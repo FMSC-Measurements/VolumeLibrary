@@ -1,0 +1,184 @@
+      PROGRAM MAIN
+
+!...  Main program for testing/debugging the NVEL.  To export this
+!...  program as a DLL the three external subroutines
+!...  (vernum, getvoleq, ) need to be declared(uncommented) and the
+!...   makeDll file should be used
+
+			USE DEBUG_MOD
+      USE CHARMOD
+      
+!     Local variables
+      INTEGER   VERSION
+      CHARACTER INDEB
+
+!     Variables for GETVOLEQ
+      INTEGER         REGN   
+      TYPE(CHAR256):: FORST
+      TYPE(CHAR256):: DIST
+      TYPE(CHAR256):: PROD
+      INTEGER         SPEC
+      TYPE(CHAR256):: VOLEQ
+      INTEGER         ERRFLAG
+!---------------------------------------------------------------------      
+      PRINT*,'Debug? Y or N'
+      READ*, INDEB
+      
+      IF (INDEB .EQ. 'Y' .OR. INDEB .EQ. 'y') THEN
+      	 ANY_DEBUG = .TRUE.
+      	 DEBUG%VOLEQ = .TRUE.
+      	 DEBUG%MODEL = .TRUE.
+      ENDIF
+      
+      IF (ANY_DEBUG) THEN
+	       OPEN (UNIT=LUDBG, FILE='Debug.txt', STATUS='UNKNOWN')
+	       WRITE (LUDBG,10)'Debugging NVEL'
+   10	   FORMAT(A)
+      END IF
+      
+      CALL VERNUM(VERSION)
+      
+      REGN = 6
+      FORST%STR(1:2) = '01'
+      DIST%STR(1:2) = '1'
+      SPEC = 837
+      PROD%STR(1:2) = '01'
+      VOLEQ%STR(1:9) = ' '
+      ERRFLG = 0
+      
+      CALL GETVOLEQ2(REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
+      
+      CALL VOLLIB09_CALL
+      
+      
+      
+      CLOSE(LUDBG)
+      END PROGRAM MAIN
+!---------------------------------------------------------------------
+      SUBROUTINE VOLLIB09_CALL
+
+!...  subroutine to call perpare data and call VOLLIB09 locally
+!...  used for debugging/testing purposes
+
+      USE DEBUG_MOD
+      USE CHARMOD
+     
+      IMPLICIT NONE
+     
+!     Parameters
+      INTEGER         REGN
+      TYPE(CHAR256):: FORSTC, VOLEQC
+      REAL            MTOPP, MTOPS, STUMP, DBHOB, DRCOB
+      TYPE(CHAR256):: HTTYPEC
+      REAL            HTTOT
+      INTEGER         HTLOG
+      REAL            HT1PRD, HT2PRD, UPSHT1, UPSHT2, UPSD1, UPSD2
+      INTEGER         HTREF
+      REAL            AVGZ1, AVGZ2
+      INTEGER         FCLASS
+      REAL            DBTBH, BTR
+      INTEGER         I3, I7, I15, I20, I21
+      REAL            VOL(15), LOGVOLC(20, 7)
+      REAL            LOGDIAC(3,21), LOGLEN(20), BOLHT(21)
+      INTEGER         TLOGS
+      REAL            NOLOGP,NOLOGS
+      INTEGER         CUTFLG, BFPFLG, CUPFLG, CDPFLG, SPFLG
+      TYPE(CHAR256):: CONSPECC, PRODC
+      INTEGER         HTTFLL
+      TYPE(CHAR256):: LIVEC
+      INTEGER         BA, SI
+      TYPE(CHAR256):: CTYPEC
+      INTEGER         ERRFLAG
+      
+!     Local variables
+!      CHARACTER(FORSTC%LENGTH)  FORST
+!      CHARACTER(VOLEQC%LENGTH)  VOLEQ
+!      CHARACTER(HTTYPEC%LENGTH) HTTYPE
+!      CHARACTER(CONSPECC%LENGTH)CONSPEC
+!      CHARACTER(PRODC%LENGTH)   PROD
+!      CHARACTER(LIVEC%LENGTH)   LIVE
+!      CHARACTER(CTYPEC%LENGTH)  CTYPE
+!      CHARACTER*3     MDL,SPECIES
+!      CHARACTER*2     DIST,VAR   
+!      CHARACTER*10    EQNUM
+!      INTEGER         SPEC
+!      REAL            LOGVOL(7,20),LOGDIA(21,3) 
+
+!     MERCH VARIABLES 
+      REAL            THT1,   MAXLEN
+
+!     TREE VARIABLES
+      REAL            CR, TRIM
+      INTEGER         SPCODE
+  
+!     OUTPUTS
+      INTEGER         IFORST
+    
+!     ARRAYS
+      INTEGER         I, J
+
+!---------------------------------------------------------------------
+
+      IF (DEBUG%MODEL) THEN
+         WRITE  (LUDBG, 10) ' -->Enter VOLLIB09_CALL'
+   10    FORMAT (A)   
+   		END IF
+
+      REGN = 9
+      FORSTC%STR(1:2) = '04'
+      FORSTC%LENGTH = 2
+      !SPEC = 837
+      PRODC%STR(1:2) = '01'
+      PRODC%LENGTH = 2
+      VOLEQC%STR(1:10) = '900CLKE837'
+      VOLEQC%LENGTH = 10
+      HTTOT = 0
+      DBHOB = 5.1
+      HT1PRD = 0.0
+      HT2PRD = 9.0
+      HTTYPEC%STR(1:1) = 'F'
+      HTTYPEC%LENGTH = 1
+      MTOPP = 0
+      MTOPS = 0
+      FCLASS = 0
+      ERRFLAG = 0
+      CONSPECC%LENGTH = 5
+      LIVEC%LENGTH   = 1
+      CTYPEC%STR(1:1) = 'F' 
+      CTYPEC%LENGTH = 1
+      CUTFLG = 1
+      BFPFLG = 1
+      CUPFLG = 1
+      SPFLG = 1
+      
+      CALL VOLLIB09(REGN, FORSTC, VOLEQC, MTOPP, MTOPS, STUMP, DBHOB,
+     &    DRCOB, HTTYPEC, HTTOT, HTLOG, HT1PRD, HT2PRD, UPSHT1, 
+     +    UPSHT2, UPSD1,
+     &    UPSD2, HTREF, AVGZ1, AVGZ2, FCLASS, DBTBH, BTR, 3, 7,
+     +    15, 20, 21,
+     &    VOL,LOGVOLC,LOGDIAC,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPECC,PRODC,HTTFLL,LIVEC,
+     &    BA,SI,CTYPEC,ERRFLAG)
+     
+      IF (DEBUG%MODEL) THEN
+         WRITE  (LUDBG, 20) ' <--Exit VOLLIB09_CALL'
+   20    FORMAT (A)   
+   		END IF
+   		
+!...  Write
+      OPEN (UNIT=LUOUT, FILE='Output.txt', STATUS='UNKNOWN')
+      WRITE (LUOUT, 225)'-----------------OUTPUT-----------------------'
+  225 FORMAT (A)
+   		WRITE (LUOUT, 250)'    VOLEQ    TOTCU BDFT  CUFT  TPWDCU TPWDBF'
+  250 FORMAT (A)
+      WRITE (LUOUT, 275)VOLEQC%STR(1:10), VOL(1), VOL(2), VOL(4), VOL(7), VOL(12)
+  275 FORMAT (2X, A, 4F6.1, F5.3)
+      WRITE (LUOUT, *)'----------------------------------------------'
+  
+      CLOSE(LUOUT)
+  
+      DO 300 I= 1, 15
+        PRINT *, VOL(I)
+  300 CONTINUE
+      RETURN
+      END SUBROUTINE VOLLIB09_CALL

@@ -1,0 +1,85 @@
+      SUBROUTINE BIOMASSFORMULA(EQFORM,DBH,THT,P3, a, b, c, d, e, BMS)
+      INTEGER EQFORM
+      REAL DBH, THT, P3, BMS
+      REAL a, b, c, d, e
+      
+      BMS = 0
+      IF (EQFORM.EQ.1) THEN
+C     log10 biomass = a + b * (log10(dia^c))      
+         BMS = a + b * (LOG10(DBH**c))
+         BMS = 10**BMS
+      ELSE IF (EQFORM.EQ.2) THEN
+C     ln biomass = a + b * dia + c * (ln(dia^d)) + e*tht         
+         BMS = a + b * DBH + c * (LOG(DBH**d)) + e*THT
+         BMS = EXP(BMS)
+      ELSE IF (EQFORM.EQ.3) THEN
+C     ln biomass = a + b * ln(dia) + c * (d + e * ln(dia))
+         BMS = a + b * LOG(DBH) + c * (d + e * LOG(DBH))
+         BMS = EXP(BMS)
+      ELSE IF (EQFORM.EQ.4) THEN
+C     biomass = a + b * dia + c * dia ^ d + e*dia^2*tht
+         BMS = a + b * DBH + c * DBH**d + e*DBH**2*THT
+      ELSE IF (EQFORM.EQ.5) THEN 
+C     biomass = a + b * dia + c * dia ^ 2 + d * dia ^ 3 + e*dia*tht
+         BMS = a + b * DBH + c * DBH**2 + d * DBH**3 + e*DBH*THT 
+      ELSE IF (EQFORM.EQ.6) THEN
+C     biomass = a * (exp(b + c * ln(dia) + d * dia))
+         BMS = a * (EXP(b + c * LOG(DBH) + d * DBH))   
+      ELSE IF (EQFORM.EQ.7) THEN  
+C     biomass = a + (b * dia ^ c)/(dia ^ c + d)
+         BMS = a + (b * DBH**c)/(DBH**c + d)  
+      ELSE IF (EQFORM.EQ.8) THEN  
+C     log100 biomass = a + b * log10(dia)
+         BMS = a + b * LOG10(DBH)
+         BMS = 100**BMS
+      ELSE IF (EQFORM.EQ.9) THEN  
+C     ln biomass = ln(a) + (b * ln(dia))
+         BMS = LOG(a) + (b * LOG(DBH)) 
+         BMS = EXP(BMS)
+      ELSE IF (EQFORM.EQ.10) THEN    
+C     biomass= exp(a + b*ln(dia))*exp(c + d/dia)
+         BMS = EXP(a + b*LOG(DBH))*EXP(c + d/DBH)   
+      ELSE IF (EQFORM.EQ.11) THEN
+C     biomass = a + b*dia^2*tht + c*dia^3 + d*dia*tht
+         BMS = a + b*DBH**2*THT + c*DBH**3 + d*DBH*THT 
+      ELSE IF (EQFORM.EQ.12) THEN 
+C     ln biomass = a + b*ln(dia) + c*ln(tht)
+         BMS = a + b*LOG(DBH) + c*LOG(THT) 
+         BMS = EXP(BMS)
+      ELSE IF (EQFORM.EQ.13) THEN  
+C     biomass = exp(a + b*ln(dia) + d*ln(tht))*c
+         BMS = EXP(a + b*LOG(DBH) + d*LOG(THT))*c 
+      ELSE IF (EQFORM.EQ.14) THEN  
+C     biomass = exp(a + b*ln(dia))/(c + d*dia^e)
+         BMS = EXP(a + b*LOG(DBH))/(c + d*DBH**e)
+      ELSE IF (EQFORM.EQ.15) THEN
+C     biomass = a + b*tht + c*tht^2
+         BMS = a + b*THT + c*THT**2
+      ELSE IF (EQFORM.EQ.16) THEN
+C     biomass = a * dia^b * tht^c
+         BMS = a * DBH**b * THT**c
+      ELSE IF (EQFORM.EQ.17) THEN
+C     biomass = a + b*dbh + c*dbh^2 + d*tht + e*dbh^2*tht
+         BMS = a + b*DBH + c*DBH**2 + d*THT + e*DBH**2*THT
+      ELSE IF (EQFORM.EQ.18) THEN
+C     ln biomass = a + b*ln(dia) + c*ln(CR) + d*ln(CR*tht)
+C     P3 as crown ratio (crown length.total height)
+         BMS = a + b*LOG(DBH) + c*LOG(P3) + d*LOG(P3*THT)
+         BMS = EXP(BMS)
+      
+      ELSE IF (EQFORM.EQ.33) THEN 
+        IF(DBH.LT.11)THEN
+          BMS = a*(DBH**2)**b 
+        ELSE
+          BMS = c*(DBH**2)**d
+        ENDIF
+      ELSE IF (EQFORM.EQ.34) THEN
+        IF(DBH.LT.11) THEN
+          BMS = a*(DBH**2*THT)**b
+        ELSE
+          BMS = c*(DBH**2)**d*THT**e
+        ENDIF
+        
+      ENDIF 
+      END
+            

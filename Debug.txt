@@ -1,0 +1,46 @@
+Debugging NVEL
+ -->Enter GETVOLEQ
+ -->Enter VOLEQDEF
+ -->Enter GETVARIANT
+  Variant = SO
+ -->Exit GETVARIANT
+  Volume equation = 616BEHW000
+ -->Exit VOLEQDEF
+ <--Exit GETVOLEQ
+ -->Enter VOLLIB09_CALL
+ -->Enter VOLLIB09
+   9 900CLKE837 01  5.1  0.0  0.0
+ -->Enter VOLINIT
+ -->Enter R9CLARK
+ -->Enter R9PREP
+  DBHOB TOPDIB TOPHT HT1PRD HT2PRD HTTOT
+    5.1  4.0   17.4    0.0    9.0    0.0
+  SPP MAXLEN MINLEN MERCHL MTOPP  MTOPS
+  837  8.0    4.0    8.0    0.0    0.0
+ <--Exit R9PREP
+ -->Enter R9DIA417
+  DBHOB TOPDIB DBHIB  ERRFLG
+    5.1  4.0    4.0    0
+  TOPHT HT1PRD HT2PRD HTTOT
+   17.4   0.0    9.0    0.0
+ <--Exit R9PREP
+  DBHIB DIB17 SAWDIB PLPDIB
+   4.0    4.1  9.6    4.0
+  TOTHT HTTOT TOPHT TOPDIB STUMP
+  25.4    0.0  17.4   4.0   0.0
+ -->Enter R9CUFT
+  CFVOL DBHIB TOTHT DIB17 LOWRHT UPPRHT
+   2.2   4.0  25.4   4.1   0.0  25.4
+ <--Exit R9CUFT
+  CFVOL 
+   1.1
+ -->Enter R9CUFT
+  CFVOL DBHIB TOTHT DIB17 LOWRHT UPPRHT
+   1.9   4.0  25.4   4.1   0.0  17.4
+ <--Exit R9CUFT
+ -->Enter R9CUFT
+ <--Exit R9CLARK
+ <--Exit VOLINIT
+  ERRFLAG =   0
+ <--Exit VOLLIB09
+ <--Exit VOLLIB09_CALL

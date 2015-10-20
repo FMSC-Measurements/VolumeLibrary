@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VisualStudioProject ProjectType="typeDynamicLibrary" ProjectCreator="Intel Fortran" Keyword="Dll" Version="11.0" ProjectIdGuid="{DD129EEC-6427-4818-924F-87C2CDBBA9AD}">
+	<Platforms>
+		<Platform Name="Win32"/>
+		<Platform Name="x64"/></Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Interfaces="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;
+copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/libs:static" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" GenerateManifest="false" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;
+copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;
+copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&quot;" Description="copy vollib.dll to volumetester"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Interfaces="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="typeDynamicLibrary">
+				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/libs:static" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
+				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" SubSystem="subSystemWindows" LinkDLL="true"/>
+				<Tool Name="VFResourceCompilerTool"/>
+				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
+				<Tool Name="VFCustomBuildTool"/>
+				<Tool Name="VFPreLinkEventTool"/>
+				<Tool Name="VFPreBuildEventTool"/>
+				<Tool Name="VFPostBuildEventTool"/>
+				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration></Configurations>
+	<Files>
+		<Filter Name="Header Files" Filter="fi;fd"/>
+		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
+		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<File RelativePath="..\BIOMASSFORMULA.F"/>
+		<File RelativePath="..\Blmtap.f"/>
+		<File RelativePath="..\blmvol.f"/>
+		<File RelativePath="..\Brk_up.f"/>
+		<File RelativePath="..\BROWN.F"/>
+		<File RelativePath="..\BROWN.F90">
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\CalcBiomass.F"/>
+		<File RelativePath="..\CalcDia.f"/>
+		<File RelativePath="..\charmod.f"/>
+		<File RelativePath="..\clkcoef_mod.f"/>
+		<File RelativePath="..\CRZBIOMASS.F"/>
+		<File RelativePath="..\debug_mod.f"/>
+		<File RelativePath="..\Doyal78.f"/>
+		<File RelativePath="..\dvest.f"/>
+		<File RelativePath="..\f_Alaska.f"/>
+		<File RelativePath="..\f_ingy.f"/>
+		<File RelativePath="..\F_other.f"/>
+		<File RelativePath="..\F_west.f"/>
+		<File RelativePath="..\Formclas.f"/>
+		<File RelativePath="..\fwinit.f"/>
+		<File RelativePath="..\getvoleq.f"/>
+		<File RelativePath="..\grossvol.f"/>
+		<File RelativePath="..\Intl78.f"/>
+		<File RelativePath="..\JENKINS.F"/>
+		<File RelativePath="..\Mrules.f"/>
+		<File RelativePath="..\mrules_mod.f"/>
+		<File RelativePath="..\numlog.f"/>
+		<File RelativePath="..\pmtProfile.f"/>
+		<File RelativePath="..\PNWTARIF.F"/>
+		<File RelativePath="..\profile.f"/>
+		<File RelativePath="..\profile2.f"/>
+		<File RelativePath="..\R10d2h.f"/>
+		<File RelativePath="..\r10tap.f"/>
+		<File RelativePath="..\R10tapo.f"/>
+		<File RelativePath="..\R10vol.f"/>
+		<File RelativePath="..\R10vol1.f"/>
+		<File RelativePath="..\R10volo.f"/>
+		<File RelativePath="..\R12tap.f"/>
+		<File RelativePath="..\R12vol.f"/>
+		<File RelativePath="..\R1Allen.f"/>
+		<File RelativePath="..\R1Kemp.f"/>
+		<File RelativePath="..\R1tap.f"/>
+		<File RelativePath="..\R2oldv.f"/>
+		<File RelativePath="..\R2tap.f"/>
+		<File RelativePath="..\R3d2hv.f"/>
+		<File RelativePath="..\R4d2h.f"/>
+		<File RelativePath="..\R4vol.f"/>
+		<File RelativePath="..\R5harv.f"/>
+		<File RelativePath="..\R5tap.f"/>
+		<File RelativePath="..\R6dibs.f"/>
+		<File RelativePath="..\R6fix.f"/>
+		<File RelativePath="..\R6vol.f"/>
+		<File RelativePath="..\R6vol1.f"/>
+		<File RelativePath="..\R6vol2.f"/>
+		<File RelativePath="..\R6vol3.f"/>
+		<File RelativePath="..\R8CLKDIB.F"/>
+		<File RelativePath="..\R8dib.f"/>
+		<File RelativePath="..\R8init.f"/>
+		<File RelativePath="..\R8vlist.f"/>
+		<File RelativePath="..\R8vol.f"/>
+		<File RelativePath="..\R8vol1.f"/>
+		<File RelativePath="..\R8vol2.f"/>
+		<File RelativePath="..\r9clark.f"/>
+		<File RelativePath="..\r9clarkdib.f"/>
+		<File RelativePath="..\R9init.f"/>
+		<File RelativePath="..\r9Logs.f"/>
+		<File RelativePath="..\r9vol.f"/>
+		<File RelativePath="..\REGNDFT_MOD.F">
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\REGNDFTDATA.F">
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\Scrib.f"/>
+		<File RelativePath="..\Segmnt.f"/>
+		<File RelativePath="..\Sf_2pt.f"/>
+		<File RelativePath="..\Sf_2pth.f"/>
+		<File RelativePath="..\Sf_3pt.f"/>
+		<File RelativePath="..\Sf_3z.f"/>
+		<File RelativePath="..\SF_corr.f"/>
+		<File RelativePath="..\Sf_dfz.f"/>
+		<File RelativePath="..\Sf_ds.f"/>
+		<File RelativePath="..\Sf_hs.f"/>
+		<File RelativePath="..\Sf_shp.f"/>
+		<File RelativePath="..\Sf_taper.f"/>
+		<File RelativePath="..\Sf_yhat.f"/>
+		<File RelativePath="..\Sf_yhat3.f"/>
+		<File RelativePath="..\Sf_zero.f"/>
+		<File RelativePath=".\Source2.F90"/>
+		<File RelativePath="..\stump.f"/>
+		<File RelativePath="..\vernum.f"/>
+		<File RelativePath="..\volapss.f"/>
+		<File RelativePath="..\voleqdef.f"/>
+		<File RelativePath="..\volinit.f"/>
+		<File RelativePath="..\volinit2.f"/>
+		<File RelativePath=".\volinput_mod.f">
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/></File>
+		<File RelativePath="..\volinput_mod.f"/>
+		<File RelativePath="..\vollib09.f"/>
+		<File RelativePath="..\vollibcs.f"/>
+		<File RelativePath="..\volumelib.f"/>
+		<File RelativePath="..\volumelibrary.f"/></Filter>
+		<File RelativePath="..\BEQINFO.INC"/>
+		<File RelativePath="..\R8CLKCOEF.INC"/>
+		<File RelativePath="..\R8dib.inc"/>
+		<File RelativePath="..\r9coeff.inc"/>
+		<File RelativePath="..\REGNDFTDATA.INC"/>
+		<File RelativePath="..\WDBKWTDATA.INC"/></Files>
+	<Globals/></VisualStudioProject>

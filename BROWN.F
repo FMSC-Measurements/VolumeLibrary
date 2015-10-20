@@ -1,0 +1,723 @@
+C     THIS SUBROUTINE CALCULATE CROWN BIOMASS (DRY WEIGHT) FRACTIONS BASED ON BROWN 1976
+C     THE RESULT FOR SIZE CATEGORY IN CWF AS:
+C     1 - NEEDLES
+C     2 - 0 TO 1/4"
+C     3 - 1/4 TO 1"
+C     4 - 1 TO 3"
+C     5 - 3" AND UP
+      SUBROUTINE BROWNCROWNFRACTION(SPCD, DBH, THT, CFWT)
+! Expose subroutine BrownCrownFraction to C# users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::BROWNCROWNFRACTION
+      IMPLICIT NONE
+      REAL DBH, THT, CFWT(5)
+      INTEGER SPCD, PROP
+      REAL LCW, DCW, LP1, LP2, LP3, LP4, DP1, DP2 
+      REAL DST1, DST2, DST3, SW
+      REAL CONST2, CONST3, CONST4
+      REAL LIVEPROP, DEADPROP
+C     ASSOCIATE SPECIES CODE WITH BROWN SPECIES CODE
+      IF(SPCD.EQ.15.OR.SPCD.EQ.11.OR.SPCD.EQ.21.OR.SPCD.EQ.22)THEN
+        SPCD = 17
+      ELSEIF(SPCD.EQ.20)THEN
+        SPCD = 19
+      ELSEIF(SPCD.EQ.116.OR.SPCD.EQ.117.OR.SPCD.EQ.121)THEN
+        SPCD = 108
+      ELSEIF(SPCD.EQ.98)THEN
+        SPCD = 93
+      ELSEIF(SPCD.EQ.260)THEN
+        SPCD = 263
+      ELSEIF(SPCD.EQ.41.OR.SPCD.EQ.42.OR.SPCD.EQ.81)THEN
+        SPCD = 242
+      ENDIF
+      CALL LIVECROWNWEIGHT(SPCD, DBH, THT, LCW)
+      
+C     SMALL TREES AND BIG TREES ARE CALCULATED DIFFERENT FOR PROPORTION
+      IF(DBH.LE.6)THEN
+        CALL SMALLTREESTEMWEIGHT(SPCD, DBH, THT, SW)
+        DST1 = LIVEPROP(SPCD, DBH, 1)
+        DST2 = LIVEPROP(SPCD, DBH, 2)
+        DST3 = LIVEPROP(SPCD, DBH, 3)
+C       NEEDLES        
+        CFWT(1) = LCW*DST1   
+C       0 TO 1/4"        
+        CFWT(2) = LCW*(DST2-DST1)   
+C       1/4 TO 1"
+        IF(DBH.GT.1.AND.DBH.LE.2)THEN
+          CONST2 = 0.02
+        ELSE
+          CONST2 = 1.0
+        ENDIF
+        CFWT(3) = LCW*(DST3-DST2) + SW*CONST2
+C       1 TO 3"
+        IF(DBH.LE.2)THEN
+          CONST3 = 0.96
+        ELSEIF(DBH.LE.3)THEN
+          CONST3 = 0.5
+        ELSEIF(DBH.LE.4)THEN
+          CONST3 = 0.1
+        ELSE
+          CONST3 = 0
+        ENDIF
+        CFWT(4) = LCW*(1-DST3) + CONST3*SW
+C       3" AND UP
+        IF(DBH.LE.3)THEN
+          CONST4 = 0.5
+        ELSEIF(DBH.LE.4)THEN
+          CONST4 = 0.9
+        ELSE
+          CONST4 = 1.0
+        ENDIF
+        CFWT(5) = SW*CONST4
+        IF(DBH.LT.3) CFWT(5) = 0  
+      ELSE
+        CALL DEADCROWNWEIGHT(SPCD, DBH, THT, DCW)
+        LP1 = LIVEPROP(SPCD, DBH, 1)
+        LP2 = LIVEPROP(SPCD, DBH, 2)
+        LP3 = LIVEPROP(SPCD, DBH, 3)
+        LP4 = LIVEPROP(SPCD, DBH, 4)
+        DP1 = DEADPROP(SPCD, DBH, 1)
+        DP2 = DEADPROP(SPCD, DBH, 2)
+        !NEEDLES
+        CFWT(1) = LP1*LCW
+        ! 0 TO 1/4"
+        CFWT(2) = (LP2-LP1)*LCW +DP1*DCW
+        ! 1/4 TO 1"
+        CFWT(3) = (LP3-LP2)*LCW + (DP2-DP1)*DCW
+        ! 1 TO 3" (ONLY CALCULATE FOR PP, DF, WP, GF, WC AND LP
+        IF(SPCD.EQ.122.OR.SPCD.EQ.202)THEN
+          CFWT(4) = (LP4-LP3)*LCW + (1-DP2)*DCW
+        ELSEIF(SPCD.EQ.17 .OR. SPCD.EQ.119
+     +        .OR. SPCD.EQ.108 .OR. SPCD.EQ.242)THEN
+          CFWT(4) = (1-LP3)*LCW + (1-DP2)*DCW
+        ELSE
+          CFWT(4) = 0
+        ENDIF
+        ! 3" AND UP (ONLY FOR PP AND DF)
+        IF(SPCD.EQ.122.OR.SPCD.EQ.202)THEN
+          CFWT(5) = (1-LP4)*LCW
+        ELSE
+          CFWT(5) = 0
+        ENDIF
+      ENDIF
+      END                          
+C ---------------------------------------------------------------------
+C Brown topwood dry weight = gross CUFT sedondary volume times breakage ratio times wood density
+      SUBROUTINE BROWNTOPWOOD(SPN, GCUFTS, WT)
+! Expose subroutine BrownTopwood to C# users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::BROWNTOPWOOD
+      IMPLICIT NONE
+      REAL GCUFTS, WT, WOODDRYWEIGHT
+      INTEGER SPN
+      WT = WOODDRYWEIGHT(SPN, GCUFTS, 1)
+      END
+C ---------------------------------------------------------------------
+C BROWN CULLLOG WEIGHT = GROSS LOG VOLUME TIMES BARK WEIGHT/STEM WEIGHT RATIO TIMES WOOD DENSITY
+      SUBROUTINE BROWNCULLLOG(SPN, GCUFTS, WT)
+! Expose subroutine BrownCullLog to C# users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::BROWNCULLLOG
+      IMPLICIT NONE
+      REAL GCUFTS, WT, WOODDRYWEIGHT
+      INTEGER SPN
+      WT = WOODDRYWEIGHT(SPN, GCUFTS, 0)
+      END
+C --------------------------------------------------------------------- 
+C BROWN CULL CHUNK WEIGHT = GROSS CUFT MINUS NET CUFT VOLUME TIMES FRACTION LEFT IN THE WOOD
+      SUBROUTINE BROWNCULLCHUNK(SPN, GCUFT, NCUFT, FLIW, WT)
+! Expose subroutine BrownCullChunk to C# users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::BROWNCULLCHUNK
+      IMPLICIT NONE
+      REAL GCUFT, NCUFT, FLIW, WT, WOODDRYWEIGHT, VOL
+      INTEGER SPN
+      VOL = (GCUFT - NCUFT)*FLIW
+      WT = WOODDRYWEIGHT(SPN, VOL, 0);
+      END
+C ---------------------------------------------------------------------
+      SUBROUTINE LIVECROWNWEIGHT(SPCD, DBH, THT, LCW)
+C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
+      IMPLICIT NONE
+      REAL DBH, THT, LCW, P3, DF34PLUSLCW
+      INTEGER SPCD
+      CHARACTER*12 BMEQ
+      DF34PLUSLCW(DBH) = EXP(0.0168 + 1.949*LOG(DBH))
+      P3 = 0
+      LCW = -1
+      IF(DBH.GT.50) DBH = 50
+      IF(DBH.LT.1) DBH = 1
+      IF(SPCD.EQ.17)THEN
+        BMEQ = 'BRN017LCR02D'
+        IF(DBH.GT.40) LCW = 1.03*DF34PLUSLCW(DBH)
+      ELSEIF(SPCD.EQ.19)THEN
+        BMEQ = 'BRN019LCR01D'
+      ELSEIF(SPCD.EQ.108)THEN
+        BMEQ = 'BRN108LCR01D'
+      ELSEIF(SPCD.EQ.73)THEN
+        BMEQ = 'BRN073LCR01D'
+        IF(DBH.GT.34) LCW = 0.58*DF34PLUSLCW(DBH)
+      ELSEIF(SPCD.EQ.93)THEN
+        BMEQ = 'BRN093LCR01D'
+        IF(DBH.GT.28) LCW = 1.24*DF34PLUSLCW(DBH)
+      ELSEIF(SPCD.EQ.202)THEN
+        IF(DBH.LE.16)THEN
+          BMEQ = 'BRN202LCR01D'
+        ELSEIF(DBH.LE.32)THEN
+          BMEQ = 'BRN202LCR03D'
+        ELSE
+          LCW = DF34PLUSLCW(DBH)
+        ENDIF
+      ELSEIF(SPCD.EQ.263)THEN
+        IF(DBH.LE.32)THEN
+          BMEQ = 'BRN263LCR01D'
+        ELSE
+          BMEQ = 'BRN263LCR04D'
+        ENDIF
+      ELSEIF(SPCD.EQ.119)THEN
+        BMEQ = 'BRN119LCR01D'
+        IF(DBH.GT.42) LCW = 0.45*DF34PLUSLCW(DBH)
+      ELSEIF(SPCD.EQ.242)THEN
+        BMEQ = 'BRN242LCR01D'
+        IF(DBH.GT.36) LCW = 0.77*DF34PLUSLCW(DBH)
+      ELSEIF(SPCD.EQ.122)THEN
+        BMEQ = 'BRN122LCR01D'
+        IF(DBH.GT.34) LCW = 2.0*DF34PLUSLCW(DBH)
+      ELSEIF(SPCD.EQ.101)THEN
+        IF(DBH.LE.6)THEN
+          BMEQ = 'BRN119LCR01D'
+        ELSE
+          BMEQ = 'BRN108LCR01D'
+        ENDIF
+      ENDIF
+      IF(LCW.LT.0)THEN
+        LCW = 0
+        CALL CalcBiomass(BMEQ, DBH, THT, P3,LCW)
+      ENDIF
+      END
+C ---------------------------------------------------------------------
+      SUBROUTINE DEADCROWNWEIGHT(SPCD, DBH, THT, DCW)
+      IMPLICIT NONE
+C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
+      REAL DBH, THT, DCW, P3, LCW
+      INTEGER SPCD
+      CHARACTER*12 BMEQ
+      P3 = 0
+      DCW = -1
+      IF(DBH.LE.6) RETURN
+      IF(DBH.GT.50) DBH = 50
+      IF(SPCD.EQ.17)THEN
+        IF(DBH.LE.18)THEN
+          BMEQ = 'BRN017DCR02D'
+        ELSEIF(DBH.LE.20)THEN
+          BMEQ = 'BRN017LCR02D'
+          CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+          DCW = LCW*0.38
+        ELSE
+          DBH = 20
+          BMEQ = 'BRN017DCR02D'
+        ENDIF
+      ELSEIF(SPCD.EQ.19)THEN
+        IF(DBH.LE.16)THEN
+          BMEQ = 'BRN019DCR01D'
+        ELSE
+          BMEQ = 'BRN019LCR01D'
+          CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+          DCW = LCW*0.31
+        ENDIF
+      ELSEIF(SPCD.EQ.108)THEN
+        BMEQ = 'BRN108LCR01D'
+        CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+        DCW = LCW*0.235  
+      ELSEIF(SPCD.EQ.73)THEN
+        DCW = 0
+      ELSEIF(SPCD.EQ.93)THEN
+        IF(DBH.GT.22) DBH = 22
+        BMEQ = 'BRN093DCR01D'
+      ELSEIF(SPCD.EQ.202)THEN
+        IF(DBH.GT.34) DBH = 34
+        BMEQ = 'BRN202DCR02D'
+      ELSEIF(SPCD.EQ.263)THEN
+        IF(DBH.GT.20) DBH = 21
+        BMEQ = 'BRN263DCR01D'
+      ELSEIF(SPCD.EQ.119)THEN
+        IF(DBH.GT.24) DBH = 25
+        BMEQ = 'BRN119DCR01D'
+      ELSEIF(SPCD.EQ.242)THEN
+        IF(DBH.GT.26) DBH = 27
+        BMEQ = 'BRN242DCR01D'
+      ELSEIF(SPCD.EQ.122)THEN
+        IF(DBH.GT.34) DBH = 34
+        BMEQ = 'BRN122DCR01D'
+      ELSEIF(SPCD.EQ.101)THEN
+        BMEQ = 'BRN119LCR01D'
+        CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+        DCW = LCW*0.235
+      ENDIF
+      IF(DCW.LT.0) CALL CALCBIOMASS(BMEQ, DBH, THT, P3,DCW)
+      IF(DCW.LT.0) DCW = 0
+      END
+C ---------------------------------------------------------------------
+C     DAM SMALL TREE STEM WEIGHT
+      SUBROUTINE SMALLTREESTEMWEIGHT(SPN, DBH, THT, STSWT)
+      IMPLICIT NONE
+      REAL DBH, THT, STSWT, P3
+      INTEGER SPN
+      CHARACTER*12 BMEQ
+      STSWT = -1
+      P3 = 0
+      
+      IF(SPN.EQ.17)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN017STT01D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 62
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 106
+        ENDIF
+      ELSEIF(SPN.EQ.19)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN019STT02D'
+        ELSE
+          STSWT = 0
+        ENDIF
+      ELSEIF(SPN.EQ.108)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN108STT01D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 83
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 134
+        ENDIF  
+      ELSEIF(SPN.EQ.73)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN073STT02D'
+        ELSE
+          STSWT = 0
+        ENDIF
+      ELSEIF(SPN.EQ.93)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN093STT02D'
+        ELSE
+          STSWT = 0
+        ENDIF
+      ELSEIF(SPN.EQ.202)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN122STT01D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 69
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 113
+        ENDIF
+      ELSEIF(SPN.EQ.263)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN263STT02D'
+        ELSE
+          STSWT = 0
+        ENDIF
+      ELSEIF(SPN.EQ.119)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN119STT01D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 50
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 82
+        ENDIF
+      ELSEIF(SPN.EQ.242)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN242STT01D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 45
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 73
+        ENDIF
+      ELSEIF(SPN.EQ.122)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN122STT04D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 50
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 82
+        ENDIF
+      ELSEIF(SPN.EQ.101)THEN
+        IF(DBH.LE.4)THEN
+          BMEQ = 'BRN119STT01D'
+        ELSEIF(DBH.LE.5)THEN
+          STSWT = 50
+        ELSEIF(DBH.LE.6)THEN
+          STSWT = 82
+        ENDIF
+      ELSE
+        STSWT = 0    
+      ENDIF
+      IF(STSWT.LT.0) CALL CALCBIOMASS(BMEQ, DBH, THT, P3, STSWT)
+      IF(STSWT.LT.0) STSWT = 0
+      RETURN
+      END  
+            
+C ---------------------------------------------------------------------      
+C     FUNCTION TO CALCULATE DOUGLAS FIR LIVE CROWN FOR DBH > 34
+c      REAL FUNCTION DF34PLUSLCW(DBH) 
+c      IMPLICIT NONE
+c      REAL DBH
+c      DF34PLUSLCW = EXP(0.0168 + 1.949*LOG(DBH))
+c      RETURN
+c      END
+C ---------------------------------------------------------------------
+      REAL FUNCTION PROPFUNC1(A, B, DBH)
+      IMPLICIT NONE
+      REAL A, B, DBH
+      PROPFUNC1 = A + B*DBH
+      RETURN
+      END
+C ---------------------------------------------------------------------
+      REAL FUNCTION PROPFUNC2(A, B, DBH)
+      IMPLICIT NONE
+      REAL A, B, DBH
+      PROPFUNC2 = A*EXP(B*DBH)
+      RETURN
+      END                 
+C ---------------------------------------------------------------------
+C     THE FUNCTION CALC LIVE PROP FOR LP1, LP2, LP3 AND LP4
+      REAL FUNCTION LIVEPROP(SPN, DBH, PROP)     
+      IMPLICIT NONE
+      REAL DBH, LP, PROPFUNC1, PROPFUNC2
+      INTEGER SPN, PROP
+      IF(SPN.EQ.17)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.34)THEN
+            LP = 1/PROPFUNC1(1.5916, 0.05294, DBH)
+          ELSE
+            LP = 0.286
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.34)THEN
+            LP = 1/PROPFUNC1(1.1495, 0.04165, DBH)
+          ELSE
+            LP = 0.378
+          ENDIF
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1
+          ELSEIF(DBH.LE.34)THEN
+            LP = PROPFUNC1(1.0267, -0.01495, DBH)
+          ELSE
+            LP = 0.488
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.19)THEN
+        IF(PROP.EQ.1)THEN
+          LP = PROPFUNC2(0.5966, -0.04247, DBH)
+        ELSEIF(PROP.EQ.2)THEN
+          LP = PROPFUNC2(0.8643, -0.03733, DBH)
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1.0
+          ELSE
+            LP = PROPFUNC1(1.0221, -0.01083, DBH)
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.108)THEN
+        IF(PROP.EQ.1)THEN
+          LP = PROPFUNC1(0.4933, -0.01167, DBH)
+        ELSEIF(PROP.EQ.2)THEN
+          LP = PROPFUNC1(0.7767, -0.01464, DBH)
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.3)THEN
+            LP = 1.0
+          ELSE
+            LP = PROPFUNC1(1.0494, -0.01464, DBH)
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.73)THEN
+        IF(PROP.EQ.1)THEN
+          LP = PROPFUNC2(0.3468, -0.04343, DBH)
+        ELSEIF(PROP.EQ.2)THEN
+          LP = PROPFUNC2(0.745, -0.03622, DBH)
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1.0
+          ELSE
+            LP = PROPFUNC2(1.05448, -0.0213, DBH)
+          ENDIF
+        ELSEIF(PROP.EQ.4)THEN
+          IF(DBH.LE.12)THEN
+            LP = 1.0
+          ELSE
+            LP =0.9223 + 0.7197/DBH
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.93)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.40)THEN
+            LP = PROPFUNC2(0.5783, -0.325, DBH)
+          ELSE
+            LP = 0.158
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.40)THEN
+            LP = PROPFUNC2(0.8519, -0.02811, DBH)
+          ELSE
+            LP = 0.277
+          ENDIF
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2) THEN
+            LP = 1.0
+          ELSEIF(DBH.LE.40)THEN
+            LP = PROPFUNC1(1.03781, -0.01537, DBH)
+          ELSE
+            LP = 0.423
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.202)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.36)THEN
+            LP = PROPFUNC2(0.484, -0.02102, DBH)
+          ELSE
+            LP = 0.227
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.36)THEN
+            LP = PROPFUNC2(0.7289, -0.02332, DBH)
+          ELSE
+            LP = 0.315
+          ENDIF
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1.0
+          ELSEIF(DBH.LE.36)THEN
+            LP = PROPFUNC1(1.0342, -0.01584, DBH)
+          ELSE
+            LP = 0.465
+          ENDIF
+        ELSEIF(PROP.EQ.4)THEN
+          IF(DBH.LE.14)THEN
+            LP = 1.0
+          ELSE
+            LP = PROPFUNC1(1.0221, -0.001821, DBH)
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.263)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.40)THEN
+            LP = PROPFUNC2(0.5474, -0.03697, DBH)
+          ELSE
+            LP = 0.125
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.40)THEN
+            LP = PROPFUNC2(0.8352, -0.03802, DBH)
+          ELSE
+            LP = 0.183
+          ENDIF
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1.0
+          ELSEIF(DBH.LE.40)THEN
+            LP = PROPFUNC2(1.0781, -0.02735, DBH)
+          ELSE
+            LP = 0.361
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.119)THEN
+        IF(PROP.EQ.1)THEN
+          LP = PROPFUNC2(0.5497, -0.03453, DBH)
+        ELSEIF(PROP.EQ.2)THEN
+          LP = PROPFUNC2(0.9138, -0.09782, DBH)
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1.0
+          ELSE
+            LP = PROPFUNC2(1.0564, -0.0181, DBH)
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.242)THEN
+        IF(PROP.EQ.1)THEN
+          LP = PROPFUNC2(0.6174, -0.02326, DBH)
+        ELSEIF(PROP.EQ.2)THEN
+          LP = PROPFUNC2(0.7562, -0.02411, DBH)
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.2)THEN
+            LP = 1.0
+          ELSE
+            LP = PROPFUNC2(1.0602, -0.02226, DBH)
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.122)THEN
+        IF(PROP.EQ.1)THEN
+          LP = PROPFUNC2(0.5578, -0.04754, DBH)
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.30)THEN
+            LP = PROPFUNC2(0.6254, -0.05114, DBH)
+          ELSE
+            LP = PROPFUNC2(0.5578, -0.04754, DBH) + 0.01
+          ENDIF
+        ELSEIF(PROP.EQ.3)THEN
+          LP = PROPFUNC2(0.985, -0.03102, DBH)
+        ELSEIF(PROP.EQ.4)THEN
+          LP = PROPFUNC1(1.083, -0.01306, DBH)
+        ENDIF
+      ELSEIF(SPN.EQ.101)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.6)THEN
+            LP = PROPFUNC2(0.5497, -0.0345, DBH)
+          ELSE
+            LP = PROPFUNC1(0.4933, -0.01167, DBH)
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.6)THEN
+            LP = 0.9138 - 0.0978*DBH**0.5
+          ELSE
+            LP = PROPFUNC1(0.7767, -0.01464, DBH)
+          ENDIF
+        ELSEIF(PROP.EQ.3)THEN
+          IF(DBH.LE.6)THEN
+            LP = PROPFUNC2(1.0564, -0.0181, DBH)
+          ELSE
+            LP = PROPFUNC1(1.0494, -0.01402, DBH)
+          ENDIF
+        ENDIF
+      ENDIF
+      LIVEPROP = LP
+      RETURN
+      END
+C ---------------------------------------------------------------------
+      REAL FUNCTION DEADPROP(SPN, DBH, PROP) 
+      IMPLICIT NONE
+      REAL DBH, DP, PROPFUNC1, PROPFUNC2
+      INTEGER SPN, PROP
+      DP = 0
+      IF(SPN.EQ.17)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.26)THEN
+            DP = PROPFUNC2(1.4336, -0.1816, DBH)
+          ELSE
+            DP = 0.01
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          DP = PROPFUNC2(1.2623, -0.0347, DBH)
+        ENDIF
+      ELSEIF(SPN.EQ.19)THEN
+        IF(PROP.EQ.1) DP = 1.2105*DBH**(-0.565)
+      ELSEIF(SPN.EQ.108)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.20)THEN
+            DP = 1.3527*DBH**(-0.7585)
+          ELSE
+            DP = 0.139
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.20)THEN
+            DP = PROPFUNC2(2.7979, -0.1257, DBH)
+          ELSE
+            DP = 0.226
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.93)THEN
+        IF(PROP.EQ.1)THEN
+          DP = 1.4657*DBH**(-0.6454)
+        ELSEIF(PROP.EQ.2)THEN
+          DP = 1/PROPFUNC1(0.847, 0.01678, DBH)
+        ENDIF
+      ELSEIF(SPN.EQ.202)THEN
+        IF(PROP.EQ.1)THEN
+          DP = 0.08355 + 1.5893/DBH
+        ELSEIF(PROP.EQ.2)THEN
+          DP = PROPFUNC2(1.5673, -0.05232, DBH)
+        ENDIF
+      ELSEIF(SPN.EQ.263)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.28)THEN
+            DP = PROPFUNC2(1.9608, -0.2064, DBH)
+          ELSE
+            DP = 0.005
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.12)THEN
+            DP = 1.0
+          ELSE
+            DP = 1/PROPFUNC1(0.2772, 0.06141, DBH)
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.119)THEN
+        IF(PROP.EQ.1)THEN
+          DP = 1.0077*DBH**(-0.4556)
+        ELSEIF(PROP.EQ.2)THEN
+          DP = PROPFUNC1(1.0291, -0.004964, DBH)
+        ENDIF
+      ELSEIF(SPN.EQ.242)THEN
+        IF(PROP.EQ.1)THEN
+          DP = -0.01578 + 1.4673/DBH
+        ELSEIF(PROP.EQ.2)THEN
+          DP = PROPFUNC2(1.4534, -0.05395, DBH)
+        ENDIF
+      ELSEIF(SPN.EQ.122)THEN
+        IF(PROP.EQ.1)THEN
+          IF(DBH.LE.30)THEN
+            DP = -0.04345 + 1.4114/DBH
+          ELSE
+            DP = 0.0004
+          ENDIF
+        ELSEIF(PROP.EQ.2)THEN
+          IF(DBH.LE.30)THEN
+            DP = PROPFUNC1(1.0621, -0.03342, DBH)
+          ELSE
+            DP = 0.06
+          ENDIF
+        ENDIF
+      ELSEIF(SPN.EQ.101)THEN
+        IF(PROP.EQ.1)THEN
+          DP = 1.3527*DBH**(-0.7585)
+        ELSEIF(PROP.EQ.2)THEN
+          DP = PROPFUNC2(2.7979, -0.1257, DBH)
+        ENDIF
+      ENDIF
+      DEADPROP = DP
+      RETURN
+      END
+C ---------------------------------------------------------------------
+      REAL FUNCTION WOODDRYWEIGHT(SPN, GCUFTS, TWFLG)
+      IMPLICIT NONE
+      REAL GCUFTS, DRYWT, WD, RATIO, RATIO2
+      INTEGER SPN, TWFLG
+C     TWFLAG IS THE FLAG FOR: 1 = TOPWOOD, 0 = LOG / CHUNK   
+      DRYWT = 0
+      RATIO = 1.68
+      RATIO2 = 1.188
+      WD = 20
+      IF(SPN.EQ.17)THEN
+        WD = 23.1
+        RATIO2 = 1.353
+      ELSEIF(SPN.EQ.19)THEN
+        RATIO2 = 1.26
+      ELSEIF(SPN.EQ.108)THEN
+        WD = 25.6
+        RATIO2 = 1.114
+      ELSEIF(SPN.EQ.73)THEN
+        WD = 32.4
+        RATIO2 = 1.194
+      ELSEIF(SPN.EQ.93)THEN
+        WD = 21.8
+        RATIO2 = 1.274
+      ELSEIF(SPN.EQ.202)THEN
+        WD = 30
+        RATIO2 = 1.188
+      ELSEIF(SPN.EQ.263)THEN
+        WD = 28.1
+        RATIO2 = 1.207
+      ELSEIF(SPN.EQ.119)THEN
+        WD = 23.7
+        RATIO = 1.97
+        RATIO2 = 1.232
+      ELSEIF(SPN.EQ.242)THEN
+        RATIO2 = 1.168
+      ELSEIF(SPN.EQ.122)THEN
+        WD = 25
+        RATIO = 1.97
+        RATIO2 = 1.209
+      ELSEIF(SPN.EQ.101)THEN
+        WD = 23.7
+        RATIO = 1.97
+        RATIO2 = 1.232
+      ENDIF
+      IF(TWFLG.EQ.0) RATIO = RATIO2
+      DRYWT = GCUFTS*RATIO*WD
+      WOODDRYWEIGHT = DRYWT
+      RETURN
+      END   

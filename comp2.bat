@@ -1,0 +1,1 @@
+ifort -fpp /exe:volfor.exe /object:C:\development\VolLibLocal\out\ *.f

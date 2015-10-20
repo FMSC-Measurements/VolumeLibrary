@@ -1,0 +1,1590 @@
+C This file has BRATIO function for all FVS variants
+C All functions are renamed as SUNROUTINE, such as AK_BRATIO(IS,D,H,BRATIO)
+
+C 01/15/2015 Y. Wang created
+C ====================================================================================
+C AK
+      SUBROUTINE AK_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--AK   DATE OF LAST REVISION:  05/08/12
+C
+C     SPECIES LIST FOR ALASKA VARIANT.
+C
+C     1 = WHITE SPRUCE (WS)           PICEA GLAUCA
+C     2 = WESTERN REDCEDAR (RC)       THUJA PLICATA
+C     3 = PACIFIC SILVER FIR (SF)     ABIES AMABILIS
+C     4 = MOUNTAIN HEMLOCK (MH)       TSUGA MERTENSIANA
+C     5 = WESTERN HEMLOCK (WH)        TSUGA HETEROPHYLLA
+C     6 = ALASKA CEDAR (YC)           CALLITROPSIS NOOTKATENSIS
+C     7 = LODGEPOLE PINE (LP)         PINUS CONTORTA
+C     8 = SITKA SPRUCE (SS)           PICEA SITCHENSIS
+C     9 = SUBALPINE FIR (AF)          ABIES LASIOCARPA
+C    10 = RED ALDER (RA)              ALNUS RUBRA
+C    11 = BLACK COTTONWOOD (CW)       POPULUS TRICHOCARPA
+C    12 = OTHER HARDWOODS (OH)
+C    13 = OTHER SOFTWOODS (OS)
+C
+C  FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER
+C----------
+      INTEGER IS
+      REAL H,D,BRATIO,DIB,DD
+C  RED ALDER AND COTTONWOOD (FROM PN VARIANT)
+C----------
+      IF(IS.EQ.10 .OR. IS.EQ.11) THEN
+        DIB=0.075256 + 0.94373*D
+        BRATIO=DIB/D
+      ELSE
+C----------
+C  EQUATIONS FOR OTHER SPECIES
+C  COMPUTE DOUBLE BARK THICKNESS AND STORE IN BRATIO
+C----------
+        DD=D
+        IF(DD .LT. 1.)DD=1.
+        BRATIO = 0.186 * (DD ** 0.45417)
+C----------
+C SUBTRACT DOUBLE BARK THICKNESS FROM DIAMETER, THEN DIVIDE BY
+C DIAMETER TO GET BARK RATIO.
+C----------
+        BRATIO = (DD - BRATIO) / DD
+      ENDIF
+C
+      RETURN
+      END
+
+C ====================================================================================
+C BM
+      SUBROUTINE BM_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--BM   DATE OF LAST REVISION:  04/16/09
+C----------
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BLKDAT. 
+C----------
+C  COMMONS
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C  COMMONS
+C----------
+C  SPECIES ORDER:
+C   1=WP,  2=WL,  3=DF,  4=GF,  5=MH,  6=WJ,  7=LP,  8=ES,
+C   9=AF, 10=PP, 11=WB, 12=LM, 13=PY, 14=YC, 15=AS, 16=CW,
+C  17=OS, 18=OH
+C
+C  SPECIES EXPANSION
+C  WJ USES SO JU (ORIGINALLY FROM UT VARIANT; REALLY PP FROM CR VARIANT)
+C  WB USES SO WB (ORIGINALLY FROM TT VARIANT)
+C  LM USES UT LM
+C  PY USES SO PY (ORIGINALLY FROM WC VARIANT)
+C  YC USES WC YC
+C  AS USES SO AS (ORIGINALLY FROM UT VARIANT)
+C  CW USES SO CW (ORIGINALLY FROM WC VARIANT)
+C  OS USES BM PP BARK COEFFICIENT
+C  OH USES SO OH (ORIGINALLY FROM WC VARIANT)
+C----------
+      REAL BARK1(MAXSP),BARK2(MAXSP),H,D,BRATIO,TEMD,DIB
+      INTEGER IS
+C
+      DATA BARK1/
+     & 0.859045,  0.859045,  0.903563,  0.904973,  0.903563,
+     &       0.,       0.9,       0.9,  0.904973,  0.809427,
+     &    0.969,    0.9625,  0.933290,  0.837291,     0.950,
+     & 0.075256,  0.809427,    0.9000/
+C
+      DATA BARK2/
+     &       1.,        1.,  0.989388,        1.,  0.989388,
+     &       0.,        1.,        1.,        1.,  1.016866,
+     &       0.,   -0.1141,        1.,        1.,        0.,
+     & 0.949670,  1.016866,        1./
+C----------
+      SELECT CASE (IS)
+C----------
+C  ORIGINAL BM VARIANT SPECIES
+C     BARK COEFFICIENTS:
+C     202,15,122,116,81 FROM WALTERS ET.AL. RES BULL 50
+C     242,93,108   FROM WYKOFF ET.AL. RES PAPER INT 133
+C----------
+      CASE(1:5,7:10,17)
+        DIB=BARK1(IS)*D**BARK2(IS)
+        BRATIO=DIB/D
+        IF(BRATIO .GT. 1.0 .OR. BRATIO .LE. 0.0) THEN
+          BRATIO=.999
+          GO TO 10
+        ENDIF
+C----------
+C  PACIFIC YEW (13=PY)
+C  ALASKA CEDAR (14=YC)
+C  OTHER HARDWOODS (18=OH)
+C----------
+      CASE(13,14,18)
+        DIB=BARK1(IS)*D**BARK2(IS)
+        BRATIO=DIB/D
+C----------
+C  WESTERN JUNIPER (6 = WJ)
+C----------
+      CASE(6)
+        TEMD=D
+        IF(TEMD.LT.1.)TEMD=1.
+        IF(TEMD.GT.19.)TEMD=19.
+        BRATIO = 0.9002 - 0.3089*(1/TEMD)
+C----------
+C  WHITEBARK PINE (11 = WB)
+C  QUAKING ASPEN (15 = AS)
+C----------
+      CASE(11,15)
+        BRATIO=BARK1(IS)
+C----------
+C  LIMBER PINE (12 = LM)
+C----------
+      CASE(12)      
+        TEMD=D
+        IF(TEMD.LT.1.)TEMD=1.
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+C----------
+C  BLACK COTTONWOOD (16 = CW)
+C----------
+      CASE(16)
+        DIB=BARK1(IS) + BARK2(IS)*D
+        BRATIO=DIB/D
+      END SELECT
+C
+      IF(BRATIO .GT. 0.99) BRATIO=0.99
+      IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+   10 CONTINUE
+      RETURN
+      END
+C ====================================================================================
+C CA
+      SUBROUTINE CA_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--CA     DATE OF LAST REVISION:   02/22/08
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS.  THIS ROUTINE IS VARIANT SPECIFIC
+C AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS PASSED TO IT.
+C
+COMMONS
+C
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C
+COMMONS
+C----------
+      REAL BARKB(5,28),H,D,BRATIO,DIB
+      INTEGER JBARK(MAXSP),IS,J,I
+C
+      DATA JBARK/
+     & 12,  5, 12,  2,  2,  2,  1, 13, 13, 10,
+     & 27, 10,  3, 10,  4, 25, 25,  3,  3, 26,
+     & 12,  9, 12, 10,  3, 19, 18, 17, 20,  8,
+     & 16, 24, 21,  6, 16, 14, 23,  7, 16, 16,
+     & 16, 28, 16, 14, 16, 16, 16, 22, 16/
+C----------
+C  202=DF, 015=WF, 122=PP, 116=JP, 081=IC, 312=BM, 431=GC, 815=WO,
+C  093=ES, 108=LP, 098=SS, 242=RC, 263=WH, 351=RA, 001=OTHER SOFTWOODS,
+C  818=BLK OAK, 807=BLUE OAK, 805=CAN LIVE OAK, 801=COAST LIVE OAK,
+C  811=ENGELMANN OAK, 839=INTERIOR LIVE OAK, 981=BAY LAURAL,
+C  361=MADRONE, 821=CALIF WHITE OAK, 631=TANOAK
+C  117=SUGAR PINE, 127=DIGGER PINE, 103=KNOBCONE PINE
+C
+C BARK COEFFICIENT SOURCES:
+C  202 --------------- FROM WALTERS ET.AL. RES BULL 50  TABLE 2
+C  807,805,801,811,
+C  839,981,821,631,
+C  818,631,361
+C  312,431,815 ------- FROM PILLSBURY AND KIRKLEY RES NOTE PNW 414
+C  93,108,242,263 ---- FROM WYKOFF ET.AL. RES PAPER INT 133  TABLE 7
+C
+C  98 ---------------- FROM HARLOW & HARRAR, TEXTBOOK OF DENDRO PG 129
+C  351 --------------- AVERAGE OF 312,361,431 VALUES FROM PILLSBURY &
+C                      KIRKLEY TABLE 2, PLUS INFO FROM HARLOW & HARRAR
+C  001 --------------- AVERAGE OF 019,081,093,108,119
+C  015,116,117,122 --- FROM DOLPH PSW-368
+C  127,103,101 ------- FROM WYKOFF AVERAGE OF AF,IC,ES,LP,WP
+C  81 ---------------- FROM Dolph PSW-368
+C
+C  NOTE: COEFFICIENTS FOR SPECIES IN PILLSBURY & KIRKLEY ARE METRIC. 
+C  INTERCEPT WERE DIVIDED BY 2.54 TO CONVERT THESE
+C  EQUATIONS TO ENGLISH.
+C----------
+      DATA ((BARKB(I,J),I=1,5),J=1,14)/
+     & 202.,  0.903563,  0.989388, 0.0    , 1.,
+     &  15., -0.1593  ,  0.8911  , 0.0    , 2.,
+     & 122., -0.4448  ,  0.8967  , 0.0    , 2.,
+     & 116., -0.4448  ,  0.8967  , 0.0    , 2.,
+     &  81., -0.0549  ,  0.8374  , 0.0    , 2.,
+     & 312.,  0.08360 ,  0.94782 , 0.0    , 2.,
+     & 431.,  0.15565 ,  0.90182 , 0.0    , 2.,
+     & 815., -0.30722 ,  0.95956 , 0.0    , 2.,
+     &  93.,  0.9     ,  0.0     , 0.0    , 3.,
+     & 108.,  0.9     ,  0.0     , 0.0    , 3.,
+     &  98.,  0.958330,  1.0     , 0.0    , 1.,
+     & 242.,  0.949670,  1.0     , 0.0    , 1.,
+     & 263.,  0.933710,  1.0     , 0.0    , 1.,
+     & 351.,  0.075256,  0.94373 , 0.0    , 2./
+C
+      DATA ((BARKB(I,J),I=1,5),J=15,28)/
+     & 001.,  0.933290,  1.0     , 0.0    , 1.,
+     & 818., -0.26824 ,  0.95767 , 0.0    , 2.,
+     & 807., -0.17324 ,  0.94403 , 0.0    , 2.,
+     & 805., -0.19128 ,  0.96147 , 0.0    , 2.,
+     & 801., -0.75739 ,  0.93475 , 0.0    , 2.,
+     & 811., -0.78572 ,  0.92472 , 0.0    , 2.,
+     & 839.,  0.04817 ,  0.92953 , 0.0    , 2.,
+     & 981., -0.12791 ,  0.96579 , 0.0    , 2.,
+     & 361., -0.013484,  0.98155 , 0.0    , 2.,
+     & 821., -0.38289 ,  0.93545 , 0.0    , 2.,
+     & 117., -0.1429  ,  0.8863  , 0.0    , 2.,
+     & 127.,  0.93290 ,  0.0     , 0.0    , 3.,
+     & 101.,  0.93290 ,  0.0     , 0.0    , 3.,
+     & 631., -0.26824 ,  0.95354 , 0.0    , 2./
+C----------
+C  EQUATION TYPES:
+C  1  DIB = a * DOB ** b
+C  2  DIB = a + bDOB
+C  3  DIB = a*DOB
+C----------
+      IF(BARKB(5,JBARK(IS)) .EQ. 1.)THEN
+        DIB=BARKB(2,JBARK(IS))*D**BARKB(3,JBARK(IS))
+        BRATIO=DIB/D
+      ELSEIF (BARKB(5,JBARK(IS)) .EQ. 2.)THEN
+        DIB=BARKB(2,JBARK(IS)) + BARKB(3,JBARK(IS))*D
+        BRATIO=DIB/D
+      ELSEIF (BARKB(5,JBARK(IS)) .EQ. 3.)THEN
+        BRATIO=BARKB(2,JBARK(IS))
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO= 0.99
+      IF(BRATIO .LT. 0.80) BRATIO= 0.80
+C
+      RETURN
+      END
+
+C ==========================================================================
+C CI
+      SUBROUTINE CI_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--CI  DATE OF LAST REVISION:  06/06/11
+C----------
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BASE MODEL.
+C----------
+COMMONS
+C
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C
+COMMONS
+C----------
+C     SPECIES LIST FOR CENTRAL IDAHO VARIANT.
+C
+C     1 = WESTERN WHITE PINE (WP)          PINUS MONTICOLA
+C     2 = WESTERN LARCH (WL)               LARIX OCCIDENTALIS
+C     3 = DOUGLAS-FIR (DF)                 PSEUDOTSUGA MENZIESII
+C     4 = GRAND FIR (GF)                   ABIES GRANDIS
+C     5 = WESTERN HEMLOCK (WH)             TSUGA HETEROPHYLLA
+C     6 = WESTERN REDCEDAR (RC)            THUJA PLICATA
+C     7 = LODGEPOLE PINE (LP)              PINUS CONTORTA
+C     8 = ENGLEMANN SPRUCE (ES)            PICEA ENGELMANNII
+C     9 = SUBALPINE FIR (AF)               ABIES LASIOCARPA
+C    10 = PONDEROSA PINE (PP)              PINUS PONDEROSA
+C    11 = WHITEBARK PINE (WB)              PINUS ALBICAULIS
+C    12 = PACIFIC YEW (PY)                 TAXUS BREVIFOLIA
+C    13 = QUAKING ASPEN (AS)               POPULUS TREMULOIDES
+C    14 = WESTERN JUNIPER (WJ)             JUNIPERUS OCCIDENTALIS
+C    15 = CURLLEAF MOUNTAIN-MAHOGANY (MC)  CERCOCARPUS LEDIFOLIUS
+C    16 = LIMBER PINE (LM)                 PINUS FLEXILIS
+C    17 = BLACK COTTONWOOD (CW)            POPULUS BALSAMIFERA VAR. TRICHOCARPA
+C    18 = OTHER SOFTWOODS (OS)
+C    19 = OTHER HARDWOODS (OH)
+C
+C  SURROGATE EQUATION ASSIGNMENT:
+C
+C  FROM THE IE VARIANT:
+C      USE 17(PY) FOR 12(PY)             (IE17 IS REALLY TT2=LM)
+C      USE 18(AS) FOR 13(AS)             (IE18 IS REALLY UT6=AS)
+C      USE 13(LM) FOR 11(WB) AND 16(LM)  (IE13 IS REALLY TT2=LM)
+C      USE 19(CO) FOR 17(CW) AND 19(OH)  (IE19 IS REALLY CR38=OH)
+C
+C  FROM THE UT VARIANT:
+C      USE 12(WJ) FOR 14(WJ)
+C      USE 20(MC) FOR 15(MC)             (UT20 = SO30=MC, WHICH IS
+C                                                  REALLY WC39=OT)
+C----------
+      REAL BARK1(MAXSP),BARK2(MAXSP),H,D,BRATIO,DIB,TEMD
+      INTEGER IS
+C----------
+C  DATA STATEMENTS
+C----------
+      DATA BARK1/
+     &   .859045, .900000, .903563, .904973, .903563,
+     &   .837291, .900000, .900000, .903563, .809427,
+     &     0.969,   0.969,   0.950,     0.0,     0.9,
+     &     0.969,   0.892, .900000,   0.892/
+      DATA BARK2/
+     &       0.0,     0.0, .989388,     0.0, .989388,
+     &       0.0,     0.0,     0.0, .989388,1.016866,
+     &       0.0,     0.0,     0.0,     0.0,     0.0,
+     &       0.0,  -0.086,     0.0,  -0.086/
+C
+      SELECT CASE (IS)
+C
+      CASE(3,5,9,10)
+      	DIB=BARK1(IS)*D**BARK2(IS)
+      	BRATIO=DIB/D
+      	IF (BRATIO .GT. 0.97) BRATIO=0.97
+C
+      CASE(14)
+        TEMD=D
+        IF(TEMD.LT.1.)TEMD=1.
+        IF(TEMD.GT.19.)TEMD=19.
+        BRATIO = 0.9002 - 0.3089*(1/TEMD)
+        IF(BRATIO .GT. 0.99) BRATIO=0.99
+        IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+      CASE(17,19)
+        TEMD=D
+        IF(TEMD.LT.1.)TEMD=1.
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+        IF(BRATIO .GT. 0.99) BRATIO=0.99
+        IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+      CASE DEFAULT
+        BRATIO=BARK1(IS)
+C
+      END SELECT
+C
+      RETURN
+      END
+
+C ===========================================================================
+C CS
+
+C ===========================================================================
+C CR
+      SUBROUTINE CR_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--CR   DATE OF LAST REVISION:  06/16/09
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BASE MODEL. COEFFICIENTS FOR BARK1 AND BARK2
+C ARE SET IN BLKDAT AND SITSET.  IF BARK1 AND BARK2 ARE BOTH ZERO THEN
+C ITS THE BLACK HILL MODEL TYPE AND USE CORMIER'S FMSC MODEL.
+C----------
+C  COMMONS
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C
+C      INCLUDE 'GGCOM.F77'
+C
+C  COMMONS
+C----------
+C  SPECIES ORDER:
+C   1=AF,  2=CB,  3=DF,  4=GF,  5=WF,  6=MH,  7=RC,  8=WL,  9=BC, 10=LM,
+C  11=LP, 12=PI, 13=PP, 14=WB, 15=SW, 16=UJ, 17=BS, 18=ES, 19=WS, 20=AS,
+C  21=NC, 22=PW, 23=GO, 24=AW, 25=EM, 26=BK, 27=SO, 28=PB, 29=AJ, 30=RM,
+C  31=OJ, 32=ER, 33=PM, 34=PD, 35=AZ, 36=CI, 37=OS, 38=OH
+C
+C  SPECIES EXPANSION:
+C  UJ,AJ,RM,OJ,ER USE CR JU                              
+C  NC,PW USE CR CO
+C  GO,AW,EM,BK,SO USE CR OA                             
+C  PB USES CR AS                              
+C  PM,PD,AZ USE CR PI
+C  CI USES CR PP                              
+C----------
+      INTEGER IMAP(MAXSP),IEQN,IS
+      REAL H,D,BRATIO,TEMD
+      DATA IMAP/ 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 
+     &           3, 1, 1, 3, 2, 1, 3, 3, 3, 2,
+     &           3, 3, 3, 3, 3, 3, 3, 2, 1, 1,
+     &           1, 1, 1, 1, 1, 1, 1, 3/
+C----------
+C  PI, PP, UJ, AJ, RM, OJ, ER AND OS USE PP BARK EQUATION.
+C  PP EQN IS DIFFERENT FOR BHPP, S-F, AND LP MODEL TYPES.
+C  BARKi() COEFFICIENTS SET TO ZERO IN SITSET TO TRIGGER
+C  DIFFERENT EQUATION IN THESE MODEL TYPES.
+C  PP EQN FOR BLACK HILLS WAS FIT BY CORMIER, FMSC
+C  PP FOR MODEL TYPES 1 & 2 USES EQUATION FROM CA VARIANT
+C  AF, CB, GF, WF USE THE CONSTANT RATIO FROM NI VARIANT
+C----------
+      IEQN=IMAP(IS)
+      TEMD=D
+      IF(TEMD.LT.1.)TEMD=1.
+C
+      IF(IEQN .EQ. 1) THEN
+        IF(BARK1(IS).EQ.0.0 .AND. BARK2(IS).EQ.0.0)THEN
+          IF(TEMD.GT.19.)TEMD=19.
+          BRATIO = 0.9002 - 0.3089*(1/TEMD)
+        ELSE
+          BRATIO=BARK1(IS)+BARK2(IS)*(1/TEMD)
+        ENDIF
+C
+      ELSEIF(IEQN .EQ. 2)THEN
+        BRATIO=BARK1(IS)
+C
+      ELSEIF(IEQN .EQ. 3)THEN
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO=0.99
+      IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+      RETURN
+      END
+
+
+C ============================================================================
+C EC
+      SUBROUTINE EC_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--EC   DATE OF LAST REVISION:  05/09/12
+C----------
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BLKDAT. 
+C----------
+C  COMMONS
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C  COMMONS
+C----------
+C  SPECIES LIST FOR EAST CASCADES VARIANT.
+C
+C   1 = WESTERN WHITE PINE      (WP)    PINUS MONTICOLA
+C   2 = WESTERN LARCH           (WL)    LARIX OCCIDENTALIS
+C   3 = DOUGLAS-FIR             (DF)    PSEUDOTSUGA MENZIESII
+C   4 = PACIFIC SILVER FIR      (SF)    ABIES AMABILIS
+C   5 = WESTERN REDCEDAR        (RC)    THUJA PLICATA
+C   6 = GRAND FIR               (GF)    ABIES GRANDIS
+C   7 = LODGEPOLE PINE          (LP)    PINUS CONTORTA
+C   8 = ENGELMANN SPRUCE        (ES)    PICEA ENGELMANNII
+C   9 = SUBALPINE FIR           (AF)    ABIES LASIOCARPA
+C  10 = PONDEROSA PINE          (PP)    PINUS PONDEROSA
+C  11 = WESTERN HEMLOCK         (WH)    TSUGA HETEROPHYLLA
+C  12 = MOUNTAIN HEMLOCK        (MH)    TSUGA MERTENSIANA
+C  13 = PACIFIC YEW             (PY)    TAXUS BREVIFOLIA
+C  14 = WHITEBARK PINE          (WB)    PINUS ALBICAULIS
+C  15 = NOBLE FIR               (NF)    ABIES PROCERA
+C  16 = WHITE FIR               (WF)    ABIES CONCOLOR
+C  17 = SUBALPINE LARCH         (LL)    LARIX LYALLII
+C  18 = ALASKA CEDAR            (YC)    CALLITROPSIS NOOTKATENSIS
+C  19 = WESTERN JUNIPER         (WJ)    JUNIPERUS OCCIDENTALIS
+C  20 = BIGLEAF MAPLE           (BM)    ACER MACROPHYLLUM
+C  21 = VINE MAPLE              (VN)    ACER CIRCINATUM
+C  22 = RED ALDER               (RA)    ALNUS RUBRA
+C  23 = PAPER BIRCH             (PB)    BETULA PAPYRIFERA
+C  24 = GIANT CHINQUAPIN        (GC)    CHRYSOLEPIS CHRYSOPHYLLA
+C  25 = PACIFIC DOGWOOD         (DG)    CORNUS NUTTALLII
+C  26 = QUAKING ASPEN           (AS)    POPULUS TREMULOIDES
+C  27 = BLACK COTTONWOOD        (CW)    POPULUS BALSAMIFERA var. TRICHOCARPA
+C  28 = OREGON WHITE OAK        (WO)    QUERCUS GARRYANA
+C  29 = CHERRY AND PLUM SPECIES (PL)    PRUNUS sp.
+C  30 = WILLOW SPECIES          (WI)    SALIX sp.
+C  31 = OTHER SOFTWOODS         (OS)
+C  32 = OTHER HARDWOODS         (OH)
+C
+C  SURROGATE EQUATION ASSIGNMENT:
+C
+C  FROM THE EC VARIANT:
+C      USE 6(GF) FOR 16(WF)
+C      USE OLD 11(OT) FOR NEW 12(MH) AND 31(OS)
+C
+C  FROM THE WC VARIANT:
+C      USE 19(WH) FOR 11(WH)
+C      USE 33(PY) FOR 13(PY)
+C      USE 31(WB) FOR 14(WB)
+C      USE  7(NF) FOR 15(NF)
+C      USE 30(LL) FOR 17(LL)
+C      USE  8(YC) FOR 18(YC)
+C      USE 29(WJ) FOR 19(WJ)
+C      USE 21(BM) FOR 20(BM) AND 21(VN)
+C      USE 22(RA) FOR 22(RA)
+C      USE 24(PB) FOR 23(PB)
+C      USE 25(GC) FOR 24(GC)
+C      USE 34(DG) FOR 25(DG)
+C      USE 26(AS) FOR 26(AS) AND 32(OH)
+C      USE 27(CW) FOR 27(CW)
+C      USE 28(WO) FOR 28(WO)
+C      USE 36(CH) FOR 29(PL)
+C      USE 37(WI) FOR 30(WI)
+C----------
+      REAL BARK1(MAXSP),BARK2(MAXSP),H,D,BRATIO,TEMD,DIB
+      INTEGER IS
+C
+      DATA BARK1/
+     &    0.964,     0.851,     0.844,     0.903,     0.950,
+     &    0.903,     0.963,     0.956,     0.903,     0.889, 
+     &  0.93371,     0.934,   0.93329,   0.93329,  0.904973,
+     &    0.903,       0.9,  0.837291,   0.94967,    0.0836,
+     &   0.0836,  0.075256,    0.0836,   0.15565,  0.075256,
+     & 0.075256,  0.075256,    0.8558,  0.075256,  0.075256,
+     &    0.934,  0.075256/
+C
+      DATA BARK2/
+     &       1.,        1.,        1.,        1.,        1.,
+     &       1.,        1.,        1.,        1.,        1.,
+     &       1.,        1.,        1.,        1.,        1.,
+     &       1.,        1.,        1.,        1.,   0.94782,
+     &  0.94782,   0.94967,   0.94782,   0.90182,   0.94967,
+     &  0.94967,   0.94967,    1.0213,   0.94967,   0.94967,
+     &       1.,   0.94967/
+C----------
+      SELECT CASE (IS)
+C----------
+C  ORIGINAL EC VARIANT SPECIES (WP,WL,DF,SF,RC,GF,LP,ES,AF,PP,OS)
+C  THOSE SPECIES USING EC COEFFICIENTS (WF,VN)
+C----------
+      CASE(1:10,12,16,31)
+        BRATIO=BARK1(IS)
+C----------
+C  THOSE SPECIES USING WC COEFFICIENTS
+C  WH, MH, PY, WB, NF, LL, YC, WJ
+C----------
+      CASE(11,13:15,17:19)
+        BRATIO=BARK1(IS)
+C----------
+C  THOSE SPECIES USING WC COEFFICIENTS; DIB = a + b*DOB
+C  BM, VN, RA, PB, GC, DG, AS, CW, PL, WI, OH
+C----------
+      CASE(20:27,29:30,32)
+        DIB=BARK1(IS) + BARK2(IS)*D
+        BRATIO=DIB/D
+        IF(BRATIO .GT. 0.99) BRATIO=0.99
+        IF(BRATIO .LT. 0.80) BRATIO=0.80
+C----------
+C  THOSE SPECIES USING WC COEFFICIENTS; DIB = a * DOB ** b
+C  WO
+C----------
+      CASE(28)
+        DIB=BARK1(IS)*D**BARK2(IS)
+        BRATIO=DIB/D
+        IF(BRATIO .GT. 0.99) BRATIO=0.99
+        IF(BRATIO .LT. 0.80) BRATIO=0.80
+      END SELECT
+C
+      RETURN
+      END
+C ==================================================================================
+C EM
+      SUBROUTINE EM_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--EM   DATE OF LAST REVISION:  03/26/09
+C----------
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BLKDAT. 
+C----------
+C  COMMONS
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C  COMMONS
+C----------
+C  SPECIES ORDER:
+C   1=WB,  2=WL,  3=DF,  4=LM,  5=LL,  6=RM,  7=LP,  8=ES,
+C   9=AF, 10=PP, 11=GA, 12=AS, 13=CW, 14=BA, 15=PW, 16=NC,
+C  17=PB, 18=OS, 19=OH
+C
+C  OS USES EM WB BARK COEFFICIENT
+C
+C  SPECIES EXPANSION
+C  LM USES IE LM (ORIGINALLY FROM TT VARIANT)
+C  LL USES IE AF (ORIGINALLY FROM NI VARIANT)
+C  RM USES IE JU (ORIGINALLY FROM UT VARIANT; REALLY PP FROM CR VARIANT)
+C  AS,PB USE IE AS (ORIGINALLY FROM UT VARIANT)
+C  GA,CW,BA,PW,NC,OH USE IE CO (ORIGINALLY FROM CR VARIANT)
+C----------
+      REAL BARK1(MAXSP),BARK2(MAXSP),H,D,BRATIO,TEMD
+      INTEGER IMAP(MAXSP),IS,IEQN
+
+      DATA BARK1/0.934, 0.934, 0.867, 0.969, 0.937, 0.000, 0.969,
+     &    0.956, 0.937, 0.890, 0.892, 0.950, 0.892, 0.892, 0.892,
+     &    0.892, 0.950, 0.934, 0.892/
+      DATA BARK2/0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000,
+     &    0.000, 0.000, 0.000, -.086, 0.000, -.086, -.086, -.086,
+     &    -.086, 0.000, 0.000, -.086/
+      DATA IMAP/     2,     2,     2,     2,     2,     1,     2,
+     &        2,     2,     2,     3,     2,     3,     3,     3,
+     &        3,     2,     2,     3/
+C----------
+      IEQN=IMAP(IS)
+      TEMD=D
+      IF(TEMD.LT.1.)TEMD=1.
+C
+      IF(IEQN .EQ. 1) THEN
+        IF(BARK1(IS).EQ.0.0 .AND. BARK2(IS).EQ.0.0)THEN
+          IF(TEMD.GT.19.)TEMD=19.
+          BRATIO = 0.9002 - 0.3089*(1/TEMD)
+        ELSE
+          BRATIO=BARK1(IS)+BARK2(IS)*(1/TEMD)
+        ENDIF
+C
+      ELSEIF(IEQN .EQ. 2)THEN
+        BRATIO=BARK1(IS)
+C
+      ELSEIF(IEQN .EQ. 3)THEN
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO=0.99
+      IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+      RETURN
+      END
+C =============================================================================
+C IE
+      SUBROUTINE IE_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--NI23   DATE OF LAST REVISION:  05/20/11
+C----------
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN NI VARIANT. 
+C----------
+C  COMMONS
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C  COMMONS
+C----------
+C  SPECIES ORDER:
+C   1=WP,  2=WL,  3=DF,  4=GF,  5=WH,  6=RC,  7=LP,  8=ES,
+C   9=AF, 10=PP, 11=MH, 12=WB, 13=LM, 14=LL, 15=PI, 16=JU,
+C  17=PY, 18=AS, 19=CO, 20=MM, 21=PB, 22=OH, 23=OS
+C----------
+      REAL BARK1(MAXSP),BARK2(MAXSP),H,D,BRATIO,TEMD
+      INTEGER IMAP(MAXSP),IS,IEQN
+
+      DATA BARK1/0.964, 0.851, 0.867, 0.915, 0.934, 0.950, 0.969,
+     &    0.956, 0.937, 0.890, 0.934, 0.851, 0.969, 0.937, 0.000,
+     &    0.000, 0.969, 0.950, 0.892, 0.950, 0.950, 0.892, 0.934/
+      DATA BARK2/0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000,
+     &    0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000, 0.000,
+     &    0.000, 0.000, 0.000, -.086, 0.000, 0.000, -.086, 0.000/
+      DATA IMAP/     2,     2,     2,     2,     2,     2,     2,
+     &        2,     2,     2,     2,     2,     2,     2,     1,
+     &        1,     2,     2,     3,     2,     2,     3,     2/
+C----------
+C  PI, JU USE PP BARK EQUATION FROM CR VARIANT.
+C  WB USE COEFFICIENTS FOR WL
+C  LM AND PY USE COEFFICIENTS FROM TT FOR LM
+C  LL USE COEFFICIENTS FOR AF
+C  AS, MM, PB USE COEFFIECIENTS FOR AS FROM UT
+C  CO, OH USE COEFFIECIENTS FOR OH FROM CR
+C  OS USE COEFFEICIENTS FOR MH
+C----------
+      IEQN=IMAP(IS)
+      TEMD=D
+      IF(TEMD.LT.1.)TEMD=1.
+C
+      IF(IEQN .EQ. 1) THEN
+        IF(BARK1(IS).EQ.0.0 .AND. BARK2(IS).EQ.0.0)THEN
+          IF(TEMD.GT.19.)TEMD=19.
+          BRATIO = 0.9002 - 0.3089*(1/TEMD)
+        ELSE
+          BRATIO=BARK1(IS)+BARK2(IS)*(1/TEMD)
+        ENDIF
+C
+      ELSEIF(IEQN .EQ. 2)THEN
+        BRATIO=BARK1(IS)
+C
+      ELSEIF(IEQN .EQ. 3)THEN
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO=0.99
+      IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+      RETURN
+      END
+
+
+C ===========================================================================
+C KT
+
+C ===========================================================================
+C LS
+      SUBROUTINE LS_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--LS DATE OF LAST REVISION:  07/11/08
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS. THIS ROUTINE IS VARIANT SPECIFIC
+C AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS PASSED TO IT.
+C
+COMMONS
+C
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C
+C      INCLUDE 'COEFFS.F77'
+C
+      INTEGER IS
+      REAL H,D,BRATIO
+C
+      DATA BKRAT/5*.91,2*.95,3*.94,.95,3*.91,2*.94,.93,3*.94,3*.93,
+     &           .94,.92,3*.94,.92,4*.91,3*.92,3*.94,3*.92,6*.94,
+     &           20*.92/
+
+C
+COMMONS
+C
+      IF(IS .EQ. 0) THEN
+        BRATIO=0.93
+      ELSE
+        BRATIO=BKRAT(IS)
+      ENDIF
+      RETURN
+      END
+
+C ==============================================================================
+C NC
+      SUBROUTINE NC_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--NC  DATE OF LAST REVISION:  02/17/09
+C----------
+C  FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C  REPLACES ARRAY BKRAT IN BASE MODEL.
+C
+C  SPECIES LIST FOR KLAMATH MOUNTAINS VARIANT.
+C  1=OC,2=SP,3=DF,4=WF,5=M,6=IC,7=BO,8=TO,9=RF,10=PP,11=OH
+C----------
+C
+      REAL BRKRAT(4,11),H,D,BRATIO,DBT,DIB
+      INTEGER IS,J,I
+C
+      DATA ((BRKRAT(I,J),I=1,4),J=1,11)/
+     &  1.,  0.1429,  0.1137,    1.0,
+     &  2.,  0.1429,  0.1137,    1.0,
+     &  3.,  0.1045,  0.1661,    1.0,
+     &  4.,  0.1593,  0.1089,    1.0,
+     &  5., -0.01348, 0.98155,   2.0,
+     &  6., -0.0549,  0.1626,    1.0,
+     &  7., -0.26824, 0.95767,   2.0,
+     &  8., -0.26824, 0.95354,   2.0,
+     &  9.,  0.1593,  0.1089,    1.0,
+     &  10., 0.4448,  0.1033,    1.0,
+     &  11.,-0.26824, 0.95767,   2.0/
+C
+C-------
+C Equation Types:
+C 1 DBT= a+b*DOB
+C 2 DIB= a+b*DOB
+C-------
+C
+      IF (BRKRAT(4,IS) .EQ. 1.) THEN
+        DBT = BRKRAT(2,IS) + BRKRAT(3,IS)*D
+        BRATIO = (D - DBT) / D
+      ELSEIF (BRKRAT(4,IS) .EQ. 2.) THEN
+        DIB = BRKRAT(2,IS) + BRKRAT(3,IS)*D
+        BRATIO = DIB/D
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO= 0.99
+      IF(BRATIO .LT. 0.80) BRATIO= 0.80
+C
+      RETURN
+      END
+
+C ===========================================================================
+C NE
+
+C ===========================================================================
+C NI
+      SUBROUTINE NI_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--NI DATE OF LAST REVISION:  04/09/08
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS. THIS ROUTINE IS VARIANT SPECIFIC
+C AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS PASSED TO IT.
+C
+COMMONS
+C
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C
+C      INCLUDE 'COEFFS.F77'
+C
+C
+COMMONS
+      INTEGER IS
+      REAL H,D,BRATIO
+      DATA  BKRAT/0.964,0.851,0.867,0.915,0.934,0.950,0.969,0.956,
+     &            0.937,0.890,0.934/
+
+C
+      BRATIO=BKRAT(IS)
+      RETURN
+      END
+
+C ==========================================================================
+C PN
+      SUBROUTINE PN_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C-----
+C  **BRATIO--PN    DATE OF LAST REVISION:  04/22/10
+C-------
+C
+C FUNCTION TO COMPUTE BARK RATIOS.  THIS ROUTINE IS VARIANT SPECIFIC
+C AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS PASSED TO IT.
+C
+C  SPECIES LIST CODES: SEQUENCE NO.-SPECIES ALPHA CODE-FIA NO.
+C
+C   1-SF-011, 2-WF-015, 3-GF-017  4-AF-019, 5-RF-020, 6-SS-098,
+C   7-NF-022, 8-YC-042, 9-IC-081,10-ES-093,11-LP-108,12-JP-116,
+C  13-SP-117,14-WP-119,15-PP-122,16-DF-202,17-RW-211,18-RC-242,
+C  19-WH-263,20-MH-264,21-BM-312,22-RA-351,23-WA-352,24-PB-376,
+C  25-GC-431,26-AS-746,27-CW-747,28-WO-815,29-J0-060,30-LL-072,
+C  31-WB-101,32-KP-103,33-PY-231,34-DG-492,35-HT-500,36-CH-764,
+C  37-WI-920,   ---   ,39-OT-999
+C----------
+
+      REAL BARKB(4,15),H,D,BRATIO,DIB
+      INTEGER JBARK(39),IS
+C
+      DATA JBARK/
+     &  2,  2,  2,  2,  2, 11,  2,  5,  5,  9,
+     & 10,  4,  4,  4,  3,  1,  5, 12, 13, 12,
+     &  6, 14, 14,  6,  7, 14, 14,  8, 12, 10,
+     & 15, 15, 15, 14, 14, 14, 14, 10, 10/
+C----------
+C  MASTER SPECIES
+C  202=DF, 015=WF, 122=PP, 116=JP, 081=IC, 312=BM, 431=GC, 815=WO,
+C  093=ES, 108=LP, 098=SS, 242=RC, 263=WH, 351=RA, 001=OTHER SOFTWOODS
+C
+C  NOTE: COEFFICIENTS FOR SPECIES 312 & 431 IN PILLSBURY &
+C  KIRKLEY ARE METRIC. INTERCEPT IS DIVIDED BY 2.54 TO CONVERT THESE
+C  EQUATIONS TO ENGLISH.
+C----------
+      DATA BARKB/
+     & 202.,  0.903563,  0.989388, 1.,
+     &  15.,  0.904973,  1.0     , 1.,
+     & 122.,  0.809427,  1.016866, 1.,
+     & 116.,  0.859045,  1.0     , 1.,
+     &  81.,  0.837291,  1.0     , 1.,
+     & 312.,  0.08360 ,  0.94782 , 2.,
+     & 431.,  0.15565 ,  0.90182 , 2.,
+     & 815.,  0.8558  ,  1.0213 ,  1.,
+     &  93.,   .9     ,  0.0     , 3.,
+     & 108.,   .9     ,  0.0     , 3.,
+     &  98.,  0.958330,  1.0     , 1.,
+     & 242.,  0.949670,  1.0     , 1.,
+     & 263.,  0.933710,  1.0     , 1.,
+     & 351.,  0.075256,  0.94373 , 2.,
+     & 001.,  0.933290,  1.0     , 1./
+C----------
+C BARK COEFS
+C  202,15,122,116,81   FROM WALTERS ET.AL. RES BULL 50  TABLE 2
+C  312,431             FROM PILLSBURY AND KIRKLEY RES NOTE PNW 414
+C  93,108,242,263      FROM WYKOFF ET.AL. RES PAPER INT 133  TABLE 7
+C  98                  FROM HARLOW & HARRAR, TEXTBOOK OF DENDRO PG 129
+C  351                 AVERAGE OF 312,361,431 VALUES FROM PILLSBURY &
+C                      KIRKLEY TABLE 2, PLUS INFO FROM HARLOW & HARRAR
+C  001                 AVERAGE OF 019,081,093,108,119
+C  815                 FROM GOULD AND HARRINGTON
+C
+C  EQUATION TYPES
+C  1  DIB = a * DOB ** b
+C  2  DIB = a + bDOB
+C  3  DIB = a*DOB
+C----------
+      IF(BARKB(4,JBARK(IS)) .EQ. 1.)THEN
+        DIB=BARKB(2,JBARK(IS))*D**BARKB(3,JBARK(IS))
+        BRATIO=DIB/D
+      ELSEIF (BARKB(4,JBARK(IS)) .EQ. 2.)THEN
+        DIB=BARKB(2,JBARK(IS)) + BARKB(3,JBARK(IS))*D
+        BRATIO=DIB/D
+      ELSEIF (BARKB(4,JBARK(IS)) .EQ. 3.)THEN
+        BRATIO=BARKB(2,JBARK(IS))
+      ELSE
+        BRATIO= 0.9
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO= 0.99
+      IF(BRATIO .LT. 0.80) BRATIO= 0.80
+C
+      RETURN
+      END
+
+C =======================================================================
+C SN
+      SUBROUTINE SN_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--SN    DATE OF LAST REVISION:  06/05/08
+C----------
+C  FUNCTION TO COMPUTE BARK RATIOS.  THIS ROUTINE IS VARIANT SPECIFIC
+C  AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS PASSED TO IT.
+C  COFFICIENTS ARE FROM CLARK(RPSE, 1991:TABLE9, PAGE54) FOR THE LINEAR
+C  EQUATION DIB= A + B*DBH
+C
+C  SPECIES LIST FOR SOUTHERN VARIANT.
+C  1=FR,2=JU,3=PI,4=PU,5=SP,6=SA,7=SR,8=LL,9=TM,10=PP,11=PD,12=WP,
+C  13=LP,14=VP,15=BY,16=PC,17=HM,18=FM,19=BE,20=RM,21=SV,22=SM,
+C  23=BU,24=BB,25=SB,26=AH,27=HI,28=CA,29=HB,30=RD,31=DW,32=PS,
+C  33=AB,34=AS,35=WA,36=BA,37=GA,38=HL,39=LB,40=HA,41=HY,42=BN,
+C  43=WN,44=SU,45=YP,46=MG,47=CT,48=MS,49=MV,50=ML,51=AP,52=MB,
+C  53=WT,54=BG,55=TS,56=HH,57=SD,58=RA,59=SY,60=CW,61=BT,62=BC,
+C  63=WO,64=SO,65=SK,66=CB,67=TO,68=LK,69=OV,70=BJ,71=SN,72=CK
+C  73=WK,74=CO,75=RO,76=QS,77=PO,78=BO,79=LO,80=BK,81=WI,82=SS,
+C  83=BW,84=EL,85=WE,86=AE,87=RL,88=OS,89=OH,90=OT
+C
+C      VARIABLES
+C      BARKC(I,J) - I1= COEFF A, I2= COEF B,
+C                   ONE RECORD (J) FOR EACH SPECIES (IS)
+C      D          - DBH
+C      DIB        - DIAM. INSIDE BARK
+C
+COMMONS
+C
+C
+C      INCLUDE 'PRGPRM.F77'
+C
+C
+C      INCLUDE 'PLOT.F77'
+C
+C
+COMMONS
+C----------
+C
+C
+COMMONS
+      INTEGER IS,J,I
+      REAL H,D,BRATIO,DIB,BARKC(2,90)
+C
+      DATA ((BARKC(I,J),I= 1,2),J= 1,15)/
+     &  0.05119,0.89372,
+     & -0.27012,0.97546,
+     & -0.17289,0.91572,
+     & -0.39956,0.95183,
+     & -0.44121,0.93045,
+     & -0.55073,0.91887,
+     & -0.13301,0.93755,
+     & -0.45903,0.92746,
+     &  0.05119,0.89372,
+     & -0.58808,0.91852,
+     & -0.51271,0.90245,
+     & -0.31608,0.92054,
+     & -0.48140,0.91413,
+     & -0.31137,0.95011,
+     & -0.27012,0.97546/
+      DATA ((BARKC(I,J),I= 1,2),J= 16,30)/
+     & -0.94204,0.96735,
+     & -0.04931,0.92272,
+     & -0.09800,0.94646,
+     & -0.09800,0.94646,
+     & -0.09800,0.94646,
+     & -0.09800,0.94646,
+     & -0.09800,0.94646,
+     & -0.35332,0.95955,
+     &  0.21790,0.92290,
+     &  0.21790,0.92290,
+     & -0.13040,0.97071,
+     & -0.60912,0.94347,
+     & -0.33014,0.94215,
+     & -0.18338,0.95768,
+     & -0.33014,0.94215/
+      DATA ((BARKC(I,J),I= 1,2),J= 31,45)/
+     & -0.33014,0.94215,
+     & -0.42001,0.94264,
+     & -0.13040,0.97071,
+     & -0.34316,0.93964,
+     & -0.48735,0.93847,
+     & -0.25063,0.94349,
+     & -0.34316,0.93964,
+     & -0.42001,0.94264,
+     & -0.33014,0.94215,
+     & -0.33014,0.94215,
+     & -0.33014,0.94215,
+     & -0.42001,0.94264,
+     & -0.42001,0.94264,
+     & -0.39271,0.95997,
+     & -0.22976,0.92408/
+      DATA ((BARKC(I,J),I= 1,2),J= 46,60)/
+     & -0.21140,0.94461,
+     & -0.21140,0.94461,
+     & -0.21140,0.94461,
+     & -0.17978,0.92381,
+     & -0.21140,0.94461,
+     & -0.33014,0.94215,
+     & -0.33014,0.94215,
+     & -0.38140,0.97327,
+     &  0.19899,0.88941,
+     & -0.15231,0.93442,
+     & -0.42001,0.94264,
+     & -0.25063,0.94349,
+     & -0.33014,0.94215,
+     & -0.09192,0.96411,
+     & -0.25063,0.94349/
+      DATA ((BARKC(I,J),I= 1,2),J= 61,75)/
+     & -0.25063,0.94349,
+     & -0.12958,0.94152,
+     & -0.24096,0.93789,
+     & -0.40860,0.94613,
+     & -0.42141,0.93008,
+     & -0.21801,0.93540,
+     & -0.61021,0.95803,
+     & -0.04612,0.93127,
+     & -0.37973,0.94380,
+     & -0.61021,0.95803,
+     & -0.49699,0.94832,
+     & -0.34225,0.93494,
+     & -0.30330,0.95826,
+     & -0.43197,0.92120,
+     & -0.52266,0.95215/
+      DATA ((BARKC(I,J),I= 1,2),J= 76,90)/
+     & -0.61021,0.95803,
+     & -0.26493,0.91899,
+     & -0.70754,0.94821,
+     & -0.70754,0.94821,
+     & -0.37166,0.89193,
+     & -0.25063,0.94349,
+     & -0.25063,0.94349,
+     & -0.35979,0.95322,
+     & -0.42027,0.96305,
+     & -0.42027,0.96305,
+     & -0.42027,0.96305,
+     & -0.42027,0.96305,
+     & -0.38344,0.91915,
+     & -0.33014,0.94215,
+     & -0.25063,0.94349/
+C----------
+C MODEL TYPE FROM CLARK
+C----------
+      IF(IFOR .EQ. 20)THEN
+        IF(IS .EQ. 5)THEN
+          DIB= 0.1713 + 0.87459*D
+        ELSEIF(IS .EQ. 6)THEN
+          DIB= -0.26207 + 0.87347 * D
+        ELSEIF(IS .EQ. 8)THEN
+          DIB= -0.43439 + 0.91382 * D
+        ELSEIF(IS .EQ. 11)THEN
+          DIB= -0.62033 + 0.91645 * D
+        ELSEIF(IS .EQ. 13)THEN
+          DIB= -0.4671 + 0.90198 * D
+        ELSE
+          DIB=BARKC(1,IS) + BARKC(2,IS)*D
+        ENDIF
+      ELSE
+        DIB=BARKC(1,IS) + BARKC(2,IS)*D
+      ENDIF
+      BRATIO=DIB/D
+C
+      IF(BRATIO .GT. 0.99) BRATIO= 0.99
+      IF(BRATIO .LT. 0.80) BRATIO= 0.80
+C
+      RETURN
+      END
+C =============================================================================
+C SO
+      SUBROUTINE SO_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--SO  DATE OF LAST REVISION:  05/06/09
+C----------
+C
+C  FUNCTION TO COMPUTE BARK RATIOS, OR CONSTANTS.  THIS ROUTINE IS
+C  VARIANT SPECIFIC AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS
+C  PASSED TO IT.
+C
+C  SPECIES LIST FOR SO VARIANT
+C  1=WP,  2=SP,  3=DF,  4=WF,  5=MH,  6=IC,  7=LP,  8=ES,  9=SH,  10=PP,
+C 11=JU, 12=GF, 13=AF, 14=SF, 15=NF, 16=WB, 17=WL, 18=RC, 19=WH,  20=PY,
+C 21=WA, 22=RA, 23=BM, 24=AS, 25=CW, 26=CH, 27=WO, 28=WI, 29=GC,  30=MC,
+C 31=MB, 32=OS, 33=OH
+C----------
+COMMONS
+C      INCLUDE 'PRGPRM.F77'
+C
+      REAL BARKB(3,MAXSP),BRDAT(MAXSP),H,D,BRATIO,DIB,TEMD
+      INTEGER IS
+C
+      DATA BRDAT /
+     & .964, .851, .867, .915, .934, .950, .969, .956, .000, .890,
+     & .000, .915, .937, .903, .000, .969, .851, .950, .000, .000,
+     & .000, .000, .000, .950, .000, .000, .000, .000, .000, .000,
+     & .000, .867, .000/
+C
+      DATA BARKB/
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &   -0.1593,    0.8911,        2.,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.904973,  1.000000,  1.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.933710,  1.000000,  1.000000,
+     &  0.933290,  1.000000,  1.000000,
+     &  0.075256,  0.949670,  2.000000,
+     &  0.075256,  0.949670,  2.000000,
+     &  0.083600,  0.947820,  2.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.075256,  0.949670,  2.000000,
+     &  0.075256,  0.949670,  2.000000,
+     &  -0.30722,   0.95956,        2.,
+     &  0.075256,  0.949670,  2.000000,
+     &  0.075256,  0.949670,  2.000000,
+     &  0.900000,  1.000000,  1.000000,
+     &  0.900000,  1.000000,  1.000000,
+     &  0.000000,  0.000000,  0.000000,
+     &  0.900000,  1.000000,  1.000000/
+C----------
+C  SPECIES FORM WC VARAINT
+C  NOTE: COEFFICIENTS FOR SPECIES 312, 431, & 815 IN PILLSBURY &
+C  KIRKLEY ARE METRIC. INTERCEPT IS DIVIDED BY 2.54 TO CONVERT THESE
+C  EQUATIONS TO ENGLISH.
+C  BARK COEFS
+C  202,15,122,116,81 FROM WALTERS ET.AL. RES BULL 50
+C  312,431,815  FROM PILLSBURY AND KIRKLEY RES NOTE PNW 414
+C  242,93,108   FROM WYKOFF ET.AL. RES PAPER INT 133
+C
+C  EQUATION TYPES
+C  1  DIB = a * DOB ** b
+C  2  DIB = a + bDOB
+C  3  DIB = a*DOB = a * DOB ** b, (eQ.1), WITH b= 1.0
+C  MODEL TYPE 1
+C----------
+      SELECT CASE (IS)
+C----------
+C  SPECIES FROM WC,CA VARIANT
+C----------
+      CASE(9,15,19:23,25,26,27,28:31,33)
+C
+        IF(BARKB(3,IS) .EQ. 1.)THEN
+          DIB=BARKB(1,IS)*D**BARKB(2,IS)
+          BRATIO=DIB/D
+        ELSEIF (BARKB(3,IS) .EQ. 2.)THEN
+          DIB=BARKB(1,IS) + BARKB(2,IS)*D
+          BRATIO=DIB/D
+        ENDIF
+C----------
+C  FROM UT(12) JU
+C----------
+      CASE(11)
+        TEMD=D
+        IF(TEMD.LT.1.)TEMD=1.
+        IF(TEMD.GT.19.)TEMD=19.
+        BRATIO = 0.9002 - 0.3089*(1/TEMD)
+C----------
+C  BARK RATIO IS CONSTANT
+C----------
+      CASE DEFAULT
+        BRATIO=BRDAT(IS)
+      END SELECT
+C
+      IF(BRATIO .GT. 0.99) BRATIO= 0.99
+      IF(BRATIO .LT. 0.80) BRATIO= 0.80
+C
+      RETURN
+      END
+
+C ==========================================================================
+C TT
+      SUBROUTINE TT_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--TT   DATE OF LAST REVISION:  04/09/10
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BASE MODEL.  
+C----------
+C SPECIES ORDER FOR TETONS VARIANT:
+C
+C  1=WB,  2=LM,  3=DF,  4=PM,  5=BS,  6=AS,  7=LP,  8=ES,  9=AF, 10=PP,
+C 11=UJ, 12=RM, 13=BI, 14=MM, 15=NC, 16=MC, 17=OS, 18=OH
+C
+C VARIANT EXPANSION:
+C BS USES ES EQUATIONS FROM TT
+C PM USES PI (COMMON PINYON) EQUATIONS FROM UT
+C PP USES PP EQUATIONS FROM CI
+C UJ AND RM USE WJ (WESTERN JUNIPER) EQUATIONS FROM UT
+C BI USES BM (BIGLEAF MAPLE) EQUATIONS FROM SO
+C MM USES MM EQUATIONS FROM IE
+C NC AND OH USE NC (NARROWLEAF COTTONWOOD) EQUATIONS FROM CR
+C MC USES MC (CURL-LEAF MTN-MAHOGANY) EQUATIONS FROM SO
+C OS USES OT (OTHER SP.) EQUATIONS FROM TT
+C----------
+      REAL BARK1(18),BARK2(18),H,D,BRATIO,TEMD,DIB
+      INTEGER IMAP(18),IS,IEQN
+C
+      DATA BARK1/  0.969,   0.969,    0.867,       0.,    0.956,
+     &             0.969,   0.969,    0.956,    0.937, 0.809427,
+     &                0.,      0.,  0.94782,    0.950,    0.892,
+     &               0.9,   0.969,    0.892/
+C
+      DATA BARK2/     0.,      0.,       0.,       0.,       0.,
+     &                0.,      0.,       0.,       0., 1.016866,
+     &                0.,      0.,   0.0836,       0.,   -0.086,
+     &                0.,      0.,   -0.086/
+C
+      DATA IMAP/ 2, 2, 2, 1, 2, 2, 2, 2, 2, 4,
+     &           1, 1, 3, 2, 3, 2, 2, 3/
+C----------
+      IEQN=IMAP(IS)
+      TEMD=D
+      IF(TEMD.LT.1.)TEMD=1.
+C
+      IF(IEQN .EQ. 1) THEN
+        IF(BARK1(IS).EQ.0.0 .AND. BARK2(IS).EQ.0.0)THEN
+          IF(TEMD.GT.19.)TEMD=19.
+          BRATIO = 0.9002 - 0.3089*(1/TEMD)
+        ELSE
+          BRATIO=BARK1(IS)+BARK2(IS)*D
+          BRATIO=1.0/BRATIO
+        ENDIF
+C
+      ELSEIF(IEQN .EQ. 2)THEN
+        BRATIO=BARK1(IS)
+C
+      ELSEIF(IEQN .EQ. 3)THEN
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+      ELSEIF(IEQN .EQ. 4)THEN
+      	DIB=BARK1(IS)*D**BARK2(IS)
+      	BRATIO=DIB/D
+      	IF (BRATIO .GT. 0.97) BRATIO=0.97
+      	GO TO 100
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO=0.99
+      IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+  100 CONTINUE
+      RETURN
+      END
+
+C =====================================================================
+C UT
+      SUBROUTINE UT_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--UT   DATE OF LAST REVISION:  11/04/09
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BASE MODEL.  
+C----------
+C  SPECIES ORDER:
+C  1=WB,  2=LM,  3=DF,  4=WF,  5=BS,  6=AS,  7=LP,  8=ES,  9=AF, 10=PP,
+C 11=PI, 12=WJ, 13=GO, 14=PM, 15=RM, 16=UJ, 17=GB, 18=NC, 19=FC, 20=MC,
+C 21=BI, 22=BE, 23=OS, 24=OH
+C
+C VARIANT EXPANSION:
+C GO AND OH USE OA (OAK SP.) EQUATIONS FROM UT
+C PM USES PI (COMMON PINYON) EQUATIONS FROM UT
+C RM AND UJ USE WJ (WESTERN JUNIPER) EQUATIONS FROM UT
+C GB USES BC (BRISTLECONE PINE) EQUATIONS FROM CR
+C NC, FC, AND BE USE NC (NARROWLEAF COTTONWOOD) EQUATIONS FROM CR
+C MC USES MC (CURL-LEAF MTN-MAHOGANY) EQUATIONS FROM SO
+C BI USES BM (BIGLEAF MAPLE) EQUATIONS FROM SO
+C OS USES OT (OTHER SP.) EQUATIONS FROM UT
+C
+C----------
+      REAL BARK1(24),BARK2(24),H,D,BRATIO,TEMD
+      INTEGER IMAP(24),IS,IEQN
+C
+      DATA BARK1/ 0.9625,  0.9625,    0.867,    0.890,  0.9502,
+     &             0.950,  0.9625,   0.9502,    0.890,  0.8967,
+     &                0.,      0.,  0.93789,       0.,      0.,
+     &                0.,  0.9625,    0.892,    0.892,     0.9,
+     &           0.94782,   0.892,   0.9625,  0.93789/
+C
+      DATA BARK2/ -.1141,  -.1141,       0.,       0., -0.2528,
+     &                0.,  -.1141,   -.2528,       0.,  -.4448,
+     &                0.,      0., -0.24096,       0.,      0.,
+     &                0., -0.1141,   -0.086,   -0.086,      0.,
+     &            0.0836,  -0.086,   -.1141, -0.24096/
+C
+      DATA IMAP/ 3, 3, 2, 2, 3, 2, 3, 3, 2, 3,
+     &           1, 1, 3, 1, 1, 1, 3, 3, 3, 2,
+     &           3, 3, 3, 3/
+C----------
+C  PI, JU, BS, AND OA USE EQUATIONS FROM CR MODEL TYPE 3-5
+C  WB, LM, LP, OT USE EQUATIONS FROM CR VARIANT
+C  ES USES THE EQUATION FROM THE CR VARIANT
+C  PP USES THE EQUATION FROM THE CA VARIANT
+C  WF AND AF USE THE CONSTANT RATIO FROM NI VARIANT
+C----------
+      IEQN=IMAP(IS)
+      TEMD=D
+      IF(TEMD.LT.1.)TEMD=1.
+C
+      IF(IEQN .EQ. 1) THEN
+        IF(BARK1(IS).EQ.0.0 .AND. BARK2(IS).EQ.0.0)THEN
+          IF(TEMD.GT.19.)TEMD=19.
+          BRATIO = 0.9002 - 0.3089*(1/TEMD)
+        ELSE
+          BRATIO=BARK1(IS)+BARK2(IS)*D
+          BRATIO=1.0/BRATIO
+        ENDIF
+C
+      ELSEIF(IEQN .EQ. 2)THEN
+        BRATIO=BARK1(IS)
+C
+      ELSEIF(IEQN .EQ. 3)THEN
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO=0.99
+      IF(BRATIO .LT. 0.80) BRATIO=0.80
+C
+      RETURN
+      END
+
+C ==================================================================
+C WC
+      SUBROUTINE WC_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--WC    DATE OF LAST REVISION:  04/22/10
+C----------
+C
+C  FUNCTION TO COMPUTE BARK RATIOS.  THIS ROUTINE IS VARIANT SPECIFIC
+C  AND EACH VARIANT USES ONE OR MORE OF THE ARGUMENTS PASSED TO IT.
+C
+C  SPECIES LIST FOR WEST CASCADES VARIANT
+C  1=SF,2=WF,3=GF,4=AF,5=RF,6=---,7=NF,8=YC,9=IC,10=ES,11=LP,12=JP,
+C  13=SP,14=WP,15=PP,16=DF,17=RW,18=RC,19=WH,20=MH,21=BM,22=RA,23=WA,
+C  24=PB,25=GC,26=AS,27=CW,28=WO,29=J,30=LL,31=WB,32=KP,33=PY,34=DG
+C  35=HT,36=CH,37=WI,38=---,39=OT
+C----------
+      REAL BARKB(4,13),H,D,BRATIO,DIB
+      INTEGER JBARK(39),IS
+      DATA JBARK/
+     &  2,  2,  2,  2,  2,  2,  2,  5,  5,  10,
+     & 10,  4,  4,  4,  3,  1,  5, 11, 12,  11,
+     &  6,  9,  9,  6,  7,  9,  9,  8, 11,  10,
+     & 13, 13, 13,  9,  9,  9,  9,  1, 10/
+C----------
+C  NOTE: COEFFICIENTS FOR SPECIES 312 & 431 IN PILLSBURY &
+C  KIRKLEY ARE METRIC. INTERCEPT IS DIVIDED BY 2.54 TO CONVERT THESE
+C  EQUATIONS TO ENGLISH.
+C----------
+      DATA BARKB/
+     & 202.,  0.903563,  0.989388, 1.,
+     &  15.,  0.904973,  1.0     , 1.,
+     & 122.,  0.809427,  1.016866, 1.,
+     & 116.,  0.859045,  1.0     , 1.,
+     &  81.,  0.837291,  1.0     , 1.,
+     & 312.,  0.08360 ,  0.94782 , 2.,
+     & 431.,  0.15565 ,  0.90182 , 2.,
+     & 815.,  0.8558  ,  1.0213 ,  1.,
+     & 351.,  0.075256,  0.949670, 2.,
+     & 108.,  0.9     ,  1.0     , 1.,
+     & 242.,  0.949670,  1.0     , 1.,
+     & 263.,  0.933710,  1.0     , 1.,
+     & 101.,  0.933290,  1.0     , 1./
+C----------
+C  BARK COEFS
+C  202,15,122,116,81 FROM WALTERS ET.AL. RES BULL 50
+C  312,431      FROM PILLSBURY AND KIRKLEY RES NOTE PNW 414
+C  242,93,108   FROM WYKOFF ET.AL. RES PAPER INT 133
+C  815          FROM GOULD AND HARRINGTON
+C
+C  EQUATION TYPES
+C  1  DIB = a * DOB ** b
+C  2  DIB = a + bDOB
+C  3  DIB = a*DOB = a * DOB ** b, (eQ.1), WITH b= 1.0
+C  MODEL TYPE 1
+C----------
+      IF(BARKB(4,JBARK(IS)) .EQ. 1.)THEN
+        DIB=BARKB(2,JBARK(IS))*D**BARKB(3,JBARK(IS))
+        BRATIO=DIB/D
+      ELSEIF (BARKB(4,JBARK(IS)) .EQ. 2.)THEN
+        DIB=BARKB(2,JBARK(IS)) + BARKB(3,JBARK(IS))*D
+        BRATIO=DIB/D
+      ELSE
+        BRATIO= 0.9
+      ENDIF
+C
+      IF(BRATIO .GT. 0.99) BRATIO= 0.99
+      IF(BRATIO .LT. 0.80) BRATIO= 0.80
+C
+      RETURN
+      END
+
+C ==========================================================================
+C WS
+      SUBROUTINE WS_BRATIO(IS,D,H,BRATIO)
+C      FUNCTION BRATIO(IS,D,H)
+      IMPLICIT NONE
+C----------
+C  **BRATIO--WS   DATE OF LAST REVISION:  05/09/12
+C----------
+C
+C FUNCTION TO COMPUTE BARK RATIOS AS A FUNCTION OF DIAMETER AND SPECIES.
+C REPLACES ARRAY BKRAT IN BASE MODEL.  
+C----------
+C     SPECIES LIST FOR WESTERN SIERRAS VARIANT.
+C
+C     1 = SUGAR PINE (SP)                   PINUS LAMBERTIANA
+C     2 = DOUGLAS-FIR (DF)                  PSEUDOTSUGA MENZIESII
+C     3 = WHITE FIR (WF)                    ABIES CONCOLOR
+C     4 = GIANT SEQUOIA (GS)                SEQUOIADENDRON GIGANTEAUM
+C     5 = INCENSE CEDAR (IC)                LIBOCEDRUS DECURRENS
+C     6 = JEFFREY PINE (JP)                 PINUS JEFFREYI
+C     7 = CALIFORNIA RED FIR (RF)           ABIES MAGNIFICA
+C     8 = PONDEROSA PINE (PP)               PINUS PONDEROSA
+C     9 = LODGEPOLE PINE (LP)               PINUS CONTORTA
+C    10 = WHITEBARK PINE (WB)               PINUS ALBICAULIS
+C    11 = WESTERN WHITE PINE (WP)           PINUS MONTICOLA
+C    12 = SINGLELEAF PINYON (PM)            PINUS MONOPHYLLA
+C    13 = PACIFIC SILVER FIR (SF)           ABIES AMABILIS
+C    14 = KNOBCONE PINE (KP)                PINUS ATTENUATA
+C    15 = FOXTAIL PINE (FP)                 PINUS BALFOURIANA
+C    16 = COULTER PINE (CP)                 PINUS COULTERI
+C    17 = LIMBER PINE (LM)                  PINUS FLEXILIS
+C    18 = MONTEREY PINE (MP)                PINUS RADIATA
+C    19 = GRAY PINE (GP)                    PINUS SABINIANA
+C         (OR CALIFORNIA FOOTHILL PINE)
+C    20 = WASHOE PINE (WE)                  PINUS WASHOENSIS
+C    21 = GREAT BASIN BRISTLECONE PINE (GB) PINUS LONGAEVA
+C    22 = BIGCONE DOUGLAS-FIR (BD)          PSEUDOTSUGA MACROCARPA
+C    23 = REDWOOD (RW)                      SEQUOIA SEMPERVIRENS
+C    24 = MOUNTAIN HEMLOCK (MH)             TSUGA MERTENSIANA
+C    25 = WESTERN JUNIPER (WJ)              JUNIPERUS OCIDENTALIS
+C    26 = UTAH JUNIPER (UJ)                 JUNIPERUS OSTEOSPERMA
+C    27 = CALIFORNIA JUNIPER (CJ)           JUNIPERUS CALIFORNICA
+C    28 = CALIFORNIA LIVE OAK (LO)          QUERCUS AGRIFOLIA
+C    29 = CANYON LIVE OAK (CY)              QUERCUS CHRYSOLEPSIS
+C    30 = BLUE OAK (BL)                     QUERCUS DOUGLASII
+C    31 = CALIFORNIA BLACK OAK (BO)         QUERQUS KELLOGGII
+C    32 = VALLEY OAK (VO)                   QUERCUS LOBATA
+C         (OR CALIFORNIA WHITE OAK)
+C    33 = INTERIOR LIVE OAK (IO)            QUERCUS WISLIZENI
+C    34 = TANOAK (TO)                       LITHOCARPUS DENSIFLORUS
+C    35 = GIANT CHINQUAPIN (GC)             CHRYSOLEPIS CHRYSOPHYLLA
+C    36 = QUAKING ASPEN (AS)                POPULUS TREMULOIDES
+C    37 = CALIFORNIA-LAUREL (CL)            UMBELLULARIA CALIFORNICA
+C    38 = PACIFIC MADRONE (MA)              ARBUTUS MENZIESII
+C    39 = PACIFIC DOGWOOD (DG)              CORNUS NUTTALLII
+C    40 = BIGLEAF MAPLE (BM)                ACER MACROPHYLLUM
+C    41 = CURLLEAF MOUNTAIN-MAHOGANY (MC)   CERCOCARPUS LEDIFOLIUS
+C    42 = OTHER SOFTWOODS (OS)
+C    43 = OTHER HARDWOODS (OH)
+C
+C  SURROGATE EQUATION ASSIGNMENT:
+C
+C    FROM EXISTING WS EQUATIONS --
+C      USE 1(SP) FOR 11(WP) AND 24(MH) 
+C      USE 2(DF) FOR 22(BD)
+C      USE 3(WF) FOR 13(SF)
+C      USE 4(GS) FOR 23(RW)
+C      USE 8(PP) FOR 18(MP)
+C      USE 34(TO) FOR 35(GC), 36(AS), 37(CL), 38(MA), AND 39(DG)
+C      USE 31(BO) FOR 28(LO), 29(CY), 30(BL), 32(VO), 33(IO), 40(BM), AND
+C                     43(OH)
+C
+C    FROM CA VARIANT --
+C      USE CA11(KP) FOR 12(PM), 14(KP), 15(FP), 16(CP), 17(LM), 19(GP), 20(WE), 
+C                       25(WJ), 26(WJ), AND 27(CJ)
+C      USE CA12(LP) FOR 9(LP) AND 10(WB)
+C
+C    FROM SO VARIANT --
+C      USE SO30(MC) FOR 41(MC)
+C
+C    FROM UT VARIANT --
+C      USE UT17(GB) FOR 21(GB)
+C----------
+      REAL BARK1(43),BARK2(43),H,D,BRATIO,TEMD
+      INTEGER IMAP(43),IS,IEQN
+C
+      DATA BARK1/
+     & 0.8863, 0.8839, 0.8911, 0.8863, 0.8374,
+     & 0.8967, 0.8911, 0.8967, 0.9000, 0.9000,
+     & 0.8863, 0.9329, 0.8911, 0.9329, 0.9329,
+     & 0.9329, 0.9329, 0.8967, 0.9329, 0.9329,
+     & 0.9625, 0.8839, 0.8863, 0.8863, 0.9329,
+     & 0.9329, 0.9329, 0.8374, 0.8374, 0.8374,
+     & 0.8374, 0.8374, 0.8374, 0.8374, 0.8374,
+     & 0.8374, 0.8374, 0.8374, 0.8374, 0.8374,
+     & 0.9000, 0.8967, 0.8374/
+C
+      DATA BARK2/
+     &     0.,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0.,     0.,     0.,
+     &-0.1141,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0.,     0.,     0.,
+     &     0.,     0.,     0./
+C
+      DATA IMAP/ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+     &           1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+     &           2, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+     &           1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+     &           1, 1, 1/
+C----------
+C  PI, JU, BS, AND OA USE EQUATIONS FROM CR MODEL TYPE 3-5
+C  WB, LM, LP, OT USE EQUATIONS FROM CR VARIANT
+C  ES USES THE EQUATION FROM THE CR VARIANT
+C  PP USES THE EQUATION FROM THE CA VARIANT
+C  WF AND AF USE THE CONSTANT RATIO FROM NI VARIANT
+C----------
+      IEQN=IMAP(IS)
+      TEMD=D
+      IF(TEMD.LT.1.)TEMD=1.
+C
+      IF(IEQN .EQ. 1) THEN
+        BRATIO=BARK1(IS)
+C
+      ELSEIF(IEQN .EQ. 2)THEN
+        BRATIO=BARK1(IS)+BARK2(IS)*(1.0/TEMD)
+        IF(BRATIO .GT. 0.99) BRATIO=0.99
+        IF(BRATIO .LT. 0.80) BRATIO=0.80
+      ENDIF
+C
+      RETURN
+      END
+
+
+
+

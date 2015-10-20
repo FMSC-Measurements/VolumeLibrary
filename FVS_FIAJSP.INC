@@ -1,0 +1,1059 @@
+C The data in this file are copied from FVS variant blkdat.f for all variants
+C 01/15/2015 Y. Wang created
+       CHARACTER*3 AK_FIAJSP(13),BM_FIAJSP(18),CA_FIAJSP(49),CI_FIAJSP(19)
+       CHARACTER*3 CR_FIAJSP(38),CS_FIAJSP(96),EC_FIAJSP(32),EM_FIAJSP(19)
+       CHARACTER*3 IE_FIAJSP(23),KT_FIAJSP(11),LS_FIAJSP(68),NC_FIAJSP(11)
+       CHARACTER*3 NE_FIAJSP(108),NI_FIAJSP(11),PN_FIAJSP(39),SN_FIAJSP(90)
+       CHARACTER*3 SO_FIAJSP(33),TT_FIAJSP(18),UT_FIAJSP(24),WC_FIAJSP(39)
+       CHARACTER*3 WS_FIAJSP(43),
+C ======================================================================
+C AK
+C     SPECIES LIST FOR ALASKA VARIANT.
+C
+C     1 = WHITE SPRUCE (WS)           PICEA GLAUCA
+C     2 = WESTERN REDCEDAR (RC)       THUJA PLICATA
+C     3 = PACIFIC SILVER FIR (SF)     ABIES AMABILIS
+C     4 = MOUNTAIN HEMLOCK (MH)       TSUGA MERTENSIANA
+C     5 = WESTERN HEMLOCK (WH)        TSUGA HETEROPHYLLA
+C     6 = ALASKA CEDAR (YC)           CALLITROPSIS NOOTKATENSIS
+C     7 = LODGEPOLE PINE (LP)         PINUS CONTORTA
+C     8 = SITKA SPRUCE (SS)           PICEA SITCHENSIS
+C     9 = SUBALPINE FIR (AF)          ABIES LASIOCARPA
+C    10 = RED ALDER (RA)              ALNUS RUBRA
+C    11 = BLACK COTTONWOOD (CW)       POPULUS TRICHOCARPA
+C    12 = OTHER HARDWOODS (OH)
+C    13 = OTHER SOFTWOODS (OS)
+C----------
+      DATA AK_FIAJSP /
+     & '094',   '242',   '011',   '264',   '263',   '042',   '108',
+     & '098',   '019',   '351',   '747',   '998',   '298'/
+C ======================================================================
+C BM
+C     SPECIES LIST FOR BLUE MOUNTAINS VARIANT.
+C
+C     1 = WESTERN WHITE PINE   119 WP  PIMO3  PINUS MONTICOLA
+C     2 = WESTERN LARCH        073 WL  LAOC   LARIX OCCIDENTALIS
+C     3 = DOUGLAS-FIR          202 DF  PSME   PSEUDOTSUGA MENZIESII
+C     4 = GRAND FIR            017 GF  ABGR   ABIES GRANDIS
+C     5 = MOUNTAIN HEMLOCK     264 MH  TSME   TSUGA MERTENSIANA
+C     6 = WESTERN JUNIPER      064 WJ  JUOC   JUNIPERUS OCCIDENTALIS (WJ FROM UT)
+C     7 = LODGEPOLE PINE       108 LP  PICO   PINUS CONTORTA
+C     8 = ENGLEMANN SPRUCE     093 ES  PIEN   PICEA ENGELMANNII
+C     9 = SUBALPINE FIR        019 AF  ABLA   ABIES LASIOCARPA
+C    10 = PONDEROSA PINE       122 PP  PIPO   PINUS PONDEROSA
+C    11 = WHITEBARK PINE       101 WB  PIAL   PINUS ALBICAULIS (WB FROM TT)
+C    12 = LIMBER PINE          113 LM  PIFL2  PINUS FLEXILIS (LM FROM UT)
+C    13 = PACIFIC YEW          231 PY  TABR2  TAXUS BREVIFOLIA (PY FROM WC)
+C    14 = ALASKA YELLOW CEDAR  042 YC  CANO9  CALLITROPSIS NOOTKATENSIS (YC FROM WC)
+C    15 = QUAKING ASPEN        746 AS  POTR5  POPULUS TREMULOIDES (AS FROM UT)
+C    16 = BLACK COTTONWOOD     747 CW  POBAT  POPULUS BALSAMIFERA (CW FROM WC)
+C    17 = OTHER SOFTWOODS      298 OS  2TE    (PP FROM BM)
+C    18 = OTHER HARDWOODS      998 OH  2TD    (OT FROM WC)
+C----------
+      DATA BM_FIAJSP /
+     & '119',   '073',   '202',   '017',   '264',   '064',   '108',
+     & '093',   '019',   '122',   '101',   '113',   '231',   '042',
+     & '746',   '747',   '298',   '998'/
+C ======================================================================
+C CA
+C     SPECIES LIST FOR ICASCA VARIANT
+C
+C     1 = PORT ORFORD CEDAR (PC)          CHAMAECYPARIS LAWSONIANA
+C     2 = INCENSE CEDAR (IC)              LIBOCEDRUS DECURRENS
+C     3 = WESTERN REDCEDAR (RC)           THUJA PLICATA
+C     4 = WHITE FIR (WF)                  ABIES CONCOLOR
+C     5 = CALIFORNIA RED FIR (RF)         ABIES MAGNIFICA (MAGNIFICA)
+C     6 = SHASTA RED FIR (SH)             ABIES MAGNIFICA (SHASTENSIS)
+C     7 = DOUGLAS-FIR (DF)                PSEUDOTSUGA MENZIESII
+C     8 = WESTERN HEMLOCK (WH)            TSUGA HETEROPHYLLA
+C     9 = MOUNTAIN HEMLOCK (MH)           TSUGA MERTENSIANA
+C    10 = WHITEBARK PINE (WB)             PINUS ALBICAULIS
+C    11 = KNOBCONE PINE (KP)              PINUS ATTENUATA
+C    12 = LODGEPOLE PINE (LP)             PINUS CONTORTA
+C    13 = COULTER PINE (CP)               PINUS COULTERI
+C    14 = LIMBER PINE (LM)                PINUS FLEXILIS (FLEXILIS)
+C    15 = JEFFREY PINE (JP)               PINUS JEFFREYI
+C    16 = SUGAR PINE (SP)                 PINUS LAMBERTIANA
+C    17 = WESTERN WHITE PINE (WP)         PINUS MONTICOLA
+C    18 = PONDEROSA PINE (PP)             PINUS PONDEROSA
+C    19 = MONTEREY PINE (MP)              PINUS RADIATA
+C    20 = GRAY PINE (GP)                  PINUS SABINIANA
+C    21 = WESTERN JUNIPER (WJ)            JUNIPERUS OCCIDENTALIS
+C    22 = BREWER SPRUCE (BR)              PICEA BREWERIANA
+C    23 = GIANT SEQUOIA (GS)              SEQUOIADENDRON GIGANTEUM
+C    24 = PACIFIC YEW (PY)                TAXUS BREVIFOLIA
+C    25 = OTHER SOFTWOODS (OS)
+C    26 = COAST LIVE OAK (LO)             QUERCUS AGRIFOLIA
+C    27 = CANYON LIVE OAK (CY)            QUERCUS CHRYSOLEPSIS
+C    28 = BLUE OAK (BL)                   QUERCUS DOUGLASII
+C    29 = ENGELMANN OAK (EO)              QUERCUS ENGELMANNI
+C    30 = OREGON WHITE OAK (WO)           QUERCUS GARRYANA
+C    31 = CALIFORNIA BLACK OAK (BO)       QUERCUS KELLOGGII
+C    32 = VALLEY WHITE OAK (VO)           QUERCUS LOBATA
+C    33 = INTERIOR LIVE OAK (IO)          QUERCUS WISLIZENII
+C    34 = BIGLEAF MAPLE (BM)              ACER MACROPHYLLUM
+C    35 = CALIFORNIA BUCKEYE (BU)         AESCULUS CALIFORNICA
+C    36 = RED ALDER (RA)                  ALNUS RUBRA
+C    37 = PACIFIC MADRONE (MA)            ARBUTUS MENZIESII
+C    38 = GIANT CHINQUAPIN (GC)           CHRYSOLEPIS CHRYSOPHYLLA
+C    39 = PACIFIC DOGWOOD (DG)            CORNUS NUTTALLII
+C    40 = OREGON ASH (FL)                 FRAXINUS LATIFOLIA
+C    41 = WALNUT (WN)                     JUGLANS sp.
+C    42 = TANOAK (TO)                     LITHOCARPUS DENSIFLORUS
+C    43 = CALIFORNIA SYCAMORE (SY)        PLATANUS RACEMOSA
+C    44 = QUAKING ASPEN (AS)              POPULUS TREMULOIDES
+C    45 = BLACK COTTONWOOD (CW)           POPULUS TRICHOCARPA
+C    46 = WILLOW (WI)                     SALIX sp.
+C    47 = CALIFORNIA NUTMEG (CN)          TORREYA CALIFORNICA
+C    48 = CALIFORNIA LAUREL (CL)          UMBELLULARIA CALIFORNICA
+C    49 = OTHER HARDWOODS (OH)
+C----------
+      DATA CA_FIAJSP /
+     & '041',   '081',   '242',   '015',   '020',   '021',   '202',
+     & '263',   '264',   '101',   '103',   '108',   '109',   '113',
+     & '116',   '117',   '119',   '122',   '124',   '127',   '064',
+     & '092',   '212',   '231',   '298',   '801',   '805',   '807',
+     & '811',   '815',   '818',   '821',   '839',   '312',   '333',
+     & '351',   '361',   '431',   '492',   '542',   '600',   '631',
+     & '730',   '746',   '747',   '920',   '251',   '981',   '998'/
+C ======================================================================
+C CI
+C     SPECIES LIST FOR CENTRAL IDAHO VARIANT.
+C
+C     1 = WESTERN WHITE PINE (WP)          PINUS MONTICOLA
+C     2 = WESTERN LARCH (WL)               LARIX OCCIDENTALIS
+C     3 = DOUGLAS-FIR (DF)                 PSEUDOTSUGA MENZIESII
+C     4 = GRAND FIR (GF)                   ABIES GRANDIS
+C     5 = WESTERN HEMLOCK (WH)             TSUGA HETEROPHYLLA
+C     6 = WESTERN REDCEDAR (RC)            THUJA PLICATA
+C     7 = LODGEPOLE PINE (LP)              PINUS CONTORTA
+C     8 = ENGLEMANN SPRUCE (ES)            PICEA ENGELMANNII
+C     9 = SUBALPINE FIR (AF)               ABIES LASIOCARPA
+C    10 = PONDEROSA PINE (PP)              PINUS PONDEROSA
+C    11 = WHITEBARK PINE (WB)              PINUS ALBICAULIS
+C    12 = PACIFIC YEW (PY)                 TAXUS BREVIFOLIA
+C    13 = QUAKING ASPEN (AS)               POPULUS TREMULOIDES
+C    14 = WESTERN JUNIPER (WJ)             JUNIPERUS OCCIDENTALIS
+C    15 = CURLLEAF MOUNTAIN-MAHOGANY (MC)  CERCOCARPUS LEDIFOLIUS
+C    16 = LIMBER PINE (LM)                 PINUS FLEXILIS
+C    17 = BLACK COTTONWOOD (CW)            POPULUS BALSAMIFERA VAR. TRICHOCARPA
+C    18 = OTHER SOFTWOODS (OS)
+C    19 = OTHER HARDWOODS (OH)
+C
+C  SURROGATE EQUATION ASSIGNMENT:
+C
+C  FROM THE IE VARIANT:
+C      USE 17(PY) FOR 12(PY)             (IE17 IS REALLY TT2=LM)
+C      USE 18(AS) FOR 13(AS)             (IE18 IS REALLY UT6=AS)
+C      USE 13(LM) FOR 11(WB) AND 16(LM)  (IE13 IS REALLY TT2=LM)
+C      USE 19(CO) FOR 17(CW) AND 19(OH)  (IE19 IS REALLY CR38=OH)
+C
+C  FROM THE UT VARIANT:
+C      USE 12(WJ) FOR 14(WJ)
+C      USE 20(MC) FOR 15(MC)             (UT20 = SO30=MC, WHICH IS
+C                                                  REALLY WC39=OT)
+C----------
+      DATA CI_FIAJSP /
+     & '119',   '073',   '202',   '017',   '263',
+     & '242',   '108',   '093',   '019',   '122',
+     & '101',   '231',   '746',   '064',   '475',
+     & '113',   '747',   '298',   '998'/
+C ======================================================================
+C CR
+C  SPECIES ORDER:
+C   1=AF,  2=CB,  3=DF,  4=GF,  5=WF,  6=MH,  7=RC,  8=WL,  9=BC, 10=LM,
+C  11=LP, 12=PI, 13=PP, 14=WB, 15=SW, 16=UJ, 17=BS, 18=ES, 19=WS, 20=AS,
+C  21=NC, 22=PW, 23=GO, 24=AW, 25=EM, 26=BK, 27=SO, 28=PB, 29=AJ, 30=RM,
+C  31=OJ, 32=ER, 33=PM, 34=PD, 35=AZ, 36=CI, 37=OS, 38=OH
+C
+C  SPECIES EXPANSION:
+C  UJ,AJ,RM,OJ,ER USE CR JU                              
+C  NC,PW USE CR CO
+C  GO,AW,EM,BK,SO USE CR OA                             
+C  PB USES CR AS                              
+C  PM,PD,AZ USE CR PI
+C  CI USES CR PP                              
+C----------
+C    AL COMMON                  FIA SCIENTIFIC                         
+C  # CD NAME                    CD  NAME                               
+C -- -- ---------------------   --- -----------------------------------
+C  1 AF SUBALPINE FIR           019 ABIES LASIOCARPA var. LASIOCARPA
+C  2 CB CORKBARK FIR            018 ABIES LASIOCARPA var. ARIZONICA
+C  3 DF DOUGLAS-FIR             202 PSEUDOTSUGA MENZIESII
+C  4 GF GRAND FIR               017 ABIES GRANDIS
+C  5 WF WHITE FIR               015 ABIES CONCOLOR
+C  6 MH MOUNTAIN HEMLOCK        264 TSUGA MERTENSIANA
+C  7 RC WESTERN REDCEDAR        242 THUJA PLICATA
+C  8 WL WESTERN LARCH           073 LARIX OCCIDENTALIS
+C  9 BC BRISTLECONE PINE        102 PINUS ARISTATA
+C 10 LM LIMBER PINE             113 PINUS FLEXILIS var. FLEXILIS
+C 11 LP LODGEPOLE PINE          108 PINUS CONTORTA
+C 12 PI COMMON PINYON           106 PINUS EDULIS
+C 13 PP PONDEROSA PINE          122 PINUS PONDEROSA
+C 14 WB WHITEBARK PINE          101 PINUS ALBICAULIS
+C 15 SW SOUTHWESTERN WHITE PINE 114 PINUS STROBIFORMUS
+C 16 UJ UTAH JUNIPER            065 JUNIPERUS OSTEOSPERMA
+C 17 BS BLUE SPRUCE             096 PICEA PUNGENS
+C 18 ES ENGELMANN SPRUCE        093 PICEA ENGELMANNII
+C 19 WS WHITE SPRUCE            094 PICEA GLAUCA
+C 20 AS QUAKING ASPEN           746 POPULUS TREMULOIDES
+C 21 NC NARROWLEAF COTTONWOOD   749 POPULUS ANGUSTIFOLIA
+C 22 PW PLAINS COTTONWOOD       745 POPULUS DELTOIDES var. MONOLIFERA
+C 23 GO GAMBEL OAK              814 QUERCUS GAMBELII
+C 24 AW ARIZONA WHITE OAK       803 QUERCUS ARIZONICA
+C 25 EM EMORY OAK               810 QUERCUS EMORYI
+C 26 BK BUR OAK                 823 QUERCUS MACROCARPA
+C 27 SO SILVERLEAF OAK          843 QUERCUS HYPOLEUCOIDES
+C 28 PB PAPER BIRCH             375 BETULA PAPYRIFERA
+C 29 AJ ALLIGATOR JUNIPER       063 JUNIPERUS DEPPEANA
+C 30 RM ROCKY MOUNTAIN JUNIPER  066 JUNIPERUS SCOPULORUM
+C 31 OJ ONESEED JUNIPER         069 JUNIPERUS MONOSPERMA
+C 32 ER EASTERN REDCEDAR        068 JUNIPERUS VIRGINIANA
+C 33 PM SINGLELEAF PINYON       133 PINUS MONOPHYLLA
+C 34 PD BORDER PINYON           134 PINUS DISCOLOR
+C 35 AZ ARIZONA PINYON PINE     143 PINUS MONOPHYLLA var. FALLAX
+C 36 CI CHIHUAHUA PINE          118 PINUS LEIOPHYLLA var. CHIHUAHUANA
+C 37 OS OTHER SOFTWOODS         298
+C 38 OH OTHER HARDWOODS         998
+C----------
+      DATA CR_FIAJSP /
+     & '019',   '018',   '202',   '017',   '015',   '264',   '242',
+     & '073',   '102',   '113',   '108',   '106',   '122',   '101',
+     & '114',   '065',   '096',   '093',   '094',   '746',   '749',
+     & '745',   '814',   '803',   '810',   '823',   '843',   '375',
+     & '063',   '066',   '069',   '068',   '133',   '134',   '143',
+     & '118',   '298',   '998'/
+C ======================================================================
+C CS
+      DATA CS_FIAJSP /
+     & '068',   '057',   '110',   '132',   '131',   '298',   '129',
+     & '602',   '601',   '690',   '694',   '691',   '693',   '   ',
+     & '407',   '405',   '409',   '403',   '400',   '401',   '402',
+     & '404',   '408',   '531',   '543',   '545',   '546',   '742',
+     & '316',   '313',   '317',   '762',   '972',   '461',   '462',
+     & '971',   '970',   '974',   '975',   '977',   '621',   '951',
+     & '318',   '540',   '541',   '544',   '802',   '833',   '812',
+     & '837',   '806',   '824',   '826',   '804',   '823',   '825',
+     & '835',   '836',   '832',   '830',   '813',   '817',   '822',
+     & '827',   '828',   '831',   '834',   '   ',   '931',   '331',
+     & '450',   '521',   '552',   '741',   '743',   '746',   '901',
+     & '   ',   '731',   '221',   '373',   '611',   '920',   '922',
+     & '   ',   '391',   '471',   '491',   '500',   '571',   '641',
+     & '651',   '653',   '680',   '701',   '711'/
+C ======================================================================
+C EC
+C  SPECIES LIST FOR EAST CASCADES VARIANT.
+C
+C   1 = WESTERN WHITE PINE      (WP)    PINUS MONTICOLA
+C   2 = WESTERN LARCH           (WL)    LARIX OCCIDENTALIS
+C   3 = DOUGLAS-FIR             (DF)    PSEUDOTSUGA MENZIESII
+C   4 = PACIFIC SILVER FIR      (SF)    ABIES AMABILIS
+C   5 = WESTERN REDCEDAR        (RC)    THUJA PLICATA
+C   6 = GRAND FIR               (GF)    ABIES GRANDIS
+C   7 = LODGEPOLE PINE          (LP)    PINUS CONTORTA
+C   8 = ENGELMANN SPRUCE        (ES)    PICEA ENGELMANNII
+C   9 = SUBALPINE FIR           (AF)    ABIES LASIOCARPA
+C  10 = PONDEROSA PINE          (PP)    PINUS PONDEROSA
+C  11 = WESTERN HEMLOCK         (WH)    TSUGA HETEROPHYLLA
+C  12 = MOUNTAIN HEMLOCK        (MH)    TSUGA MERTENSIANA
+C  13 = PACIFIC YEW             (PY)    TAXUS BREVIFOLIA
+C  14 = WHITEBARK PINE          (WB)    PINUS ALBICAULIS
+C  15 = NOBLE FIR               (NF)    ABIES PROCERA
+C  16 = WHITE FIR               (WF)    ABIES CONCOLOR
+C  17 = SUBALPINE LARCH         (LL)    LARIX LYALLII
+C  18 = ALASKA CEDAR            (YC)    CALLITROPSIS NOOTKATENSIS
+C  19 = WESTERN JUNIPER         (WJ)    JUNIPERUS OCCIDENTALIS
+C  20 = BIGLEAF MAPLE           (BM)    ACER MACROPHYLLUM
+C  21 = VINE MAPLE              (VN)    ACER CIRCINATUM
+C  22 = RED ALDER               (RA)    ALNUS RUBRA
+C  23 = PAPER BIRCH             (PB)    BETULA PAPYRIFERA
+C  24 = GIANT CHINQUAPIN        (GC)    CHRYSOLEPIS CHRYSOPHYLLA
+C  25 = PACIFIC DOGWOOD         (DG)    CORNUS NUTTALLII
+C  26 = QUAKING ASPEN           (AS)    POPULUS TREMULOIDES
+C  27 = BLACK COTTONWOOD        (CW)    POPULUS BALSAMIFERA var. TRICHOCARPA
+C  28 = OREGON WHITE OAK        (WO)    QUERCUS GARRYANA
+C  29 = CHERRY AND PLUM SPECIES (PL)    PRUNUS sp.
+C  30 = WILLOW SPECIES          (WI)    SALIX sp.
+C  31 = OTHER SOFTWOODS         (OS)
+C  32 = OTHER HARDWOODS         (OH)
+C
+C  NOTE: VINE MAPLE IS CONSIDERED A SHRUB BY FIA (CODE 324); THE FIA 
+C  CODE FOR ROCKY MTN MAPLE (321) WAS APPARENTLY USED IN THE INVENTORY 
+C  DATA FOR VINE MAPLE. HOWEVER, IN THIS VARIANT, FIA CODE 321 IS BEING
+C  ASSOCIATED WITH VINE MAPLE IN THE SPECIES TRANSLATOR.
+C
+      DATA EC_FIAJSP /
+     & '119',   '073',   '202',   '011',   '242',
+     & '017',   '108',   '093',   '019',   '122',
+     & '263',   '264',   '231',   '101',   '022',
+     & '015',   '072',   '042',   '064',   '312',
+     & '324',   '351',   '375',   '431',   '492',
+     & '746',   '747',   '815',   '760',   '920',
+     & '298',   '998'/
+C ======================================================================
+C EM
+C  SPECIES ORDER:
+C   1=WB,  2=WL,  3=DF,  4=LM,  5=LL,  6=RM,  7=LP,  8=ES,
+C   9=AF, 10=PP, 11=GA, 12=AS, 13=CW, 14=BA, 15=PW, 16=NC,
+C  17=PB, 18=OS, 19=OH
+C
+C  SPECIES EXPANSION
+C  LM USES IE LM (ORIGINALLY FROM TT VARIANT)
+C  LL USES IE AF (ORIGINALLY FROM NI VARIANT)
+C  RM USES IE JU (ORIGINALLY FROM UT VARIANT)
+C  AS,PB USE IE AS (ORIGINALLY FROM UT VARIANT)
+C  GA,CW,BA,PW,NC,OH USE IE CO (ORIGINALLY FROM CR VARIANT)
+C----------
+C    AL COMMON                FIA SCIENTIFIC                         
+C  # CD NAME                  CD  NAME                               
+C -- -- --------------------- --- -----------------------------------
+C  1 WB WHITEBARK PINE        101 PINUS ALBICALA (WB FROM EM11)
+C  2 WL WESTERN LARCH         073 LARIX OCCIDENTALIS (WL FROM EM11)
+C  3 DF DOUGLAS-FIR           202 PSEUDOTSUGA MENZIESII (DF FROM EM11)
+C  4 LM LIMBER PINE           113 PINUS FLEXILIS (LM FROM TT)
+C  5 LL SUBALPINE LARCH       072 LARIX LYALLII (AF FROM IE)
+C  6 RM ROCKY MTN JUNIPER     066 JUNIPERUS SCOPULORUM (WJ FROM UT)
+C  7 LP LODGEPOLE PINE        108 PINUS CONTORTA (LP FROM EM11)
+C  8 ES ENGELMANN SPRUCE      093 PICEA ENGELMANNII (ES FROM EM11)
+C  9 AF SUBALPINE FIR         019 ABIES LASIOCARPA (AF FROM EM11)
+C 10 PP PONDEROSA PINE        122 PINUS PONDEROSA (PP FROM EM11)
+C 11 GA GREEN ASH             544 FRAXINUS PENNSYLVANICA (CO FROM IE)
+C 12 AS QUAKING ASPEN         746 POPULUS TREMULOIDES (AS FROM UT)
+C 13 CW BLACK COTTONWOOD      747 POPULUS BALSAMIFERA VAR TRICHOCARPA (CO FROM CR)
+C 14 BA BALSAM POPLAR         741 POPULUS BALSAMIFERA (CO FROM CR)
+C 15 PW PLAINS COTTONWOOD     745 POPULUS DELTOIDES VAR MONOLIFERA (CO FROM CR)
+C 16 NC NARROWLEAF COTTONWOOD 749 POPULUS ANGUSTIFOLIA (CO FROM CR)
+C 17 PB PAPER BIRCH           375 BETULA PAPYRIFERA (AS FROM UT)
+C 18 OS OTHER SOFTWOODS       298                   (WB FROM EM11)
+C 19 OH OTHER HARDWOODS       998                   (CO FROM CR)
+C----------
+      DATA EM_FIAJSP /
+     & '101',   '073',   '202',   '113',   '072',   '066',   '108',
+     & '093',   '019',   '122',   '544',   '746',   '747',   '741',
+     & '745',   '749',   '375',   '298',   '998'/
+C ======================================================================
+C IE
+C     SPECIES LIST FOR INLAND EMPIRE VARIANT.
+C
+C     1 = WESTERN WHITE PINE (WP)        PINUS MONTICOLA (FR0M NI)
+C     2 = WESTERN LARCH (WL)             LARIX OCCIDENTALIS (FR0M NI)
+C     3 = DOUGLAS-FIR (DF)               PSEUDOTSUGA MENZIESII (FR0M NI)
+C     4 = GRAND FIR (GF)                 ABIES GRANDIS (FR0M NI)
+C     5 = WESTERN HEMLOCK (WH)           TSUGA HETEROPHYLLA (FR0M NI)
+C     6 = WESTERN REDCEDAR (RC)          THUJA PLICATA (FR0M NI)
+C     7 = LODGEPOLE PINE (LP)            PINUS CONTORTA (FR0M NI)
+C     8 = ENGLEMAN SPRUCE (ES)           PICEA ENGELMANNII (FR0M NI)
+C     9 = SUBALPINE FIR (AF)             ABIES LASIOCARPA (FR0M NI)
+C    10 = PONDEROSA PINE (PP)            PINUS PONDEROSA (FR0M NI)
+C    11 = MOUNTAIN HEMLOCK (MH)          TSUGA MERTENSIANA (OT FR0M NI)
+C    12 = WHITEBARK PINE (WB)            PINUS ALBICAULIS (WL FR0M NI)
+C    13 = LIMBER PINE (LM)               PINUS FLEXILIS (FR0M TT)
+C    14 = SUBALPINE LARCH (LL)           LARIX LYALLII (AF FR0M NI)
+C    15 = PINYON PINE (PI)               PINUS EDULIS (FR0M UT)
+C    16 = ROCKY MOUNTAIN JUNIPER (RM)    JUNIPERUS SCOPULORUM (FR0M UT)
+C    17 = PACIFIC YEW (PY)               TAXUS BREVIFOLIA (LM FR0M TT)
+C    18 = QUAKING ASPEN (AS)             POPULUS TREMULOIDES (FR0M UT)
+C    19 = COTTONWOOD (CO)                POPULUS SPP. (OH FR0M CR)
+C    20 = MOUNTAIN MAPLE (MM)            ACER GLABRUM (AS FROM UT)
+C    21 = PAPER BIRCH (PB)               BETULA PAPYRIFERA (AS FROM UT)
+C    22 = OTHER HARDWOODS (OH)           (OH FR0M CR)
+C    23 = OTHER SOFTWOODS (OS)           (FR0M NI)
+C----------
+      DATA IE_FIAJSP /
+     & '119',   '073',   '202',   '017',   '263',   '242',   '108',
+     & '093',   '019',   '122',   '264',   '101',   '113',   '072',
+     & '106',   '066',   '231',   '746',   '740',   '321',   '375',
+     & '998',   '298'/
+C ======================================================================
+C KT
+C     SPECIES LIST FOR KOOKANTL VARIANT.
+C
+C     1 = WESTERN WHITE PINE (WP)        PINUS MONTICOLA
+C     2 = WESTERN LARCH (WL)             LARIX OCCIDENTALIS
+C     3 = DOUGLAS-FIR (DF)               PSEUDOTSUGA MENZIESII
+C     4 = GRAND FIR (GF)                 ABIES GRANDIS
+C     5 = WESTERN HEMLOCK (WH)           TSUGA HETEROPHYLLA
+C     6 = WESTERN REDCEDAR (RC)          THUJA PLICATA
+C     7 = LODGEPOLE PINE (LP)            PINUS CONTORTA
+C     8 = ENGLEMAN SPRUCE (ES)           PICEA ENGELMANNII
+C     9 = SUBALPINE FIR (AF)             ABIES LASIOCARPA
+C    10 = PONDEROSA PINE (PP)            PINUS PONDEROSA
+C    11 = OTHER (OT)  grown as MOUNTAIN HEMLOCK   TSUGA MERTENSIANA
+C----------
+      DATA KT_FIAJSP /
+     & '119',   '073',   '202',   '017',   '263',   '242',   '108',
+     & '093',   '019',   '122',   '999'/
+C ======================================================================
+C LS
+C=================================
+C     SPECIES LIST FOR LAKE STATES
+C=================================
+C     1 = JACK PINE (JP)
+C     2 = SCOTCH PINE (SC)
+C     3 = RED PINE NATURAL (RN)
+C     4 = RED PINE PLANTATION (RP)
+C     5 = EASTERN WHITE PINE (WP)
+C     6 = WHITE SPRUCE (WS)
+C     7 = NORWAY SPRUCE (NS)
+C     8 = BALSAM FIR (BF)
+C     9 = BLACK SPRUCE (BS)
+C    10 = TAMARACK (TA)
+C    11 = NORTHERN WHITE-CEDAR (WC)
+C    12 = EASTERN HEMLOCK (EH)
+C    13 = OTHER SOFTWOOD SPECIES (OS)
+C    14 = EASTERN REDCEDAR (RC)
+C    15 = BLACK ASH (BA)
+C    16 = GREEN ASH (GA)
+C    17 = EASTERN COTTONWOOD (EC)
+C    18 = SILVER MAPLE (SV)
+C    19 = RED MAPLE (RM)
+C    20 = BLACK CHERRY (BC)
+C    21 = AMERICAN ELM (AE)
+C    22 = SLIPPERY ELM (RL)
+C    23 = ROCK ELM (RE)
+C    24 = YELLOW BIRCH (YB)
+C    25 = AMERICAN BASSWOOD (BW)
+C    26 = SUGAR MAPLE (SM)
+C    27 = BLACK MAPLE (BM)
+C    28 = AMERICAN BEECH (AB)
+C    29 = WHITE ASH (WA)
+C    30 = WHITE OAK (WO)
+C    31 = SWAMP WHITE OAK (SW)
+C    32 = BUR OAK (BR)
+C    33 = CHINKAPIN OAK (CK)
+C    34 = NORTHERN RED OAK (RO)
+C    35 = BLACK OAK (BO)
+C    36 = NORTHERN PIN OAK (NP)
+C    37 = BITTERNUT HICKORY (BH)
+C    38 = PIGNUT HICKORY (PH)
+C    39 = SHAGBARK HICKORY (SH)
+C    40 = BIGTOOTH ASPEN (BT)
+C    41 = QUAKING ASPEN (QA)
+C    42 = BALSAM POPLAR (BP)
+C    43 = PAPER BIRCH (PB)
+C    44 = COMMERCIAL HARDWOOD SPECIES (CH)
+C    45 = BUTTERNUT (BN)
+C    46 = BLACK WALNUT (WN)
+C    47 = EASTERN HOPHORNBEAM (HH)
+C    48 = BLACK LOCUST (BK)
+C    49 = NON-COMMERCIAL HARDWOOD SPECIES (NC)
+C    50 = BOXELDER (BE)
+C    51 = STRIPED MAPLE (ST)
+C    52 = MOUNTAIN MAPLE (MM)
+C    53 = AMERICAN HORNBEAM (AH)
+C    54 = AMERICAN CHESTNUT (AC)
+C    55 = HACKBERRY (HK)
+C    56 = FLOWERING DOGWOOD (DW)
+C    57 = HAWTHORN SPECIES(HT)
+C    58 = APPLE SPECIES (AP)
+C    59 = BLACKGUM (BG)
+C    60 = SYCAMORE (SY)
+C    61 = PIN CHERRY (PR)
+C    62 = CHOKECHERRY (CC)
+C    63 = PLUMS, CHERRIES (PL)
+C    64 = WILLOW SPECIES(WI)
+C    65 = BLACK WILLOW (BL)
+C    66 = DIAMOND WILLOW (DM)
+C    67 = SASSAFRAS (SS)
+C    68 = AMERICAN MOUNTAIN ASH (MA)
+C----------
+      DATA LS_FIAJSP /
+     & '105',   '130',   '125',   '125',   '129',   '094',   '091',
+     & '012',   '095',   '071',   '241',   '261',   '298',   '068',
+     & '543',   '544',   '742',   '317',   '316',   '762',   '972',
+     & '975',   '977',   '371',   '951',   '318',   '314',   '531',
+     & '541',   '802',   '804',   '823',   '826',   '833',   '837',
+     & '809',   '402',   '403',   '407',   '743',   '746',   '741',
+     & '375',   '   ',   '601',   '602',   '701',   '901',   '   ',
+     & '313',   '315',   '319',   '391',   '421',   '462',   '491',
+     & '500',   '660',   '693',   '731',   '761',   '763',   '760',
+     & '920',   '922',   '923',   '931',   '935'/
+C ======================================================================
+C NC
+C     SPECIES LIST FOR KLAMATH MOUNTAINS VARIANT.
+C
+C     1 = OTHER CONIFERS (OS)
+C     2 = SUGAR PINE (SP)                PINUS LAMBERTIANA
+C     3 = DOUGLAS-FIR (DF)               PSEUDOTSUGA MENZIESII
+C     4 = WHITE FIR (WF)                 ABIES CONCOLOR
+C     5 = MADRONE (MA)                   ARBUTUS MENZIESII
+C     6 = INCENSE CEDAR (IC)             LIBOCEDRUS DECURRENS
+C     7 = CALIFORNIA BLACK OAK (BO)      QUERQUS KELLOGGII
+C     8 = TANOAK (TO)                    LITHOCARPUS DENSIFLORUS
+C     9 = RED FIR (RF)                   ABIES MAGNIFICA
+C    10 = PONDEROSA PINE (PP)            PINUS PONDEROSA
+C    11 = OTHER HARDWOOD (OH)
+C----------
+      DATA NC_FIAJSP /
+     & '298',   '117',   '202',   '015',   '361',   '081',   '818',
+     & '631',   '020',   '122',   '998'/
+C ======================================================================
+C NE
+C================================================
+C     SPECIES LIST FOR NORTHEASTERN UNITED STATES
+C================================================
+C     1 = BALSAM FIR (BF)
+C     2 = TAMARACK (TA)
+C     3 = WHITE SPRUCE (WS)
+C     4 = RED SPRUCE (RS)
+C     5 = NORWAY SPRUCE (NS)
+C     6 = BLACK SPRUCE (BS)
+C     7 = OTHER SPRUCE SPECIES(PI)
+C     8 = RED PINE (RN)
+C     9 = EASTERN WHITE PINE (WP)
+C    10 = LOBLOLLY PINE (LP)
+C    11 = VIRGINIA PINE (VP)
+C    12 = NORTHERN WHITE CEDAR (WC)
+C    13 = ATLANTIC WHITE CEDAR (AW)
+C    14 = EASTERN REDCEDAR (RC)
+C    15 = OTHER CEDAR SPECIES (OC)
+C    16 = EASTERN HEMLOCK (EH)
+C    17 = OTHER HEMLOCK SPECIES (HM)
+C    18 = OTHER PINE SPECIES (OP)
+C    19 = JACK PINE (JP)
+C    20 = SHORLEAF PINE (SP)
+C    21 = TABLE MOUNTAIN PINE (TM)
+C    22 = PITCH PINE (PP)
+C    23 = POND PINE (PD)
+C    24 = SCOTCH PINE (SC)
+C    25 = OTHER SOFTWOOD SPECIES (OS)
+C    26 = RED MAPLE (RM)
+C    27 = SUGAR MAPLE (SM)
+C    28 = BLACK MAPLE (BM)
+C    29 = SILVER MAPLE (SV)
+C    30 = YELLOW BIRCH (YB)
+C    31 = SWEET BIRCH (SB)
+C    32 = RIVER BIRCH (RB)
+C    33 = PAPER BIRCH (PB)
+C    34 = GRAY BIRCH (GB)
+C    35 = HICKORY SPECIES (HI)
+C    36 = PIGNUT HICKORY (PH)
+C    37 = SHELLBARK HICKORY (SL)
+C    38 = SHAGBARK HICKORY (SH)
+C    39 = MOCKERNUT HICKORY (MH)
+C    40 = AMERICAN BEECH (AB)
+C    41 = ASH SPECIES (AS)
+C    42 = WHITE ASH (WA)
+C    43 = BLACK ASH (BA)
+C    44 = GREEN ASH (GA)
+C    45 = PUMPKIN ASH (PA)
+C    46 = YELLOW-POPLAR (YP)
+C    47 = SWEETGUM (SU)
+C    48 = CUCUMBERTREE (CT)
+C    49 = QUAKING ASPEN (QA)
+C    50 = BALSAM POPLAR (BP)
+C    51 = EASTERN COTTONWOOD (EC)
+C    52 = BIGTOOTH ASPEN (BT)
+C    53 = SWAMP COTTONWOOD (PY)
+C    54 = BLACK CHERRY (BC)
+C    55 = WHITE OAK (WO)
+C    56 = BUR OAK (BR)
+C    57 = CHINKAPIN OAK (CK)
+C    58 = POST OAK (PO)
+C    59 = OTHER OAK SPECIES (OK)
+C    60 = SCARLET OAK (SO)
+C    61 = SHINGLE OAK (QI)
+C    62 = WATER OAK (WK)
+C    63 = PIN OAK (PN)
+C    64 = CHESTNUT OAK (CO)
+C    65 = SWAMP WHITE OAK (SW)
+C    66 = SWAMP CHESTNUT OAK (SN)
+C    67 = NORTHERN RED OAK (RO)
+C    68 = SOUTHERN RED OAK (SK)
+C    69 = BLACK OAK (BO)
+C    70 = CHERRYBARK OAK (CB)
+C    71 = OTHER HARDWOOD SPECIES (OH)
+C    72 = BUCKEYE SPECIES (BU)
+C    73 = YELLOW BUCKEYE (YY)
+C    74 = WATER BIRCH (WR)
+C    75 = HACKBERRY (HK)
+C    76 = COMMON PERSIMMON (PS)
+C    77 = AMERICAN HOLLY (HY)
+C    78 = BUTTERNUT (BN)
+C    79 = BLACK WALNUT (WN)
+C    80 = OSAGE-ORANGE (OO)
+C    81 = MAGNOLIA SPECIES(MG)
+C    82 = SWEETBAY (MV)
+C    83 = APPLE SPECIES (AP)
+C    84 = WATER TUPELO (WT)
+C    85 = BLACKGUM (BG)
+C    86 = SOURWOOD (SD)
+C    87 = PAULOWNIA (PW)
+C    88 = SYCAMORE (SY)
+C    89 = WILLOW OAK (WL)
+C    90 = BLACK LOCUST (BK)
+C    91 = BLACK WILLOW (BL)
+C    92 = SASSAFRAS (SS)
+C    93 = AMERICAN BASSWOOD (BW)
+C    94 = WHITE BASSWOOD (WB)
+C    95 = OTHER ELM SPECIES (EL)
+C    96 = AMERICAN ELM (AE)
+C    97 = SLIPPERY ELM (RL)
+C    98 = NON-COMMERCIAL HARDWOOD SPECIES (NC)
+C    99 = BOXELDER (BE)
+C   100 = STRIPED MAPLE (ST)
+C   101 = AILANTHUS (AI)
+C   102 = SERVICEBERRY (SE)
+C   103 = AMERICAN HORNBEAM (AH)
+C   104 = FLOWERING DOGWOOD (DW)
+C   105 = HAWTHORN SPECIES (HT)
+C   106 = EASTERN HOPHORNBEAM (HH)
+C   107 = PLUMS, CHERRIES (PL)
+C   108 = PIN CHERRY (PR)
+C----------
+      DATA NE_FIAJSP /
+     & '012',   '071',   '094',   '097',   '091',   '095',   '090',
+     & '125',   '129',   '131',   '132',   '241',   '043',   '068',
+     & '057',   '261',   '260',   '100',   '105',   '110',   '123',
+     & '126',   '128',   '130',   '298',   '316',   '318',   '314',
+     & '317',   '371',   '372',   '373',   '375',   '379',   '400',
+     & '403',   '405',   '407',   '409',   '531',   '540',   '541',
+     & '543',   '544',   '545',   '621',   '611',   '651',   '746',
+     & '741',   '742',   '743',   '744',   '762',   '802',   '823',
+     & '826',   '835',   '800',   '806',   '817',   '827',   '830',
+     & '832',   '804',   '825',   '833',   '812',   '837',   '813',
+     & '998',   '330',   '332',   '374',   '462',   '521',   '591',
+     & '601',   '602',   '641',   '650',   '653',   '660',   '691',
+     & '693',   '711',   '712',   '731',   '831',   '901',   '922',
+     & '931',   '951',   '952',   '970',   '972',   '975',   '   ',
+     & '313',   '315',   '341',   '356',   '391',   '491',   '500',
+     & '701',   '760',   '761'/
+C ======================================================================
+C NI
+C     SPECIES LIST FOR INLAND EMPIRE VARIANT.
+C
+C     1 = WESTERN WHITE PINE (WP)        PINUS MONTICOLA
+C     2 = WESTERN LARCH (WL)             LARIX OCCIDENTALIS
+C     3 = DOUGLAS-FIR (DF)               PSEUDOTSUGA MENZIESII
+C     4 = GRAND FIR (GF)                 ABIES GRANDIS
+C     5 = WESTERN HEMLOCK (WH)           TSUGA HETEROPHYLLA
+C     6 = WESTERN REDCEDAR (RC)          THUJA PLICATA
+C     7 = LODGEPOLE PINE (LP)            PINUS CONTORTA
+C     8 = ENGLEMAN SPRUCE (ES)           PICEA ENGELMANNII
+C     9 = SUBALPINE FIR (AF)             ABIES LASIOCARPA
+C    10 = PONDEROSA PINE (PP)            PINUS PONDEROSA
+C    11 = OTHER (OT)  grown as MOUNTAIN HEMLOCK   TSUGA MERTENSIANA
+C----------
+      DATA NI_FIAJSP /
+     & '119',   '073',   '202',   '017',   '263',   '242',   '108',
+     & '093',   '019',   '122',   '999'/
+C ======================================================================
+C PN
+C     SPECIES LIST FOR PACIFIC COAST VARIANT
+C
+C     1 = PACIFIC SILVER FIR (SF)      ABIES AMABILIS
+C     2 = WHITE FIR (WF)               ABIES CONCOLOR
+C     3 = GRAND FIR (GF)               ABIES GRANDIS
+C     4 = SUBALPINE FIR (AF)           ABIES LASIOCARPA
+C     5 = CALIFORNIA RED FIR (RF)/     ABIES MAGNIFICA
+C         SHASTA RED FIR
+C     6 = SITKA SPRUCE (SS)            PICEA SITCHENSIS
+C     7 = NOBLE FIR (NF)               ABIES PROCERA
+C     8 = ALASKA CEDAR (YC)/           CALLITROPSIS NOOTKATENSIS
+C         WESTERN LARCH                LARIX OCCIDENTALIS
+C     9 = INCENSE CEDAR (IC)           LIBOCEDRUS DECURRENS
+C    10 = ENGELMANN SPRUCE (ES)        PICEA ENGELMANNII
+C    11 = LODGEPOLE PINE (LP)          PINUS CONTORTA
+C    12 = JEFFREY PINE (JP)            PINUS JEFFREYI
+C    13 = SUGAR PINE (SP)              PINUS LAMBERTIANA
+C    14 = WESTERN WHITE PINE (WP)      PINUS MONTICOLA
+C    15 = PONDEROSA PINE (PP)          PINUS PONDEROSA
+C    16 = DOUGLAS-FIR (DF)             PSEUDOTSUGA MENZIESII
+C    17 = COAST REDWOOD (RW)           SEQUOIA SEMPERVIRENS
+C    18 = WESTERN REDCEDAR (RC)        THUJA PLICATA
+C    19 = WESTERN HEMLOCK (WH)         TSUGA HETEROPHYLLA
+C    20 = MOUNTAIN HEMLOCK (MH)        TSUGA MERTENSIANA
+C    21 = BIGLEAF MAPLE (BM)           ACER MACROPHYLLUM
+C    22 = RED ALDER (RA)               ALNUS RUBRA
+C    23 = WHITE ALDER (WA) /           ALNUS RHOMBIFOLIA
+C         PACIFIC MADRONE              ARBUTUS MENZIESII
+C    24 = PAPER BIRCH (PB)             BETULA PAPYRIFERA
+C    25 = GIANT CHINQUAPIN (GC) /      CHRYSOLEPIS CHRYSOPHYLLA
+C         TANOAK                       LITHOCARPUS DENSIFLORUS
+C    26 = QUAKING ASPEN (AS)           POPULUS TREMULOIDES
+C    27 = BLACK COTTONWOOD (CW)        POPULUS TRICHOCARPA
+C    28 = OREGON WHITE OAK (WO) /      QUERCUS GARRYANA
+C         CALIFORNIA BLACK OAK         QUERCUS KELLOGGII
+C    29 = WESTERN JUNIPER (WJ)         JUNIPERUS OCCIDENTALIS
+C    30 = SUBALPINE LARCH (LL)         LARIX LYALLII
+C    31 = WHITEBARK PINE (WB)          PINUS ALBICAULIS
+C    32 = KNOBCONE PINE (KP)           PINUS ATTENUATA
+C    33 = PACIFIC YEW (PY)             TAXUS BREVIFOLIA
+C    34 = PACIFIC DOGWOOD (DG)         CORNUS NUTTALLII
+C    35 = HAWTHORN (HT)                CRATAEGUS sp.
+C    36 = BITTER CHERRY (CH)           PRUNUS EMARGINATA
+C    37 = WILLOW (WI)                  SALIX sp.
+C    38 = ---
+C    39 = OTHER (OT)
+C----------
+      DATA PN_FIAJSP /
+     & '011',   '015',   '017',   '019',   '020',   '098',   '022',
+     & '042',   '081',   '093',   '108',   '116',   '117',   '119',
+     & '122',   '202',   '211',   '242',   '263',   '264',   '312',
+     & '351',   '352',   '375',   '431',   '746',   '747',   '815',
+     & '064',   '072',   '101',   '103',   '231',   '492',   '500',
+     & '768',   '920',   '   ',   '999'/
+C ======================================================================
+C SN
+C     SPECIES LIST FOR SOUTHERN VARIANT.
+C
+C    1 = FIR SPECIES (FR)              ABIES SP.
+C    2 = REDCEDAR SPECIES (JU)         JUNIPERUS SP.
+C    3 = SPRUCE SPECIES (PI)           PICEA SP.
+C    4 = SAND PINE (PU)                PINUS CLAUSA
+C    5 = SHORTLEAF PINE (SP)           PINUS ECHINATA
+C    6 = SLASH PINE (SA)               PINUS ELLIOTTII
+C    7 = SPRUCE PINE (SR)              PINUS GLABRA
+C    8 = LONGLEAF PINE (LL)            PINUS PALUSTRIS
+C    9 = TABLE MOUNTAIN PINE (TM)      PINUS PUNGENS
+C    10 = PITCH PINE (PP)              PINUS RIGIDA
+C    11 = POND PINE (PD)               PINUS SEROTINA
+C    12 = EASTERN WHITE PINE (WP)      PINUS STROBUS
+C    13 = LOBLOLLY PINE (LP)           PINUS TAEDA
+C    14 = VIRGINIA PINE (VP)           PINUS VIRGINIANA
+C    15 = BALDCYPRESS (BY)             TAXODIUM DISTICHUM
+C    16 = PONDCYPRESS (PC)             TAXODIUM DISTICHUM VAR. NUTANS
+C    17 = HEMLOCK SPECIES (HM)         TSUGA SP.
+C    18 = FLORIDA MAPLE (FM)           ACER BARBATUM
+C    19 = BOXELDER (BE)                ACER NEGUNDO
+C    20 = RED MAPLE (RM)               ACER RUBRUM
+C    21 = SILVER MAPLE (SV)            ACER SACCHARINUM
+C    22 = SUGAR MAPLE (SM)             ACER SACCHARUM
+C    23 = BUCKEYE, HORSECHESTNUT SPECIES(BU)  AESCULUS SP.
+C    24 = BIRCH SPECIES (BB)           BETULA SP.
+C    25 = SWEET BIRCH, BLACK BIRCH (SB)BETULA LENTA
+C    26 = AMERICAN HORNBEAM (AH)       CARPINUS CAROLINIANA
+C    27 = HICKORY SPECIES (HI)         CARYA SP.
+C    28 = CATALPA (CA)                 CATALPA SP.
+C    29 = HACKBERRY SPECIES (HB)       CELTIS SP.
+C    30 = EASTERN REDBUD (RD)          CERCIS CANADENSIS
+C    31 = FLOWERING DOGWOOD (DW)       CORNUS FLORIDA
+C    32 = COMMON PERSIMMON (PS)        DIOSPYROS VIRGINIANA
+C    33 = AMERICAN BEECH (AB)          FAGUS GRANDIFOLIA
+C    34 = ASH SPECIES(AS)              FRAXINUS SP.
+C    35 = WHITE ASH (WA)               FRAXINUS AMERICANA
+C    36 = BLACK ASH (BA)               FRAXINUS NIGRA
+C    37 = GREEN ASH (GA)               FRAXINUS PENNSYLVANICA
+C    38 = HONEYLOCUST (HL)             GLEDITSIA TRIACANTHOS
+C    39 = LOBLOLLY-BAY (LB)            GORDONIA LASIANTHUS
+C    40 = SILVERBELL (HA)              HALESIA SP.
+C    41 = AMERICAN HOLLY (HY)          ILEX OPACA
+C    42 = BUTTERNUT (BN)               JUGLANS CINEREA
+C    43 = BLACK WALNUT (WN)            JUGLANS NIGRA
+C    44 = SWEETGUM (SU)                LIQUIDAMBAR STYRACIFLUA
+C    45 = YELLOW-POPLAR (YP)           LIRIODENDRON TULIPIFERA
+C    46 = MAGNOLIA SPECIES (MG)        MAGNOLIA SP.
+C    47 = CUCUMBERTREE (CT)            MAGNOLIA ACUMINATA
+C    48 = SOUTHERN MAGNOLIA (MS)       MAGNOLIA GRANDIFLORA
+C    49 = SWEETBAY (MV)                MAGNOLIA VIRGINIANA
+C    50 = BIGLEAF MAGNOLIA (ML)        MAGNOLIA MACROPHYLLA
+C    51 = APPLE SPECIES (AP)           MALUS SP.
+C    52 = MULBERRY SPECIES (MB)        MORUS SP.
+C    53 = WATER TUPELO (WT)            NYSSA AQUATICA
+C    54 = BLACKGUM/ BLACK TUPELO (BG)  NYSSA SYLVATICA
+C    55 = SWAMP TUPELO(TS)             NYSSA SYLVATICA VAR. BIFLORA
+C    56 = EASTERN HOPHORNBEAM, (HH)    OSTRYA VIRGINIANA
+C    57 = SOURWOOD (SD)                OXYDENDRUM ARBOREUM
+C    58 = REDBAY (RA)                  PERSEA BORBONIA
+C    59 = SYCAMORE (SY)                PLATANUS OCCIDENTALIS
+C    60 = COTTONWOOD SPECIES (CW)      POPULUS SP.
+C    61 = BIGTOOTH ASPEN (BT)          POPULUS GRANDIDENTATA
+C    62 = BLACK CHERRY (BC)            PRUNUS SEROTINA
+C    63 = WHITE OAK (WO)               QUERCUS ALBA
+C    64 = SCARLET OAK (SO)             QUERCUS COCCINEA
+C    65 = SOUTHERN RED OAK (SK)        QUERCUS FALCATA VAR. FALCATA
+C    66 = CHERRYBARK OAK               QUERCUS FALCATA
+C    67 = TURKEY OAK (TO)              QUERCUS LAEVIS
+C    68 = LAUREL OAK (LK)              QUERCUS LAURIFOLIA
+C    69 = OVERCUP OAK (OV)             QUERCUS LYRATA
+C    70 = BLACKJACK OAK (BJ)           QUERCUS MARILANDICA
+C    71 = SWAMP CHESTNUT OAK (SN)      QUERCUS MICHAUXII
+C    72 = CHINKAPIN OAK (CK)           QUERCUS MUEHLENBERGII
+C    73 = WATER OAK (WK)               QUERCUS NIGRA
+C    74 = CHESTNUT OAK (CO)            QUERCUS PRINUS
+C    75 = NORTHERN RED OAK (RO)        QUERCUS RUBRA
+C    76 = SHUMARD OAK (QS)             QUERCUS SHUMARDII
+C    77 = POST OAK (PO)                QUERCUS STELLATA
+C    78 = BLACK OAK (BO)               QUERCUS VELUTINA
+C    79 = LIVE OAK (LO)                QUERCUS VIRGINIANA
+C    80 = BLACK LOCUST (BK)            ROBINIA PSUEDOACACIA
+C    81 = WILLOW SPECIES (WI)          SALIX SP.
+C    82 = SASSAFRAS (SS)               SASSAFRAS ALBIDUM
+C    83 = BASSWOOD SPECIES (BW)        TILIA SP.
+C    84 = ELM SPECIES(EL)              ULMUS SP.
+C    85 = WINGED ELM (WE)              ULMUS ALATA
+C    86 = AMERICAN ELM (AE)            ULMUS AMERICANA
+C    87 = SLIPPERY ELM (RL)            ULMUS RUBRA
+C    88 = OTHER SOFTWOOD SPECIES (OS)
+C    89 = OTHER HARDWOOD SPECIES (OH)
+C    90 = OTHER SPECIES(OT)
+C----------
+      DATA SN_FIAJSP /
+     & '010',   '057',   '090',   '107',   '110',   '111',   '115',
+     & '121',   '123',   '126',   '128',   '129',   '131',   '132',
+     & '221',   '222',   '260',   '311',   '313',   '316',   '317',
+     & '318',   '330',   '370',   '372',   '391',   '400',   '450',
+     & '460',   '471',   '491',   '521',   '531',   '540',   '541',
+     & '543',   '544',   '552',   '555',   '580',   '591',   '601',
+     & '602',   '611',   '621',   '650',   '651',   '652',   '653',
+     & '654',   '660',   '680',   '691',   '693',   '694',   '701',
+     & '711',   '721',   '731',   '740',   '743',   '762',   '802',
+     & '806',   '812',   '813',   '819',   '820',   '822',   '824',
+     & '825',   '826',   '827',   '832',   '833',   '834',   '835',
+     & '837',   '838',   '901',   '920',   '931',   '950',   '970',
+     & '971',   '972',   '975',   '298',   '998',   '999'/
+C ======================================================================
+C SO
+C     SPECIES LIST FOR SORNEC-33 VARIANT.
+C
+C     1 = WESTERN WHITE PINE (WP)            PINUS MONTICOLA
+C     2 = SUGAR PINE (SP)                    PINUS LAMBERTIANA
+C     3 = DOUGLAS-FIR (DF)                   PSEUDOTSUGA MENZIESII
+C     4 = WHITE FIR (WF)                     ABIES CONCOLOR (SO - WF/GF)
+C     5 = MOUNTAIN HEMLOCK (MH)              TSUGA MERTENSIANA
+C     6 = INCENSE CEDAR (IC)                 LIBOCEDRUS DECURRENS
+C     7 = LODGEPOLE PINE (LP)                PINUS CONTORTA
+C     8 = ENGELMANN SPRUCE (ES)              PICEA ENGELMANNII
+C     9 = SHASTA RED FIR (SH)                ABIES MAGNIFICA (SHASTENSIS)(FROM CA)
+C    10 = PONDEROSA PINE (PP)                PINUS PONDEROSA
+C    11 = WESTERN JUNIPER (WJ)               JUNIPERUS OCCIDENTALIS
+C    12 = GRAND FIR (GF)                     ABIES GRANDIS (SO - WF/GF)
+C    13 = SUBALPINE FIR (AF)                 ABIES LASIOCARPA
+C    14 = PACIFIC SILVER FIR (SF)            ABIES AMABILIS (FROM EC)
+C    15 = NOBLE FIR (NF)                     ABIES PROCERA (FROM WC)
+C    16 = WHITEBARK PINE (WB)                PINUS ALBICAULIS (FROM TT)
+C    17 = WESTERN LARCH (WL)                 LARIX OCCIDENTALIS (FROM EC)
+C    18 = WESTERN REDCEDAR (RC)              THUJA PLICATA (FROM EC)
+C    19 = WESTERN HEMLOCK (WH)               TSUGA HETEROPHYLLA (FROM WC)
+C    20 = PACIFIC YEW (PY)                   TAXUS BREVIFOLIA (FROM WC)
+C    21 = WHITE ALDER (WA)                   ALNUS RHOMBIFOLIA (FROM WC)
+C    22 = RED ALDER (RA)                     ALNUS RUBRA (FROM WC)
+C    23 = BIGLEAF MAPLE (BM)                 ACER MACROPHYLLUM (FROM WC)
+C    24 = QUAKING ASPEN (AS)                 POPULUS TREMULOIDES (FROM UT)
+C    25 = BLACK COTTONWOOD (CW)              POPULUS TRICHOCARPA (FROM WC)
+C    26 = BITTER CHERRY (CH)                 PRUNUS EMARGINATA (FROM WC)
+C    27 = OREGON WHITE OAK (WO)              QUERCUS GARRYANA (FROM CA)
+C    28 = WILLOW (WI)                        SALIX sp. (FROM WC)
+C    29 = GIANT CHINQUAPIN (GC)              CHRYSOLEPIS CHRYSOPHYLLA (FROM WC)
+C    30 = CURL-LEAF MOUNTAIN MAHOGANY (MC)   CERCOCARPUS LEDIFOLIUS (FROM WC)
+C    31 = BIRCHLEAF MOUNTAIN MAHOGANY (MB)   CERCOCARPUS ALNIFOLIUS (FROM WC)
+C    32 = OTHER SOFTWOODS (OS)               DOUGLAS-FIR (DF) (FROM SO)
+C    33 = OTHER HARDWOODS (OH)               MISCELLANEOUS HARDWOOD (FROM WC)
+
+C----------
+      DATA SO_FIAJSP /
+     &'119','117','202','015','264','081','108','093','021','122',
+     &'064','017','019','011','022','101','073','242','263','231',
+     &'352','351','312','746','747','768','815','920','431','475',
+     &'478','298','998'/
+C ======================================================================
+C TT
+C
+C  1 = WHITEBARK PINE              WB   PINUS ALBICAULIS
+C  2 = LIMBER PINE                 LM   PINUS FLEXILIS
+C  3 = DOUGLAS-FIR                 DF   PSEUDOTSUGA MENZIESII
+C  4 = SINGLELEAF PINYON           PM   PINUS MONOPHYLLA
+C  5 = BLUE SPRUCE                 BS   PICEA PUNGENS
+C  6 = QUAKING ASPEN               AS   POPULUS TREMULOIDES
+C  7 = LODGEPOLE PINE              LP   PINUS CONTORTA
+C  8 = ENGELMANN SPRUCE            ES   PICEA ENGELMANNII
+C  9 = SUBALPINE FIR               AF   ABIES LASIOCARPA
+C 10 = PONDEROSA PINE              PP   PINUS PONDEROSA
+C 11 = UTAH JUNIPER                UJ   JUNIPERUS OSTEOSPERMA
+C 12 = ROCKY MOUNTAIN JUNIPER      RM   JUNIPERUS SCOPULORUM
+C 13 = BIGTOOTH MAPLE              BI   ACER GRANDIDENTATUM
+C 14 = ROCKY MOUNTAIN MAPLE        MM   ACER GLABRUM
+C 15 = NARROWLEAF COTTONWOOD       NC   POPULUS ANGUSTIFOLIA
+C 16 = CURLLEAF MOUNTAIN-MAHOGANY  MC   CERCOCARPUS LEDIFOLIUS
+C 17 = OTHER SOFTWOODS             OS 
+C 18 = OTHER HARDWOODS             OH
+C----------
+      DATA TT_FIAJSP /
+     & '101',   '113',   '202',   '133',   '096',
+     & '746',   '108',   '093',   '019',   '122',
+     & '065',   '066',   '322',   '321',   '749',   
+     & '475',   '298',   '998'/
+C ======================================================================
+C UT
+C SPECIES LIST FOR UTAH VARIANT:
+C
+C  1=WB,  2=LM,  3=DF,  4=WF,  5=BS,  6=AS,  7=LP,  8=ES,  9=AF, 10=PP,
+C 11=PI, 12=WJ, 13=GO, 14=PM, 15=RM, 16=UJ, 17=GB, 18=NC, 19=FC, 20=MC,
+C 21=BI, 22=BE, 23=OS, 24=OH
+C
+C VARIANT EXPANSION:
+C GO AND OH USE OA (OAK SP.) EQUATIONS FROM UT
+C PM USES PI (COMMON PINYON) EQUATIONS FROM UT
+C RM AND UJ USE WJ (WESTERN JUNIPER) EQUATIONS FROM UT
+C GB USES BC (BRISTLECONE PINE) EQUATIONS FROM CR
+C NC, FC, AND BE USE NC (NARROWLEAF COTTONWOOD) EQUATIONS FROM CR
+C MC USES MC (CURL-LEAF MTN-MAHOGANY) EQUATIONS FROM SO
+C BI USES BM (BIGLEAF MAPLE) EQUATIONS FROM SO
+C OS USES OT (OTHER SP.) EQUATIONS FROM UT
+C
+C     1 = WHITEBARK PINE               WB  PINUS ALBICAULIS
+C     2 = LIMBER PINE                  LM  PINUS FLEXILIS
+C     3 = DOUGLAS-FIR                  DF  PSEUDOTSUGA MENZIESII
+C     4 = WHITE FIR                    WF  ABIES CONCOLOR
+C     5 = BLUE SPRUCE                  BS  PICEA PUNGENS
+C     6 = QUAKING ASPEN                AS  POPULUS TREMULOIDES
+C     7 = LODGEPOLE PINE               LP  PINUS CONTORTA
+C     8 = ENGELMANN SPRUCE             ES  PICEA ENGELMANNII
+C     9 = SUBALPINE FIR                AF  ABIES LASIOCARPA
+C    10 = PONDEROSA PINE               PP  PINUS PONDEROSA
+C    11 = COMMON PINYON                PI  PINUS EDULIS
+C    12 = WESTERN JUNIPER              WJ  JUNIPERUS OCCIDENTALIS
+C    13 = GAMBEL OAK                   GO  QUERCUS GAMBELII
+C    14 = SINGLELEAF PINYON            PM  PINUS MONOPHYLLA
+C    15 = ROCKY MOUNTAIN JUNIPER       RM  JUNIPERUS SCOPULORUM
+C    16 = UTAH JUNIPER                 UJ  JUNIPERUS OSTEOSPERMA
+C    17 = GREAT BASIN BRISTLECONE PINE GB  PINUS LONGAEVA
+C    18 = NARROWLEAF COTTONWOOD        NC  POPULUS ANGUSTIFOLIA
+C    19 = FREMONT COTTONWOOD           FC  POPULUS FREMONTII
+C    20 = CURL-LEAF MOUNTAIN-MAHOGANY  MC  CERCOCARPUS LEDIFOLIUS
+C    21 = BIGTOOTH MAPLE               BI  ACER GRANDIDENTATUM
+C    22 = BOXELDER                     BE  ACER NEGUNDO
+C    23 = OTHER SOFTWOODS              OS
+C    24 = OTHER HARDWOODS              OH
+C
+C----------
+      DATA UT_FIAJSP /
+     & '101',   '113',   '202',   '015',   '096',   '746',   '108',
+     & '093',   '019',   '122',   '106',   '064',   '814',   '133',
+     & '066',   '065',   '142',   '749',   '748',   '475',   '322',
+     & '313',   '298',   '998'/
+C ======================================================================
+C WC
+C     SPECIES LIST FOR WEST CASCADES VARIANT
+C
+C     1 = PACIFIC SILVER FIR (SF)      ABIES AMABILIS
+C     2 = WHITE FIR (WF)               ABIES CONCOLOR
+C     3 = GRAND FIR (GF)               ABIES GRANDIS
+C     4 = SUBALPINE FIR (AF)           ABIES LASIOCARPA
+C     5 = CALIFORNIA RED FIR (RF)/     ABIES MAGNIFICA
+C         SHASTA RED FIR
+C     6 =    
+C     7 = NOBLE FIR (NF)               ABIES PROCERA
+C     8 = ALASKA CEDAR (YC)/           CALLITROPSIS NOOTKATENSIS
+C         WESTERN LARCH                LARIX OCCIDENTALIS
+C     9 = INCENSE CEDAR (IC)           LIBOCEDRUS DECURRENS
+C    10 = ENGELMANN SPRUCE (ES)/       PICEA ENGELMANNII
+C         SITKA SPRUCE                 PICEA SITCHENSIS
+C    11 = LODGEPOLE PINE (LP)          PINUS CONTORTA
+C    12 = JEFFREY PINE (JP)            PINUS JEFFREYI
+C    13 = SUGAR PINE (SP)              PINUS LAMBERTIANA
+C    14 = WESTERN WHITE PINE (WP)      PINUS MONTICOLA
+C    15 = PONDEROSA PINE (PP)          PINUS PONDEROSA
+C    16 = DOUGLAS-FIR (DF)             PSEUDOTSUGA MENZIESII
+C    17 = COAST REDWOOD (RW)           SEQUOIA SEMPERVIRENS
+C    18 = WESTERN REDCEDAR (RC)        THUJA PLICATA
+C    19 = WESTERN HEMLOCK (WH)         TSUGA HETEROPHYLLA
+C    20 = MOUNTAIN HEMLOCK (MH)        TSUGA MERTENSIANA
+C    21 = BIGLEAF MAPLE (BM)           ACER MACROPHYLLUM
+C    22 = RED ALDER (RA)               ALNUS RUBRA
+C    23 = WHITE ALDER (WA) /           ALNUS RHOMBIFOLIA
+C         PACIFIC MADRONE              ARBUTUS MENZIESII
+C    24 = PAPER BIRCH (PB)             BETULA PAPYRIFERA
+C    25 = GIANT CHINQUAPIN (GC) /      CHRYSOLEPIS CHRYSOPHYLLA
+C         TANOAK                       LITHOCARPUS DENSIFLORUS
+C    26 = QUAKING ASPEN (AS)           POPULUS TREMULOIDES
+C    27 = BLACK COTTONWOOD (CW)        POPULUS TRICHOCARPA
+C    28 = OREGON WHITE OAK (WO) /      QUERCUS GARRYANA
+C         CALIFORNIA BLACK OAK         QUERCUS KELLOGGII
+C    29 = WESTERN JUNIPER (WJ)         JUNIPERUS OCCIDENTALIS
+C    30 = SUBALPINE LARCH (LL)         LARIX LYALLII
+C    31 = WHITEBARK PINE (WB)          PINUS ALBICAULIS
+C    32 = KNOBCONE PINE (KP)           PINUS ATTENUATA
+C    33 = PACIFIC YEW (PY)             TAXUS BREVIFOLIA
+C    34 = PACIFIC DOGWOOD (DG)         CORNUS NUTTALLII
+C    35 = HAWTHORN (HT)                CRATAEGUS sp.
+C    36 = BITTER CHERRY (CH)           PRUNUS EMARGINATA
+C    37 = WILLOW (WI)                  SALIX sp.
+C    38 =    
+C    39 = OTHER (OT)
+C----------
+      DATA WC_FIAJSP /
+     & '011',   '015',   '017',   '019',   '020',   '   ',   '022',
+     & '042',   '081',   '093',   '108',   '116',   '117',   '119',
+     & '122',   '202',   '211',   '242',   '263',   '264',   '312',
+     & '351',   '352',   '375',   '431',   '746',   '747',   '815',
+     & '064',   '072',   '101',   '103',   '231',   '492',   '500',
+     & '768',   '920',   '   ',   '999'/
+C ======================================================================
+C WS
+C     SPECIES LIST FOR WESTERN SIERRAS VARIANT.
+C
+C     1 = SUGAR PINE (SP)                   PINUS LAMBERTIANA
+C     2 = DOUGLAS-FIR (DF)                  PSEUDOTSUGA MENZIESII
+C     3 = WHITE FIR (WF)                    ABIES CONCOLOR
+C     4 = GIANT SEQUOIA (GS)                SEQUOIADENDRON GIGANTEAUM
+C     5 = INCENSE CEDAR (IC)                LIBOCEDRUS DECURRENS
+C     6 = JEFFREY PINE (JP)                 PINUS JEFFREYI
+C     7 = CALIFORNIA RED FIR (RF)           ABIES MAGNIFICA
+C     8 = PONDEROSA PINE (PP)               PINUS PONDEROSA
+C     9 = LODGEPOLE PINE (LP)               PINUS CONTORTA
+C    10 = WHITEBARK PINE (WB)               PINUS ALBICAULIS
+C    11 = WESTERN WHITE PINE (WP)           PINUS MONTICOLA
+C    12 = SINGLELEAF PINYON (PM)            PINUS MONOPHYLLA
+C    13 = PACIFIC SILVER FIR (SF)           ABIES AMABILIS
+C    14 = KNOBCONE PINE (KP)                PINUS ATTENUATA
+C    15 = FOXTAIL PINE (FP)                 PINUS BALFOURIANA
+C    16 = COULTER PINE (CP)                 PINUS COULTERI
+C    17 = LIMBER PINE (LM)                  PINUS FLEXILIS
+C    18 = MONTEREY PINE (MP)                PINUS RADIATA
+C    19 = GRAY PINE (GP)                    PINUS SABINIANA
+C         (OR CALIFORNIA FOOTHILL PINE)
+C    20 = WASHOE PINE (WE)                  PINUS WASHOENSIS
+C    21 = GREAT BASIN BRISTLECONE PINE (GB) PINUS LONGAEVA
+C    22 = BIGCONE DOUGLAS-FIR (BD)          PSEUDOTSUGA MACROCARPA
+C    23 = REDWOOD (RW)                      SEQUOIA SEMPERVIRENS
+C    24 = MOUNTAIN HEMLOCK (MH)             TSUGA MERTENSIANA
+C    25 = WESTERN JUNIPER (WJ)              JUNIPERUS OCIDENTALIS
+C    26 = UTAH JUNIPER (UJ)                 JUNIPERUS OSTEOSPERMA
+C    27 = CALIFORNIA JUNIPER (CJ)           JUNIPERUS CALIFORNICA
+C    28 = CALIFORNIA LIVE OAK (LO)          QUERCUS AGRIFOLIA
+C    29 = CANYON LIVE OAK (CY)              QUERCUS CHRYSOLEPSIS
+C    30 = BLUE OAK (BL)                     QUERCUS DOUGLASII
+C    31 = CALIFORNIA BLACK OAK (BO)         QUERQUS KELLOGGII
+C    32 = VALLEY OAK (VO)                   QUERCUS LOBATA
+C         (OR CALIFORNIA WHITE OAK)
+C    33 = INTERIOR LIVE OAK (IO)            QUERCUS WISLIZENI
+C    34 = TANOAK (TO)                       LITHOCARPUS DENSIFLORUS
+C    35 = GIANT CHINQUAPIN (GC)             CHRYSOLEPIS CHRYSOPHYLLA
+C    36 = QUAKING ASPEN (AS)                POPULUS TREMULOIDES
+C    37 = CALIFORNIA-LAUREL (CL)            UMBELLULARIA CALIFORNICA
+C    38 = PACIFIC MADRONE (MA)              ARBUTUS MENZIESII
+C    39 = PACIFIC DOGWOOD (DG)              CORNUS NUTTALLII
+C    40 = BIGLEAF MAPLE (BM)                ACER MACROPHYLLUM
+C    41 = CURLLEAF MOUNTAIN-MAHOGANY (MC)   CERCOCARPUS LEDIFOLIUS
+C    42 = OTHER SOFTWOODS (OS)
+C    43 = OTHER HARDWOODS (OH)
+C
+      DATA WS_FIAJSP /
+     & '117',   '202',   '015',   '212',   '081',   
+     & '116',   '020',   '122',   '108',   '101',   
+     & '119',   '133',   '011',   '103',   '104',   
+     & '109',   '113',   '124',   '127',   '137',   
+     & '142',   '201',   '211',   '264',   '064',   
+     & '065',   '062',   '801',   '805',   '807',   
+     & '818',   '821',   '839',   '631',   '431',   
+     & '746',   '981',   '361',   '492',   '312',   
+     & '475',   '298',   '998'/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
