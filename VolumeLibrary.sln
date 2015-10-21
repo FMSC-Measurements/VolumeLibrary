@@ -1,0 +1,65 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "volCStest", "volCStest\volCStest.csproj", "{7EE7756B-DBF7-4152-8FA4-04C211845018}"
+EndProject
+Project("{6989167D-11E4-40FE-8C1A-2192A86A7E90}") = "vollib", "vollib\vollib.vfproj", "{DD129EEC-6427-4818-924F-87C2CDBBA9AD}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "VollibTester", "deployment\deployment.vdproj", "{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|Win32.ActiveCfg = Debug|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|Win32.Build.0 = Debug|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|x86.ActiveCfg = Debug|x86
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Debug|x86.Build.0 = Debug|x86
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|Win32.ActiveCfg = Release|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|Win32.Build.0 = Release|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|x64.ActiveCfg = Release|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|x64.Build.0 = Release|Any CPU
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|x86.ActiveCfg = Release|x86
+		{7EE7756B-DBF7-4152-8FA4-04C211845018}.Release|x86.Build.0 = Release|x86
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Debug|x64.ActiveCfg = Debug|x64
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Debug|x64.Build.0 = Debug|x64
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Debug|x86.ActiveCfg = Debug|Win32
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Release|Any CPU.ActiveCfg = Release|x64
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Release|Win32.ActiveCfg = Release|Win32
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Release|Win32.Build.0 = Release|Win32
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Release|x64.ActiveCfg = Release|x64
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Release|x64.Build.0 = Release|x64
+		{DD129EEC-6427-4818-924F-87C2CDBBA9AD}.Release|x86.ActiveCfg = Release|Win32
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Debug|Any CPU.ActiveCfg = Debug
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Debug|Win32.ActiveCfg = Debug
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Debug|Win32.Build.0 = Debug
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Debug|x64.ActiveCfg = Debug
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Debug|x86.ActiveCfg = Debug
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Debug|x86.Build.0 = Debug
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|Any CPU.ActiveCfg = Release
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|Win32.ActiveCfg = Release
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|Win32.Build.0 = Release
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|x64.ActiveCfg = Release
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|x64.Build.0 = Release
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|x86.ActiveCfg = Release
+		{9F8A3B9F-5BD9-48FF-81B9-D286E783A209}.Release|x86.Build.0 = Release
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
