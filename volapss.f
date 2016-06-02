@@ -72,7 +72,7 @@
       CHARACTER*10    EQNUM
       INTEGER         SPEC
       REAL            LOGVOL(I7,I20),LOGDIA(I21,I3) 
-
+      INTEGER         IDIST
 !     MERCH VARIABLES 
       REAL            THT1,   MAXLEN
 
@@ -135,7 +135,7 @@
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,3,7,15,20,21,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLAG, MERRULES)
+     +    BA,SI,CTYPE,ERRFLAG, MERRULES,IDIST)
      
       !conVert Char(*) back to CHAR256 for return to C++ wrapper including
       !a null terminator required by C strings.  Tack on the null terminator

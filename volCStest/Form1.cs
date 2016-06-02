@@ -70,7 +70,7 @@ namespace volCStest
          ref float btr, ref int i3, ref int i7, ref int i15, ref int i20, ref int i21, float[] vol, float[,] logvol,
          float[,] logdia, float[] loglen, float[] bohlt, ref int tlogs, ref float nologp, ref float nologs, ref int cutflg, ref int bfpflg,
          ref int cupflg, ref int cdpflg, ref int spflg, StringBuilder conspec, StringBuilder prod, ref int httfll, StringBuilder live,
-         ref int ba, ref int si, StringBuilder ctype, ref int errflg, ref int indeb, ref int pmtflg, ref MRules mRules, int ll1, int ll2, int ll3, int ll4, int ll5, int ll6, int ll7, int charLen);
+         ref int ba, ref int si, StringBuilder ctype, ref int errflg, ref int indeb, ref int pmtflg, ref MRules mRules, ref int dist, int ll1, int ll2, int ll3, int ll4, int ll5, int ll6, int ll7, int charLen);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void CALCDIACS(ref int regn, StringBuilder forst, StringBuilder voleq, ref float stump, ref float dbhob,
@@ -100,7 +100,7 @@ namespace volCStest
         //static extern void VOLLIBVB8(ref float tcu);
 
         // standard variables
-        int REGN,HTLOG,HTREF,FCLASS,HTTFLL,ERRFLAG,TLOGS,BA,SI,SPCODE,INDEB, PMTFLG;
+        int REGN,HTLOG,HTREF,FCLASS,HTTFLL,ERRFLAG,TLOGS,BA,SI,SPCODE,INDEB, PMTFLG, IDIST;
         int CUTFLG,BFPFLG,CUPFLG,CDPFLG,CUSFLG,CDSFLG,SPFLG,VERSION;
         float DBHOB,DRCOB,HTTOT,HT1PRD,HT2PRD,STUMP;
         float UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2;
@@ -163,7 +163,7 @@ namespace volCStest
         string m_sConSpec;    
                      
         //strings for passing to/from fortran.  Pass fixed length strings
-	      StringBuilder FORST = new StringBuilder(256);
+	    StringBuilder FORST = new StringBuilder(256);
         StringBuilder DIST = new StringBuilder(256);
         StringBuilder PROD = new StringBuilder(256);
         StringBuilder HTTYPE = new StringBuilder(256);
@@ -283,15 +283,17 @@ namespace volCStest
                     }
                 }
             }
+            //STUMP = 1.0F;
            //MessageBox.Show("b4 HTTYPE=" + HTTYPE);
            //if pmtflg == 2 call profile2 with user defined merch rules 
            //else just call the regular profile model...vollibcs.f handles this.
-           VOLLIBCS(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
+           IDIST = int.Parse(DIST.ToString());
+            VOLLIBCS(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
               HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
               ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, ref I3, ref I7, ref I15, ref I20, ref I21, VOL, LOGVOL,
               LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
               ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref INDEB, ref PMTFLG,
-              ref mRules, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
+              ref mRules, ref IDIST, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
 
             //test call MRULESCS
            MRULESCS(ref REGN, VOLEQ, PROD, ref TRIM, ref MINLEN, ref MAXLEN, ref OPT, ref MERCHL, strlen, strlen);
@@ -1037,7 +1039,7 @@ namespace volCStest
                     mRules.evod = 2;
 
                     mRules.maxlen = 8;  // 16; changed to 8 based on r9clark.f
-                    mRules.minlen = 8; // 2; changed to 4 based on r9clark.f
+                    mRules.minlen = 2; // 2; changed to 4 based on r9clark.f
                     mRules.minlent = 8;
                     mRules.opt = 22;
                     if (spp < 300)

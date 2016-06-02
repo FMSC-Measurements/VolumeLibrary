@@ -4,7 +4,7 @@
 ! Added DIB calculation for region 8 Clark equation (6/4/14)
 ! Added DIB calculation for Behr equation (1/28/2014)
 ! Added stump diameter (from ground to 4.5 ft) calculation for non profile model using Raile 1983 (YW)
-! 
+! YW 2016/01/13 Added BTR default value for Region 3 Santa Fe forest DF and PP
 !  CalcDia.f90 
 !  FUNCTIONS/SUBROUTINES exported from VOLLIB.dll:
 !	CALCDIA      - subroutine 
@@ -61,6 +61,15 @@
       MTOPP = 0
       MDL = VOLEQ(4:6)
       prod = '01'
+C     Modifid BTR for Region 3 Santa Fe forest DF and PP (YW 2016/01/13)
+C     The BTR for Region 3 has not been released. It is test only
+c      IF(REGN.EQ.3.AND.FORST.EQ.'10'.AND.BTR.EQ.0)THEN
+c        IF(VOLEQ(8:10).EQ.'202') BTR = 89.12
+c        IF(VOLEQ(8:10).EQ.'122') BTR = 89.72
+c        IF(VOLEQ(8:10).EQ.'015') BTR = 91.16
+c       White pine BTR (using 200FW2W108)
+c        IF(VOLEQ(8:10).EQ.'108') BTR = 93.26               
+c      ENDIF
       
       IF(MDL.EQ.'FW2' .OR. MDL.EQ.'fw2' .OR. MDL.EQ.'FW3' .OR.
      &   MDL.EQ.'fw3' .OR. MDL.EQ.'CZ2' .OR. MDL.EQ.'cz2' .OR.

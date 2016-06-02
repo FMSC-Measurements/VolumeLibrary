@@ -15,7 +15,7 @@ C_______________________________________________________________________
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLAG, MERRULES)
+     +    BA,SI,CTYPE,ERRFLAG, MERRULES,IDIST)
 C_______________________________________________________________________
 
 	USE CHARMOD
@@ -55,7 +55,7 @@ C_______________________________________________________________________
     
 !   OUTPUTS
       REAL         NOLOGP,NOLOGS
-      INTEGER      TLOGS,IFORST
+      INTEGER      TLOGS,IFORST,IDIST
     
 !   ARRAYS
       INTEGER      I15,I21,I20,I7,I3,I,J
@@ -73,11 +73,16 @@ C_______________________________________________________________________
         ERRFLAG = 3
         GOTO 4000
       ENDIF
+!-----Set the default DIST to 01---------------------      
+      IF(IDIST.NE.IDIST) IDIST = 1
+      WRITE (DIST, '(I2)') IDIST
+      IF(DIST(1:1) .LT. '0') DIST(1:1) = '0'
+!-----End for DIST (04/19/2016)
 
       IF(VOLEQ .EQ. "" .AND. CTYPE.EQ.'F')THEN
         VAR = '  '
         READ(CONSPEC,'(I3)')SPEC
-        DIST = '01'
+C        DIST = '01'
         CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPEC,PROD,EQNUM,ERRFLAG)
         VOLEQ = EQNUM
         ERRFLAG = 1
@@ -89,7 +94,7 @@ c  save FCLASS value
       IF(FORST(2:2) .LT. '0') THEN
         FORST(2:2) = FORST(1:1)
 	    FORST(1:1) = '0'
-      IF(FORST(2:2) .LT. '0') FORST(2:2) = '0'
+        IF(FORST(2:2) .LT. '0') FORST(2:2) = '0'
       ENDIF
       READ(FORST,'(i2)') IFORST
 
@@ -230,6 +235,14 @@ C ADDED TO TEST R8 CLARK PROFILE FOR LOG BOARDFOOT VOLUME
      +             HT2PRD,HTTOT, LOGDIA,BOLHT,LOGLEN,LOGVOL,VOL,CUTFLG,
      +                  BFPFLG,CUPFLG, CDPFLG,SPFLG,PROD,ERRFLAG,CTYPE,
      +                  UPSHT1,TLOGS,NOLOGP,NOLOGS)
+C 04/19/2016
+C PUT THE INTL BDFT TO VOL(2) FOR GW/JF(08),OUACHITA(09),OZARK-ST FRANCIS(10) 
+C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
+          IF(IFORST.EQ.8.OR.IFORST.EQ.9.OR.IFORST.EQ.10.OR.
+     +       (IFORST.EQ.12.AND.IDIST.NE.2)) THEN
+             VOL(2) = VOL(10)
+          ENDIF          
+
         ELSE        
         
           CALL R8VOL (VOLEQ,DBHOB,HTTOT,UPSHT1,HT1PRD,MTOPP,PROD,VOL,

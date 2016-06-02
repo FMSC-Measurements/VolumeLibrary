@@ -8,6 +8,7 @@ C  Cleaned up code and added comments
 C
 C  Revised TDH 10/04/10
 C  Adding logic to expand the profile model tutorial
+C  YW 2016/01/13 Added BTR default value for Region 3 Santa Fe forest DF and PP
 C_______________________________________________________________________
 
       SUBROUTINE VOLLIBCS(REGN,FORSTI,VOLEQI,MTOPP,MTOPS,STUMP,
@@ -16,7 +17,7 @@ C_______________________________________________________________________
      &    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
      &    VOL,LOGVOLI,LOGDIAI,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPECI,PRODI,HTTFLL,LIVEI,
-     &    BA,SI,CTYPEI,ERRFLAG, INDEB, PMTFLG, MERRULES)
+     &    BA,SI,CTYPEI,ERRFLAG, INDEB, PMTFLG, MERRULES,IDIST)
 C_______________________________________________________________________
 
 
@@ -75,7 +76,7 @@ C**********************************************************************
       CHARACTER*10   EQNUM
       INTEGER        SPEC
       REAL           LOGVOL(I7,I20),LOGDIA(I21,I3),DIBO 
-      
+      INTEGER        IDIST
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
       !Convert the CHAR*256 types to Char(*) so I don't have to rename 
@@ -128,7 +129,7 @@ C**********************************************************************
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,3,7,15,20,21,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLAG, MERRULES)
+     +    BA,SI,CTYPE,ERRFLAG, MERRULES,IDIST)
      
       
       ELSE
@@ -141,7 +142,7 @@ C**********************************************************************
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLAG)
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
           
 !          IF (INDEB.eq.1 .AND. VOLEQ .EQ. 'F06FW2W202') THEN
 !          WRITE (LUDBG,2)'After call VOLINIT'
@@ -228,7 +229,6 @@ C**********************************************************************
       INTEGER         ERRFLG, INDEB, PMTFLG
       TYPE(MERCHRULES):: MERRULES
       
-      
 !     Local variables      
 !     Variable required for call to VOLINIT      
       INTEGER         SPFLG
@@ -249,7 +249,7 @@ C**********************************************************************
       CHARACTER*10   EQNUM
       INTEGER        SPEC
       REAL           LOGVOL(I7,I20),LOGDIA(I21,I3),DIBO 
-      
+      INTEGER        IDIST
       IF (INDEB.eq.1) THEN
 	   OPEN (UNIT=LUDBG, FILE='Debug.txt', STATUS='UNKNOWN')
 	   WRITE (LUDBG,5)'Debugging VOLLIBCS2'
@@ -269,13 +269,59 @@ C**********************************************************************
       ENDIF
 c  PMTFLG = 2 will user defined rule. otherwise use default rule.
       IF (PMTFLG.NE.2) PMTFLG = 3
-      CALL VOLLIBCS(REGN,FORSTI,VOLEQI,MTOPP,MTOPS,STUMP,
-     +    DBHOB,
-     &    DRCOB,HTTYPEI,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
-     &    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
-     &    VOL,LOGVOLI,LOGDIAI,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
-     &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPECI,PRODI,HTTFLL,LIVEI,
-     &    BA,SI,CTYPEI,ERRFLAG, INDEB, PMTFLG, MERRULES)
+C      CALL VOLLIBCS(REGN,FORSTI,VOLEQI,MTOPP,MTOPS,STUMP,
+C     +    DBHOB,
+C     &    DRCOB,HTTYPEI,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+C     &    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+C     &    VOL,LOGVOLI,LOGDIAI,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+C     &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPECI,PRODI,HTTFLL,LIVEI,
+C     &    BA,SI,CTYPEI,ERRFLAG, INDEB, PMTFLG, MERRULES)
+!--------------------------------------------------------------------
+      FORST   = FORSTI(1:2)
+      VOLEQ   = VOLEQI(1:10)
+      HTTYPE  = HTTYPEI(1:1)
+      CONSPEC = CONSPECI(1:4)
+      PROD    = PRODI(1:2)
+      LIVE    = LIVEI(1:1)
+      CTYPE   = CTYPEI(1:1)
+!---------------------------------------------------
+!Use array converter to reshape c arrays to fortran notation
+      LOGVOL = RESHAPE(LOGVOLI, SHAPE(LOGVOL))
+      LOGDIA = RESHAPE(LOGDIAI, SHAPE(LOGDIA))
+      ERRFLAG = 0
+
+      IF (PMTFLG .EQ. 2) THEN
+    
+           CALL VOLINIT2(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,3,7,15,20,21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG, MERRULES,IDIST)
+      
+      ELSE
+           CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+          
+!          IF (INDEB.eq.1 .AND. VOLEQ .EQ. 'F06FW2W202') THEN
+!          WRITE (LUDBG,2)'After call VOLINIT'
+!          ENDIF
+       ENDIF
+
+     
+      !add null terminator required by C# strings
+      FORSTI = FORST // char(0)
+      VOLEQI = VOLEQ // char(0)
+      HTTYPEI = HTTYPE // char(0)
+      CONSPECI = CONSPEC // char(0)
+      PRODI = PROD // char(0)
+      LIVEI = LIVE // char(0)
+      CTYPEI = CTYPE // char(0)
+
       END SUBROUTINE VOLLIBC2
       
 C_______________________________________________________________________
@@ -419,6 +465,11 @@ c     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
       MTOPP = 0
       MDL = VOLEQ(4:6)
       prod = '01'
+C     Modifid BTR for Region 3 Santa Fe forest DF and PP (YW 2016/01/13)
+      IF(REGN.EQ.3.AND.FORST.EQ.'10'.AND.BTR.EQ.0)THEN
+        IF(VOLEQ(8:10).EQ.'202') BTR = 87.8
+        IF(VOLEQ(8:10).EQ.'122') BTR = 88.5
+      ENDIF
       
       IF(MDL.EQ.'FW2' .OR. MDL.EQ.'fw2' .OR. MDL.EQ.'FW3' .OR.
      &   MDL.EQ.'fw3' .OR. MDL.EQ.'CZ2' .OR. MDL.EQ.'cz2' .OR.

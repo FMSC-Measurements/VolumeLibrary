@@ -5,9 +5,10 @@ C     This subroutine calculate biomass using DBH (inches) and return dry biomas
       INTEGER I0, J0
       REAL DBHOB, B0, B1
       REAL BIOMS(8), COEF(10,3)
-      REAL FOL, ROOT, WOOD, BARK, STMTOT, ABT, BRANCHES, CROWN
+      REAL FOL, ROOT, WOOD, BARK, STMTOT, ABT, BRANCHES, CROWN,STUMP
       REAL A0F, A1F, A0R, A1R, A0W, A1W, A0B, A1B
       REAL FOLRATIO, ROTRATIO, WDRATIO, BKRATIO, KG2LB
+      REAL STUMPVIB, STUMPVOB, STUMPHT, WDEN, BDEN
 
 C     COEF IS THE COEFFICIENT FOR ABOVE GROUND TOTAL BIOMASS FOR 10 SPECIES GROUP
 C     SPECIES CLASS SPECIES GROUP                 GROUP CODE  B0         B1
@@ -48,7 +49,7 @@ C                  STEM BARK    3              -2.0980  -1.1432
 C                  STEM WOOD    4              -0.3737  -1.8055
 C    -------------------------------------------------------------
       KG2LB = 2.20462
-
+      STUMP = 0
       IF(SPCD.LT.10)THEN
 C     The SPCD is jenkins group code
         SPCLS = 1
@@ -76,6 +77,14 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
         IF(DONE.LT.0) DONE = 455
         SPCLS = WDBKWT(DONE,2)
         SPGRPCD = WDBKWT(DONE,3) 
+      ENDIF
+
+C    GET VOLUME FOR 1 FOOT STUMP USING RAILE
+      STUMPHT = 1.0
+      IF(DBHOB.GE.5.0) THEN
+        CALL RAILEVOL(SPCD, DBHOB, STUMPHT, STUMPVIB, STUMPVOB)
+        CALL WOODDEN(SPCD, WDEN, BDEN)
+        STUMP = STUMPVIB*WDEN + (STUMPVOB-STUMPVIB)*BDEN
       ENDIF
       
       DO I = 1, 10
@@ -115,12 +124,19 @@ C     CALCULATE COMPONENT RATIO
       WDRATIO = EXP(A0W + A1W/DBHOB)   
       FOL = ABT*FOLRATIO
       ROOT = ABT*ROTRATIO
-      BARK = ABT*BKRATIO
-      WOOD = ABT*WDRATIO
-      STMTOT = WOOD + BARK
-      BRANCHES = ABT - STMTOT - FOL
-      CROWN = ABT - STMTOT
-      
+      IF(DBHOB.LT.5) THEN
+        BARK = 0
+        WOOD = 0
+        STMTOT = 0
+        BRANCHES = ABT - FOL
+        CROWN = ABT
+      ELSE
+        BARK = ABT*BKRATIO
+        WOOD = ABT*WDRATIO
+        STMTOT = WOOD + BARK
+        BRANCHES = ABT - STMTOT - FOL - STUMP
+        CROWN = ABT - STMTOT - STUMP
+      ENDIF
 C     ADD BIOMASS COMPONENT VALUE TO RETURN VARIABLE BIOMS(8)
 C     1 ABOVE GROUND TOTAL
 C     2 STEM WOOD

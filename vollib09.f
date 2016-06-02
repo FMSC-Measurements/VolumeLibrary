@@ -60,7 +60,7 @@
       TYPE(CHAR256):: CTYPEC
       INTEGER         ERRFLAG
       INTEGER					INDEB
-      
+      INTEGER         IDIST
 !     Local variables
       CHARACTER(FORSTC%LENGTH)  FORST
       CHARACTER(VOLEQC%LENGTH)  VOLEQ
@@ -141,7 +141,7 @@
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLAG)
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
      
       !conVert Char(*) back to CHAR256 for return to C++ wrapper including
       !a null terminator required by C strings.  Tack on the null terminator

@@ -1,5 +1,17 @@
       SUBROUTINE VERNUM(VERSION)
-
+! 20151130 For R8 Clark profile use MINLEN = 2 to test BDFT
+! 20151201 Added function VOLLIBVB8XHT for VB project to get merch HT
+C 20160113 Added BTR default value for Region 3 Santa Fe forest DF and PP
+C 20160125 Modify r9ht in r9clark.f to check NaN value for stemHt. The old check doesnot work well.
+C 20160126 Added weight factor for R3 Santa Fe forest (Modified regdftdata.inc)
+C 20160302 Modified r9clark.f to remove the error check for HtTot < 17.3. The calc will use small tree logic
+C 20160322 Modified r8clkdib.f DIB calculation for UPSHT1 < 17.3 to avoid Nan value error. 
+C          Added hardcoded weightfactor for DF in Rogue River - Siskiyou NF based on DBH
+C          Added volume rounding to R8CLARK to be same as the one in r8vol rounding
+C
+C 20160408 Added BTR for R3 F10 WF (91.8) for testing
+C 20160505 Added DIST to VOLINIT and VOLLIBCS to set VOL(2) with Scribner or International for Region 8.
+C 20160517 Added biomass calculation for sapling adjustment factor; set LOGST to 0 in Profile.f for non variable log cruising
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -29,7 +41,7 @@
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20151008
+      VERSION = 20160517
       RETURN
       END SUBROUTINE VERNUM
       
@@ -62,7 +74,7 @@
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20151008
+      VERSION = 20160517
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -85,7 +97,7 @@
 
 !---------------------------------------------------------------------
      
-      VERSION = 20151008
+      VERSION = 20160517
       
       PRINT     '(I8)', VERSION
       RETURN

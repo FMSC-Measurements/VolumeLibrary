@@ -82,6 +82,9 @@ C     Temp variable for BEH equation
 
 
 c      LOGST = 0      ! commented out for variable log cruising
+C     changed to set LOGST = 0 for NOT variable log cruising (CTYPE = V)
+C     YW 05/10/2016
+      IF(CTYPE.NE.'V') LOGST = 0
       ! calc secondary product    
       MFLAG = 0       
       NOLOGP = 0.0

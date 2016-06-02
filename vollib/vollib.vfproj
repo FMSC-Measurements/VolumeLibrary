@@ -149,13 +149,15 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\volinit.f"/>
 		<File RelativePath="..\volinit2.f"/>
 		<File RelativePath=".\volinput_mod.f">
-			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/></File>
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\volinput_mod.f"/>
 		<File RelativePath="..\vollib09.f"/>
 		<File RelativePath="..\vollibcs.f"/>
 		<File RelativePath="..\volumelib.f"/>
 		<File RelativePath="..\volumelibrary.f"/></Filter>
 		<File RelativePath="..\BEQINFO.INC"/>
+		<File RelativePath="..\R8clist.inc"/>
 		<File RelativePath="..\R8CLKCOEF.INC"/>
 		<File RelativePath="..\R8dib.inc"/>
 		<File RelativePath="..\r9coeff.inc"/>

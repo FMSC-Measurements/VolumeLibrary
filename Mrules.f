@@ -179,8 +179,8 @@ c         MINBFD = 6.0
          COR='Y'
          EVOD = 2
          MAXLEN = 8.0
-         MINLEN = 8.0 
-c         MINLEN = 4.0
+c         MINLEN = 8.0 
+         MINLEN = 2.0
          MERCHL = 8.0
          OPT = 22
          read(volEq(8:10),'(i3)') spp
