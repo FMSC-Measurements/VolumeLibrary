@@ -12,6 +12,7 @@ C
 C 20160408 Added BTR for R3 F10 WF (91.8) for testing
 C 20160505 Added DIST to VOLINIT and VOLLIBCS to set VOL(2) with Scribner or International for Region 8.
 C 20160517 Added biomass calculation for sapling adjustment factor; set LOGST to 0 in Profile.f for non variable log cruising
+C 20160713 Modified fwinit to add 301FW2W122, 301FW2W202, 301FW2W015, and 301FW2W108 for Santa Fe NF.
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -41,7 +42,7 @@ C 20160517 Added biomass calculation for sapling adjustment factor; set LOGST to
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20160517
+      VERSION = 20160713
       RETURN
       END SUBROUTINE VERNUM
       
@@ -74,7 +75,7 @@ C 20160517 Added biomass calculation for sapling adjustment factor; set LOGST to
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20160517
+      VERSION = 20160713
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -97,7 +98,7 @@ C 20160517 Added biomass calculation for sapling adjustment factor; set LOGST to
 
 !---------------------------------------------------------------------
      
-      VERSION = 20160517
+      VERSION = 20160713
       
       PRINT     '(I8)', VERSION
       RETURN
