@@ -7,6 +7,7 @@ C
 c  revised YW 05/16/2013 For BEH equation, if total height is entered, the HTTYPE is set to F
 !REV  YW 02/27/2014 For region 6 Behre equation, if merch height is entered in feet, convert it to log ht
 !REV  YW 07/30/2014 For region 6 Behre equation, if merch height is entered in feet, use log rules to convert to log ht.
+C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
 
 C_______________________________________________________________________
 
@@ -133,7 +134,8 @@ c     +   MDL.EQ.'jb2') THEN
 !**********************
 
         CALL R4VOL(REGN,VOLEQ,MTOPP,HTTOT,DBHOB,HT1PRD,VOL,NOLOGP,
-     +             NOLOGS, CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
+     +             NOLOGS, LOGDIA,LOGLEN,LOGVOL,
+     +             CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
         TLOGS = ANINT(NOLOGP + NOLOGS)
       ELSEIF (MDL.EQ.'TRF' .OR. MDL.EQ.'trf')THEN
 C********************************

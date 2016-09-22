@@ -13,6 +13,10 @@ C 20160408 Added BTR for R3 F10 WF (91.8) for testing
 C 20160505 Added DIST to VOLINIT and VOLLIBCS to set VOL(2) with Scribner or International for Region 8.
 C 20160517 Added biomass calculation for sapling adjustment factor; set LOGST to 0 in Profile.f for non variable log cruising
 C 20160713 Modified fwinit to add 301FW2W122, 301FW2W202, 301FW2W015, and 301FW2W108 for Santa Fe NF.
+C 20160922 (1)Added DRC to DBH conversion and when DRC is measured, convert it to DBH bafore call Jenkins equation for biomass calc
+C          (2)Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
+C          (3)Updated R6 weight factor for GF, NF, PSF, DF and MH in Mt Hood, DF in Siuslaw and WF, PP and DF in Umatilla NF.
+
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -42,7 +46,7 @@ C 20160713 Modified fwinit to add 301FW2W122, 301FW2W202, 301FW2W015, and 301FW2
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20160713
+      VERSION = 20160922
       RETURN
       END SUBROUTINE VERNUM
       
@@ -75,7 +79,7 @@ C 20160713 Modified fwinit to add 301FW2W122, 301FW2W202, 301FW2W015, and 301FW2
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20160713
+      VERSION = 20160922
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -98,7 +102,7 @@ C 20160713 Modified fwinit to add 301FW2W122, 301FW2W202, 301FW2W015, and 301FW2
 
 !---------------------------------------------------------------------
      
-      VERSION = 20160713
+      VERSION = 20160922
       
       PRINT     '(I8)', VERSION
       RETURN

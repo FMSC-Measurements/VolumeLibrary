@@ -23,6 +23,7 @@
 !REV  YW 07/30/2014 For region 6 Behre equation, if merch height is entered in feet, use log rules to convert to log ht.
 C     YW 2016/01/13 Added BTR default value for Region 3 Santa Fe forest DF and PP
 C     YW 04/19/2016 Added input variable DIST.
+C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
 !REV  Added manual debugging for use with pro vollib09 calls and
 !REV  code to check for forest = null which caused blm problems
 
@@ -211,7 +212,8 @@ c      ENDIF
 !**********************
 
         CALL R4VOL(REGN,VOLEQ,MTOPP,HTTOT,DBHOB,HT1PRD,VOL,NOLOGP,
-     +             NOLOGS, CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
+     +             NOLOGS,LOGDIA,LOGLEN,LOGVOL, 
+     +             CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
         TLOGS = ANINT(NOLOGP + NOLOGS)
 
       ELSEIF (MDL.EQ.'TRF' .OR. MDL.EQ.'trf')THEN

@@ -82,7 +82,7 @@ namespace volCStest
         static extern void MRULESCS(ref int regn, StringBuilder voleq, StringBuilder prod, ref float trim, ref float minlen, ref float maxlen, ref int opt, ref float merchl, int l1, int l2);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
-        static extern void CRZBIOMASSCS(ref int regn, StringBuilder forst, ref int spcd, ref float dbhob, ref float httot, float[] vol, float[] wf, float[] bms, ref int errflg, int i1);
+        static extern void CRZBIOMASSCS(ref int regn, StringBuilder forst, ref int spcd, ref float dbhob, ref float drcob, ref float httot, ref int fclass, float[] vol, float[] wf, float[] bms, ref int errflg, int i1);
         [DllImport("vollib.dll")]
         static extern void CRZSPDFTCS(ref int regn, StringBuilder forst, ref int spcd, float[] wf, StringBuilder agteq, StringBuilder lbreq, StringBuilder dbreq, StringBuilder foleq, StringBuilder tipeq,
             StringBuilder wf1ref, StringBuilder wf2ref, StringBuilder mcref, StringBuilder agtref, StringBuilder lbrref, StringBuilder dbrref, StringBuilder folref, StringBuilder tipref, 
@@ -105,7 +105,7 @@ namespace volCStest
         float DBHOB,DRCOB,HTTOT,HT1PRD,HT2PRD,STUMP;
         float UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2;
         float DBTBH,BTR,MTOPP,MTOPS,NOLOGP,NOLOGS, DIB,DIBHT, DOB;
-           
+        float DBH;   
         // test MRULESCS variable
         int OPT;
         float TRIM, MINLEN, MAXLEN, MERCHL;
@@ -304,9 +304,11 @@ namespace volCStest
                WF1REF, WF2REF, MCREF, AGTREF, LBRREF, DBRREF, FOLREF, TIPREF,
                strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
            //the calculation works!!!
-           CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref HTTOT, VOL, WF, BMS, ref ERRFLAG, strlen);
+           DRCOB = 0.0F;
+           CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
            //test Brown's function works!!!
-           BROWNCROWNFRACTION(ref SPCD, ref DBHOB, ref HTTOT, CFWT);
+           DBH = DBHOB;
+           BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, CFWT);
            VolS = VOL[6];
            VolN = VolS - 0.2F;
            fliw = 0.5F;

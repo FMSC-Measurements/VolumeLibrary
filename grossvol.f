@@ -67,7 +67,8 @@ C      REGION 4 MODEL  *
 C***********************
 
         CALL R4VOL(REGN,VOLEQ,MTOPP,HTTOT,DBHOB,HT1PRD,VOL,NOLOGP,
-     >               NOLOGS,CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
+     >               NOLOGS,LOGDIA,LOGLEN,LOGVOL,
+     >             CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
           TLOGS = ANINT(NOLOGP + NOLOGS)
       ELSEIF (MDL.EQ.'TRF' .OR. MDL.EQ.'trf')THEN
 C********************************

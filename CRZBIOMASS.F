@@ -174,7 +174,7 @@ C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO
          DONE = 0
          FIRST = 1
          LAST = TOTSPC
-           DO 50, WHILE (DONE.EQ.0)
+           DO 55, WHILE (DONE.EQ.0)
              HALF = (LAST - FIRST +1)/2 + FIRST
              IF(WDBKWT(HALF,1).EQ.SPCD) THEN
                DONE = HALF
@@ -185,21 +185,23 @@ C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO
              ELSE
                LAST = HALF
              ENDIF
-50         CONTINUE
+55         CONTINUE
          IF(DONE.LT.0) DONE = TOTSPC
          ADJ = WDBKWT(DONE,11)
        END       
 C--------------------------------------------------------------------------------------------
-       SUBROUTINE CRZBIOMASS(REGN,FORST,SPCD,DBHOB,HTTOT,VOL,WF,BMS,
-     +  ERRFLG)
+       SUBROUTINE CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB, HTTOT,FCLASS,
+     +  VOL,WF,BMS,ERRFLG)
        IMPLICIT NONE
-       INTEGER REGN, IFORST, SPCD, ERRFLG, I,J, LENGTH
-       REAL DBHOB, HTTOT, DBH, THT, VOL(15), WF(3), BMS(8)
+       INTEGER REGN, IFORST, SPCD, ERRFLG, I,J, LENGTH, FCLASS
+       REAL DBHOB, HTTOT, DBH, THT, VOL(15), WF(3), BMS(8),DRCOB
        CHARACTER*2 FORST
        CHARACTER*12 BMSEQ(8), BEQ
        CHARACTER*40 REF(8)
        REAL MERCHSTEM, P3, BIOMS, DRY2GRN, STEMGWT
        REAL JNKBMS(8), RATIO, DEN, STUMPDRY, STUMPGRN
+       INTEGER stm, Pied, Quga
+       REAL drcp, drcq
 C      THE COMPONENTS IN BMS VARIABLES AS:
 C      1 ABOVEGROUND TOTAL
 C      2 BRANCHES + TOP
@@ -213,7 +215,10 @@ C      7 STEM TIP
        DO 13, J=1,8
          BMS(J) = 0.0
 13     CONTINUE
-
+C      Convert DRC to DBH (Chojnacky 1999)
+       CALL DRC2DBH(SPCD,DRCOB,FCLASS,DBHOB)
+       
+       IF(DBHOB.EQ.0) GOTO 40
        DBH = DBHOB
        THT = HTTOT
        RATIO = 0
@@ -247,17 +252,6 @@ C     7 CROWN
 C     8 STEM WOOD AND BARK
 
        CALL JENKINS(SPCD, DBH, JNKBMS)
-C      DEDUCT STUMP FOR TREES DBH >= 5
-       IF(DBHOB.LT.5) THEN 
-         JNKBMS(7) = JNKBMS(1)
-         JNKBMS(2) = 0
-         JNKBMS(3) = 0
-       ELSE 
-         STUMPDRY = VOL(14)*WF(1)/(1+WF(3)/100)
-         JNKBMS(7) = JNKBMS(1)-JNKBMS(8)-STUMPDRY
-       ENDIF       
-       JNKBMS(6) = JNKBMS(7)-JNKBMS(4)
-       STUMPGRN = VOL(14)*WF(1)
 
 C      CONVERT DRY BIOMASS TO GREEN BIOMASS
        DRY2GRN = 1 + WF(3)/100
@@ -302,80 +296,37 @@ C      IF BIOMASS EQUSTION IS SET IN REGIONAL DEFAULT, USE IT TO CALCULATE BIOMA
            IF(BEQ(12:12).EQ.'D') BMS(I) = BIOMS*DRY2GRN
          ENDIF
 30     CONTINUE   
-    
+40     RETURN    
        END
-C -------------------------------------------------------------------------
-       SUBROUTINE CRZSPDFTCS(REGN, FORSTI, SPCD, WF, AGTEQ, LBREQ,
-     + DBREQ, FOLEQ, TIPEQ, WF1REF, WF2REF, MCREF, AGTREF, LBRREF,
-     + DBRREF, FOLREF, TIPREF)
-! Expose subroutine CRZSPDFTCS to C# users of this DLL
-      !DEC$ ATTRIBUTES DLLEXPORT::CRZSPDFTCS
-
-      IMPLICIT NONE
-      INTEGER REGN, SPCD, I,J
-      REAL WF(3)
-      CHARACTER*(*) FORSTI,AGTEQ,LBREQ,DBREQ, FOLEQ, TIPEQ
-      CHARACTER*(*) WF1REF, WF2REF, MCREF, AGTREF, LBRREF
-      CHARACTER*(*) DBRREF, FOLREF, TIPREF
+C ------------------------------------------------------------------------------------
+C Convert DRC to DBH for woodland species
+C Chojnack, D. C. and Rogers, P. Converting Tree Diameter Measured at Root Collar
+C to Diameter at Breast Height. WJAF 14(1), 1999
+      SUBROUTINE DRC2DBH (SPCD,DRCOB,FCLASS, DBHOB)
+      INTEGER SPCD, Pied, Quga, stm, FCLASS
+      REAL DRCOB, DBHOB, drcp, drcq
       
-      CHARACTER(2)   FORST
-      CHARACTER(12)  BMSEQ(8), BEQ 
-      CHARACTER(40) REF(8)
-      
-      FORST   = FORSTI(1:2)
-      
-      CALL CRZSPDFT(REGN, FORST, SPCD, WF, BMSEQ, REF)
-      DO 20, J=1,8
-         BEQ = BMSEQ(J) 
-         IF(BEQ(1:1).EQ.'-') THEN 
-           BMSEQ(J) = ''
+       IF(DRCOB.GT.0) THEN
+         Pied = 0
+         Quga = 0
+         stm = 1
+         IF(FCLASS.GT.1) stm = 0
+C        Pinyon pine species         
+         IF(SPCD.EQ.106.OR.SPCD.EQ.133.OR.SPCD.EQ.134
+     &      .OR.SPCD.EQ.138.OR.SPCD.EQ.140.OR.SPCD.EQ.141
+     &      .OR.SPCD.EQ.143)THEN
+           Pied = 1
+           drcp = DRCOB
+C        Gambel oak species           
+         ELSEIF(SPCD.EQ.803.OR.SPCD.EQ.810.OR.SPCD.EQ.814
+     &      .OR.SPCD.EQ.829.OR.SPCD.EQ.843.OR.SPCD.EQ.846
+     &      .OR.SPCD.EQ.847)THEN
+           Quga = 1
+           drcq = DRCOB
          ENDIF
-20    CONTINUE
-      DO J=1,3
-        I=J
-        IF(J.EQ.3) I=J+1
-        IF(REF(I).EQ.'') REF(I)='Heath et al 2009'
-      ENDDO
-
-C     !add null terminator required by C# strings
-      FORSTI = FORST // char(0)
-      AGTEQ = BMSEQ(1) // char(0)
-      LBREQ = BMSEQ(2) // char(0)
-      DBREQ = BMSEQ(3) // char(0)
-      FOLEQ = BMSEQ(4) // char(0)
-      TIPEQ = BMSEQ(7) // char(0)
-      WF1REF = REF(5) //char(0)
-      WF2REF = REF(6) //char(0)
-      MCREF = REF(8) //char(0)
-      AGTREF = REF(1) //char(0)
-      LBRREF = REF(2) //char(0)
-      DBRREF = REF(3) //char(0)
-      FOLREF = REF(4) //char(0)
-      TIPREF = REF(7) //char(0)
-      
+         DBHOB = -2.6843+1.0222*DRCOB+0.7433*stm
+     &   +0.7469*Pied-0.0399*drcp+1.2244*Quga-0.0689*drcq
+         IF(DBHOB.LT.0) DBHOB = 0
+       ENDIF
+      RETURN
       END
-C ----------------------------------------------------------------------------------------
-      SUBROUTINE CRZBIOMASSCS(REGN,FORSTI,SPCD,DBHOB,HTTOT,VOL,WF,BMS,
-     +  ERRFLG)
-! Expose subroutine CRZBIOMASSCS to C# users of this DLL
-      !DEC$ ATTRIBUTES DLLEXPORT::CRZBIOMASSCS
-
-      IMPLICIT NONE
-      INTEGER REGN, SPCD, ERRFLG
-      REAL DBHOB, HTTOT, VOL(15), WF(3), BMS(8), WFI(3)
-      CHARACTER*(*) FORSTI
-      CHARACTER(2) FORST
-      
-      FORST   = FORSTI(1:2)
-      CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,HTTOT,VOL,WF,BMS,ERRFLG)
-C     !add null terminator required by C# strings
-      FORSTI = FORST // char(0)
-      END
-
-C      SUBROUTINE BROWNCROWNFRACTIONCS(SPCD, DBH, THT, CFWT)
-C      !DEC$ ATTRIBUTES DLLEXPORT::BrownCrownFractionCS
-C      IMPLICIT NONE
-C      INTEGER SPCD
-C      REAL DBH, THT, CFWT(5)
-C      CALL BrownCrownFraction(SPCD, DBH, THT, CFWT)
-C      END

@@ -6,7 +6,8 @@
      &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      &    BA,SI,CTYPE,ERRFLAG,IDIST)
      
-!... last modified  04-19-2016     Added IDIST as input variable
+! 04-19-2016     Added IDIST as input variable
+! 09/21/2016  Added biomass calculation
 
 ! Expose subroutine VOLUMELIBRARY to users of this DLL
 !
@@ -43,7 +44,7 @@
       INTEGER         HTTFLL
       CHARACTER*(*)   LIVE, CTYPE
       INTEGER         ERRFLG
-      CHARACTER*2     DIST
+      CHARACTER*2     DIST, VAR
       INTEGER         IDIST
 !     Local variables      
 !     Variable required for call to VOLINIT      
@@ -51,6 +52,10 @@
       REAL            VOL(15)
       INTEGER         BA, SI
       INTEGER         ERRFLAG
+!     Variable for biomass      
+      REAL    WF(3), BMS(8)
+      INTEGER SPCD, BMSFLG
+      CHARACTER*10 EQNUM
         
 ! 	    print *, '--> enter volume library'
 !	    print *, '    regn = ',regn, 'forst = ', forst
@@ -60,6 +65,11 @@
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  !      vol(2) = 17.3
  !      logvol(4,1) = 32.3
+      IF(BMSFLG.EQ.1.AND.VOLEQ.EQ."")THEN
+        VAR = '  '
+        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPCD,PROD,EQNUM,ERRFLAG)
+        VOLEQ = EQNUM
+      ENDIF
       CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -68,6 +78,11 @@
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
  !      print *, 'vol(2) = ', vol(2)
  !      print *, 'logvol(4,1) = ', logvol(4,1)
+ !    Added the following to calculat biomass (09/20/2016)
+      IF (BMSFLG.EQ.1) THEN
+        CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB, HTTOT,FCLASS,
+     +  VOL,WF,BMS,ERRFLG)
+      ENDIF
  4000 RETURN
       
       END SUBROUTINE VOLUMELIBRARY

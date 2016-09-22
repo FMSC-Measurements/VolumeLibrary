@@ -1,9 +1,11 @@
       SUBROUTINE JENKINS(SPCD, DBHOB, BIOMS)
 C     This subroutine calculate biomass using DBH (inches) and return dry biomass in lb.
+C     08/15/2016 YW For woodland species, dismater is usually measured as DRC, Jenkins converted DRC to DBH
+C     for the generilized equation.
       INCLUDE 'WDBKWTDATA.INC'
       INTEGER SPCD, SPGRPCD, FIRST, LAST, HALF, DONE
       INTEGER I0, J0
-      REAL DBHOB, B0, B1
+      REAL DBHOB, B0, B1, DBHIN, DBHCM
       REAL BIOMS(8), COEF(10,3)
       REAL FOL, ROOT, WOOD, BARK, STMTOT, ABT, BRANCHES, CROWN,STUMP
       REAL A0F, A1F, A0R, A1R, A0W, A1W, A0B, A1B
@@ -79,12 +81,16 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
         SPGRPCD = WDBKWT(DONE,3) 
       ENDIF
 
+      DBHIN = DBHOB
+
 C    GET VOLUME FOR 1 FOOT STUMP USING RAILE
       STUMPHT = 1.0
-      IF(DBHOB.GE.5.0) THEN
-        CALL RAILEVOL(SPCD, DBHOB, STUMPHT, STUMPVIB, STUMPVOB)
+      IF(DBHIN.GE.5.0) THEN
+        CALL RAILEVOL(SPCD, DBHIN, STUMPHT, STUMPVIB, STUMPVOB)
         CALL WOODDEN(SPCD, WDEN, BDEN)
         STUMP = STUMPVIB*WDEN + (STUMPVOB-STUMPVIB)*BDEN
+C       The STUMP calculated in above is in lb. Convert it to KG to calculate with Jenkins
+        STUMP = STUMP/KG2LB        
       ENDIF
       
       DO I = 1, 10
@@ -96,8 +102,13 @@ C    GET VOLUME FOR 1 FOOT STUMP USING RAILE
       END DO
 C     CALCULATE BIOMASS FOR ABOVE GROUND TOTAL
 C     First convert DBH from inch to cm because Jenkins equation using cn for DBH
-      DBHOB = 2.54*DBHOB
-      ABT = EXP(B0 + B1 * LOG(DBHOB))
+      DBHCM = 2.54*DBHIN
+C     For woodland species, convert DRC(DBHOB) to real DBH
+C     The DRC to DBH conversion from Chojnacky etal 2014.
+C      IF(SPGRPCD.EQ.10) DBHCM = EXP(-0.35031+1.03991*LOG(DBHCM))
+C     The conversion from DRC to DBH should be done before call Jenkins
+            
+      ABT = EXP(B0 + B1 * LOG(DBHCM))
 C     CALCULATE COMPONENT RATIO
       IF(SPCLS.EQ.0) THEN
         A0F = -2.9584
@@ -118,13 +129,13 @@ C     CALCULATE COMPONENT RATIO
         A0W = -0.3065
         A1W = -5.4240   
       ENDIF
-      FOLRATIO = EXP(A0F + A1F/DBHOB)
-      ROTRATIO = EXP(A0R + A1R/DBHOB) 
-      BKRATIO = EXP(A0B + A1B/DBHOB)
-      WDRATIO = EXP(A0W + A1W/DBHOB)   
+      FOLRATIO = EXP(A0F + A1F/DBHCM)
+      ROTRATIO = EXP(A0R + A1R/DBHCM) 
+      BKRATIO = EXP(A0B + A1B/DBHCM)
+      WDRATIO = EXP(A0W + A1W/DBHCM)   
       FOL = ABT*FOLRATIO
       ROOT = ABT*ROTRATIO
-      IF(DBHOB.LT.5) THEN
+      IF(DBHIN.LT.5) THEN
         BARK = 0
         WOOD = 0
         STMTOT = 0

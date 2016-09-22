@@ -1,7 +1,8 @@
-!== last modified  04-15-2014 reconciled Vol. Eq. No. output from FVS with Cruise software-RNH
+!== last modified  09-15-2016 reconciled Vol. Eq. No. output from FVS with Cruise software-RNH
 C 01/18/2013 added FIAVOLEQDEF, R5_PNWEQN and R6_PNWEQN for PNE FIA equations.
 C 03/25/2014 changed default equation for Region 3 (R3_EQN) Ponderosa pine in the forest Apache Sitgreaves, Coconino, Kaibab and Tonto to 300FW2W122.
-C
+C 09/09/2016 Modified R3_EQN default equation for PP, DF, WF, and WP in Sante Fe NF
+C 09/15/2016 Corrected R4 default equation for other species to DVE equation
       SUBROUTINE VOLEQDEF (VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
 C
 C    SUBROUTINE WILL RETURN THE DEFAULT VOLUME EQUATION NUMBER
@@ -374,7 +375,7 @@ C//////////////////////////////////////////////////////////////////
       CHARACTER*10 VOLEQ
       CHARACTER*2 FORST
       INTEGER SPEC,ERRFLAG
-      CHARACTER*10 EQNUM(48)
+      CHARACTER*10 EQNUM(52)
       INTEGER FIA(45), FIRST, HALF, LAST, DONE, FORNUM,I
 
 C     SPECIES
@@ -399,7 +400,7 @@ C     Emory oak,              Gambel oak,       Bur oak,              Silverleaf
      >                     745, 746, 749, 800, 803, 
      >                     810, 814, 823, 843, 998/
 
-      DATA (EQNUM(I),I=1,48)/
+      DATA (EQNUM(I),I=1,52)/
      >'301DVEW015','300DVEW093','300DVEW093','300DVEW093','300DVEW060',
      >'300DVEW060','300DVEW060','300DVEW060','300DVEW060','300DVEW060',
      >'300DVEW060','301DVEW015','300DVEW093','300DVEW093','300DVEW093',
@@ -409,12 +410,13 @@ C     Emory oak,              Gambel oak,       Bur oak,              Silverleaf
      >'300DVEW310','300DVEW314','300DVEW999','300DVEW999','300DVEW999',
      >'300DVEW999','300DVEW746','300DVEW999','300DVEW800','300DVEW800',
      >'300DVEW800','300DVEW800','300DVEW800','300DVEW800','300DVEW999',
-     >'302DVEW202','302DVEW202','302DVEW015'/
+     >'302DVEW202','302DVEW202','302DVEW015','301FW2W122','301FW2W202',
+     >'301FW2W015','301FW2W108'/
 C
 C  SEARCH FOR VALID EQUATION NUMBER
 C
       IF(SPEC.EQ.9999)THEN
-        DO I=1,48
+        DO I=1,52
         IF(VOLEQ.EQ.EQNUM(I))THEN
 C
 C  FOUND VALID EQUATION NUMBER
@@ -432,10 +434,10 @@ C
       LAST = 45
    
       IF(SPEC.EQ.202.AND.(FORNUM.EQ.2.OR.FORNUM.EQ.3.OR.
-     >                    FORNUM.EQ.7.OR.FORNUM.EQ.10)) THEN
+     >                    FORNUM.EQ.7)) THEN
          DONE=46
       ELSEIF(SPEC.EQ.15.AND.(FORNUM.EQ.2.OR.FORNUM.EQ.3.OR.
-     >                       FORNUM.EQ.7.OR.FORNUM.EQ.10)) THEN
+     >                       FORNUM.EQ.7)) THEN
          DONE=48
 C    using Fleweling profile model for Ponderosa pine in following forest:
 C    Apache Sitgreaves, Coconino, Kaibab, Tonto. The 300FW2W122 equation
@@ -444,8 +446,17 @@ c    set to the DVE equation blow.
       ELSEIF(SPEC.EQ.122.AND.(FORNUM.EQ.2.OR.FORNUM.EQ.3.OR.
      >                        FORNUM.EQ.5.OR.FORNUM.EQ.6.OR.
      >                        FORNUM.EQ.8.OR.FORNUM.EQ.9.OR.
-     >                        FORNUM.EQ.10.OR.FORNUM.EQ.11))THEN
+     >                        FORNUM.EQ.11))THEN
          DONE=22
+C    Added profile model for DF, PP, WF and WP to Santa Fe NF
+      ELSEIF(SPEC.EQ.122.AND.FORNUM.EQ.10) THEN
+         DONE = 49
+      ELSEIF(SPEC.EQ.202.AND.FORNUM.EQ.10) THEN
+         DONE = 50
+      ELSEIF(SPEC.EQ.15.AND.FORNUM.EQ.10) THEN
+         DONE = 51    
+      ELSEIF(SPEC.EQ.114.AND.FORNUM.EQ.10) THEN
+         DONE = 52           
       ELSE
          FIRST = 1
 
@@ -502,7 +513,7 @@ C Other hardwoods,       Other
      >'400DVEW998','400MATW081','400MATW015','401MATW015','400MATW108',
      >'400MATW108','400MATW108','400MATW108','400DVEW475','400MATW746',
      >'400DVEW998','400MATW108','400MATW108','300DVEW800','300DVEW800',
-     >'400MATW998','400MATW998',
+     >'400DVEW998','400DVEW998',
      >'I15FW2W017','401MATW015','400MATW015','I15FW2W017','405MATW019',
      >'400MATW019','401DVEW065','400DVEW065','I15FW2W093','407FW2W093',
      >'400MATW093','401MATW108','400MATW108','I15FW2W122','401MATW122',
