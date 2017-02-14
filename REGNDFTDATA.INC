@@ -1,9 +1,9 @@
 C WARNING! The codes were created by NBEL Tester program. Please do NOT modify
-C Last modified on 9/19/2016
+C Last modified on 11/21/2016
        INTEGER I1, J1, I2, J2
-       REAL SPREGNDFTWF(104, 6)
-       CHARACTER*12 SPREGNDFTBEQ(104, 5)
-       INTEGER TOTDFT/104/
+       REAL SPREGNDFTWF(102, 6)
+       CHARACTER*12 SPREGNDFTBEQ(102, 5)
+       INTEGER TOTDFT/102/
        DATA ((SPREGNDFTWF(I1, J1),J1=1,6),I1=1,15)/
      + 02,13,15,73.01,0,0, 
      + 02,0,15,68,0,0, 
@@ -94,15 +94,13 @@ C Last modified on 9/19/2016
      + 06,02,122,62,0,0, 
      + 06,0,122,69,0,0, 
      + 06,14,202,58,0,0, 
-     + 06,12,202,61,0,0, 
      + 06,09,202,58,0,0, 
      + 06,06,202,60,0,0, 
      + 06,04,202,54,0,0, 
      + 06,0,202,60,0,0, 
-     + 06,14,204,58,0,0/ 
-       DATA ((SPREGNDFTWF(I1, J1),J1=1,6),I1=91,104)/
-     + 06,12,204,61,0,0, 
-     + 06,09,204,58,0,0, 
+     + 06,14,204,58,0,0, 
+     + 06,09,204,58,0,0/ 
+       DATA ((SPREGNDFTWF(I1, J1),J1=1,6),I1=91,102)/
      + 06,06,204,60,0,0, 
      + 06,04,204,54,0,0, 
      + 06,0,204,60,0,0, 
@@ -211,9 +209,7 @@ C Last modified on 9/19/2016
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-'/ 
-       DATA ((SPREGNDFTBEQ(I2, J2),J2=1,5),I2=91,104)/
-     + '-','-','-','-','-', 
-     + '-','-','-','-','-', 
+       DATA ((SPREGNDFTBEQ(I2, J2),J2=1,5),I2=91,102)/
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 

@@ -1,11 +1,34 @@
 C WARNING! The codes were created by NBEL Tester program. Please do NOT modify
 C Last modified on 7/17/2015
 C This sunroutine is generated from NBEL Tester for selected biomass equations
-       SUBROUTINE CalcBiomass(BEQ, DBH, THT, P3, BMS)
+       SUBROUTINE CalcBiomass(BEQ, DBH, THT, CR, BMS)
        CHARACTER*12 BEQ
-       REAL DBH, THT, P3, BMS, a,b,c,d,e
-       INTEGER EqForm
+       REAL DBH, THT, CR, VOL(15),BMS, a,b,c,d,e
+       INTEGER EqForm, I
        CHARACTER*5 diaUnit, BmsUnit,HtUnit,diaType
+
+C the following section is for testing 11/29/2016
+       TYPE EQINFO
+         CHARACTER*12 BIOEQ
+         INTEGER EQN
+         CHARACTER*3 DiaType, DiaUnit, HtUnit, BioUnit
+       END TYPE EQINFO
+       TYPE(EQINFO) BIOMSEQ(10)
+       DATA (BIOMSEQ(I),I=1,10) /
+     +  EQINFO('JKN001AGT01D',1,'DBH','IN','FT','LB'),  
+     +  EQINFO('JKN002AGT01D',2,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN003AGT01D',3,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN004AGT01D',4,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN005AGT01D',5,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN006AGT01D',6,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN007AGT01D',7,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN008AGT01D',8,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN009AGT01D',9,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN000AGT01D',10,'DBH','IN','FT','LB')/
+       IF(BIOMSEQ(10)%BIOEQ.EQ.'CHO000AGT01D') THEN
+         RETURN
+       ENDIF
+C end testing section
        
        BMS = 0
        a = 0
@@ -599,4 +622,32 @@ C This sunroutine is generated from NBEL Tester for selected biomass equations
          e = 0.06819
          CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
        ENDIF
+       END
+C ------------------------------------------------------------------------------------------------------------
+       SUBROUTINE CalcBiomass2(BEQ, DBH, THT, CR, VOL, BMS)
+C       INCLUDE 'fiabeq.inc'
+C       INCLUDE 'beqcoef.inc'
+C       INCLUDE 'beqinfo.inc'
+       CHARACTER*12 BEQ
+       REAL DBH, THT, CR, VOL(15), BMS
+       CHARACTER*3 MDL
+       
+       MDL = BEQ(1:3)
+       IF(MDL.EQ.'FNW'.OR.MDL.EQ.'FRM'.OR.MDL.EQ.'FNC'
+     +    .OR.MDL.EQ.'FNE'.OR.MDL.EQ.'FSE')THEN
+         
+       ENDIF
+       END
+C ------------------------------------------------------------------------------------------------------------       
+       SUBROUTINE SEARCHBIOEQ(N, ARY, BEQ, LOC)
+       INTEGER N, LOC, I
+       CHARACTER*12 ARY(N), BEQ
+       
+       LOC = 0
+       DO I = 1, N
+         IF(ARY(I).EQ.BEQ)THEN
+           LOC = I
+           EXIT
+         ENDIF
+       END DO
        END

@@ -144,45 +144,59 @@ C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
       IF(DBH.GT.50) DBH = 50
       IF(DBH.LT.1) DBH = 1
       IF(SPCD.EQ.17)THEN
+c       eqn 305      
         BMEQ = 'BRN017LCR02D'
         IF(DBH.GT.40) LCW = 1.03*DF34PLUSLCW(DBH)
       ELSEIF(SPCD.EQ.19)THEN
+c       eqn 312      
         BMEQ = 'BRN019LCR01D'
       ELSEIF(SPCD.EQ.108)THEN
+c       eqn 323      
         BMEQ = 'BRN108LCR01D'
       ELSEIF(SPCD.EQ.73)THEN
+c       eqn 315      
         BMEQ = 'BRN073LCR01D'
         IF(DBH.GT.34) LCW = 0.58*DF34PLUSLCW(DBH)
       ELSEIF(SPCD.EQ.93)THEN
+c       eqn 317      
         BMEQ = 'BRN093LCR01D'
         IF(DBH.GT.28) LCW = 1.24*DF34PLUSLCW(DBH)
       ELSEIF(SPCD.EQ.202)THEN
         IF(DBH.LE.16)THEN
+c       eqn 337        
           BMEQ = 'BRN202LCR01D'
         ELSEIF(DBH.LE.32)THEN
+c       eqn 339
           BMEQ = 'BRN202LCR03D'
         ELSE
           LCW = DF34PLUSLCW(DBH)
         ENDIF
       ELSEIF(SPCD.EQ.263)THEN
         IF(DBH.LE.32)THEN
+c       eqn 350
           BMEQ = 'BRN263LCR01D'
         ELSE
+c       eqn 4146
           BMEQ = 'BRN263LCR04D'
         ENDIF
       ELSEIF(SPCD.EQ.119)THEN
+c       eqn 324
         BMEQ = 'BRN119LCR01D'
         IF(DBH.GT.42) LCW = 0.45*DF34PLUSLCW(DBH)
       ELSEIF(SPCD.EQ.242)THEN
+c       eqn 345
         BMEQ = 'BRN242LCR01D'
         IF(DBH.GT.36) LCW = 0.77*DF34PLUSLCW(DBH)
       ELSEIF(SPCD.EQ.122)THEN
+c       eqn 330
         BMEQ = 'BRN122LCR01D'
         IF(DBH.GT.34) LCW = 2.0*DF34PLUSLCW(DBH)
       ELSEIF(SPCD.EQ.101)THEN
         IF(DBH.LE.6)THEN
+c       eqn 324
           BMEQ = 'BRN119LCR01D'
         ELSE
+c       eqn 323
           BMEQ = 'BRN108LCR01D'
         ENDIF
       ENDIF
@@ -204,24 +218,30 @@ C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
       IF(DBH.GT.50) DBH = 50
       IF(SPCD.EQ.17)THEN
         IF(DBH.LE.18)THEN
+c       eqn 310
           BMEQ = 'BRN017DCR02D'
         ELSEIF(DBH.LE.20)THEN
+c       eqn 309
           BMEQ = 'BRN017LCR02D'
           CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
           DCW = LCW*0.38
         ELSE
           DBH = 20
+c       eqn 310
           BMEQ = 'BRN017DCR02D'
         ENDIF
       ELSEIF(SPCD.EQ.19)THEN
         IF(DBH.LE.16)THEN
+c       eqn 313
           BMEQ = 'BRN019DCR01D'
         ELSE
+c       eqn 312
           BMEQ = 'BRN019LCR01D'
           CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
           DCW = LCW*0.31
         ENDIF
       ELSEIF(SPCD.EQ.108)THEN
+c       eqn 323
         BMEQ = 'BRN108LCR01D'
         CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
         DCW = LCW*0.235  
@@ -229,23 +249,30 @@ C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
         DCW = 0
       ELSEIF(SPCD.EQ.93)THEN
         IF(DBH.GT.22) DBH = 22
+c       eqn 318
         BMEQ = 'BRN093DCR01D'
       ELSEIF(SPCD.EQ.202)THEN
         IF(DBH.GT.34) DBH = 34
+c       eqn 341
         BMEQ = 'BRN202DCR02D'
       ELSEIF(SPCD.EQ.263)THEN
         IF(DBH.GT.20) DBH = 21
+c       eqn 351
         BMEQ = 'BRN263DCR01D'
       ELSEIF(SPCD.EQ.119)THEN
         IF(DBH.GT.24) DBH = 25
+c       eqn 326
         BMEQ = 'BRN119DCR01D'
       ELSEIF(SPCD.EQ.242)THEN
         IF(DBH.GT.26) DBH = 27
+c       eqn 347
         BMEQ = 'BRN242DCR01D'
       ELSEIF(SPCD.EQ.122)THEN
         IF(DBH.GT.34) DBH = 34
+c       eqn 332
         BMEQ = 'BRN122DCR01D'
       ELSEIF(SPCD.EQ.101)THEN
+c       eqn 324
         BMEQ = 'BRN119LCR01D'
         CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
         DCW = LCW*0.235
@@ -265,6 +292,7 @@ C     DAM SMALL TREE STEM WEIGHT
       
       IF(SPN.EQ.17)THEN
         IF(DBH.LE.4)THEN
+c       eqn 304
           BMEQ = 'BRN017STT01D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 62
@@ -273,12 +301,14 @@ C     DAM SMALL TREE STEM WEIGHT
         ENDIF
       ELSEIF(SPN.EQ.19)THEN
         IF(DBH.LE.4)THEN
-          BMEQ = 'BRN019STT02D'
+c       eqn 5025
+          BMEQ = 'BRN019STT11D'
         ELSE
           STSWT = 0
         ENDIF
       ELSEIF(SPN.EQ.108)THEN
         IF(DBH.LE.4)THEN
+c       eqn 322
           BMEQ = 'BRN108STT01D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 83
@@ -287,18 +317,21 @@ C     DAM SMALL TREE STEM WEIGHT
         ENDIF  
       ELSEIF(SPN.EQ.73)THEN
         IF(DBH.LE.4)THEN
-          BMEQ = 'BRN073STT02D'
+c       eqn 5022
+          BMEQ = 'BRN073STT11D'
         ELSE
           STSWT = 0
         ENDIF
       ELSEIF(SPN.EQ.93)THEN
         IF(DBH.LE.4)THEN
+c       eqn 4148
           BMEQ = 'BRN093STT02D'
         ELSE
           STSWT = 0
         ENDIF
       ELSEIF(SPN.EQ.202)THEN
         IF(DBH.LE.4)THEN
+c       eqn 327
           BMEQ = 'BRN122STT01D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 69
@@ -307,12 +340,14 @@ C     DAM SMALL TREE STEM WEIGHT
         ENDIF
       ELSEIF(SPN.EQ.263)THEN
         IF(DBH.LE.4)THEN
-          BMEQ = 'BRN263STT02D'
+c       eqn 5021
+          BMEQ = 'BRN263STT11D'
         ELSE
           STSWT = 0
         ENDIF
       ELSEIF(SPN.EQ.119)THEN
         IF(DBH.LE.4)THEN
+c       eqn 325
           BMEQ = 'BRN119STT01D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 50
@@ -321,6 +356,7 @@ C     DAM SMALL TREE STEM WEIGHT
         ENDIF
       ELSEIF(SPN.EQ.242)THEN
         IF(DBH.LE.4)THEN
+c       eqn 342
           BMEQ = 'BRN242STT01D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 45
@@ -329,6 +365,7 @@ C     DAM SMALL TREE STEM WEIGHT
         ENDIF
       ELSEIF(SPN.EQ.122)THEN
         IF(DBH.LE.4)THEN
+c       eqn 4147
           BMEQ = 'BRN122STT04D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 50
@@ -337,6 +374,7 @@ C     DAM SMALL TREE STEM WEIGHT
         ENDIF
       ELSEIF(SPN.EQ.101)THEN
         IF(DBH.LE.4)THEN
+c       eqn 325
           BMEQ = 'BRN119STT01D'
         ELSEIF(DBH.LE.5)THEN
           STSWT = 50

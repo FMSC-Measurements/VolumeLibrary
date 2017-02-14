@@ -16,6 +16,11 @@ C 20160713 Modified fwinit to add 301FW2W122, 301FW2W202, 301FW2W015, and 301FW2
 C 20160922 (1)Added DRC to DBH conversion and when DRC is measured, convert it to DBH bafore call Jenkins equation for biomass calc
 C          (2)Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
 C          (3)Updated R6 weight factor for GF, NF, PSF, DF and MH in Mt Hood, DF in Siuslaw and WF, PP and DF in Umatilla NF.
+C 20160930 Correct the error in CRZSPDFT for searching the weight factor in the last of the array 
+C          and made correction to LAST = HALF-1 to avoid infinit loop.
+C 20161121 Removed the weight factor for douglas-fir in Siuslaw NF. They want to use the regional weight factor for DF.
+C 20170209 Added EZVOLLIB subroutine to volumelibrary.f
+C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
 
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
@@ -46,7 +51,7 @@ C          (3)Updated R6 weight factor for GF, NF, PSF, DF and MH in Mt Hood, DF
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20160922
+      VERSION = 20170214
       RETURN
       END SUBROUTINE VERNUM
       
@@ -79,7 +84,7 @@ C          (3)Updated R6 weight factor for GF, NF, PSF, DF and MH in Mt Hood, DF
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20160922
+      VERSION = 20170214
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -102,8 +107,22 @@ C          (3)Updated R6 weight factor for GF, NF, PSF, DF and MH in Mt Hood, DF
 
 !---------------------------------------------------------------------
      
-      VERSION = 20160922
+      VERSION = 20170214
       
       PRINT     '(I8)', VERSION
       RETURN
       END SUBROUTINE VERNUM_F
+C*********************************************************************
+
+      subroutine vernum_r(version)
+C     R program need subroutine name to be all lower case
+c      !DEC$ ATTRIBUTES STDCALL,REFERENCE,DLLEXPORT::vernum_r
+c      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG ::vernum_r
+c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
+      !DEC$ ATTRIBUTES DLLEXPORT::vernum_r
+      !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
+
+      integer version
+      version = 20170214
+      return
+      end subroutine vernum_r

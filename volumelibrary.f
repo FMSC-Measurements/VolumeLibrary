@@ -86,7 +86,7 @@
  4000 RETURN
       
       END SUBROUTINE VOLUMELIBRARY
-      
+C ---------------------------------------------------------------------      
       SUBROUTINE VOLLIBVB8(EQNUM, REGN,DBHOB, HTTOT, TOPD,
      +  TOTCU, MERCHCU, BDFT, XINT)
 !... 03-23-2015     This function is make the DLL be called from VB.NET
@@ -99,11 +99,17 @@
       !DEC$ ATTRIBUTES REFERENCE :: EQNUM
       IMPLICIT NONE
       CHARACTER*10 EQNUM
-      INTEGER      REGN
+      INTEGER      REGN, ERRFLG
       REAL DBHOB,HTTOT,TOPD,TOTCU,MERCHCU,BDFT,XINT,MHT
+      REAL VOL(15)
       
       CALL VOLLIBVB8INIT(EQNUM, REGN,DBHOB, HTTOT, TOPD,
-     +  TOTCU, MERCHCU, BDFT, XINT, MHT)
+     +  VOL, MHT, ERRFLG) 
+
+      TOTCU = VOL(1)
+      MERCHCU = VOL(4)
+      BDFT = VOL(2)
+      XINT = VOL(10)
 
       RETURN
       
@@ -121,18 +127,24 @@
       !DEC$ ATTRIBUTES REFERENCE :: EQNUM
       IMPLICIT NONE
       CHARACTER*10 EQNUM
-      INTEGER      REGN
+      INTEGER      REGN,ERRFLG
       REAL DBHOB,HTTOT,TOPD,TOTCU,MERCHCU,BDFT,XINT,MHT
+      REAL VOL(15)
       
       CALL VOLLIBVB8INIT(EQNUM, REGN,DBHOB, HTTOT, TOPD,
-     +  TOTCU, MERCHCU, BDFT, XINT, MHT)
+     +  VOL, MHT,ERRFLG) 
 
+      TOTCU = VOL(1)
+      MERCHCU = VOL(4)
+      BDFT = VOL(2)
+      XINT = VOL(10)
       RETURN
       
       END SUBROUTINE VOLLIBVB8XHT
       
+C -------------------------------------------------------------------------      
       SUBROUTINE VOLLIBVB8INIT(EQNUM, REGN,DBHOB, HTTOT, TOPD,
-     +  TOTCU, MERCHCU, BDFT, XINT, MHT)
+     +  VOL, MHT, ERRFLAG) 
 
       USE CHARMOD 
 	USE DEBUG_MOD
@@ -240,16 +252,195 @@
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
 
-c      TOTCU = NINT(VOL(1)*10.0)/10.0
-c      MERCHCU = NINT(VOL(4)*10.0)/10.0
-c      BDFT = NINT(VOL(2)*10.0)/10.0
-c      XINT = NINT(VOL(10)*10.0)/10.0
-      TOTCU = VOL(1)
-      MERCHCU = VOL(4)
-      BDFT = VOL(2)
-      XINT = VOL(10)
       MHT = HT1PRD
       RETURN
       
       END SUBROUTINE VOLLIBVB8INIT
-            
+C ------------------------------------------------------------------------------
+      SUBROUTINE EZVOLLIB(VOLEQI,DBHOB,HTTOT,VOL)
+C ADD THIS EAZY LIBRARY FOR USER WITH ONLY DBH AND HEIGHT
+C 2017/02/08
+
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::EZVOLLIB
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: EZVOLLIB
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'EZVOLLIB'::EZVOLLIB
+      IMPLICIT NONE
+      
+      CHARACTER*(*)   VOLEQI
+      CHARACTER*10 VOLEQ
+      REAL DBHOB,HTTOT,TOPD, VOL(15), MHT
+      INTEGER REGN,ERRFLG
+      
+      VOLEQ   = VOLEQI(1:10)
+      IF(VOLEQ(1:1).EQ.'A'.OR.VOLEQ(1:1).EQ.'a')THEN
+        REGN = 10
+      ELSEIF(VOLEQ(1:1).EQ.'B'.OR.VOLEQ(1:1).EQ.'B')THEN
+        REGN = 7
+      ELSEIF(VOLEQ(1:1).EQ.'I'.OR.VOLEQ(1:1).EQ.'i')THEN
+        REGN = 1
+      ELSEIF(VOLEQ(1:1).EQ.'H'.OR.VOLEQ(1:1).EQ.'h')THEN
+        REGN = 5
+      ELSEIF(VOLEQ(1:1).EQ.'F'.OR.VOLEQ(1:1).EQ.'f')THEN
+        REGN = 6
+      ELSE
+        READ(VOLEQ(1:1),'(I1)') REGN
+      ENDIF
+      
+      TOPD = 0.0
+      CALL VOLLIBVB8INIT(VOLEQ, REGN,DBHOB, HTTOT, TOPD,
+     +  VOL, MHT,ERRFLG)
+      
+      VOLEQI = VOLEQ // char(0)
+      RETURN
+      END SUBROUTINE EZVOLLIB   
+C *******************************************************************************
+      subroutine vollib_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,HTTOT_d,
+     + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
+     + FCLASS,DBTBH_d,BTR_d,VOL_d, ERRFLAG)
+C This subroutine is for R user to calculate volume from vollib      !
+C YW 02/10/2017
+C testing --still not working
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollib_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollib_r_'::vollib_r
+
+	USE CHARMOD
+	USE DEBUG_MOD
+      USE VOLINPUT_MOD
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,MTOPP_d,MTOPS_d,STUMP_d
+      DOUBLE PRECISION HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d
+      DOUBLE PRECISION DBTBH_d,BTR_d,VOL_d(15)
+      
+      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*2  FORST,PROD
+      character*4  CONSPEC
+      CHARACTER*10 VOLEQ
+      CHARACTER*3  MDL,SPECIES
+      CHARACTER*2  DIST,VAR
+   
+      INTEGER      SPEC,TMPSPEC,NULEQ
+
+!   MERCH VARIABLES 
+      INTEGER      REGN,HTTFLL,BA,SI,IFORST,IDIST
+      REAL         STUMP,MTOPP,MTOPS  !,THT1,MAXLEN
+      INTEGER      CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+      REAL         TIPDIB,TIPLEN
+      
+!   Tree variables
+      REAL 		HTTOT,HT1PRD,HT2PRD  !,LEFTOV 
+      REAL 		DBHOB,DRCOB,DBTBH,BTR  !,CR,TRIM
+      INTEGER   FCLASS,HTLOG  !,SPCODE, WHOLELOGS
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+    
+!   OUTPUTS
+      REAL      NOLOGP,NOLOGS
+      INTEGER   TLOGS  !,IFORST, IDIST
+    
+!   ARRAYS
+      INTEGER   I15,I21,I20,I7,I3,I,J
+      REAL 		VOL(15),LOGVOL(7,20)
+      REAL		LOGDIA(21,3),LOGLEN(20),BOLHT(21)
+      
+      
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      MTOPP = REAL(MTOPP_d)
+      MTOPS = REAL(MTOPS_d)
+      HT1PRD = REAL(HT1PRD_d)
+      HT2PRD = REAL(HT2PRD_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
+      STUMP = REAL(STUMP_d)
+      DBTBH = REAL(DBTBH_d)
+      BTR = REAL(BTR_d)
+      
+      READ (DIST, '(I2)') IDIST
+C     Set the default value for other variable
+      PROD='01'
+      HTTYPE='F'
+      HTLOG=0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      CONSPEC='    '
+      DRCOB=0.0
+      HTTFLL=0
+      BA=0
+      SI=0
+      CTYPE='F'
+      CUTFLG=1
+      CUPFLG=1
+      SPFLG=1
+      BFPFLG=1
+      I3 = 3
+      I7 = 7
+      I15 = 15
+      I20 = 20
+      I21 =21
+      
+C     Check if the VOLEQ is valid. If not valid, return error flag 1      
+c      NULEQ = INDEX(VOLEQ,' ')
+c      IF(LEN_TRIM(VOLEQ).EQ.0.OR.NULEQ.GT.0)THEN
+c        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG) 
+c      ENDIF
+c      TMPSPEC = 9999
+c      CALL VOLEQDEF(VAR,REGN,FORST,DIST,TMPSPEC,PROD,VOLEQ,ERRFLAG)
+c      IF(TMPSPEC.NE.8888) GOTO 999
+      
+      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      
+      VOL_d = DBLE(VOL)
+      DBHOB_d = DBLE(DBHOB)
+      HTTOT_d = DBLE(HTTOT)
+      MTOPP_d = DBLE(MTOPP)
+      MTOPS_d = DBLE(MTOPS)
+      HT1PRD_d = DBLE(HT1PRD)
+      HT2PRD_d = DBLE(HT2PRD)
+      UPSHT1_d = DBLE(UPSHT1)
+      UPSD1_d = DBLE(UPSD1)
+      STUMP_d = DBLE(STUMP)
+      DBTBH_d = DBLE(DBTBH)
+      BTR_d = DBLE(BTR)
+      
+c      TOPD = 0.0
+c      CALL VOLLIBVB8INIT(VOLEQ, REGN,DBHOB, HTTOT, TOPD,
+c     +  VOL, MHT,ERRFLG)
+c      TCU = DBLE(VOL)
+
+999   CONTINUE
+      RETURN
+      end subroutine vollib_r   
+      
+C *********************************************************************************
+      subroutine test_r(voleq,dbh,tht,tcu)
+C this is a test
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::test_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'test_r_'::test_r
+      IMPLICIT NONE
+      
+      CHARACTER*10 voleq
+      double precision dbh,tht,tcu
+      real dbhob, httot, totcu
+      INTEGER REGN,ERR
+      
+      err=0
+      dbhob = REAL(dbh)
+      httot = REAL(tht)
+      totcu = dbhob*dbhob*httot
+      tcu= DBLE(totcu)
+      err=10
+      RETURN
+      end subroutine test_r      

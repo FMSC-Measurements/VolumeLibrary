@@ -97,7 +97,7 @@ namespace volCStest
         [DllImport("vollib.dll")]
         static extern void BROWNCULLCHUNK(ref int SPN, ref float GCUFT, ref float NCUFT, ref float FLIW, ref float WT);
         //[DllImport("vollib.dll")]
-        //static extern void VOLLIBVB8(ref float tcu);
+        //static extern void EZVOLLIB(StringBuilder voleq, ref float dbhob, ref float httot, ref float[] vol, int i1);
 
         // standard variables
         int REGN,HTLOG,HTREF,FCLASS,HTTFLL,ERRFLAG,TLOGS,BA,SI,SPCODE,INDEB, PMTFLG, IDIST;
@@ -115,7 +115,8 @@ namespace volCStest
         int I15 = 15;
         int I20 = 20;
         int I21 = 21;
-
+        //test EZVOLLIB
+        float TCU, MCU, BDF, SCNCU;
            
         float[] VOL;
         float[] LOGLEN;
@@ -288,12 +289,12 @@ namespace volCStest
            //if pmtflg == 2 call profile2 with user defined merch rules 
            //else just call the regular profile model...vollibcs.f handles this.
            IDIST = int.Parse(DIST.ToString());
-            VOLLIBCS(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
-              HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
-              ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, ref I3, ref I7, ref I15, ref I20, ref I21, VOL, LOGVOL,
-              LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
-              ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref INDEB, ref PMTFLG,
-              ref mRules, ref IDIST, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
+           VOLLIBCS(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
+             HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
+             ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, ref I3, ref I7, ref I15, ref I20, ref I21, VOL, LOGVOL,
+             LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
+             ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref INDEB, ref PMTFLG,
+             ref mRules, ref IDIST, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
 
             //test call MRULESCS
            MRULESCS(ref REGN, VOLEQ, PROD, ref TRIM, ref MINLEN, ref MAXLEN, ref OPT, ref MERCHL, strlen, strlen);
@@ -317,6 +318,9 @@ namespace volCStest
            VolS = 302.7F;
            VolN = 293.9F;
            BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
+
+            //test on EZVOLLIB
+           //EZVOLLIB(VOLEQ, ref DBHOB, ref HTTOT, ref VOL, strlen);
             //volumes have been calculated, display them in the form and display merch rules
            panel2.Enabled = true;
            //MessageBox.Show("HTTYPE=" + HTTYPE);
@@ -560,6 +564,7 @@ namespace volCStest
                 SPCODE = int.Parse(speciesTB.Text); //spcode
             else
                 SPCODE = 0;
+            if (SPCODE > 999) SPCODE = 999;
             // output debug flag
             INDEB = 0;// debugCB.Checked ? 1 : 0;
             if (debugCB.Checked == true)
@@ -580,7 +585,7 @@ namespace volCStest
             if (MDL == "F32" || MDL == "f32") HTLOG = 32;
             
             //add test biomass calc variable
-            SPCD = SPCODE;
+            SPCD = int.Parse(speciesTB.Text);
             WF = new float[3];
             WF[0] = 0.0F;
             WF[1] = 0.0F;
@@ -1238,22 +1243,22 @@ namespace volCStest
                 return;
             }
 
-            if(REGN == 9)
-                R9CLARKDIB(VOLEQ, ref STUMP, ref MTOPP, ref MTOPS, ref DBHOB, ref HT1PRD, ref HT2PRD, ref HTTOT, ref DIBHT, ref DIB, PROD, ref ERRFLAG, ref UPSHT1);
+            //if(REGN == 9)
+            //    R9CLARKDIB(VOLEQ, ref STUMP, ref MTOPP, ref MTOPS, ref DBHOB, ref HT1PRD, ref HT2PRD, ref HTTOT, ref DIBHT, ref DIB, PROD, ref ERRFLAG, ref UPSHT1);
             
-            else if (VOLEQ.ToString().Contains("BEH") || (REGN == 8 && VOLEQ.ToString().Contains("CLK")))
-            {
+            //else if (VOLEQ.ToString().Contains("BEH") || (REGN == 8 && VOLEQ.ToString().Contains("CLK")))
+            //{
                 CALCDIACS(ref REGN, FORST, VOLEQ, ref STUMP, ref DBHOB, ref DRCOB, ref HTTOT, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2, ref HTREF,
                     ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, ref DIBHT, ref DIB, ref DOB, ref ERRFLAG, strlen, strlen);
-            }
+            //}
             
-            else
-                PMTPROFILE(FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DIB,
-                  HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
-                  ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, VOL,
-                  ref CUTFLG, ref BFPFLG, ref CUPFLG,
-                  ref CDPFLG, ref SPFLG, ref DIBHT, CTYPE, ref FCLASS, PROD, ref ERRFLAG,
-                  strlen, strlen, strlen, strlen, strlen);
+            //else
+            //    PMTPROFILE(FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DIB,
+            //      HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
+            //      ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, VOL,
+            //      ref CUTFLG, ref BFPFLG, ref CUPFLG,
+            //      ref CDPFLG, ref SPFLG, ref DIBHT, CTYPE, ref FCLASS, PROD, ref ERRFLAG,
+            //      strlen, strlen, strlen, strlen, strlen);
 
             volEqTB.Text = VOLEQ.ToString();
             diboTB.Text = DIB.ToString();
@@ -1376,7 +1381,8 @@ namespace volCStest
                 DIST.Append(districtTB.Text);
                 PROD.Length = 0;
                 PROD.Append(prodTB.Text);
-                SPCODE = int.Parse(speciesTB.Text);                
+                SPCODE = int.Parse(speciesTB.Text);
+                if (SPCODE > 999) SPCODE = 999;
                 GETVOLEQ3(ref REGN, FORST, DIST, ref SPCODE, PROD, VOLEQ, ref ERRFLAG, strlen, strlen, strlen, strlen);
                 volEqTB.Text = VOLEQ.ToString();
             }

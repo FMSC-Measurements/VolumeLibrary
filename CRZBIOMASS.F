@@ -12,6 +12,29 @@ C YW 2016/03/08 harded coded the weight factor for DF in Rogue Rive - Siskiyou N
        CHARACTER*12 BMSEQ(8)
        CHARACTER*40 REF(8)
        INTEGER FIRST, LAST, HALF, DONE
+
+C the following section is for testing 11/29/2016
+       TYPE EQINFO
+         CHARACTER*12 BIOEQ
+         INTEGER EQN
+         CHARACTER*3 DiaType, DiaUnit, HtUnit, BioUnit
+       END TYPE EQINFO
+       TYPE(EQINFO) BIOMSEQ(10)
+       DATA (BIOMSEQ(I),I=1,10) /
+     +  EQINFO('JKN001AGT01D',1,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN002AGT01D',2,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN003AGT01D',3,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN004AGT01D',4,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN005AGT01D',5,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN006AGT01D',6,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN007AGT01D',7,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN008AGT01D',8,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN009AGT01D',9,'DBH','IN','FT','LB'),
+     +  EQINFO('JKN000AGT01D',10,'DBH','IN','FT','LB')/
+       IF(BIOMSEQ(10)%BIOEQ.EQ.'CHO000AGT01D') THEN
+         RETURN
+       ENDIF
+C end testing section
        
        READ(FORST,'(i2)') IFORST
        DO 3, J=1,8
@@ -39,7 +62,7 @@ C      First to check if the species has a regional/forest default record
              BMSEQ(7) = SPREGNDFTBEQ(I,5)
            ENDIF
          ENDIF 
-         IF(I.GE.TOTDFT) DONE = -1
+         IF(I.GE.TOTDFT.AND.DONE.EQ.0) DONE = -1
 5      CONTINUE
        IF(DONE.GT.0) THEN
        !Found regional species default, then get the default equation and reference   
@@ -111,7 +134,7 @@ C      IF THE SPECIES DOES NOT HAVE REGION DEFAULT, SEARCH NATIONAL DEFAULT
              ELSEIF(WDBKWT(HALF,1).LT.SPCD) THEN  
                FIRST = HALF
              ELSE
-               LAST = HALF
+               LAST = HALF - 1
              ENDIF
 10         CONTINUE
              IF(DONE.LT.0) DONE = TOTSPC
@@ -157,7 +180,7 @@ C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO
              ELSEIF(WDBKWT(HALF,1).LT.SPCD) THEN  
                FIRST = HALF
              ELSE
-               LAST = HALF
+               LAST = HALF - 1
              ENDIF
 50         CONTINUE
          IF(DONE.LT.0) DONE = TOTSPC
@@ -183,7 +206,7 @@ C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO
              ELSEIF(WDBKWT(HALF,1).LT.SPCD) THEN  
                FIRST = HALF
              ELSE
-               LAST = HALF
+               LAST = HALF - 1
              ENDIF
 55         CONTINUE
          IF(DONE.LT.0) DONE = TOTSPC

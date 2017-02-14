@@ -598,7 +598,12 @@ c       if sawtimber topHt is provided, no recalc topHt. 11/15/2011 (yw)
         else        
           if(ht1Prd.ge.17.3) then
 c         Use linear extrapolation from sawDib to topDib
+            if((dbhOb-sawDib).GT.0) then
             topHt=4.5+(ht1prd-4.5)*(dbhOb-topDib)/(dbhOb-sawDib)
+            else
+              errFlg=13
+              return
+            endif
           else
             short=.true.
             topHt=17.4

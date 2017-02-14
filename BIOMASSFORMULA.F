@@ -1,6 +1,6 @@
-      SUBROUTINE BIOMASSFORMULA(EQFORM,DBH,THT,P3, a, b, c, d, e, BMS)
+      SUBROUTINE BIOMASSFORMULA(EQFORM,DBH,THT,CR, a, b, c, d, e, BMS)
       INTEGER EQFORM
-      REAL DBH, THT, P3, BMS
+      REAL DBH, THT, CR, BMS
       REAL a, b, c, d, e
       
       BMS = 0
@@ -63,10 +63,9 @@ C     biomass = a + b*dbh + c*dbh^2 + d*tht + e*dbh^2*tht
          BMS = a + b*DBH + c*DBH**2 + d*THT + e*DBH**2*THT
       ELSE IF (EQFORM.EQ.18) THEN
 C     ln biomass = a + b*ln(dia) + c*ln(CR) + d*ln(CR*tht)
-C     P3 as crown ratio (crown length.total height)
-         BMS = a + b*LOG(DBH) + c*LOG(P3) + d*LOG(P3*THT)
+C     CR as crown ratio (crown length/total height)
+         BMS = a + b*LOG(DBH) + c*LOG(CR) + d*LOG(CR*THT)
          BMS = EXP(BMS)
-      
       ELSE IF (EQFORM.EQ.33) THEN 
         IF(DBH.LT.11)THEN
           BMS = a*(DBH**2)**b 
@@ -79,7 +78,15 @@ C     P3 as crown ratio (crown length.total height)
         ELSE
           BMS = c*(DBH**2)**d*THT**e
         ENDIF
-        
+      ELSEIF(EQFORM.EQ.35)THEN
+        BMS = a+b*DBH**3+c*DBH**2*CR+d*DBH**2*THT*CR
+      ELSEIF(EQFORM.EQ.36)THEN
+        BMS = a+b*DBH**2+c*DBH**2*THT+d*DBH*THT*CR+e*DBH**2*THT*CR
+      ELSEIF(EQFORM.EQ.37)THEN
+        BMS = a+b*LOG(THT)+c*LOG(THT*CR)
+        BMS = EXP(BMS)
+      ELSEIF(EQFORM.EQ.38)THEN
+        BMS = a+b*THT+c*THT*CR+d*DBH*THT*CR
       ENDIF 
       END
             

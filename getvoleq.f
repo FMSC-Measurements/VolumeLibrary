@@ -192,3 +192,21 @@ c      CHARACTER*10 nvoleq
 
       RETURN
       end subroutine GETFIAVOLEQ
+C*********************************************************************************
+      subroutine getvoleq_r(REGN,FORST,DIST,SPEC,VOLEQ,ERRFLAG)
+C This subroutine is for R user to get default equation from vollib      !
+C YW 02/10/2017
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::getvoleq_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'getvoleq_r_'::getvoleq_r
+      
+      CHARACTER*(*) :: FORST,DIST
+
+      CHARACTER*(*):: VOLEQ
+      CHARACTER*2 VAR,PROD
+	INTEGER SPEC,ERRFLAG,REGN
+	    
+         VAR = '  '
+         CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
+
+      RETURN
+      end subroutine getvoleq_r

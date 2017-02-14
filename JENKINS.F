@@ -1,9 +1,9 @@
-      SUBROUTINE JENKINS(SPCD, DBHOB, BIOMS)
+      SUBROUTINE JENKINS(SPEC, DBHOB, BIOMS)
 C     This subroutine calculate biomass using DBH (inches) and return dry biomass in lb.
 C     08/15/2016 YW For woodland species, dismater is usually measured as DRC, Jenkins converted DRC to DBH
 C     for the generilized equation.
       INCLUDE 'WDBKWTDATA.INC'
-      INTEGER SPCD, SPGRPCD, FIRST, LAST, HALF, DONE
+      INTEGER SPEC, SPCD, SPGRPCD, FIRST, LAST, HALF, DONE
       INTEGER I0, J0
       REAL DBHOB, B0, B1, DBHIN, DBHCM
       REAL BIOMS(8), COEF(10,3)
@@ -50,6 +50,7 @@ C                  COARSE ROOTS 2              -1.5619  0.6614
 C                  STEM BARK    3              -2.0980  -1.1432
 C                  STEM WOOD    4              -0.3737  -1.8055
 C    -------------------------------------------------------------
+      SPCD = SPEC
       KG2LB = 2.20462
       STUMP = 0
       IF(SPCD.LT.10)THEN
