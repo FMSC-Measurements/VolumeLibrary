@@ -65,11 +65,11 @@
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
  !      vol(2) = 17.3
  !      logvol(4,1) = 32.3
-      IF(BMSFLG.EQ.1.AND.VOLEQ.EQ."")THEN
-        VAR = '  '
-        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPCD,PROD,EQNUM,ERRFLAG)
-        VOLEQ = EQNUM
-      ENDIF
+c      IF(BMSFLG.EQ.1.AND.VOLEQ.EQ."")THEN
+c        VAR = '  '
+c        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPCD,PROD,EQNUM,ERRFLAG)
+c        VOLEQ = EQNUM
+c      ENDIF
       CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -79,10 +79,10 @@
  !      print *, 'vol(2) = ', vol(2)
  !      print *, 'logvol(4,1) = ', logvol(4,1)
  !    Added the following to calculat biomass (09/20/2016)
-      IF (BMSFLG.EQ.1) THEN
-        CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB, HTTOT,FCLASS,
-     +  VOL,WF,BMS,ERRFLG)
-      ENDIF
+c      IF (BMSFLG.EQ.1) THEN
+c        CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB, HTTOT,FCLASS,
+c     +  VOL,WF,BMS,ERRFLG)
+c      ENDIF
  4000 RETURN
       
       END SUBROUTINE VOLUMELIBRARY
@@ -299,7 +299,6 @@ C ******************************************************************************
      + FCLASS,DBTBH_d,BTR_d,VOL_d, ERRFLAG)
 C This subroutine is for R user to calculate volume from vollib      !
 C YW 02/10/2017
-C testing --still not working
 
       !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollib_r
       !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollib_r_'::vollib_r
@@ -415,32 +414,8 @@ c      IF(TMPSPEC.NE.8888) GOTO 999
       DBTBH_d = DBLE(DBTBH)
       BTR_d = DBLE(BTR)
       
-c      TOPD = 0.0
-c      CALL VOLLIBVB8INIT(VOLEQ, REGN,DBHOB, HTTOT, TOPD,
-c     +  VOL, MHT,ERRFLG)
-c      TCU = DBLE(VOL)
 
 999   CONTINUE
       RETURN
       end subroutine vollib_r   
       
-C *********************************************************************************
-      subroutine test_r(voleq,dbh,tht,tcu)
-C this is a test
-      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::test_r
-      !DEC$ ATTRIBUTES DECORATE, ALIAS:'test_r_'::test_r
-      IMPLICIT NONE
-      
-      CHARACTER*10 voleq
-      double precision dbh,tht,tcu
-      real dbhob, httot, totcu
-      INTEGER REGN,ERR
-      
-      err=0
-      dbhob = REAL(dbh)
-      httot = REAL(tht)
-      totcu = dbhob*dbhob*httot
-      tcu= DBLE(totcu)
-      err=10
-      RETURN
-      end subroutine test_r      

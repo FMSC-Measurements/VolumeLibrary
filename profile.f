@@ -893,7 +893,7 @@ c--   USE SMALIAN FOR TIP, WITH A TIP DIAMETER OF 0.0
          TCVOL = TCVOL + VOLTMP
          TIPV = TIPV + VOLTMP
       ENDIF
-      VOL(15) = TIPV
+C      VOL(15) = TIPV
       RETURN
       END
 

@@ -266,7 +266,7 @@ namespace volCStest
                 {
                     if (VOLEQ.ToString().Substring(0, 1) == "8" && VOLEQ.ToString().Substring(3, 3) == "CLK")
                     {
-                        if (VOLEQ.ToString().Substring(2, 1) != "0" || VOLEQ.ToString().Substring(2, 1) != "8")
+                        if (VOLEQ.ToString().Substring(2, 1) != "0" && VOLEQ.ToString().Substring(2, 1) != "8")
                         {
                             MessageBox.Show("Upper stem height is required for the equation: " + volEqTB.Text);
                             upsht1TB.Focus();

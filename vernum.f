@@ -21,6 +21,7 @@ C          and made correction to LAST = HALF-1 to avoid infinit loop.
 C 20161121 Removed the weight factor for douglas-fir in Siuslaw NF. They want to use the regional weight factor for DF.
 C 20170209 Added EZVOLLIB subroutine to volumelibrary.f
 C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
+C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch stem vol is calculated, the stem biomass is also calculated.
 
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
@@ -51,7 +52,7 @@ C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170214
+      VERSION = 20170227
       RETURN
       END SUBROUTINE VERNUM
       
@@ -84,7 +85,7 @@ C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170214
+      VERSION = 20170227
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -107,7 +108,7 @@ C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
 
 !---------------------------------------------------------------------
      
-      VERSION = 20170214
+      VERSION = 20170227
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -123,6 +124,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20170214
+      version = 20170227
       return
       end subroutine vernum_r
