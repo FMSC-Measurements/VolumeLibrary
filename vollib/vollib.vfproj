@@ -71,6 +71,11 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\f_ingy.f"/>
 		<File RelativePath="..\F_other.f"/>
 		<File RelativePath="..\F_west.f"/>
+		<File RelativePath="..\fia_nc.f"/>
+		<File RelativePath="..\fia_ne.f"/>
+		<File RelativePath="..\fia_nw.f"/>
+		<File RelativePath="..\fia_rm.f"/>
+		<File RelativePath="..\fia_se.f"/>
 		<File RelativePath="..\Formclas.f"/>
 		<File RelativePath="..\fwinit.f"/>
 		<File RelativePath="..\getvoleq.f"/>
@@ -157,6 +162,10 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\volumelib.f"/>
 		<File RelativePath="..\volumelibrary.f"/></Filter>
 		<File RelativePath="..\BEQINFO.INC"/>
+		<File RelativePath="..\beqrefinfo.inc"/>
+		<File RelativePath="..\bioeqcoef.inc"/>
+		<File RelativePath="..\bioeqinfo.inc"/>
+		<File RelativePath="..\fiabioeq.inc"/>
 		<File RelativePath="..\R8clist.inc"/>
 		<File RelativePath="..\R8CLKCOEF.INC"/>
 		<File RelativePath="..\R8dib.inc"/>

@@ -27,7 +27,7 @@
 C     First check the species for in the SPLIST1
       CALL SEARCH(LAST,SPLIST1,SPN,DONE,ERRFLG)
       IF(DONE.GT.0) THEN
-        IF(VOL(4).GT.0.AND DBHOB.GE.5) THEN
+        IF(VOL(4).GT.0.AND. DBHOB.GE.5) THEN
 C         For species in most locations
           IF(BEQ(10:11).EQ.'01') THEN
             BOLE_WD = VOL(4)*WD_DEN(DONE)
@@ -45,7 +45,7 @@ C         For Douglas-fir and other hardwood species in CO, UT,
             BOLE_BK = BOLE_WD*BKRAT
           ENDIF
           BOLE = BOLE_WD + BOLE_BK
-          IF(SPN.EQ.122.OR.SPN.EQ.119.OR.(SPN.EQ108.AND.DBH.LT.14)THEN
+          IF(SPN.EQ.122.OR.SPN.EQ.119.OR.(SPN.EQ.108.AND.DBH.LT.14))THEN
             TOP_LIMB = 193.5-43.5412*DBH+3.1659*DBH**2
           ELSEIF(SPN.LT.300) THEN
             TOP_LIMB = 0.191+2.0304*DBH+0.7031*DBH**2
@@ -94,20 +94,20 @@ C       the VOL(4) is set to be same as VOL(1)
           ENDIF
           BIO3_M = BIO3/2.2046
           IF(SPN.GE.300)THEN
-            WT_FOL = 10**(-.5655+(.8382*(Log(10,BIO3 )))+(-.0094*HT))
-            WT_BRA = 10**(.3036+(.7752*(Log(10,BIO3 )))+(-.0049*HT))
+            WT_FOL = 10**(-.5655+(.8382*(LOG10(BIO3)))+(-.0094*HT))
+            WT_BRA = 10**(.3036+(.7752*(LOG10(BIO3)))+(-.0049*HT))
           ELSE
             IF(SPN.EQ.106)THEN
               IF(BIO3_M.LE.468.028)THEN
-                WT_FOL_M = EXP(1.0254+.559*LN(BIO3_M))
+               WT_FOL_M = EXP(1.0254+.559*LOG(BIO3_M))
               ELSE
-                WT_FOL_M=EXP(1.0254+.559*(1+LN(468.028)-468.028/BIO3_M))
+               WT_FOL_M=EXP(1.0254+.559*(1+LOG(468.028)-468.028/BIO3_M))
               ENDIF
             ELSE
               IF(BIO3_M.LE.150)THEN
-                WT_FOL_M = EXP(1.2867+.649*LN(BIO3_M))
+                WT_FOL_M = EXP(1.2867+.649*LOG(BIO3_M))
               ELSE
-                WT_FOL_M = EXP(1.2867+.649*(1+LN(150)-150/BIO3_M))
+                WT_FOL_M = EXP(1.2867+.649*(1+LOG(150.0)-150/BIO3_M))
               ENDIF
             ENDIF
             WT_FOL = WT_FOL_M*2.2046
@@ -130,6 +130,7 @@ C         Foliage total
           ELSEIF(BEQ(7:9).EQ.'FOT')THEN
             BMS = WT_FOL
           ENDIF
+        ENDIF
       ENDIF
       END
 C ------------------------------------------------------------------------------
@@ -148,7 +149,7 @@ C     the given volume (CV15) to a 1.5 inch branch diameter
           VR = 1 -(0.66949*(1.5**0.62895))/(DSH**0.44205)
         ENDIF
       ELSE
-        IF(SPN.EQ.57.OR.SPN.EQ63.OR.SPN.EQ.65.OR.SPN.EQ.69)THEN
+        IF(SPN.EQ.57.OR.SPN.EQ.63.OR.SPN.EQ.65.OR.SPN.EQ.69)THEN
           IF(STEMS.LE.1)THEN
             DSH = -0.77 + (0.9603*DRC) + 0.22
             VR = 1 - (0.44761*(1.5**0.65698))/(DSH**0.38835)
@@ -158,7 +159,7 @@ C     the given volume (CV15) to a 1.5 inch branch diameter
           ENDIF
         ENDIF
       ENDIF
-      IF(SPN.EQ.57.OR.SPN.EQ63.OR.SPN.EQ.65.OR.
+      IF(SPN.EQ.57.OR.SPN.EQ.63.OR.SPN.EQ.65.OR.
      +   SPN.EQ.69.OR.SPN.EQ.106)THEN
         CV3 = CV15*VR
       ELSEIF(SPN.EQ.475)THEN
@@ -167,7 +168,7 @@ C     the given volume (CV15) to a 1.5 inch branch diameter
         CV3 = Cv15
       ENDIF
 C     Compute small tree volume if none provided
-      IF(DRC.GE.1.AND.DRC.LT5.AND.SPN.NE475)THEN
+      IF(DRC.GE.1.AND.DRC.LT.5.AND.SPN.NE.475)THEN
         CV3 = .25*.005454*DRC**2*HT
       ENDIF
       BIO3 = SG*CV3*62.4

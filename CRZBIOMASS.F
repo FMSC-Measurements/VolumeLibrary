@@ -5,36 +5,16 @@ C YW 2016/03/08 harded coded the weight factor for DF in Rogue Rive - Siskiyou N
        IMPLICIT NONE
        INCLUDE 'WDBKWTDATA.INC'
        INCLUDE 'REGNDFTDATA.INC'
-       INCLUDE 'BEQINFO.INC'
-       INTEGER REGN, IFORST, SPCD, I, J
+C       INCLUDE 'BEQINFO.INC'
+       INCLUDE 'beqrefinfo.inc'
+       
+       INTEGER REGN, IFORST, SPCD, I, J, K
        REAL WF(3), DWF, REGNWF(3), NATLWF
        CHARACTER*2 FORST
-       CHARACTER*12 BMSEQ(8)
+       CHARACTER*12 BMSEQ(8), BIOEQ
        CHARACTER*40 REF(8)
+       CHARACTER*3 REFABRV
        INTEGER FIRST, LAST, HALF, DONE
-
-C the following section is for testing 11/29/2016
-       TYPE EQINFO
-         CHARACTER*12 BIOEQ
-         INTEGER EQN
-         CHARACTER*3 DiaType, DiaUnit, HtUnit, BioUnit
-       END TYPE EQINFO
-       TYPE(EQINFO) BIOMSEQ(10)
-       DATA (BIOMSEQ(I),I=1,10) /
-     +  EQINFO('JKN001AGT01D',1,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN002AGT01D',2,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN003AGT01D',3,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN004AGT01D',4,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN005AGT01D',5,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN006AGT01D',6,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN007AGT01D',7,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN008AGT01D',8,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN009AGT01D',9,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN000AGT01D',10,'DBH','IN','FT','LB')/
-       IF(BIOMSEQ(10)%BIOEQ.EQ.'CHO000AGT01D') THEN
-         RETURN
-       ENDIF
-C end testing section
        
        READ(FORST,'(i2)') IFORST
        DO 3, J=1,8
@@ -96,17 +76,25 @@ C      First to check if the species has a regional/forest default record
            REF(8) = 'USE REGIONAL DEFAULT MOISTURE CONTENT'
          ENDIF
          !BIOMASS EQN REFERENCE
-         DO I=1,TOTEQ
-           IF(BEQN(I).EQ.BMSEQ(1)) THEN
-             REF(1) = BEQREF(I)
-           ELSEIF (BEQN(I).EQ.BMSEQ(2)) THEN
-             REF(2) = BEQREF(I)
-           ELSEIF(BEQN(I).EQ.BMSEQ(3)) THEN
-             REF(3) = BEQREF(I)
-           ELSEIF(BEQN(I).EQ.BMSEQ(4)) THEN
-             REF(4) = BEQREF(I)
-           ELSEIF(BEQN(I).EQ.BMSEQ(7)) THEN
-             REF(7) = BEQREF(I)
+         DO K=1, 5
+           REFABRV = " "
+           IF(K.LE.4)THEN
+             BIOEQ = BMSEQ(K)
+           ELSE
+             BIOEQ = BMSEQ(7)
+           ENDIF
+           IF(LEN_TRIM(BIOEQ).EQ.12) REFABRV = BIOEQ(1:3)
+
+           IF(LEN_TRIM(REFABRV).EQ.3) THEN
+             DO I=1,REFCNT
+               IF(REFABRV.EQ.BEQREF(I)%ABRV)THEN
+                 IF(K.LE.4)THEN
+                   REF(K) = BEQREF(I)%AUTH
+                 ELSE
+                   REF(7) = BEQREF(I)%AUTH
+                 ENDIF
+               ENDIF
+             ENDDO
            ENDIF
          ENDDO
        ENDIF
@@ -305,9 +293,11 @@ C      ADJUST BIOMASS FROM JENKINS
        BMS(1) = JNKBMS(1)*RATIO
        BMS(2) = JNKBMS(6)*RATIO
        BMS(4) = JNKBMS(4)*RATIO
-C      RETURN MAINSTEM BIOMASS FROM JENKINS WHEN THERE IS NO VOLUME FOR MAINSTEM(6/13/2016)       
-       IF(BMS(5).EQ.0.AND.BMS(6).EQ.0.AND.DBHOB.GE.5) BMS(5) = JNKBMS(8)
-       
+C      RETURN MAINSTEM BIOMASS FROM JENKINS WHEN THERE IS NO VOLUME FOR MAINSTEM(6/13/2016)
+C      For tree DBH>=5 and no merch vol calculated, stem goes to branches (03/07/2017)      
+       IF(BMS(5).EQ.0.AND.BMS(6).EQ.0.AND.DBHOB.GE.5)THEN
+        BMS(2) = BMS(1) - BMS(4)
+       ENDIF
 C      For small trees, if merch vol is calculated to topd < 4", adjust the branches total.
 C      2017/02/21
        IF(JNKBMS(8).EQ.0.AND.STEMGWT.GT.0) BMS(2)=BMS(2)-BMS(5)-BMS(6)

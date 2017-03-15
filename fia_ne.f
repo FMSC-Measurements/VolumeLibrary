@@ -42,11 +42,11 @@ C     First check the species for in the SPLIST
 C       First calculate the total above ground dry biomass including stump, branches and foliage
 C       Created from FCS_TREE_BIOM_NERS written by Carol Alerich
         IF (MDL(DONE).EQ.1) THEN
-          ABVGRD_TOT = EXP(Y1(DONE + Y2(DONE)*LN(DBH))  
+          ABVGRD_TOT = EXP(Y1(DONE) + Y2(DONE)*LOG(DBH))  
         ELSEIF(MDL(DONE).EQ.2) THEN
-          ABVGRD_TOT = 10**(LOG10(Y1(DONE + Y2(DONE*LOG10(DBH))
-        ELSEIF(MDL(DONE).E3.3) THEN
-          IF(SPN.EQ.318) THEM
+          ABVGRD_TOT = 10**(LOG10(Y1(DONE) + Y2(DONE)*LOG10(DBH)))
+        ELSEIF(MDL(DONE).EQ.3) THEN
+          IF(SPN.EQ.318) THEN
             M3 = 0.0076
           ELSEIF(SPN.EQ.531) THEN
             M3 = 0.0072

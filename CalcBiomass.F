@@ -3,651 +3,234 @@ C Last modified on 7/17/2015
 C This sunroutine is generated from NBEL Tester for selected biomass equations
        SUBROUTINE CalcBiomass(BEQ, DBH, THT, CR, BMS)
        CHARACTER*12 BEQ
-       REAL DBH, THT, CR, VOL(15),BMS, a,b,c,d,e
-       INTEGER EqForm, I
-       CHARACTER*5 diaUnit, BmsUnit,HtUnit,diaType
-
-C the following section is for testing 11/29/2016
-       TYPE EQINFO
-         CHARACTER*12 BIOEQ
-         INTEGER EQN
-         CHARACTER*3 DiaType, DiaUnit, HtUnit, BioUnit
-       END TYPE EQINFO
-       TYPE(EQINFO) BIOMSEQ(10)
-       DATA (BIOMSEQ(I),I=1,10) /
-     +  EQINFO('JKN001AGT01D',1,'DBH','IN','FT','LB'),  
-     +  EQINFO('JKN002AGT01D',2,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN003AGT01D',3,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN004AGT01D',4,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN005AGT01D',5,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN006AGT01D',6,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN007AGT01D',7,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN008AGT01D',8,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN009AGT01D',9,'DBH','IN','FT','LB'),
-     +  EQINFO('JKN000AGT01D',10,'DBH','IN','FT','LB')/
-       IF(BIOMSEQ(10)%BIOEQ.EQ.'CHO000AGT01D') THEN
-         RETURN
-       ENDIF
-C end testing section
-       
+       REAL DBH, THT, CR, VOL(15),BMS
+       INTEGER STEMS, ERRFLG
+       REAL HT1PRD, HT2PRD,TOPD
        BMS = 0
-       a = 0
-       b = 0
-       c = 0
-       d = 0
-       e = 0
-       IF(LEN(BEQ).EQ.0) THEN 
-         BMS = 0
-       ELSEIF(BEQ.EQ.'WY2015TIP01G') THEN
-         EqForm = 4
-         a = 39.61376
-         c = 0.350321
-         d = 0.8841
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2015CRW01G') THEN
-         EqForm = 16
-         a = 4.833
-         b = 1.7883
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2096TIP01G') THEN
-         EqForm = 4
-         a = 84.60268
-         c = -3.75349
-         d = 1.0798
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2096CRW01G') THEN
-         EqForm = 16
-         a = 1.5978
-         b = 2.1371
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2122TIP01G') THEN
-         EqForm = 4
-         a = 25.45383
-         c = 4.810467
-         d = 0.728
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2122CRW01G') THEN
-         EqForm = 17
-         a = 468.7
-         b = -109.56
-         c = 7.0873
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2202TIP01G') THEN
-         EqForm = 4
-         a = 55.33516
-         c = -3.09924
-         d = 0.8087
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'WY2202CRW01G') THEN
-         EqForm = 16
-         a = 0.577
-         b = 2.5765
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'TNK122AGT01D') THEN
-         EqForm = 4
-         DBH = DBH*2.54
-         THT = THT*0.3048
-         DBH = DBH * DBH * THT
-         a = 20.283
-         b = 0.018849
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-         BMS = BMS * 2.204623
-       ELSEIF(BEQ.EQ.'STD122AST01D') THEN
-         EqForm = 11
-         DBH = DBH*0.0254
-         THT = THT*0.3048
-         a = 1.6
-         b = 187
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-         BMS = BMS * 2.204623
-       ELSEIF(BEQ.EQ.'BRN017LCR01D') THEN
-         EqForm = 2
-         a = 1.0144
-         c = 1.6156
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017LCR02D') THEN
-         EqForm = 2
-         a = 1.3094
-         c = 1.6076
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017LCR03D') THEN
-         EqForm = 15
-         b = 0.4284
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017LCR04D') THEN
-         EqForm = 15
-         c = 0.0538
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN019LCR01D') THEN
-         EqForm = 4
-         a = 7.345
-         c = 1.255
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN019LCR02D') THEN
-         EqForm = 12
-         a = -3.335
-         c = 2.303
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN073LCR01D') THEN
-         EqForm = 2
-         a = 0.4373
-         c = 1.6786
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN073LCR02D') THEN
-         EqForm = 15
-         b = 0.1128
-         c = 0.00813
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN093LCR01D') THEN
-         EqForm = 2
-         a = 1.0404
-         c = 1.7096
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN093LCR02D') THEN
-         EqForm = 12
-         a = -3.932
-         c = 2.571
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN101LCR01D') THEN
-         EqForm = 4
-         a = -1
-         c = 0.8371
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN101LCR02D') THEN
-         EqForm = 15
-         a = 0.07
-         c = 0.02446
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN108LCR01D') THEN
-         EqForm = 2
-         a = 0.1224
-         c = 1.882
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN108LCR02D') THEN
-         EqForm = 15
-         c = 0.03111
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN119LCR01D') THEN
-         EqForm = 2
-         a = 0.7276
-         c = 1.5497
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN119LCR02D') THEN
-         EqForm = 15
-         b = 0.3292
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN119LCR03D') THEN
-         EqForm = 11
-         a = 3.65
-         b = 0.01233
-         c = -0.04534
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122LCR01D') THEN
-         EqForm = 2
-         a = 0.268
-         c = 2.074
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122LCR02D') THEN
-         EqForm = 2
-         a = -0.7572
-         c = 2.216
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122LCR03D') THEN
-         EqForm = 15
-         b = 0.3451
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122LCR04D') THEN
-         EqForm = 12
-         a = -2.7297
-         c = 1.1707
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202LCR01D') THEN
-         EqForm = 2
-         a = 1.1368
-         c = 1.5819
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202LCR02D') THEN
-         EqForm = 2
-         a = 0.1508
-         c = 1.862
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202LCR03D') THEN
-         EqForm = 4
-         a = -20.74
-         c = 1.0237
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202LCR04D') THEN
-         EqForm = 12
-         a = -4.212
-         c = 2.7168
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202LCR05D') THEN
-         EqForm = 12
-         a = -2.8065
-         c = 1.4802
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202LCR06D') THEN
-         EqForm = 4
-         a = 10.9
-         b = -11.34
-         c = 4.059
-         d = 2
-         e = -0.03283
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242LCR01D') THEN
-         EqForm = 2
-         a = 0.8815
-         c = 1.6389
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242LCR02D') THEN
-         EqForm = 2
-         a = 0.5743
-         c = 1.796
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242LCR03D') THEN
-         EqForm = 15
-         c = 0.04833
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242LCR04D') THEN
-         EqForm = 15
-         c = 0.0307
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263LCR01D') THEN
-         EqForm = 2
-         a = 0.7218
-         c = 1.7502
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263LCR02D') THEN
-         EqForm = 12
-         a = -5.126
-         c = 2.563
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263LCR03D') THEN
-         EqForm = 5
-         a = 3.6
-         c = -1.545
-         d = 0.01734
-         e = 0.388
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263LCR04D') THEN
-         EqForm = 2
-         a = -0.4691
-         c = 2.165
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017DCR01D') THEN
-         EqForm = 2
-         a = -2.6214
-         c = 2.5492
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017DCR02D') THEN
-         EqForm = 2
-         a = -5.3154
-         c = 3.5638
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017DCR03D') THEN
-         EqForm = 11
-         a = 1.36
-         b = -0.003564
-         c = 0.04371
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN019DCR01D') THEN
-         EqForm = 2
-         a = -6.5431
-         c = 4.0365
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN093DCR01D') THEN
-         EqForm = 2
-         a = -6.686
-         c = 3.6172
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN101DCR01D') THEN
-         EqForm = 4
-         c = 0.06117
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN101DCR02D') THEN
-         EqForm = 11
-         a = 0.28
-         b = 0.001397
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN119DCR01D') THEN
-         EqForm = 2
-         a = -4.397
-         c = 2.6076
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122DCR01D') THEN
-         EqForm = 2
-         a = -3.7398
-         c = 2.8376
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122DCR02D') THEN
-         EqForm = 2
-         a = -2.5176
-         c = 2.51
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202DCR01D') THEN
-         EqForm = 2
-         a = -1.928
-         c = 2.353
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202DCR02D') THEN
-         EqForm = 4
-         c = 0.01094
-         d = 3
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242DCR01D') THEN
-         EqForm = 4
-         c = 0.01063
-         d = 3
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242DCR02D') THEN
-         EqForm = 2
-         a = -2.799
-         c = 2.4942
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263DCR01D') THEN
-         EqForm = 2
-         a = -6.6768
-         c = 3.3664
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263DCR02D') THEN
-         EqForm = 12
-         a = -19.34
-         b = -2.0496
-         c = 6.0111
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017STT01D') THEN
-         EqForm = 5
-         a = 0.62
-         c = 0.8024
-         d = 0.1724
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017STT02D') THEN
-         EqForm = 4
-         a = -1.63
-         c = 2.172
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN017STT03D') THEN
-         EqForm = 11
-         a = 0.34
-         b = 0.09182
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN019STT01D') THEN
-         EqForm = 5
-         a = 1.55
-         d = 0.414
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN019STT02D') THEN
-         EqForm = 11
-         a = 0.28
-         b = 0.02692
-         d = 0.1912
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN073STT01D') THEN
-         EqForm = 5
-         a = 0.96
-         d = 0.6532
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN073STT02D') THEN
-         EqForm = 4
-         a = 0.65
-         d = 0
-         e = 0.1004
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN093STT01D') THEN
-         EqForm = 2
-         a = 0.8381
-         c = 1.3803
-         d = 1
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN093STT02D') THEN
-         EqForm = 3
-         a = 0.7839
-         b = 1.29
-         d = 0
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN101STT01D') THEN
-         EqForm = 4
-         a = 0.52
-         c = 1.441
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN101STT02D') THEN
-         EqForm = 4
-         a = 1.33
-         d = 0
-         e = 0.08614
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN108STT01D') THEN
-         EqForm = 4
-         a = 1.49
-         b = -2.388
-         c = 2.297
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN119STT01D') THEN
-         EqForm = 5
-         a = 1.15
-         d = 0.5297
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122STT01D') THEN
-         EqForm = 4
-         a = 1.08
-         c = 0.9361
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122STT02D') THEN
-         EqForm = 5
-         a = 0.74
-         d = 0.4006
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122STT03D') THEN
-         EqForm = 4
-         a = 0.2
-         d = 0
-         e = 0.07058
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN122STT04D') THEN
-         EqForm = 4
-         a = 0.56
-         c = 1.1029
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202STT01D') THEN
-         EqForm = 4
-         a = 0.74
-         c = 1.591
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN202STT02D') THEN
-         EqForm = 4
-         a = -0.88
-         c = 2.234
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242STT01D') THEN
-         EqForm = 5
-         b = 1.436
-         d = 0.3326
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN242STT02D') THEN
-         EqForm = 4
-         a = 0.52
-         c = 1.35
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263STT01D') THEN
-         EqForm = 4
-         a = 0.11
-         c = 1.665
-         d = 2
-         e = 0
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ELSEIF(BEQ.EQ.'BRN263STT02D') THEN
-         EqForm = 4
-         a = 0.31
-         b = 0.8334
-         d = 0
-         e = 0.06819
-         CALL BiomassFormula(EqForm,DBH,THT,P3,a,b,c,d,e,BMS)
-       ENDIF
+
+       CALL BiomassLibrary(BEQ,DBH,THT,CR,HT1PRD, 
+     + HT2PRD,TOPD, STEMS, VOL, BMS, ERRFLG)
+
+       RETURN
        END
 C ------------------------------------------------------------------------------------------------------------
-       SUBROUTINE CalcBiomass2(BEQ, DBH, THT, CR, VOL, BMS)
-C       INCLUDE 'fiabeq.inc'
-C       INCLUDE 'beqcoef.inc'
-C       INCLUDE 'beqinfo.inc'
-       CHARACTER*12 BEQ
-       REAL DBH, THT, CR, VOL(15), BMS
+C This subroutine calculates biomass for equation stored in the National Biomass Estimator Library (NBEL).
+C The file fiabioeq.inc lists all FIA Regional biomass equation. 
+C The file bioeqinfo.inc lists published biomass equations in NBEL and the file bioeqcoef.inc contains the
+C coefficients for all biomass equations.
+C Input variables are:
+C BIOEQ -- biomass equatiom number 
+C DBHOB -- outside bark diameter at breast height
+C HTTOT -- total height 
+C CR    -- crown ratio (=crown length/total height)
+C HT1PRD -- height for primary prod (saw timber)
+C HT2PRD -- height for secondary prod (pulp)
+C TOPD -- top diameter for merch part
+C STEMS -- number of stems for woodland species
+C VOL -- the volume calculated from volume library 
+C BIOMS -- the calculated dry biomass for the given BIOEQ.
+C ERRFLG -- error code returnd from calculation:
+C        15 - invalid BIOEQ
+C        16 - primary prod height required
+C        17 - secondary prod height is required
+C        18 - stem cubic volume is required for FIA biomass equation
+       SUBROUTINE BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD, 
+     + HT2PRD,TOPD, STEMS, VOL, BIOMS, ERRFLG)
+       INCLUDE 'fiabioeq.inc'
+       INCLUDE 'bioeqinfo.inc'
+       INCLUDE 'bioeqcoef.inc'
+       CHARACTER*12 BIOEQ
+       REAL DBHOB, HTTOT, TOPD, CR, VOL(15), BIOMS
+       REAL HT1PRD, HT2PRD
        CHARACTER*3 MDL
+       REAL DIA, HT
+       INTEGER STEMS, IDX, I, SPEC, ERRFLG
+       CHARACTER*2 DiaUnit, HtUnit, BioUnit
+       CHARACTER*3 DiaType, HtType
+       REAL IN2CM,IN2MM,IN2M,FT2M,FT2CM,KG2LB,G2LB,MG2LB
+       REAL SG(11), MC
+       INTEGER EqForm
+
+C      List of unit conversion factor       
+       IN2CM = 2.54
+       IN2MM = 25.4
+       IN2M = 0.0254
+       FT2M = 0.3048
+       FT2CM = 30.48
+       KG2LB = 2.20462
+       G2LB = 0.00220462
+       MG2LB = 2204.62
        
-       MDL = BEQ(1:3)
+       DIA = DBHOB
+       HT = HTTOT
+       MDL = BIOEQ(1:3)
        IF(MDL.EQ.'FNW'.OR.MDL.EQ.'FRM'.OR.MDL.EQ.'FNC'
      +    .OR.MDL.EQ.'FNE'.OR.MDL.EQ.'FSE')THEN
-         
-       ENDIF
-       END
-C ------------------------------------------------------------------------------------------------------------       
-       SUBROUTINE SEARCHBIOEQ(N, ARY, BEQ, LOC)
-       INTEGER N, LOC, I
-       CHARACTER*12 ARY(N), BEQ
-       
-       LOC = 0
-       DO I = 1, N
-         IF(ARY(I).EQ.BEQ)THEN
-           LOC = I
+C      Check if the equation is a valid 
+       IDX = 0
+       DO I = 1, TOTEQ
+         IF(FIABEQ(I).EQ.BIOEQ)THEN
+           IDX = I
            EXIT
          ENDIF
        END DO
+       IF(IDX.EQ.0)THEN
+C      Flag for invalid BIOEQ       
+        ERRFLG = 15
+        RETURN
+       ENDIF
+     
+C      Vol(4) should be the volume to 4" top
+C      If top wood volume is saved in VOL(7), add it back to VOL(4)
+         IF(VOL(7).GT.0) VOL(4) = VOL(4)+VOL(7)    
+         IF(VOL(1).EQ.0.AND.VOL(4).EQ.0)THEN
+C          Stem cubic volume is required for FIA biomass equation
+           ERRFLG = 18
+           RETURN
+         ENDIF 
+C      For the FIA biomass equation call FIA subroutine     
+         IF(MDL.EQ.'FNW')THEN
+           CALL FIA_NW(BIOEQ, DIA, HT, VOL, BIOMS)
+         ELSEIF(MDL.EQ.'FRM')THEN
+           CALL FIA_RM(BIOEQ, DIA, HT, STEMS, VOL, BIOMS)
+         ELSEIF(MDL.EQ.'FNC')THEN
+           CALL FIA_NC(BIOEQ, DIA, HT, VOL, BIOMS)
+         ELSEIF(MDL.EQ.'FNE')THEN
+           CALL FIA_NE(BIOEQ, DIA, HT, VOL, BIOMS)
+         ELSEIF(MDL.EQ.'FSE')THEN
+           CALL FIA_SE(BIOEQ, DIA, HT, VOL, BIOMS)
+         ENDIF
+       ELSE
+C      For equations saved in the SQLite database, calculate biomass with its equation formula
+C      1. check if the BIOEQ is valid. EQNTOT is total number of biomass equations in the database
+       IDX = 0
+       DO I = 1, EQNTOT
+         IF(BIOMSEQ(I)%BIOEQ.EQ.BIOEQ)THEN
+           IDX = I
+           EXIT
+         ENDIF
+       END DO
+       IF(IDX.EQ.0)THEN
+         ERRFLG = 15
+         RETURN
+       ENDIF
+       READ(BIOEQ(4:6),'(I3)') SPEC
+
+C      2. get the EQN info and coef
+       DiaUnit = BIOMSEQ(IDX)%DiaUnit
+       HtType = BIOMSEQ(IDX)%HtType
+       IF(HtType.EQ.'HT1')THEN
+         IF(HT1PRD.LE.0)THEN
+C          Primary prod height is required for the BIOEQ         
+           ERRFLG = 16
+           RETURN
+         ELSE
+           HT = HT1PRD
+         ENDIF
+       ELSEIF(HtType.EQ.'HT2')THEN
+         IF(HT2PRD.LE.0)THEN
+C          Secondary prod height is required for the BIOEQ         
+           ERRFLG = 17
+           RETURN
+         ELSE
+           HT = HT2PRD
+         ENDIF
+       ENDIF
+       HtUnit = BIOMSEQ(IDX)%HtUnit
+       IF(DiaUnit.EQ.'CM'.OR.DiaUnit.EQ.'cm')THEN
+         DIA = DIA*IN2CM
+       ELSEIF(DiaUnit.EQ.'MM'.OR.DiaUnit.EQ.'mm')THEN
+         DIA = DIA*IN2MM
+       ELSEIF(DiaUnit.EQ.'M'.OR.DiaUnit.EQ.'m')THEN
+         DIA = DIA*IN2M
+       ENDIF
+       IF(HtUnit.EQ.'M'.OR.HtUnit.EQ.'m')THEN
+         HT = HT*FT2M
+       ELSEIF(HtUnit.EQ.'CM'.OR.HtUnit.EQ.'cm')THEN
+         HT = HT*FT2CM
+       ENDIF
+       IF(DiaType.EQ.'CBH'.OR.DiaType.EQ.'CRC'.OR.DiaType.EQ.'CBA')THEN
+         DIA = DIA*3.24
+       ELSEIF(DiaType.EQ.'BA')THEN
+         DIA = (DIA/2)**2*3.14
+       ELSEIF(DiaType.EQ.'D2')THEN
+         DIA = DIA*DIA
+       ELSEIF(DiaType.EQ.'BAH')THEN
+         DIA = DIA**2*0.005454*HT
+       ELSEIF(DiaType.EQ.'D2H')THEN
+         DIA = DIA*DIA*HT
+       ELSEIF(DiaType.EQ.'D2R')THEN
+         DIA = DIA*DIA*CR
+       ENDIF
+        EqForm = BEQCOEF(IDX,1)
+        a = BEQCOEF(IDX,2)
+        b = BEQCOEF(IDX,3)
+        c = BEQCOEF(IDX,4)
+        d = BEQCOEF(IDX,5)
+        e = BEQCOEF(IDX,6)
+C      3. call the EQN formula to calculate the biomass
+       CALL BioeqFormula(EqForm,DIA,HT,CR,TOPD,a,b,c,d,e,BIOMS)
+C      4. return dry biomass in lb
+       BioUnit = BIOMSEQ(IDX)%BioUnit
+       IF(BioUnit.EQ.'KG')THEN
+         BIOMS = BIOMS*KG2LB
+       ELSEIF(BioUnit.EQ.'G')THEN
+         BIOMS = BIOMS*G2LB
+       ELSEIF(BioUnit.EQ.'MG')THEN
+         BIOMS = BIOMS*MG2LB
+       ENDIF
+         IF(BIOEQ(12:12).EQ.'G')THEN
+           CALL MILESDATA(SPEC, SG)
+           MC = (SG(9)-SG(10))/SG(10)
+           BIOMS = BIOMS/(1+MC)
+         ENDIF      
+       ENDIF
        END
+C *********************************************************************************************************
+C This subroutine the specific gravity data for a given species
+C The wood and bark specific gravity data for a species are given as:
+C      Column# Name
+C            1 Species FIA code
+C            2 soft or hard wood (0=soft and 1=hard)
+C            3 Jenkins species group code
+C            4 Wood dry weight (lb/cf)
+C            5 bark dry weight (lb/cf)
+C            6 Wood moist content(%)
+C            7 Bark moist cotent (%)
+C            8 bark to wood vol percent (%)
+C            9 Green weight factor (lb/cf)
+C           10 Dry weight factor (lb/cf)
+C           11 Sapling adjustment factor
+      SUBROUTINE MILESDATA(SPEC, SG)
+      INCLUDE 'WDBKWTDATA.INC'
+      INTEGER SPEC, FIRST, LAST, HALF, DONE
+      REAL SG(11)
+         DONE = 0
+         FIRST = 1
+         LAST = TOTSPC
+           DO 50, WHILE (DONE.EQ.0)
+             HALF = (LAST - FIRST +1)/2 + FIRST
+             IF(WDBKWT(HALF,1).EQ.SPCD) THEN
+               DONE = HALF
+             ELSEIF(FIRST .EQ. LAST) THEN
+               DONE = -1
+             ELSEIF(WDBKWT(HALF,1).LT.SPCD) THEN  
+               FIRST = HALF
+             ELSE
+               LAST = HALF - 1
+             ENDIF
+50         CONTINUE
+         IF(DONE.LT.0) DONE = TOTSPC
+         SG(1) = WDBKWT(DONE,1)
+         SG(2) = WDBKWT(DONE,2)
+         SG(3) = WDBKWT(DONE,3)
+         SG(4) = WDBKWT(DONE,4)
+         SG(5) = WDBKWT(DONE,5)
+         SG(6) = WDBKWT(DONE,6)
+         SG(7) = WDBKWT(DONE,7)
+         SG(8) = WDBKWT(DONE,8)
+         SG(9) = WDBKWT(DONE,9)
+         SG(10) = WDBKWT(DONE,10)
+         SG(11) = WDBKWT(DONE,11)
+         RETURN         
+      END

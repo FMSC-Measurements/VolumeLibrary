@@ -327,11 +327,6 @@ C************************************************
         ENDIF
         VOL(4) = CUFTGROS
         vol(1) = cvt
-C       calculate stump and tip volume
-        VOL(14)=CVTS-CVT
-        IF(VOL(14).LT.0.01) VOL(14)=0.0
-        VOL(15)=CVT-CUFTGROS
-        IF(VOL(15).LT.0.01) VOL(15)=0.0                               
 C END CUFT CALCULATIONS
 C
 C
@@ -409,6 +404,12 @@ c        check for top diameter greater then dbh; no merch volume
       IF(MTOPP .GT. DBHOB) VOL(2) = 0.0
       IF(MTOPP .GT. DBHOB) VOL(10) = 0.0
       IF(MTOPP .GT. DBHOB) VOL(4) = 0.0
+
+C       calculate stump and tip volume
+        VOL(14)=CVTS-CVT
+        IF(VOL(14).LT.0.01) VOL(14)=0.0
+        VOL(15)=CVT-CUFTGROS
+        IF(VOL(15).LT.0.01) VOL(15)=0.0                               
 
 
  999  RETURN

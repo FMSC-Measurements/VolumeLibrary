@@ -313,11 +313,11 @@ namespace volCStest
            VolS = VOL[6];
            VolN = VolS - 0.2F;
            fliw = 0.5F;
-           BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
-           BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
+           //BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
+           //BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
            VolS = 302.7F;
            VolN = 293.9F;
-           BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
+           //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
 
             //test on EZVOLLIB
            //EZVOLLIB(VOLEQ, ref DBHOB, ref HTTOT, ref VOL, strlen);

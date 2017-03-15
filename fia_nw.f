@@ -1,9 +1,9 @@
       SUBROUTINE FIA_NW(BEQ, DBHOB, HTTOT, VOL, BMS)
       CHARACTER(12) BEQ, BIOEQ
       CHARACTER(3) COMP
-      REAL DBHOB, HTTOT, BMS, DBH
+      REAL DBHOB,HTTOT,BMS,DBH,HT1PRD, HT2PRD,CR,TOPD
       REAL VOL(15)
-      INTEGER SPN, SPLIST(123), DONE, LAST, ERRFLG, I
+      INTEGER SPN, SPLIST(123),DONE,LAST,ERRFLG,I,STEMS
       REAL WD_DEN(123)
       REAL STEM_WDTOT, STEM_WDMCH, BRCH_L, BRCH_D, STEM_BRCH
       REAL STEM_BK, FOL, BRCH_TOT, ABVGRD_TOT, CRWN
@@ -61,58 +61,91 @@ C       First calculate the total stem wood and merch stem wood using cubic volu
 C         CALCULATE BRANCHES AND STEM BARK USING STANDISH, SHAW, OR GHOLZ EQUATION
           IF(EQMDL.EQ.'ST')THEN
 C           STANDISH EQUSTION
-            BIOEQ(1:3) = 'STD'
+            BIOEQ(1:3) = 'STA'
           ELSEIF(EQMDL.EQ.'SH')THEN
 C           SHAW EQUSTION
-            BIOEQ(1:3) = 'SHW'
+            BIOEQ(1:3) = 'SHA'
           ELSEIF(EQMDL.EQ.'G1'.OR.EQMDL.EQ.'G2')THEN
 C           GHOLZ EQUSTION
-            BIOEQ(1:3) = 'GZ3'
+            BIOEQ(1:3) = 'GHZ'
           ENDIF
 
           BIOEQ(7:9) = 'BRL'
           BIOEQ(10:12) = '01D'        
-          BRCH_L = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          BRCH_L = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,
+     +     HT2PRD,TOPD,STEMS,VOL,BRCH_L,ERRFLG)
+
 C         STEM BARK
           BIOEQ(7:9) = 'STB'
-          STEM_BK = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          STEM_BK = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,STEM_BK,ERRFLG)
+          
           STEM_BRCH = STEM_WDTOT + STEM_BK + BRCH_L
           IF(EQMDL.EQ.'G2')THEN
 C           THE STEM WOOD IS ALSO CALCULATED USING GHOLZ EQUATION
             BIOEQ(7:9) = 'BRD'
-            BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C            BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+            CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +      STEMS,VOL,BRCH_D,ERRFLG)
+            
             BIOEQ(7:9) = 'STW'
-            STEM_WDTOT = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C            STEM_WDTOT = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+            CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +      STEMS,VOL,STEM_WDTOT,ERRFLG)
+            
             STEM_BRCH = STEM_WDTOT + STEM_BK + BRCH_L + BRCH_D
           ENDIF
 
         ELSEIF(COMP.EQ.'AGT')THEN
 C         CALCULATE ABOVE GROUND TOTAL USING GHOLZ EQUATION
-          BIOEQ(1:3) = 'GZ3'
+          BIOEQ(1:3) = 'GHZ'
           BIOEQ(7:9) = 'BRL'
           BIOEQ(10:12) = '01D'        
-          BRCH_L = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          BRCH_L = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,BRCH_L,ERRFLG)
+          
 C         STEM BARK
           BIOEQ(7:9) = 'STB'
-          STEM_BK = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          STEM_BK = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,STEM_BK,ERRFLG)
+          
           BIOEQ(7:9) = 'STW'
-          STEM_WDTOT = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          STEM_WDTOT = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,STEM_WDTOT,ERRFLG)
+          
           BIOEQ(7:9) = 'FOT'
-          FOL = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          FOL = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,FOL,ERRFLG)
+          
           BIOEQ(7:9) = 'BRD'
-          BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,BRCH_D,ERRFLG)
+          
           ABVGRD_TOT = STEM_WDTOT + STEM_BK + BRCH_L + BRCH_D + FOL
 
         ELSEIF(COMP.EQ.'BRT'.AND.EQMDL.EQ.'SN')THEN
 C         CALCULATE BRANCHES USING SNALL EQUATION
-          BIOEQ(1:3) = 'SN1'
+          BIOEQ(1:3) = 'SNE'
           BIOEQ(7:9) = 'CRW'
-          CRWN = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          CRWN = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,CRWN,ERRFLG)
+          
           BIOEQ(7:9) = 'FOT'
-          FOL = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+C          FOL = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,FOL,ERRFLG)
+          
           BRCH_TOT = CRWN - FOL
         ELSEIF(COMP.EQ.'MSB'.AND.EQMDL.EQ.'PI')THEN
-          CALL PILLSBURYSTMBKVOL(SPN,DBHOB,HTTOT, BRKVOL)
+          CALL PILLSBSTMBRKVOL(SPN,DBHOB,HTTOT, BRKVOL)
           STEM_BK = BRKVOL*WD_DEN(DONE)
         ELSEIF(SPN.EQ.212.AND.COMP.EQ.'STB')THEN
 C         Redwood stem bark
@@ -120,17 +153,17 @@ C         It uses Harmon for large trees and Shaw cedar for small trees.
           BIOEQ(7:9) = 'STB'
           BIOEQ(10:12) = '01'
           IF(DBHOB.GT.39.37)THEN
-            BIOEQ(1:3) = 'HM1'
+            BIOEQ(1:3) = 'HAN'
             BIOEQ(4:6) = '212'           
           ELSE
-            BIOEQ(1:3) = 'SHW'
+            BIOEQ(1:3) = 'SHA'
             BIOEQ(4:6) = '242'
           ENDIF
-          STEM_BK = CALCBIOMASs(BIOEQ, DBHOB, HTTOT)
+C          STEM_BK = CALCBIOMASs(BIOEQ, DBHOB, HTTOT)
+          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +    STEMS,VOL,STEM_BK,ERRFLG)
+          
         ENDIF
-
-
-
 
 C       Return the biomass for the BEQ       
 C       Total stem wood 
@@ -159,8 +192,8 @@ C       ABOVE GROUND TOTAL
 C ------------------------------------------------------------------------------------
 C Computes DBH+DBT at breast high then feeds both DBH and DBH+DBT into Pillsbury CV4 to 
 C get bark volume.
-      SUBROUTINE PILLSBURYSTMBRKVOL(SPN, DBHOB, HTTOT, BRKVOL)
-      INTEGER SPN, SPLIST(13), DONE, FIRST, LAST, I
+      SUBROUTINE PILLSBSTMBRKVOL(SPN, DBHOB, HTTOT, BRKVOL)
+      INTEGER SPN, SPLIST(13), DONE, FIRST, LAST, I, ERRFLG
       REAL DBHOB, HTTOT, MSTMBRK
       REAL OUTDBH, CMDBH, OUTCV4, INCV4, BRKVOL
       REAL T1(13), T2(13), C1(13), C2(13), C3(13), A, B, C
@@ -173,7 +206,7 @@ C get bark volume.
      + 0.48584, 0.44003, 1.99573, 0.78034, 0.68133, 
      + 0.97254, 0.12237, 0.32491/
 
-      DATA T2(I), I=1,13)/
+      DATA (T2(I), I=1,13)/
      + 0.94782, 0.98155, 0.90182, 0.95354, 0.93475, 
      + 0.96147, 0.94403, 0.92472, 0.95956, 0.95767, 
      + 0.93545, 0.92953, 0.96579/
@@ -193,14 +226,15 @@ C get bark volume.
      + 0.74348, 0.50591, 0.31103, 0.87108, 0.83339, 
      + 1.62443, 0.77843, 1.05293/
 
-      LAST = 123
+      LAST = 13
       DONE = 0
 
 C     First check the species for in the SPLIST
       CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+
       IF(DONE.GT.0) THEN
         CMDBH = DBHOB*2.540005
-        OUTDBH = ((CMDBH + T1(DONE))/T2(DONE)/2.540005
+        OUTDBH = (CMDBH + T1(DONE))/T2(DONE)/2.540005
         A = C1(DONE)
         B = C2(DONE)
         C = C3(DONE)
@@ -208,6 +242,7 @@ C     First check the species for in the SPLIST
         INCV4 = A*DBHOB**B*HTTOT**C
         BRKVOL = OUTCV4 - INCV4
       ENDIF
+      RETURN
       END
-
+    
 

@@ -1,9 +1,28 @@
       SUBROUTINE BIOMASSFORMULA(EQFORM,DBH,THT,CR, a, b, c, d, e, BMS)
       INTEGER EQFORM
-      REAL DBH, THT, CR, BMS
+      REAL DBH, THT, CR, BMS, TopD
+      REAL a, b, c, d, e
+
+      BMS = 0
+C     CR as crown ratio (crown length/total height)      
+      IF(CR.GT.1.OR.CR.LE.0) CR = 0.5
+C     Default TopD to 4" when no value provided
+      TopD = 4      
+
+      CALL BioeqFormula(EQFORM,DBH,THT,CR,TopD,a,b,c,d,e,BMS)
+      RETURN
+      END
+C ***********************************************************************      
+      SUBROUTINE BioeqFormula(EQFORM,DBH,THT,CR,TopD,a,b,c,d,e,BMS)
+      INTEGER EQFORM
+      REAL DBH, THT, CR, BMS, TopD
       REAL a, b, c, d, e
       
       BMS = 0
+C     CR as crown ratio (crown length/total height)      
+      IF(CR.GT.1.OR.CR.LE.0) CR = 0.5
+C     Default TopD to 4" when no value provided
+      IF(TopD.LE.0) TopD = 4      
       IF (EQFORM.EQ.1) THEN
 C     log10 biomass = a + b * (log10(dia^c))      
          BMS = a + b * (LOG10(DBH**c))
@@ -66,6 +85,9 @@ C     ln biomass = a + b*ln(dia) + c*ln(CR) + d*ln(CR*tht)
 C     CR as crown ratio (crown length/total height)
          BMS = a + b*LOG(DBH) + c*LOG(CR) + d*LOG(CR*THT)
          BMS = EXP(BMS)
+      ELSE IF(EQFORM.EQ.19) THEN
+C     ratio = 1 - EXP(a*TopD^b*DBH^c)
+         BMS = 1-EXP(a*TopD**b*DBH**c)        
       ELSE IF (EQFORM.EQ.33) THEN 
         IF(DBH.LT.11)THEN
           BMS = a*(DBH**2)**b 

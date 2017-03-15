@@ -86,7 +86,7 @@ C         Convert fro total stem to 4 inch top biomass
           IF(VOL(1).GT.0.AND.VOL(4).GT.0) THEN
             VOL_RAT = VOL(4)/VOL(1)
             GRN_MERCH = GRN_TOT*VOL_RAT
-          ENDIG
+          ENDIF
         ENDIF
 
 

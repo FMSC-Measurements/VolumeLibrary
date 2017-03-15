@@ -1,5 +1,5 @@
 C WARNING! The codes were created by NBEL Tester program. Please do NOT modify
-C Last modified on 11/21/2016
+C Last modified on 3/14/2017
        INTEGER I1, J1, I2, J2
        REAL SPREGNDFTWF(102, 6)
        CHARACTER*12 SPREGNDFTBEQ(102, 5)
@@ -114,14 +114,14 @@ C Last modified on 11/21/2016
      + 06,0,351,68,0,0, 
      + 06,0,747,46,0,0/ 
        DATA ((SPREGNDFTBEQ(I2, J2),J2=1,5),I2=1,15)/
-     + '-','WY2015CRW01G','-','-','WY2015TIP01G', 
+     + '-','WAA015CRW01G','-','-','WAA015TIP01G', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
-     + '-','WY2096CRW01G','-','-','WY2096TIP01G', 
+     + '-','WAA096CRW01G','-','-','WAA096TIP01G', 
      + '-','-','-','-','-', 
-     + 'TNK122AGT01D','WY2122CRW01G','-','-','WY2122TIP01G', 
+     + 'TIN122AGT11D','WAA122CRW01G','-','-','WAA122TIP01G', 
      + '-','-','-','-','-', 
-     + '-','WY2202CRW01G','-','-','WY2202TIP01G', 
+     + '-','WAA202CRW01G','-','-','WAA202TIP01G', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
@@ -131,7 +131,7 @@ C Last modified on 11/21/2016
      + '-','-','-','-','-'/ 
        DATA ((SPREGNDFTBEQ(I2, J2),J2=1,5),I2=16,30)/
      + '-','-','-','-','-', 
-     + 'STD122AST01D','-','-','-','-', 
+     + 'STA122AST01D','-','-','-','-', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
      + '-','-','-','-','-', 
