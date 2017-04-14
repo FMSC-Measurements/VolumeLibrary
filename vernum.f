@@ -22,7 +22,8 @@ C 20161121 Removed the weight factor for douglas-fir in Siuslaw NF. They want to
 C 20170209 Added EZVOLLIB subroutine to volumelibrary.f
 C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
 C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch stem vol is calculated, the stem biomass is also calculated.
-
+C 20170413 Removed 532WO2W*** eqn from R5_EQN list, modified CALCDIA to include R4 MAT model, added HT2TOPD to calculate stem HT to a
+C          given stem DIB, modified log vol calc for R8 and R9 to also include topwood logs, moved stump and tip vol calc to volinit sunroutine.
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -52,7 +53,7 @@ C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch s
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170227
+      VERSION = 20170414
       RETURN
       END SUBROUTINE VERNUM
       
@@ -85,7 +86,7 @@ C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch s
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170227
+      VERSION = 20170414
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -108,7 +109,7 @@ C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch s
 
 !---------------------------------------------------------------------
      
-      VERSION = 20170227
+      VERSION = 20170414
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -124,6 +125,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20170227
+      version = 20170414
       return
       end subroutine vernum_r

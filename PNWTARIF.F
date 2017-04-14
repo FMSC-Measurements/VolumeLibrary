@@ -258,11 +258,11 @@ C       OTHER HARDWOOD IN REGION 5 CALL R5HARV
         ENDIF
       ENDIF              
 c     get Stump volume which is CVTS-CVT      
-      VOL(14) = CVTS-CVT
-      IF(VOL(14).LT.0.0) VOL(14)=0.0
+c      IF(VOL(14).LE.0.0) VOL(14) = CVTS-CVT
+c      IF(VOL(14).LT.0.0) VOL(14)=0.0
 c     get stem tip volume which is cvt-cv4
-      VOL(15) = CVT-CV4
-      IF(VOL(15).LT.0.0) VOL(15)=0.0
+c      IF(VOL(15).LE.0.0) VOL(15) = CVT-CV4
+c      IF(VOL(15).LT.0.0) VOL(15)=0.0
       
 999   RETURN
       END SUBROUTINE PNWTARIF

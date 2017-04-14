@@ -26,7 +26,6 @@ C--     TAPERMODEL - INTERNAL - CALLS PROFILE EQUATION ROUTINES
 C--     FWSMALL  - INTERNAL - CALLS SF_DS, BRK_UP
 
         USE DEBUG_MOD
-        
 !REV  Revised TDH 03/08/10
 !REV  See notes in GETDIB subroutine below
 C YW 11/06/2012 Changed the errflag to 12 for NUMSEG > 20
@@ -73,6 +72,9 @@ C       Temp variables for Region 1
 
 
       REAL UHT,VMER,VMER1,VMER2,TEMPVOL,TCVOL,TCVOL1,TCVOL2
+C     Temp variable for BEH equation
+      INTEGER ZONE
+      REAL FC_HT,D17,TTH,DBHIB
 
 c      LOGST = 0      ! commented out for variable log cruising
 C     changed to set LOGST = 0 for NOT variable log cruising (CTYPE = V)
@@ -113,7 +115,20 @@ c     MRULES IS EXTERNAL AND CONTAINS THE MERCHANDIZING RULES SETTINGS
       CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
      >           MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >           PROD)
-      
+
+C     Add 1.5 to HTTOT to make it same as it in blmvol (YW 09/17/13)
+      IF (VOLEQ(1:1).EQ.'B' .OR. VOLEQ(1:1).EQ.'b') THEN
+        HTTOT=HTTOT+1.5
+      ELSEIF (VOLEQ(1:1).EQ.'6') THEN
+        TTH=HTTOT
+        HTTOT=HTTOT+1.0
+      ENDIF
+ 
+      IF(FCLASS .LE. 0 .AND. VOLEQ(4:6).EQ.'BEH') THEN
+            ERRFLAG = 2
+            RETURN
+      ENDIF
+
       IF (VOLEQ(4:4).EQ.'F' .OR. VOLEQ(4:4).EQ.'f' .OR.
      >    VOLEQ(4:6).EQ.'DEM' .OR. VOLEQ(4:6).EQ.'dem' .OR.
      >    VOLEQ(4:6).EQ.'CUR' .OR. VOLEQ(4:6).EQ.'cur')  THEN
@@ -238,6 +253,28 @@ C*************************************************************
        
 C--   SUBROUTINE "TCUBIC" IS INTERNAL AND USES PROFILE MODEL
       IF (CUTFLG .EQ. 1) THEN
+C     For Behre equation 616BEH***, 628BEH***, 632BEH*** use R6VOL3 to calculate total cubic
+        IF (VOLEQ(1:1).EQ.'6')THEN
+           IF(VOLEQ(1:3).EQ.'632')THEN
+             ZONE=2
+             FC_HT=33.6
+           ELSE
+             ZONE=1
+             FC_HT=16.3
+           ENDIF
+           DBHIB = DBHOB-DBTBH
+           IF(TTH.GT.0) THEN 
+              D17 = FCLASS/100.0*DBHOB     
+              IF(TTH.LE.FC_HT) THEN  
+C                use smailians to find total cubic volume
+                 VOL(1)=0.00272708*(DBHIB*DBHIB)*TTH
+              ELSE
+c                call the total cubic routines
+                 CALL R6VOL3(DBHOB,DBTBH,FCLASS,TTH,ZONE,VOL)
+              ENDIF
+           ENDIF                                  
+        ELSE        
+      
         CALL TCUBIC (VOLEQ,FORST,JSP,NEXTRA,SETOPT,DBHOB,HTTOT,DBTBH,
      >           MTOPP,HEX,DEX,ZEX,RHFW,RFLW,TAPCOE,F,FMOD,PINV_Z,TOP6,
      >           TCVOL,slope,errflag,VOL,MTOPS)
@@ -245,6 +282,7 @@ C--   SUBROUTINE "TCUBIC" IS INTERNAL AND USES PROFILE MODEL
 	  if(drcob.le.0 .and. ctype.eq.'F')then
 	      drcob = dex(2)
 	  endif
+	  ENDIF	  
       ENDIF
 
       IF (DEBUG%MODEL) THEN
@@ -864,7 +902,7 @@ C--   STUMP VOLUME IS VOLUME FOR A 1 FT HIGH CYLINDER
       R=DIB/2.0
       TCVOL = (3.1416*R*R)/144.0
 C     Save stump vol to VOL(14) (YW 2015/08/19)
-      VOL(14) = TCVOL      
+c      VOL(14) = TCVOL      
 	dex(2) = dib
       DO 10 I = 1,HTLOOP
          D2OLD = DIB
@@ -893,7 +931,7 @@ c--   USE SMALIAN FOR TIP, WITH A TIP DIAMETER OF 0.0
          TCVOL = TCVOL + VOLTMP
          TIPV = TIPV + VOLTMP
       ENDIF
-C      VOL(15) = TIPV
+c      VOL(15) = TIPV
       RETURN
       END
 
@@ -1530,10 +1568,10 @@ C            WRITE(*,*)" 32FT ",NUMSEG,I,LOGVOL(1,I)
       ENDIF
 c************** 32 foot logs endif ******************************
 c     calculate stump and stem tip volume
-      IF(STUMP.LT.0.01) STUMP=1.0
-      VOL(14)=0.005454154*LOGDIA(1,2)*LOGDIA(1,2)*STUMP
-      IF(VOL(4).GT.0.0) VOL(15)=VOL(1)-VOL(14)-VOL(4)-VOL(7)
-      IF(VOL(15).LT.0.01) VOL(15)=0.0
+c      IF(STUMP.LT.0.01) STUMP=1.0
+c      VOL(14)=0.005454154*LOGDIA(1,2)*LOGDIA(1,2)*STUMP
+c      IF(VOL(4).GT.0.0) VOL(15)=VOL(1)-VOL(14)-VOL(4)-VOL(7)
+c      IF(VOL(15).LT.0.01) VOL(15)=0.0
       
       RETURN
       END

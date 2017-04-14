@@ -441,15 +441,23 @@ c      CHARACTER(2)   PROD
       INTEGER SPN
       REAL TLH
       CHARACTER*3 MDL
+      ! Variable for R4 taper
+      REAL STUMPD,BUTTCF,CF0,B
 
       TLH = 0.
       
       FORST   = FORSTI(1:2)
       VOLEQ   = VOLEQI(1:10)
-C Not sure why it does not work if call CALCDIA directly!!!      
-c      CALL CALCDIA(REGN,FORSTI,VOLEQI,STUMP,DBHOB,
-c     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
-c     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
+C Not sure why it does not work if call CALCDIA directly!!!   
+C YW 04/13/2017
+C But the call CALCDIA2 works fine. I think the reason is that
+C CALCDIA has the DLLEXPORT and so I added CALCDIA2.   
+      CALL CALCDIA2(REGN,FORST,VOLEQ,STUMP,DBHOB,
+     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
+     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
+      GOTO 1000
+
+C The following codes are not used will be deleted. (4/13/2017)      
 !     ARRAYS
 ! initialize profile model  
 !C  heck for a DBH of less than 1.  Drop out of volume if true.  10/97
@@ -478,7 +486,8 @@ c      ENDIF
      &   MDL.EQ.'CZ3' .OR. MDL.EQ.'cz3' .OR. MDL.EQ.'WO2' .OR.     
      &   MDL.EQ.'wo2' .OR. MDL.EQ.'F32' .OR. MDL.EQ.'f32' .OR.
      &   MDL.EQ.'F33' .OR. MDL.EQ.'f33' .OR. MDL.EQ.'JB2' .OR.
-     &   MDL.EQ.'jb2') THEN
+     &   MDL.EQ.'jb2' .OR. MDL.EQ.'DEM' .OR. MDL.EQ.'CUR' .OR.
+     &   MDL.EQ.'dem' .OR. MDL.EQ.'cur') THEN
 !************************
 !    FLEWELLING MODELS  *
 !    REGION 2 MODELS    *
@@ -544,6 +553,11 @@ C     added DIB calculation for Behr equation
            CALL GETFCLASS(VOLEQ,FORST,DBHOB,FCLASS)
          ENDIF
          CALL BEHTAP(VOLEQ,DBHOB,HTTOT,TLH,HTUP,FCLASS,MTOPP,DIB)    
+C     Added the calculation for R4 taper equation (03/20/2017)
+      ELSEIF (MDL.EQ.'MAT' .OR. MDL.EQ.'mat') THEN  
+         DIB = 0.0
+         CALL R4MATTAPER(VOLEQ,DBHOB,HTTOT,STUMPD,BUTTCF,CF0,B,
+     +     HTUP,DIB,ERRFLAG)      
            
 C calculation for diameter from ground to 4.5 ft heigh for non profile model
 C added on 7/22/2012 YW
@@ -638,4 +652,4 @@ C      INTEGER SPCD
 C      REAL DBH, THT, CFWT(5)
 C      CALL BrownCrownFraction(SPCD, DBH, THT, CFWT)
 C      END
-      
+C ************************************************************************

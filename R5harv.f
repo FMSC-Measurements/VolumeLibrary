@@ -1,5 +1,6 @@
 !== last modified  01-18-2013
 C 01/18/2013 Added calculation for stump VOL(14) and tip VOL(15)
+C 04/13/2017 moved stump and tip vol calc to voinit
       SUBROUTINE  R5HARV (VOLEQ,DBHOB,HTTOT,MTOPP,VOL,BFPFLG,CUPFLG,
      >                    ERRFLAG)
 C FROM THE PNW RESEARCH NOTE PNW-414
@@ -406,10 +407,10 @@ c        check for top diameter greater then dbh; no merch volume
       IF(MTOPP .GT. DBHOB) VOL(4) = 0.0
 
 C       calculate stump and tip volume
-        VOL(14)=CVTS-CVT
-        IF(VOL(14).LT.0.01) VOL(14)=0.0
-        VOL(15)=CVT-CUFTGROS
-        IF(VOL(15).LT.0.01) VOL(15)=0.0                               
+c        VOL(14)=CVTS-CVT
+c        IF(VOL(14).LT.0.01) VOL(14)=0.0
+c        VOL(15)=CVT-CUFTGROS
+c        IF(VOL(15).LT.0.01) VOL(15)=0.0                               
 
 
  999  RETURN

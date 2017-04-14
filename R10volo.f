@@ -1,5 +1,6 @@
 !== last modified  01-18-2013
 C 01/18/2013 Added stump and tip vol calculation
+c 04/13/2017 moved stum and tip vol calc to volinit
       SUBROUTINE R10VOLO(EQNUM,DBHOB,HTTOT,HT1PRD,HTYPE,MTOPP,TLOGS, 
      >       VOL,LOGSPAN,LOGDIA,logvol,BFPFLG,CUPFLG,ERRFLAG)
 
@@ -293,12 +294,12 @@ C--     LOG DEFECTS, AND NET VOLUMES FOR THE TREE             *
 C--        MOVED TO NETVOL.FOR
 C**************************************************************
 C     Calculate stump and tip volume
-      STUMP=1.0
-      IF(DBHOB.LT.36.0) STUMP=DBHOB/36.0
-      IF(LOGDIA(1,2).GT.0.0) VOL(14)=0.005454154*LOGDIA(1,2)**2*STUMP
-      IF(VOL(4).GT.0.0 .AND. VOL(1).GT.0.0)THEN
-        VOL(15)=VOL(1)-VOL(4)-VOL(14)
-      ENDIF
+c      STUMP=1.0
+c      IF(DBHOB.LT.36.0) STUMP=DBHOB/36.0
+c      IF(LOGDIA(1,2).GT.0.0) VOL(14)=0.005454154*LOGDIA(1,2)**2*STUMP
+c      IF(VOL(4).GT.0.0 .AND. VOL(1).GT.0.0)THEN
+c        VOL(15)=VOL(1)-VOL(4)-VOL(14)
+c      ENDIF
  1000 CONTINUE
 
       RETURN

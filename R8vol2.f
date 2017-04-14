@@ -7,6 +7,7 @@ C               Broken height is entered to the field HT1PRD
 C YW 02/26/2014 Modified TOTHT subrouine to have broken height less then HTTWO and also set HTTOT variable when 
 C               total height is passed in with UPSHT1(HTTWO) variable befor cal TOTHT subroutine.
 C YW 03/12/2014 Fixed HT479 for smal tree problem (HT2<17.3)
+C YW 04/13/2017 Modified R8CLARK for the log volume calculation to also include logs for topwood
       SUBROUTINE R8VOL2(VOLEQ,VOL,DBHOB,HTONE,HTTWO,MTOPP,HTTOT,CTYPE,
      >                  ERRFLAG)
 C      *** SUBROUTINE TO CALCULATE NEW VOLUMES ***
@@ -900,7 +901,7 @@ c	       WRITE (FCLSOUT,100)DBH,',',FCLSS,',',FCLSCLC
 c 100         FORMAT(F4.1,A,F4.1,A,F4.1)
 c      CLOSE(FCLSOUT)
 C      Calculate stump vol
-       VOL(14)=0.005454154*DIB**2*LOWER       
+c       VOL(14)=0.005454154*DIB**2*LOWER       
 
   998 RETURN
       END
@@ -1080,7 +1081,7 @@ C--      VOL(5) = VOLM
 
        ENDIF
 C      Calculate stump vol
-       VOL(14)=0.005454154*DIB**2*STUMP       
+c       VOL(14)=0.005454154*DIB**2*STUMP       
 !       OPEN (UNIT=FCLSOUT, FILE='fclass.txt', ACCESS = 'APPEND',
 !     &       STATUS='UNKNOWN')
 !	       WRITE (FCLSOUT,100)DBH,',',FCLSS,',',FCLSCLC
@@ -1444,7 +1445,7 @@ C     FIND TOPWOOD VOLUME
          VOL(7) = VOL4
        ENDIF
 C     calculate stump vol
-      VOL(14)=0.005454154*DBHIB**2*STUMP       
+c      VOL(14)=0.005454154*DBHIB**2*STUMP       
 C     RETURN VOLUMES
 
 
@@ -1606,10 +1607,10 @@ C ----------------------------------------------------------------------
      &              SPFLG,PROD,ERRFLG,CTYPE,UPSHT1,
      &              TLOGS,NOLOGP,NOLOGS)
       USE VOLINPUT_MOD
-
+      USE CLKCOEF_MOD
       implicit none
 C     Shared variables
-      CHARACTER FORST*2,PROD*2,VOLEQ*10
+      CHARACTER FORST*2,PROD*2,VOLEQ*10, VOLEQTMP*10
       INTEGER   CUTFLG,BFPFLG,CUPFLG,SPFLG,CDPFLG,ERRFLG,I,J,REGN
       REAL      MINBFD,MAXLEN,MINLEN,MERCHL,MTOPP,MTOPS,STUMP,TRIM
       REAL      DBHOB,HT1PRD,HT2PRD,HTTOT,TOPDIB,UPSHT1 
@@ -1619,6 +1620,8 @@ C     Shared variables
       REAL MINLENT, BTR, DBTBH,LMERCH, CFVOL, TLOGVOL
       INTEGER   TLOGS
       REAL NOLOGP,NOLOGS 
+      TYPE(CLKCOEF):: COEFFS
+      REAL LOGLEN2(20), DBHIB,DIB17,topHt,totHt,a,b
 
       READ(VOLEQ(3:3),'(I1)')EQN
       REGN = 8
@@ -1630,6 +1633,8 @@ C     Shared variables
         LOGDIA(I,2) = 0.0
         LOGDIA(I,3) = 0.0
         BOLHT(I)=0.0
+        LOGLEN(I) = 0.0
+        LOGLEN2(I) = 0.0
   102 CONTINUE        
        
       DO 104, I=1,15
@@ -1637,42 +1642,50 @@ C     Shared variables
   104 CONTINUE
 
 C The HT1PRD field is also used by pulpwood broken top height (YW 2/7/14)    	
-	IF(UPSHT1.LE.0 .AND. HT1PRD.GT.0.AND.PROD.EQ.'01')UPSHT1=HT1PRD
-      
+c	IF(UPSHT1.LE.0 .AND. HT1PRD.GT.0.AND.PROD.EQ.'01')UPSHT1=HT1PRD
+      IF(UPSHT1.LE.0.AND.HT1PRD.GT.0.AND.(EQN.EQ.'7'.OR.EQN.EQ.'9'))THEN
+        UPSHT1=HT1PRD
+      ENDIF
       CALL R8VOL2 (VOLEQ,VOL,DBHOB,HT1PRD,UPSHT1,MTOPP,HTTOT,
      >                      CTYPE, ERRFLG)
       IF(ERRFLG.GT.0) RETURN
       CFVOL = VOL(4)
 C CALCULATE BOARDFOOT VOLUME
-      IF(BFPFLG.EQ.1.AND.(EQN.EQ.7.OR.EQN.EQ.9))THEN
+C      IF(BFPFLG.EQ.1.AND.(EQN.EQ.7.OR.EQN.EQ.9))THEN
+C Calculate log volume (03/28/2017)
 c     MRULES IS EXTERNAL AND CONTAINS THE MERCHANDIZING RULES SETTINGS
         CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
      >           MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >           PROD)
 C IF USER MODIFIED MRULE, THEN NO NEED TO CALL MRULES
-        IF(MRULEMOD.EQ.'Y')THEN
-          IF(NEWCOR.EQ.'Y'.OR.NEWCOR.EQ.'N') COR = NEWCOR
-          IF(NEWEVOD.GT.0) EVOD = NEWEVOD
-          IF(NEWOPT.GT.0) OPT = NEWOPT
-          IF(NEWMAXLEN.GT.0) MAXLEN = NEWMAXLEN
-          IF(NEWMINLEN.GT.0) MINLEN = NEWMINLEN
-          IF(NEWMERCHL.GT.0) MERCHL = NEWMERCHL
-          IF(NEWMINLENT.GT.0) MINLENT = NEWMINLENT
-          IF(NEWMTOPP.GT.0) MTOPP = NEWMTOPP
-          IF(NEWMTOPS.GT.0) MTOPS = NEWMTOPS
-          IF(NEWSTUMP.GT.0) STUMP = NEWSTUMP
-          IF(NEWTRIM.GT.0) TRIM = NEWTRIM
-          IF(NEWBTR.GT.0) BTR = NEWBTR
-          IF(NEWDBTBH.GT.0) DBTBH = NEWDBTBH
-          IF(NEWMINBFD.GT.0) MINBFD = NEWMINBFD
+C The following has been added to MRULES, so I comment out (03/22/2017)
+c        IF(MRULEMOD.EQ.'Y')THEN
+c          IF(NEWCOR.EQ.'Y'.OR.NEWCOR.EQ.'N') COR = NEWCOR
+c          IF(NEWEVOD.GT.0) EVOD = NEWEVOD
+c          IF(NEWOPT.GT.0) OPT = NEWOPT
+c          IF(NEWMAXLEN.GT.0) MAXLEN = NEWMAXLEN
+c          IF(NEWMINLEN.GT.0) MINLEN = NEWMINLEN
+c          IF(NEWMERCHL.GT.0) MERCHL = NEWMERCHL
+c          IF(NEWMINLENT.GT.0) MINLENT = NEWMINLENT
+c          IF(NEWMTOPP.GT.0) MTOPP = NEWMTOPP
+c          IF(NEWMTOPS.GT.0) MTOPS = NEWMTOPS
+c          IF(NEWSTUMP.GT.0) STUMP = NEWSTUMP
+c          IF(NEWTRIM.GT.0) TRIM = NEWTRIM
+c          IF(NEWBTR.GT.0) BTR = NEWBTR
+c          IF(NEWDBTBH.GT.0) DBTBH = NEWDBTBH
+c          IF(NEWMINBFD.GT.0) MINBFD = NEWMINBFD
 C RESET INDICATOR VARIABLE
-          MRULEMOD='N'          
+c          MRULEMOD='N'          
 c        ELSE      
-        ENDIF
+c        ENDIF
 C--         SUBROUTINE "NUMLOG" WILL DETERMINE THE NUMBER OF
 C--         MERCHANTABLE SEGMENTS IN A GIVEN MERCHANTABLE LENGTH
 C--         OF TREE STEM, ACCORDING TO ONE OF THE DEFINED SEGMENTATION
 C--         RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
+       IF(PROD.EQ.'01')THEN
+C        First do the sawlog
+         LMERCH = STUMP
+         IF(HT1PRD.GT.0.0)THEN  
            LMERCH = HT1PRD - STUMP
            CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
       
@@ -1684,16 +1697,115 @@ C--         ONE OF THE DEFINED SEGMENTATION RULES IN THE VOLUME
 C--         ESTIMATOR HANDBOOK FSH ???.
            CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
      >               LOGLEN)
-           TLOGS = NUMSEG
            NOLOGP = NUMSEG
-           CALL R8LOGDIB(VOLEQ, FORST, DBHOB, HTTOT, UPSHT1, 
-     &         NUMSEG, TRIM, STUMP, BOLHT,LOGLEN, LOGDIA,ERRFLG)
+           LMERCH = STUMP
+           DO I = 1, NOLOGP
+             LMERCH = LMERCH + LOGLEN(I) + TRIM
+           ENDDO
+           
+         ENDIF
+C        Then do the topwood/pulp
+         IF(SPFLG.GT.0)THEN
+           CFVOL = CFVOL + VOL(7)
+           IF(HT2PRD.LE.0.0)THEN
+              CALL R8PREPCOEF(VOLEQ, COEFFS, ERRFLG)
+              DBHIB = COEFFS%A4+COEFFS%B4*DBHOB
+              DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/UPSHT1)**2)
+
+               IF(HTTOT.LE.0.0)THEN
+                 topDib = COEFFS%FIXDI
+                 topHt = UPSHT1
+               ENDIF
+
+             VOLEQTMP = VOLEQ
+             VOLEQTMP(3:3) = '0'
+             CALL R8PREPCOEF(VOLEQTMP, COEFFS, ERRFLG)
+             COEFFS%DBHIB = DBHIB
+             COEFFS%DIB17 = DIB17
+             IF(HTTOT.LE.0.0)THEN
+               a = COEFFS%A
+               b = COEFFS%B
+               CALL r9totHt(totHt,htTot,dbhIb,dib17,topHt,topDib,a,b,
+     &               errFlg)
+               HTTOT = totHt
+             ENDIF
+             COEFFS%TOTHT = HTTOT
+             CALL r9ht(HT2PRD,COEFFS,COEFFS%FIXDI,errFlg)
+           ENDIF
+           IF(HT2PRD.GT.HT1PRD)THEN
+             NUMSEG = 0
+             LMERCH = HT2PRD - LMERCH
+             CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
+             CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
+     >               LOGLEN2)
+             NOLOGS = NUMSEG
+             IF(NOLOGS.GT.0)THEN
+               DO I = 1, NOLOGS
+                 LOGLEN(NOLOGP+I) = LOGLEN2(I)
+               ENDDO
+             ENDIF
+           ENDIF
+         ENDIF
+                
+         TLOGS = NOLOGP + NOLOGS
+         NUMSEG = NOLOGP
+         CALL R8LOGDIB(VOLEQ, FORST, DBHOB, HTTOT, UPSHT1, 
+     &        TLOGS, TRIM, STUMP, BOLHT,LOGLEN, LOGDIA,ERRFLG)
 C CALCULATE LOG BOARDFOOT USING R9 ROUTINE
+         IF(BFPFLG.EQ.1)THEN
            CALL R9BDFT(VOL,LOGLEN,NUMSEG,LOGDIA,ERRFLG,LOGVOL)
+         ENDIF
 C CALCULATE LOG CUBIC VOLUME AND ADJUST LOG VOLUME WITH MERCH CUBIC VOL
 C USING R9 ROUTINE
-           CALL R9LGCFT(NUMSEG, LOGLEN, LOGDIA, LOGVOL,TLOGVOL,CFVOL)  
-      ENDIF
+         CALL R9LGCFT(TLOGS, LOGLEN, LOGDIA, LOGVOL,TLOGVOL,CFVOL)  
+       ELSE  ! For non-sawtimber log volume calc (03/28/2017)
+C If pult height is not provided, calculate it       
+           IF(HT2PRD.LE.0.0)THEN
+              CALL R8PREPCOEF(VOLEQ, COEFFS, ERRFLG)
+              DBHIB = COEFFS%A4+COEFFS%B4*DBHOB
+              IF(UPSHT1.LE.0.0.AND.HT1PRD.GT.0.0) UPSHT1=HT1PRD
+              DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/UPSHT1)**2)
+
+               IF(HTTOT.LE.0.0)THEN
+                 topDib = COEFFS%FIXDI
+                 topHt = UPSHT1
+               ENDIF
+
+             VOLEQTMP = VOLEQ
+             VOLEQTMP(3:3) = '0'
+             CALL R8PREPCOEF(VOLEQTMP, COEFFS, ERRFLG)
+             COEFFS%DBHIB = DBHIB
+             COEFFS%DIB17 = DIB17
+             IF(HTTOT.LE.0.0)THEN
+               a = COEFFS%A
+               b = COEFFS%B
+               CALL r9totHt(totHt,htTot,dbhIb,dib17,topHt,topDib,a,b,
+     &               errFlg)
+               HTTOT = totHt
+             ENDIF
+             COEFFS%TOTHT = HTTOT
+             CALL r9ht(HT2PRD,COEFFS,COEFFS%FIXDI,errFlg)
+           ENDIF
+           IF((HT2PRD-STUMP).GT.MERCHL)THEN
+             NUMSEG = 0
+             LMERCH = HT2PRD - STUMP
+             CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
+             CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
+     >               LOGLEN)
+             NOLOGS = NUMSEG
+             TLOGS = NOLOGS
+             CALL R8LOGDIB(VOLEQ, FORST, DBHOB, HTTOT, UPSHT1, 
+     &        TLOGS, TRIM, STUMP, BOLHT,LOGLEN, LOGDIA,ERRFLG)
+C CALCULATE LOG BOARDFOOT USING R9 ROUTINE
+            IF(BFPFLG.EQ.1)THEN
+              CALL R9BDFT(VOL,LOGLEN,NUMSEG,LOGDIA,ERRFLG,LOGVOL)
+            ENDIF
+C CALCULATE LOG CUBIC VOLUME AND ADJUST LOG VOLUME WITH MERCH CUBIC VOL
+C USING R9 ROUTINE
+            CALL R9LGCFT(TLOGS, LOGLEN, LOGDIA, LOGVOL,TLOGVOL,CFVOL)  
+             
+           ENDIF
+       ENDIF
 C The following is copied fron R8vol (YW 2016/03/10)
 C     ROUND THE VOLUMES 10TH CUBIC FOOT, NEAREST BDFT
 	VOL(2) = ANINT(VOL(2))
@@ -1748,13 +1860,14 @@ c--     Get DIB at all log ends
 C CHECK THE HEIGHT FOR THE LAST LOG. THE HEIGHT MAY BE SLIGHTLY HIGHER THAN
 C THE UPSHT1 BECAUSE OF ROUNDING FOR SEGMENT. IN THIS CASE, THE LAST LOGDIB
 C WIL USE VOLEQ DEFAULT TOP DIB
-          IF(HT.GT.UPSHT1)THEN
-            CALL R8PREPCOEF(VOLEQ, COEFFS, ERRFLAG)
-            DIB = COEFFS%FIXDI
-          ELSE          
+c Now R8CLKDIB can calculate DIB above UPSHT1, so I comment out the following lines (03/24/2017)
+c          IF(HT.GT.UPSHT1)THEN
+c            CALL R8PREPCOEF(VOLEQ, COEFFS, ERRFLAG)
+c            DIB = COEFFS%FIXDI
+c          ELSE          
             CALL R8CLKDIB(VOLEQ,FORST,DBHOB, HTTOT, UPSHT1,HT,DIB,
      +                  ERRFLAG)
-          ENDIF
+c          ENDIF
           IF(DIB.GT.0)THEN
             LOGDIA(I+1,2)= DIB    
             LOGDIA(I+1,1)=INT(DIB+0.499)

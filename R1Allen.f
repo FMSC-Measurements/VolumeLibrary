@@ -1,4 +1,6 @@
 !== last modified  12-12-2002
+C YW 04/13/2017 Added 260, 240 and 090 to be valid species code for R1ALLENB
+C               This is to make species code match with R1ALLENC.
       SUBROUTINE R1ALLENC(VOLEQ,DBHOB,HTTOT,TOPD,BTR,CUVOL,TCVOL,CFSTMP,
      >                    ERRFLAG)
 C----------
@@ -350,13 +352,13 @@ C----------
           ISPC = 3
       ELSEIF(VOLEQ(8:10).EQ.'017')THEN
           ISPC = 4
-      ELSEIF(VOLEQ(8:10).EQ.'263')THEN
+      ELSEIF(VOLEQ(8:10).EQ.'263'.OR.VOLEQ(8:10).EQ.'260')THEN
           ISPC = 5
-      ELSEIF(VOLEQ(8:10).EQ.'242')THEN
+      ELSEIF(VOLEQ(8:10).EQ.'242'.OR.VOLEQ(8:10).EQ.'240')THEN
           ISPC = 6
       ELSEIF(VOLEQ(8:10).EQ.'108')THEN
           ISPC = 7
-      ELSEIF(VOLEQ(8:10).EQ.'093')THEN
+      ELSEIF(VOLEQ(8:10).EQ.'093'.OR.VOLEQ(8:10).EQ.'090')THEN
           ISPC = 8
       ELSEIF(VOLEQ(8:10).EQ.'019')THEN
           ISPC = 9

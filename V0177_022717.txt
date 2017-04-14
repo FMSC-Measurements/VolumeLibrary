@@ -1,0 +1,35 @@
+
+                           VOLUME ESTIMATOR LIBRARY BULLETIN
+                                      Issued By: Yingfang Wang
+
+                        MENSURATION AND SYSTEMS DEVELOPMENT SECTION
+                             FOREST MANAGEMENT SERVICE CENTER
+                                     FT. COLLINS, CO
+
+      BULLETIN NO: V0177_022717
+     
+      DATE: 02-27-2017
+
+      ROUTINE(S): 
+
+		Modified routines:
+
+		crzbiomass.f
+		volumelibrary.f
+
+		New Routines:
+
+
+            
+      MAIN TOPIC: 
+	(1)Added subroutines for R program to call the library. The added subroutines for R are: vernum_r, getvoleq_r and vollib_r
+	(2)Updated biomass calculation for small trees (DBH<5). When stem merch volume is calculated to a smaller top diameter (TOPD < 4),
+           the stem component biomass will also be calculeted.
+
+
+     RESULT/IMPACT: 
+        Small tree (DBH<5) stem component biomass if the tree has merch cubic volume calculated for the stem. 
+              
+
+     Getting downloads:
+

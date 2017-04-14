@@ -79,6 +79,11 @@ namespace volCStest
             int ll1, int ll2);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
+        static extern void HT2TOPDCS(ref int regn, StringBuilder forst, StringBuilder voleq, ref float dbhob, ref float httot, ref float ht1prd, ref float ht2prd,
+            ref float upsht1, ref float upsht2, ref float upsd1, ref float upsd2, ref float avgz1, ref float avgz2, ref int htref, ref float dbtbh,
+         ref float btr, ref int fclass, ref float stmdib, ref float stmht, ref int errflg, int ll1, int ll2);
+
+        [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void MRULESCS(ref int regn, StringBuilder voleq, StringBuilder prod, ref float trim, ref float minlen, ref float maxlen, ref int opt, ref float merchl, int l1, int l2);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
@@ -89,15 +94,13 @@ namespace volCStest
             int i1, int i2, int i3,int i4, int i5, int i6,int i7, int i8, int i9,int i10, int i11, int i12,int i13,int i14);
         
         [DllImport("vollib.dll")]
-        static extern void BROWNCROWNFRACTION(ref int SPCD, ref float DBH, ref float THT, float[] CFWT);
+        static extern void BROWNCROWNFRACTION(ref int SPCD, ref float DBH, ref float THT, ref float CR, float[] CFWT);
         [DllImport("vollib.dll")]
         static extern void BROWNTOPWOOD(ref int SPN, ref float GCUFTS, ref float WT);
         [DllImport("vollib.dll")]
         static extern void BROWNCULLLOG(ref int SPN, ref float GCUFTS, ref float WT);
         [DllImport("vollib.dll")]
         static extern void BROWNCULLCHUNK(ref int SPN, ref float GCUFT, ref float NCUFT, ref float FLIW, ref float WT);
-        //[DllImport("vollib.dll")]
-        //static extern void EZVOLLIB(StringBuilder voleq, ref float dbhob, ref float httot, ref float[] vol, int i1);
 
         // standard variables
         int REGN,HTLOG,HTREF,FCLASS,HTTFLL,ERRFLAG,TLOGS,BA,SI,SPCODE,INDEB, PMTFLG, IDIST;
@@ -105,7 +108,8 @@ namespace volCStest
         float DBHOB,DRCOB,HTTOT,HT1PRD,HT2PRD,STUMP;
         float UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2;
         float DBTBH,BTR,MTOPP,MTOPS,NOLOGP,NOLOGS, DIB,DIBHT, DOB;
-        float DBH;   
+        float DBH,CR;
+        float STEMDIB, STEMHT;
         // test MRULESCS variable
         int OPT;
         float TRIM, MINLEN, MAXLEN, MERCHL;
@@ -309,7 +313,8 @@ namespace volCStest
            CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
            //test Brown's function works!!!
            DBH = DBHOB;
-           BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, CFWT);
+           CR = 0.5F;
+           BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, ref CR, CFWT);
            VolS = VOL[6];
            VolN = VolS - 0.2F;
            fliw = 0.5F;
@@ -448,8 +453,10 @@ namespace volCStest
                if (VOLEQ.ToString().Substring(3, 3) == "BEH" && !mRulesCB.Checked)
                    pmtForm.drawLogs(LOGDIA, LOGLEN, LOGVOL, 1.0f, BOLHT, 0.3f);
                else
-                   pmtForm.drawLogs(LOGDIA, LOGLEN, LOGVOL, STUMP, BOLHT, mRules.trim);  
-             
+               {
+                   if (STUMP == 0) STUMP = mRules.stump;
+                   pmtForm.drawLogs(LOGDIA, LOGLEN, LOGVOL, STUMP, BOLHT, mRules.trim);
+               }
            }
            //if the PMT form is open, enable the print graph button
            if (pmtFormOpen) PrintGraphBtn.Enabled = true;
@@ -543,7 +550,9 @@ namespace volCStest
             HTREF = int.Parse(htrefTB.Text);//reference height
             AVGZ1 = float.Parse(avgz1TB.Text);
             AVGZ2 = 0;
-            FCLASS = int.Parse(formClsTB.Text);//form class
+            if (int.Parse(formClsTB.Text) > 0) FCLASS = int.Parse(formClsTB.Text);
+            if (FCLASS == 0) FCLASS = 80;
+
             DBTBH = float.Parse(dbtbhTB.Text);
             //DBTBH = float.Parse("0.88");  //0;//double bark thickness at breast height
             BTR = float.Parse(btrTB.Text);//bark thickness ratio
@@ -591,7 +600,7 @@ namespace volCStest
             WF[1] = 0.0F;
             WF[2] = 0.0F;
             BMS = new float[8];
-            CFWT = new float[5];
+            CFWT = new float[7];
         }
 
         //prepare variables for calling the profile model just to get dibs for drawing the profile
@@ -599,6 +608,7 @@ namespace volCStest
         {
             //int PMTFLG = 1;
             float segLen = 0.0F;
+            float DRC = 0.0F;
             
             //# points = 300
             //those points have to be scaled so that their sum = 750.
@@ -642,18 +652,23 @@ namespace volCStest
                     DIBHT = HTTOT - DRCOB;
                     NOLOGP = r6behDIB(DIBHT);                   
                 }
+                else if (VOLEQ.ToString().Contains("MAT"))
+                {
+                    CALCDIACS(ref REGN,FORST,VOLEQ,ref STUMP,ref DBHOB,ref DRC,ref HTTOT,ref UPSHT1,ref UPSHT2,ref UPSD1,ref UPSD2,ref HTREF,ref AVGZ1,ref AVGZ2,
+                        ref FCLASS, ref DBTBH, ref BTR, ref DRCOB, ref NOLOGP, ref DOB, ref ERRFLAG, strlen, strlen);
+                }
                 else
                 {
                     //pmtprofile is a trimmed down version of profile.f that just returns dib
                     PMTPROFILE(FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref NOLOGP,
                        HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
                        ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, VOL,
-                       ref CUTFLG, ref BFPFLG, ref CUPFLG, 
-                       ref CDPFLG, ref SPFLG, ref DRCOB,  CTYPE, ref FCLASS, PROD, ref ERRFLAG,
+                       ref CUTFLG, ref BFPFLG, ref CUPFLG,
+                       ref CDPFLG, ref SPFLG, ref DRCOB, CTYPE, ref FCLASS, PROD, ref ERRFLAG,
                        strlen, strlen, strlen, strlen, strlen);
-                
+
                     //and dib is returned in NOLOGP
-                    
+
                 }
                 dibs[0, i] = NOLOGP;
                 dibs[1, i] = DRCOB;                
@@ -1272,7 +1287,7 @@ namespace volCStest
                    VOLEQ.ToString().Contains("CZ") ||
                    VOLEQ.ToString().Contains("DEM") ||
                     VOLEQ.ToString().Contains("WO2") ||
-                   //(REGN == 9 && VOLEQ.ToString().Contains("CLK"))||
+                   VOLEQ.ToString().Contains("MAT")||
                    VOLEQ.ToString().Contains("CLK")||
                 VOLEQ.ToString().Contains("BEH"))
                 return true;
@@ -1292,7 +1307,7 @@ namespace volCStest
                   MDL.Contains("WO2") ||
                   //(REGN == 9 && MDL.Contains("CLK")) ||
                   MDL.Contains("CLK") ||
-                  //VOLEQ.ToString().Contains("CLK") ||
+                  MDL.Contains("MAT") ||
                   MDL.Contains("BEH"))//NEED TO SET THIS TO R6 ONLY
                 return true;
             else
@@ -2221,12 +2236,49 @@ namespace volCStest
                 writer.WriteLine("1/4 to 1: " + CFWT[2].ToString());
                 writer.WriteLine("1 to 3: " + CFWT[3].ToString());
                 writer.WriteLine("3 and up: " + CFWT[4].ToString());
+                writer.WriteLine("Live crown: " + CFWT[5].ToString());
+                writer.WriteLine("Dead crown: " + CFWT[6].ToString());
                 writer.WriteLine(" ");
                 writer.WriteLine("Brown Topwood: " + TopWt.ToString());
                 writer.WriteLine("Brown CullLog: " + CullLogWt.ToString());
                 writer.WriteLine("Brown CullChunk: " + CullChunkWt.ToString());
             }
             System.Diagnostics.Process.Start(exePath + biomassFile);
+        }
+
+        private void btnGetHT_Click(object sender, EventArgs e)
+        {
+            
+            STEMDIB = 0.0F;
+            STEMHT = 0.0F;
+            if (txStemDIB.TextLength > 0)
+                STEMDIB = float.Parse(txStemDIB.Text);
+
+            //make sure all required fields are populated
+            if (!checkFields())
+                return;
+
+            //initialize variables for volume library dll call
+            getVolPrep();
+            //PMTFLG = 1;
+
+            if (VOLEQ.Length < 10)
+            {
+                GETVOLEQ3(ref REGN, FORST, DIST, ref SPCODE, PROD, VOLEQ, ref ERRFLAG, strlen, strlen, strlen, strlen);
+                volEqTB.Text = VOLEQ.ToString();
+            }
+            //check for profile model volume equation number
+            if (!checkVolEq())
+            {
+                MessageBox.Show("cannot return height to the dib for this volume equation");
+                return;
+            }
+
+            HT2TOPDCS(ref REGN, FORST, VOLEQ, ref DBHOB, ref HTTOT, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
+                ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, ref FCLASS, ref STEMDIB, ref STEMHT, ref ERRFLAG, strlen, strlen);
+
+            //volEqTB.Text = VOLEQ.ToString();
+            txStemHT.Text = STEMHT.ToString();
         }
 
     }

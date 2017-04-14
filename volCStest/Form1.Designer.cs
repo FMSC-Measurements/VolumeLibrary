@@ -139,11 +139,19 @@ namespace volCStest
             this.PrintReportBtn = new System.Windows.Forms.Button();
             this.PrintGraphBtn = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.panel6 = new System.Windows.Forms.Panel();
+            this.btnGetHT = new System.Windows.Forms.Button();
+            this.label52 = new System.Windows.Forms.Label();
+            this.label51 = new System.Windows.Forms.Label();
+            this.txStemHT = new System.Windows.Forms.TextBox();
+            this.txStemDIB = new System.Windows.Forms.TextBox();
+            this.label50 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
             this.panel5.SuspendLayout();
+            this.panel6.SuspendLayout();
             this.SuspendLayout();
             // 
             // versionTB
@@ -158,7 +166,7 @@ namespace volCStest
             // 
             this.getVolEqB.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Red;
             this.getVolEqB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.getVolEqB.Location = new System.Drawing.Point(155, 277);
+            this.getVolEqB.Location = new System.Drawing.Point(155, 289);
             this.getVolEqB.Name = "getVolEqB";
             this.getVolEqB.Size = new System.Drawing.Size(167, 35);
             this.getVolEqB.TabIndex = 30;
@@ -219,7 +227,7 @@ namespace volCStest
             // 
             this.label4.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(7, 100);
+            this.label4.Location = new System.Drawing.Point(7, 107);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(38, 13);
             this.label4.TabIndex = 7;
@@ -231,7 +239,7 @@ namespace volCStest
             this.ctypeTB.Items.AddRange(new object[] {
             "FVS Vol",
             "Cruise Vol"});
-            this.ctypeTB.Location = new System.Drawing.Point(72, 97);
+            this.ctypeTB.Location = new System.Drawing.Point(72, 104);
             this.ctypeTB.Name = "ctypeTB";
             this.ctypeTB.Size = new System.Drawing.Size(71, 21);
             this.ctypeTB.TabIndex = 7;
@@ -327,7 +335,7 @@ namespace volCStest
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(164, 100);
+            this.label12.Location = new System.Drawing.Point(164, 105);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(45, 13);
             this.label12.TabIndex = 19;
@@ -338,7 +346,7 @@ namespace volCStest
             this.htTypeTB.Items.AddRange(new object[] {
             "Feet",
             "Logs"});
-            this.htTypeTB.Location = new System.Drawing.Point(227, 97);
+            this.htTypeTB.Location = new System.Drawing.Point(227, 102);
             this.htTypeTB.Name = "htTypeTB";
             this.htTypeTB.Size = new System.Drawing.Size(71, 21);
             this.htTypeTB.TabIndex = 8;
@@ -365,7 +373,7 @@ namespace volCStest
             // 
             this.label8.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(158, 175);
+            this.label8.Location = new System.Drawing.Point(158, 177);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(64, 13);
             this.label8.TabIndex = 23;
@@ -374,7 +382,7 @@ namespace volCStest
             // topDibSPTB
             // 
             this.topDibSPTB.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.topDibSPTB.Location = new System.Drawing.Point(227, 172);
+            this.topDibSPTB.Location = new System.Drawing.Point(227, 174);
             this.topDibSPTB.Name = "topDibSPTB";
             this.topDibSPTB.Size = new System.Drawing.Size(71, 20);
             this.topDibSPTB.TabIndex = 16;
@@ -432,7 +440,7 @@ namespace volCStest
             this.panel1.Controls.Add(this.label16);
             this.panel1.Location = new System.Drawing.Point(6, 7);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(473, 260);
+            this.panel1.Size = new System.Drawing.Size(473, 274);
             this.panel1.TabIndex = 25;
             // 
             // avgz1TB
@@ -766,7 +774,7 @@ namespace volCStest
             // debugCB
             // 
             this.debugCB.AutoSize = true;
-            this.debugCB.Location = new System.Drawing.Point(16, 99);
+            this.debugCB.Location = new System.Drawing.Point(90, 3);
             this.debugCB.Name = "debugCB";
             this.debugCB.Size = new System.Drawing.Size(115, 17);
             this.debugCB.TabIndex = 48;
@@ -777,7 +785,7 @@ namespace volCStest
             // pmtCB
             // 
             this.pmtCB.AutoSize = true;
-            this.pmtCB.Location = new System.Drawing.Point(16, 76);
+            this.pmtCB.Location = new System.Drawing.Point(16, 39);
             this.pmtCB.Name = "pmtCB";
             this.pmtCB.Size = new System.Drawing.Size(159, 17);
             this.pmtCB.TabIndex = 53;
@@ -787,7 +795,7 @@ namespace volCStest
             // label25
             // 
             this.label25.AutoSize = true;
-            this.label25.Location = new System.Drawing.Point(6, 42);
+            this.label25.Location = new System.Drawing.Point(6, 30);
             this.label25.Name = "label25";
             this.label25.Size = new System.Drawing.Size(44, 13);
             this.label25.TabIndex = 54;
@@ -795,7 +803,7 @@ namespace volCStest
             // 
             // topDIBTB
             // 
-            this.topDIBTB.Location = new System.Drawing.Point(59, 39);
+            this.topDIBTB.Location = new System.Drawing.Point(59, 27);
             this.topDIBTB.Name = "topDIBTB";
             this.topDIBTB.Size = new System.Drawing.Size(43, 20);
             this.topDIBTB.TabIndex = 55;
@@ -823,12 +831,12 @@ namespace volCStest
             this.panel2.Enabled = false;
             this.panel2.Location = new System.Drawing.Point(490, 6);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(209, 261);
+            this.panel2.Size = new System.Drawing.Size(209, 211);
             this.panel2.TabIndex = 56;
             // 
             // SetDefaults
             // 
-            this.SetDefaults.Location = new System.Drawing.Point(59, 223);
+            this.SetDefaults.Location = new System.Drawing.Point(59, 184);
             this.SetDefaults.Name = "SetDefaults";
             this.SetDefaults.Size = new System.Drawing.Size(75, 23);
             this.SetDefaults.TabIndex = 68;
@@ -839,7 +847,7 @@ namespace volCStest
             // label32
             // 
             this.label32.AutoSize = true;
-            this.label32.Location = new System.Drawing.Point(8, 174);
+            this.label32.Location = new System.Drawing.Point(8, 141);
             this.label32.Name = "label32";
             this.label32.Size = new System.Drawing.Size(27, 13);
             this.label32.TabIndex = 66;
@@ -847,7 +855,7 @@ namespace volCStest
             // 
             // trimTB
             // 
-            this.trimTB.Location = new System.Drawing.Point(59, 170);
+            this.trimTB.Location = new System.Drawing.Point(59, 137);
             this.trimTB.Name = "trimTB";
             this.trimTB.Size = new System.Drawing.Size(43, 20);
             this.trimTB.TabIndex = 67;
@@ -855,7 +863,7 @@ namespace volCStest
             // label31
             // 
             this.label31.AutoSize = true;
-            this.label31.Location = new System.Drawing.Point(6, 147);
+            this.label31.Location = new System.Drawing.Point(6, 118);
             this.label31.Name = "label31";
             this.label31.Size = new System.Drawing.Size(37, 13);
             this.label31.TabIndex = 64;
@@ -863,7 +871,7 @@ namespace volCStest
             // 
             // stumpTB
             // 
-            this.stumpTB.Location = new System.Drawing.Point(59, 144);
+            this.stumpTB.Location = new System.Drawing.Point(59, 115);
             this.stumpTB.Name = "stumpTB";
             this.stumpTB.Size = new System.Drawing.Size(43, 20);
             this.stumpTB.TabIndex = 65;
@@ -871,7 +879,7 @@ namespace volCStest
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(6, 121);
+            this.label30.Location = new System.Drawing.Point(6, 96);
             this.label30.Name = "label30";
             this.label30.Size = new System.Drawing.Size(49, 13);
             this.label30.TabIndex = 62;
@@ -879,7 +887,7 @@ namespace volCStest
             // 
             // minLenTTB
             // 
-            this.minLenTTB.Location = new System.Drawing.Point(59, 118);
+            this.minLenTTB.Location = new System.Drawing.Point(59, 93);
             this.minLenTTB.Name = "minLenTTB";
             this.minLenTTB.Size = new System.Drawing.Size(43, 20);
             this.minLenTTB.TabIndex = 63;
@@ -909,7 +917,7 @@ namespace volCStest
             "top segment stands on its own",
             "if top seg < 1/4 log len drop the top. If  top >= 1/4 & <= 3/4 nom length top is " +
                 "1/2 of nom log length, else top is nom log len."});
-            this.optCB.Location = new System.Drawing.Point(36, 196);
+            this.optCB.Location = new System.Drawing.Point(36, 159);
             this.optCB.Name = "optCB";
             this.optCB.Size = new System.Drawing.Size(166, 21);
             this.optCB.TabIndex = 61;
@@ -917,7 +925,7 @@ namespace volCStest
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(6, 197);
+            this.label29.Location = new System.Drawing.Point(6, 160);
             this.label29.Name = "label29";
             this.label29.Size = new System.Drawing.Size(24, 13);
             this.label29.TabIndex = 60;
@@ -926,7 +934,7 @@ namespace volCStest
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(6, 96);
+            this.label28.Location = new System.Drawing.Point(6, 74);
             this.label28.Name = "label28";
             this.label28.Size = new System.Drawing.Size(42, 13);
             this.label28.TabIndex = 58;
@@ -934,7 +942,7 @@ namespace volCStest
             // 
             // minLenTB
             // 
-            this.minLenTB.Location = new System.Drawing.Point(59, 93);
+            this.minLenTB.Location = new System.Drawing.Point(59, 71);
             this.minLenTB.Name = "minLenTB";
             this.minLenTB.Size = new System.Drawing.Size(43, 20);
             this.minLenTB.TabIndex = 59;
@@ -942,7 +950,7 @@ namespace volCStest
             // label27
             // 
             this.label27.AutoSize = true;
-            this.label27.Location = new System.Drawing.Point(6, 70);
+            this.label27.Location = new System.Drawing.Point(6, 52);
             this.label27.Name = "label27";
             this.label27.Size = new System.Drawing.Size(45, 13);
             this.label27.TabIndex = 56;
@@ -950,7 +958,7 @@ namespace volCStest
             // 
             // maxLenTB
             // 
-            this.maxLenTB.Location = new System.Drawing.Point(59, 67);
+            this.maxLenTB.Location = new System.Drawing.Point(59, 49);
             this.maxLenTB.Name = "maxLenTB";
             this.maxLenTB.Size = new System.Drawing.Size(43, 20);
             this.maxLenTB.TabIndex = 57;
@@ -958,7 +966,7 @@ namespace volCStest
             // mRulesCB
             // 
             this.mRulesCB.AutoSize = true;
-            this.mRulesCB.Location = new System.Drawing.Point(16, 53);
+            this.mRulesCB.Location = new System.Drawing.Point(16, 20);
             this.mRulesCB.Name = "mRulesCB";
             this.mRulesCB.Size = new System.Drawing.Size(126, 17);
             this.mRulesCB.TabIndex = 57;
@@ -969,7 +977,7 @@ namespace volCStest
             // label21
             // 
             this.label21.AutoSize = true;
-            this.label21.Location = new System.Drawing.Point(72, 56);
+            this.label21.Location = new System.Drawing.Point(73, 50);
             this.label21.Name = "label21";
             this.label21.Size = new System.Drawing.Size(21, 13);
             this.label21.TabIndex = 58;
@@ -977,7 +985,7 @@ namespace volCStest
             // 
             // diboTB
             // 
-            this.diboTB.Location = new System.Drawing.Point(109, 56);
+            this.diboTB.Location = new System.Drawing.Point(112, 50);
             this.diboTB.Name = "diboTB";
             this.diboTB.Size = new System.Drawing.Size(44, 20);
             this.diboTB.TabIndex = 59;
@@ -985,7 +993,7 @@ namespace volCStest
             // label24
             // 
             this.label24.AutoSize = true;
-            this.label24.Location = new System.Drawing.Point(12, 28);
+            this.label24.Location = new System.Drawing.Point(13, 28);
             this.label24.Name = "label24";
             this.label24.Size = new System.Drawing.Size(91, 13);
             this.label24.TabIndex = 60;
@@ -993,7 +1001,7 @@ namespace volCStest
             // 
             // upstht2TB
             // 
-            this.upstht2TB.Location = new System.Drawing.Point(109, 28);
+            this.upstht2TB.Location = new System.Drawing.Point(112, 28);
             this.upstht2TB.Name = "upstht2TB";
             this.upstht2TB.Size = new System.Drawing.Size(44, 20);
             this.upstht2TB.TabIndex = 61;
@@ -1029,7 +1037,7 @@ namespace volCStest
             this.panel3.Controls.Add(this.boardFtVolTB);
             this.panel3.Controls.Add(this.label18);
             this.panel3.Controls.Add(this.label19);
-            this.panel3.Location = new System.Drawing.Point(36, 318);
+            this.panel3.Location = new System.Drawing.Point(32, 331);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(408, 220);
             this.panel3.TabIndex = 62;
@@ -1159,21 +1167,22 @@ namespace volCStest
             // 
             // panel4
             // 
+            this.panel4.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel4.Controls.Add(this.label34);
             this.panel4.Controls.Add(this.mRulesCB);
             this.panel4.Controls.Add(this.pmtCB);
             this.panel4.Controls.Add(this.debugCB);
-            this.panel4.Location = new System.Drawing.Point(501, 297);
+            this.panel4.Location = new System.Drawing.Point(490, 220);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(191, 117);
+            this.panel4.Size = new System.Drawing.Size(209, 61);
             this.panel4.TabIndex = 63;
             // 
             // label34
             // 
             this.label34.AutoSize = true;
             this.label34.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label34.Location = new System.Drawing.Point(13, 16);
+            this.label34.Location = new System.Drawing.Point(5, 3);
             this.label34.Name = "label34";
             this.label34.Size = new System.Drawing.Size(107, 13);
             this.label34.TabIndex = 58;
@@ -1188,16 +1197,16 @@ namespace volCStest
             this.panel5.Controls.Add(this.label24);
             this.panel5.Controls.Add(this.diboTB);
             this.panel5.Controls.Add(this.upstht2TB);
-            this.panel5.Location = new System.Drawing.Point(501, 425);
+            this.panel5.Location = new System.Drawing.Point(500, 329);
             this.panel5.Name = "panel5";
-            this.panel5.Size = new System.Drawing.Size(191, 113);
+            this.panel5.Size = new System.Drawing.Size(192, 101);
             this.panel5.TabIndex = 64;
             // 
             // label35
             // 
             this.label35.AutoSize = true;
             this.label35.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label35.Location = new System.Drawing.Point(18, 6);
+            this.label35.Location = new System.Drawing.Point(8, 6);
             this.label35.Name = "label35";
             this.label35.Size = new System.Drawing.Size(118, 13);
             this.label35.TabIndex = 63;
@@ -1205,9 +1214,9 @@ namespace volCStest
             // 
             // GetDibBN
             // 
-            this.GetDibBN.Location = new System.Drawing.Point(35, 80);
+            this.GetDibBN.Location = new System.Drawing.Point(25, 73);
             this.GetDibBN.Name = "GetDibBN";
-            this.GetDibBN.Size = new System.Drawing.Size(100, 27);
+            this.GetDibBN.Size = new System.Drawing.Size(100, 21);
             this.GetDibBN.TabIndex = 62;
             this.GetDibBN.Text = "Get DIB";
             this.GetDibBN.UseVisualStyleBackColor = true;
@@ -1215,7 +1224,7 @@ namespace volCStest
             // 
             // ClearFormBtn
             // 
-            this.ClearFormBtn.Location = new System.Drawing.Point(65, 565);
+            this.ClearFormBtn.Location = new System.Drawing.Point(24, 565);
             this.ClearFormBtn.Name = "ClearFormBtn";
             this.ClearFormBtn.Size = new System.Drawing.Size(85, 32);
             this.ClearFormBtn.TabIndex = 65;
@@ -1225,7 +1234,7 @@ namespace volCStest
             // 
             // PrintReportBtn
             // 
-            this.PrintReportBtn.Location = new System.Drawing.Point(257, 565);
+            this.PrintReportBtn.Location = new System.Drawing.Point(123, 565);
             this.PrintReportBtn.Name = "PrintReportBtn";
             this.PrintReportBtn.Size = new System.Drawing.Size(94, 34);
             this.PrintReportBtn.TabIndex = 66;
@@ -1235,7 +1244,7 @@ namespace volCStest
             // 
             // PrintGraphBtn
             // 
-            this.PrintGraphBtn.Location = new System.Drawing.Point(378, 565);
+            this.PrintGraphBtn.Location = new System.Drawing.Point(223, 565);
             this.PrintGraphBtn.Name = "PrintGraphBtn";
             this.PrintGraphBtn.Size = new System.Drawing.Size(88, 32);
             this.PrintGraphBtn.TabIndex = 67;
@@ -1245,13 +1254,79 @@ namespace volCStest
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(560, 565);
+            this.button1.Location = new System.Drawing.Point(329, 565);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(117, 32);
             this.button1.TabIndex = 68;
             this.button1.Text = "View Biomass Info";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // panel6
+            // 
+            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Controls.Add(this.btnGetHT);
+            this.panel6.Controls.Add(this.label52);
+            this.panel6.Controls.Add(this.label51);
+            this.panel6.Controls.Add(this.txStemHT);
+            this.panel6.Controls.Add(this.txStemDIB);
+            this.panel6.Controls.Add(this.label50);
+            this.panel6.Location = new System.Drawing.Point(502, 446);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(189, 106);
+            this.panel6.TabIndex = 69;
+            // 
+            // btnGetHT
+            // 
+            this.btnGetHT.Location = new System.Drawing.Point(25, 79);
+            this.btnGetHT.Name = "btnGetHT";
+            this.btnGetHT.Size = new System.Drawing.Size(95, 23);
+            this.btnGetHT.TabIndex = 5;
+            this.btnGetHT.Text = "Get HT";
+            this.btnGetHT.UseVisualStyleBackColor = true;
+            this.btnGetHT.Click += new System.EventHandler(this.btnGetHT_Click);
+            // 
+            // label52
+            // 
+            this.label52.AutoSize = true;
+            this.label52.Location = new System.Drawing.Point(37, 57);
+            this.label52.Name = "label52";
+            this.label52.Size = new System.Drawing.Size(71, 13);
+            this.label52.TabIndex = 4;
+            this.label52.Text = "Height to DIB";
+            // 
+            // label51
+            // 
+            this.label51.AutoSize = true;
+            this.label51.Location = new System.Drawing.Point(56, 34);
+            this.label51.Name = "label51";
+            this.label51.Size = new System.Drawing.Size(52, 13);
+            this.label51.TabIndex = 3;
+            this.label51.Text = "Stem DIB";
+            // 
+            // txStemHT
+            // 
+            this.txStemHT.Location = new System.Drawing.Point(111, 53);
+            this.txStemHT.Name = "txStemHT";
+            this.txStemHT.Size = new System.Drawing.Size(44, 20);
+            this.txStemHT.TabIndex = 2;
+            // 
+            // txStemDIB
+            // 
+            this.txStemDIB.Location = new System.Drawing.Point(111, 30);
+            this.txStemDIB.Name = "txStemDIB";
+            this.txStemDIB.Size = new System.Drawing.Size(44, 20);
+            this.txStemDIB.TabIndex = 1;
+            // 
+            // label50
+            // 
+            this.label50.AutoSize = true;
+            this.label50.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label50.Location = new System.Drawing.Point(18, 11);
+            this.label50.Name = "label50";
+            this.label50.Size = new System.Drawing.Size(110, 13);
+            this.label50.TabIndex = 0;
+            this.label50.Text = "Height to Top DIB";
             // 
             // Form1
             // 
@@ -1260,6 +1335,7 @@ namespace volCStest
             this.AutoScroll = true;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(762, 614);
+            this.Controls.Add(this.panel6);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.PrintGraphBtn);
             this.Controls.Add(this.PrintReportBtn);
@@ -1284,6 +1360,8 @@ namespace volCStest
             this.panel4.PerformLayout();
             this.panel5.ResumeLayout(false);
             this.panel5.PerformLayout();
+            this.panel6.ResumeLayout(false);
+            this.panel6.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1402,6 +1480,13 @@ namespace volCStest
         private System.Windows.Forms.TextBox upsd1TB;
         private System.Windows.Forms.TextBox errmsgTB;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Panel panel6;
+        private System.Windows.Forms.TextBox txStemDIB;
+        private System.Windows.Forms.Label label50;
+        private System.Windows.Forms.Label label52;
+        private System.Windows.Forms.Label label51;
+        private System.Windows.Forms.TextBox txStemHT;
+        private System.Windows.Forms.Button btnGetHT;
     }
 }
 

@@ -1,3 +1,32 @@
+      SUBROUTINE BROWN(BIOEQ, DBHOB, HTTOT, CR, BIOMAS)
+      IMPLICIT NONE
+      REAL DBHOB, HTTOT, CR, CFWT(7), BIOMAS
+      CHARACTER*12 BIOEQ
+      INTEGER SPEC
+      CHARACTER*3 CMP
+      
+      CMP = BIOEQ(7:9)
+      READ (BIOEQ(4:6),'(I3)') SPEC
+      CALL BROWNCROWNFRACTION(SPEC, DBHOB, HTTOT,CR, CFWT)
+      IF(CMP.EQ.'FOT')THEN
+        BIOMAS = CFWT(1)
+      ELSEIF(CMP.EQ.'B04')THEN
+        BIOMAS = CFWT(2)
+      ELSEIF(CMP.EQ.'B41')THEN
+        BIOMAS = CFWT(3)
+      ELSEIF(CMP.EQ.'B13')THEN
+        BIOMAS = CFWT(4)
+      ELSEIF(CMP.EQ.'B3P')THEN
+        BIOMAS = CFWT(5)
+      ELSEIF(CMP.EQ.'LCR')THEN
+        BIOMAS = CFWT(6)
+      ELSEIF(CMP.EQ.'DCR')THEN
+        BIOMAS = CFWT(7)
+      ENDIF
+      
+      RETURN
+      END
+C **************************************************************************************      
 C     THIS SUBROUTINE CALCULATE CROWN BIOMASS (DRY WEIGHT) FRACTIONS BASED ON BROWN 1976
 C     THE RESULT FOR SIZE CATEGORY IN CWF AS:
 C     1 - NEEDLES
@@ -5,16 +34,21 @@ C     2 - 0 TO 1/4"
 C     3 - 1/4 TO 1"
 C     4 - 1 TO 3"
 C     5 - 3" AND UP
-      SUBROUTINE BROWNCROWNFRACTION(SPCD, DBH, THT, CFWT)
+C     6 - Live Crown
+C     7 - Dead crown
+      SUBROUTINE BROWNCROWNFRACTION(SPCD, DBH, THT,CR, CFWT)
 ! Expose subroutine BrownCrownFraction to C# users of this DLL
       !DEC$ ATTRIBUTES DLLEXPORT::BROWNCROWNFRACTION
       IMPLICIT NONE
-      REAL DBH, THT, CFWT(5)
+      REAL DBH, THT, CFWT(7), CR
       INTEGER SPCD, PROP
       REAL LCW, DCW, LP1, LP2, LP3, LP4, DP1, DP2 
       REAL DST1, DST2, DST3, SW
       REAL CONST2, CONST3, CONST4
       REAL LIVEPROP, DEADPROP
+      
+      LCW = 0.0
+      DCW = 0.0
 C     ASSOCIATE SPECIES CODE WITH BROWN SPECIES CODE
       IF(SPCD.EQ.15.OR.SPCD.EQ.11.OR.SPCD.EQ.21.OR.SPCD.EQ.22)THEN
         SPCD = 17
@@ -29,7 +63,7 @@ C     ASSOCIATE SPECIES CODE WITH BROWN SPECIES CODE
       ELSEIF(SPCD.EQ.41.OR.SPCD.EQ.42.OR.SPCD.EQ.81)THEN
         SPCD = 242
       ENDIF
-      CALL LIVECROWNWEIGHT(SPCD, DBH, THT, LCW)
+      CALL LIVECROWNWEIGHT(SPCD, DBH, THT, CR, LCW)
       
 C     SMALL TREES AND BIG TREES ARE CALCULATED DIFFERENT FOR PROPORTION
       IF(DBH.LE.6)THEN
@@ -70,7 +104,7 @@ C       3" AND UP
         CFWT(5) = SW*CONST4
         IF(DBH.LT.3) CFWT(5) = 0  
       ELSE
-        CALL DEADCROWNWEIGHT(SPCD, DBH, THT, DCW)
+        CALL DEADCROWNWEIGHT(SPCD, DBH, THT,CR, DCW)
         LP1 = LIVEPROP(SPCD, DBH, 1)
         LP2 = LIVEPROP(SPCD, DBH, 2)
         LP3 = LIVEPROP(SPCD, DBH, 3)
@@ -99,6 +133,8 @@ C       3" AND UP
           CFWT(5) = 0
         ENDIF
       ENDIF
+      CFWT(6) = LCW
+      CFWT(7) = DCW
       END                          
 C ---------------------------------------------------------------------
 C Brown topwood dry weight = gross CUFT sedondary volume times breakage ratio times wood density
@@ -132,14 +168,14 @@ C BROWN CULL CHUNK WEIGHT = GROSS CUFT MINUS NET CUFT VOLUME TIMES FRACTION LEFT
       WT = WOODDRYWEIGHT(SPN, VOL, 0);
       END
 C ---------------------------------------------------------------------
-      SUBROUTINE LIVECROWNWEIGHT(SPCD, DBH, THT, LCW)
+      SUBROUTINE LIVECROWNWEIGHT(SPCD, DBH, THT, CR, LCW)
 C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
       IMPLICIT NONE
-      REAL DBH, THT, LCW, P3, DF34PLUSLCW
+      REAL DBH, THT, LCW, CR, DF34PLUSLCW
       INTEGER SPCD
       CHARACTER*12 BMEQ
       DF34PLUSLCW(DBH) = EXP(0.0168 + 1.949*LOG(DBH))
-      P3 = 0
+c      P3 = 0
       LCW = -1
       IF(DBH.GT.50) DBH = 50
       IF(DBH.LT.1) DBH = 1
@@ -202,14 +238,14 @@ c       eqn 323
       ENDIF
       IF(LCW.LT.0)THEN
         LCW = 0
-        CALL CalcBiomass(BMEQ, DBH, THT, P3,LCW)
+        CALL CalcBiomass(BMEQ, DBH, THT, CR,LCW)
       ENDIF
       END
 C ---------------------------------------------------------------------
-      SUBROUTINE DEADCROWNWEIGHT(SPCD, DBH, THT, DCW)
+      SUBROUTINE DEADCROWNWEIGHT(SPCD, DBH, THT, CR, DCW)
       IMPLICIT NONE
 C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
-      REAL DBH, THT, DCW, P3, LCW
+      REAL DBH, THT, DCW, P3, LCW, CR
       INTEGER SPCD
       CHARACTER*12 BMEQ
       P3 = 0
@@ -223,7 +259,7 @@ c       eqn 310
         ELSEIF(DBH.LE.20)THEN
 c       eqn 309
           BMEQ = 'BRN017LCR02D'
-          CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+          CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
           DCW = LCW*0.38
         ELSE
           DBH = 20
@@ -237,13 +273,13 @@ c       eqn 313
         ELSE
 c       eqn 312
           BMEQ = 'BRN019LCR01D'
-          CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+          CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
           DCW = LCW*0.31
         ENDIF
       ELSEIF(SPCD.EQ.108)THEN
 c       eqn 323
         BMEQ = 'BRN108LCR01D'
-        CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+        CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
         DCW = LCW*0.235  
       ELSEIF(SPCD.EQ.73)THEN
         DCW = 0
@@ -274,10 +310,10 @@ c       eqn 332
       ELSEIF(SPCD.EQ.101)THEN
 c       eqn 324
         BMEQ = 'BRN119LCR01D'
-        CALL CALCBIOMASS(BMEQ, DBH, THT, P3,LCW)
+        CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
         DCW = LCW*0.235
       ENDIF
-      IF(DCW.LT.0) CALL CALCBIOMASS(BMEQ, DBH, THT, P3,DCW)
+      IF(DCW.LT.0) CALL CALCBIOMASS(BMEQ, DBH, THT, CR,DCW)
       IF(DCW.LT.0) DCW = 0
       END
 C ---------------------------------------------------------------------

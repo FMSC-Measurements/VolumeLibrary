@@ -69,6 +69,32 @@ C_______________________________________________________________________
     2    FORMAT (A)   
    		END IF
 
+      MRULEMOD = 'Y'
+      NEWCOR = MERRULES%COR
+      NEWEVOD = MERRULES%EVOD
+      NEWOPT = MERRULES%OPT
+      NEWMAXLEN = MERRULES%MAXLEN
+      NEWMINLEN = MERRULES%MINLEN
+      NEWMERCHL = MERRULES%MERCHL
+      NEWMINLENT = MERRULES%MINLENT
+      NEWMTOPP = MERRULES%MTOPP
+      NEWMTOPS = MERRULES%MTOPS
+      NEWSTUMP = MERRULES%STUMP
+      NEWTRIM = MERRULES%TRIM
+      NEWBTR = MERRULES%BTR
+      NEWDBTBH = MERRULES%DBTBH
+      NEWMINBFD = MERRULES%MINBFD
+
+      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      GOTO 4000
+         		
+! The following codes are almost duplicated from VOLINIT1 and will be deleted 2017/03/17
+! **************************************************************************************
 !Check for a DBH of less than 1.  Drop out of volume if true.  10/97
       IF(DBHOB.LT.1 .AND. DRCOB.LT.1) THEN
         ERRFLAG = 3
@@ -134,7 +160,7 @@ c     +   MDL.EQ.'jb2') THEN
 !**********************
 
         CALL R4VOL(REGN,VOLEQ,MTOPP,HTTOT,DBHOB,HT1PRD,VOL,NOLOGP,
-     +             NOLOGS, LOGDIA,LOGLEN,LOGVOL,
+     +             NOLOGS, LOGDIA,LOGLEN,LOGVOL,BOLHT,
      +             CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
         TLOGS = ANINT(NOLOGP + NOLOGS)
       ELSEIF (MDL.EQ.'TRF' .OR. MDL.EQ.'trf')THEN
@@ -372,10 +398,10 @@ C  calc Tip volume and save to VOL(15)
         VOL(14) = VOLIB
       ENDIF
 c now calc tip volume
-      IF(VOL(15).LT.0.01 .AND. VOL(4).GT.0.0)THEN
-        VOL(15) = VOL(1)-VOL(4)-VOL(7)-VOL(14)
-        IF(VOL(15).LT.0.0) VOL(15) = 0.0
-      ENDIF
+c      IF(VOL(15).LT.0.01 .AND. VOL(4).GT.0.0)THEN
+c        VOL(15) = VOL(1)-VOL(4)-VOL(7)-VOL(14)
+c        IF(VOL(15).LT.0.0) VOL(15) = 0.0
+c      ENDIF
                   
       
       IF (DEBUG%MODEL) THEN

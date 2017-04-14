@@ -3,6 +3,7 @@ C 01/18/2013 added FIAVOLEQDEF, R5_PNWEQN and R6_PNWEQN for PNE FIA equations.
 C 03/25/2014 changed default equation for Region 3 (R3_EQN) Ponderosa pine in the forest Apache Sitgreaves, Coconino, Kaibab and Tonto to 300FW2W122.
 C 09/09/2016 Modified R3_EQN default equation for PP, DF, WF, and WP in Sante Fe NF
 C 09/15/2016 Corrected R4 default equation for other species to DVE equation
+C 04/12/2017 removed 532WO2W*** equation from R5_EQN per the email from Craig Bodenhausen (4/12/2017)
       SUBROUTINE VOLEQDEF (VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
 C
 C    SUBROUTINE WILL RETURN THE DEFAULT VOLUME EQUATION NUMBER
@@ -674,7 +675,7 @@ C//////////////////////////////////////////////////////////////////
       CHARACTER*10 VOLEQ
       CHARACTER*2 FORST,VAR
       INTEGER SPEC,ERRFLAG
-      CHARACTER*10 EQNUM(78)
+      CHARACTER*10 EQNUM(71)
       INTEGER FIA(71), FIRST, HALF, LAST, DONE, FORNUM,I
 
 C     SPECIES
@@ -718,7 +719,7 @@ C     Willow,                California laurel,     Other hardwoods,     unkown
      >'500WO2W108','500WO2W116','500WO2W117','500WO2W117','500WO2W122',
      >'500WO2W108','500WO2W108','500WO2W116','500WO2W117','500WO2W108',
      >'500WO2W202','500WO2W202'/
-      DATA (EQNUM(I),I=33,78)/
+      DATA (EQNUM(I),I=33,71)/
      >'500WO2W211','500DVEW212','500WO2W108','500WO2W081','500DVEW807',
      >'500WO2W015','500WO2W015','500WO2W108','H00SN2W301','500DVEW312',
      >'500DVEW807','500DVEW351','500DVEW351','500DVEW361','500DVEW431',
@@ -726,14 +727,14 @@ C     Willow,                California laurel,     Other hardwoods,     unkown
      >'500DVEW818','500DVEW631','H00SN2W671','500DVEW818','500DVEW818',
      >'500DVEW818','500DVEW801','500DVEW801','500DVEW805','500DVEW807',
      >'500DVEW811','500DVEW815','500DVEW818','500DVEW821','500DVEW839',
-     >'500DVEW807','500DVEW981','500DVEW981','500DVEW631','532WO2W015',
-     >'532WO2W020','532WO2W081','532WO2W108','532WO2W117','532WO2W122',
-     >'532WO2W202'/
+     >'500DVEW807','500DVEW981','500DVEW981','500DVEW631'/ !,'532WO2W015',
+c     >'532WO2W020','532WO2W081','532WO2W108','532WO2W117','532WO2W122',
+c     >'532WO2W202'/
 C
 C  SEARCH FOR VALID EQUATION NUMBER
 C
       IF(SPEC.EQ.9999)THEN
-        DO I=1,78
+        DO I=1,71
         IF(VOLEQ.EQ.EQNUM(I))THEN
 C
 C  FOUND VALID EQUATION NUMBER
@@ -748,78 +749,78 @@ C
       READ(FORST,'(I2)')FORNUM
       DONE = 0
 C     white fir
-      IF(SPEC.EQ.15)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c      IF(SPEC.EQ.15)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
 C                 VOLEQ=EQNUM(72)
-              DONE=72
-              ENDIF
-          ENDIF
+c              DONE=72
+c              ENDIF
+c          ENDIF
 C     California red fir
-      ELSEIF(SPEC.EQ.20)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c      ELSEIF(SPEC.EQ.20)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
 C                 VOLEQ=EQNUM(73)
-              DONE=73
-              ENDIF
-          ENDIF
+c              DONE=73
+c              ENDIF
+c          ENDIF
 C     incense cedar
-      ELSEIF(SPEC.EQ.81)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c      ELSEIF(SPEC.EQ.81)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
 C                 VOLEQ=EQNUM(74)
-                  DONE=74
-              ENDIF
-          ENDIF
+c                  DONE=74
+c              ENDIF
+c          ENDIF
 C     Whitebark pine
-      ELSEIF(SPEC.EQ.101) THEN
+      IF(SPEC.EQ.101) THEN
           IF(VAR.EQ.'SO' .OR. VAR.EQ.'so') THEN
                DONE=30
           ELSE
                DONE=40   
           ENDIF
 C     lodgepole pine
-      ELSEIF(SPEC.EQ.108)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-              DONE=75
-              ENDIF
-          ENDIF
+c      ELSEIF(SPEC.EQ.108)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c              DONE=75
+c              ENDIF
+c          ENDIF
 C     sugar pine
-      ELSEIF(SPEC.EQ.117)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-                 DONE=76
-              ENDIF
-          ENDIF
+c      ELSEIF(SPEC.EQ.117)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c                 DONE=76
+c              ENDIF
+c          ENDIF
 C     ponderosa pine
-      ELSEIF(SPEC.EQ.122)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-                 DONE=77
-              ENDIF
-          ENDIF
+c      ELSEIF(SPEC.EQ.122)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c                 DONE=77
+c              ENDIF
+c          ENDIF
 C     Douglas fir
-      ELSEIF(SPEC.EQ.202)THEN
-          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-                 DONE=78
-              ENDIF
-          ENDIF
+c      ELSEIF(SPEC.EQ.202)THEN
+c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
+c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
+c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
+c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
+c                 DONE=78
+c              ENDIF
+c          ENDIF
 C     other softwoods
       ELSEIF(SPEC.EQ.298 .OR. SPEC.EQ.290) THEN
           IF(VAR.EQ.'SO' .OR. VAR.EQ.'so') THEN

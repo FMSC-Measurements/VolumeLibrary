@@ -4,6 +4,7 @@
 !     Revised TDH 06/18/09 - created profile2 for APSS
 !     YW 06/20/2014 Add logic to reset MINLEN for region 10 32 foot log equation
 C     YW 07/02/2014 Added errflag to call VOLINTRP routine
+C     YW 03/17/2017 Modified PROFILE2 to call PROFILE to avoid duplicated codes
       SUBROUTINE PROFILE2 (REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      >   HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,UPSD2,
      >   AVGZ1,AVGZ2,HTREF,DBTBH,BTR,LOGDIA,BOLHT,LOGLEN,LOGVOL,VOL,
@@ -12,6 +13,7 @@ C     YW 07/02/2014 Added errflag to call VOLINTRP routine
      
       USE MRULES_MOD
       USE DEBUG_MOD
+      USE VOLINPUT_MOD
      
 !...  This is a minor modification to profile.f for use with the APSS
 C--   This subroutine determines the cubic and board foot volume of a tree
@@ -75,11 +77,35 @@ C     Temp variable for BEH equation
       INTEGER ZONE
       REAL FC_HT,D17,TTH,DBHIB
 !=====================================================================
-			IF (DEBUG%MODEL) THEN
+		IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 2) ' -->Enter PROFILE2'
     2    FORMAT (A)   
    		END IF
 
+      MRULEMOD = 'Y'
+      NEWCOR = MERRULES%COR
+      NEWEVOD = MERRULES%EVOD
+      NEWOPT = MERRULES%OPT
+      NEWMAXLEN = MERRULES%MAXLEN
+      NEWMINLEN = MERRULES%MINLEN
+      NEWMERCHL = MERRULES%MERCHL
+      NEWMINLENT = MERRULES%MINLENT
+      NEWMTOPP = MERRULES%MTOPP
+      NEWMTOPS = MERRULES%MTOPS
+      NEWSTUMP = MERRULES%STUMP
+      NEWTRIM = MERRULES%TRIM
+      NEWBTR = MERRULES%BTR
+      NEWDBTBH = MERRULES%DBTBH
+      NEWMINBFD = MERRULES%MINBFD
+        CALL PROFILE (REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,HTTYPE,
+     +      HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,
+     +      AVGZ2,HTREF,DBTBH,BTR,LOGDIA,BOLHT,LOGLEN,LOGVOL,VOL,
+     +      TLOGS, NOLOGP,NOLOGS,CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,
+     +      DRCOB,CTYPE,FCLASS,PROD,ERRFLAG)
+
+      GOTO 1000
+! The following codes are duplicated from PROFILE subroutine and will be deleted!
+! ********************************************************************************      
 
 c      LOGST = 0      ! commented out for variable log cruising
 C     changed to set LOGST = 0 for NOT variable log cruising (CTYPE = V)
@@ -833,7 +859,7 @@ C     UPDATE TOTAL LOGS
 
 1000  CONTINUE
 
-			IF (DEBUG%MODEL) THEN
+		IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 20) ' <--Exit PROFILE2'
    20    FORMAT (A)   
    		END IF

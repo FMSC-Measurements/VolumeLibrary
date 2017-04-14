@@ -38,6 +38,7 @@ C YW 04/15/2015 Added to make prod 14 to be same as prod 01 for volume calculati
 C YW 10/06/2015 Added TLOGS,NOLOGP and NOLOGS to the R9CLARK subroutine
 C YW 01/22/2016 Added extra NaN check in r9ht routine for stemHt.
 C YW 03/02/2016 Removed the error check for small tree (<17.3) and calculation using small tree logic
+c YW 04/13/2017 Moved the stump and tip volume calc to volinit subroutine.
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -257,7 +258,7 @@ C-----Get topwood cubic volumes
       
 !...  get log lengths, dibs
         CALL R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
-     &       LOGLEN, LOGDIA, NOLOGP, NOLOGS, TLOGS,COEFFS, ERRFLG) 
+     &       LOGLEN,LOGDIA,NOLOGP,NOLOGS,TLOGS,COEFFS,ERRFLG,BOLHT) 
      
         IF(ERRFLG .NE. 0) THEN
           DO 525, I=1,15
@@ -294,7 +295,7 @@ C-----Get board foot volumes
       ELSE  !prod ne 1
       
         CALL R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
-     &       LOGLEN, LOGDIA, NOLOGP, NOLOGS, TLOGS,COEFFS, ERRFLG) 
+     &       LOGLEN,LOGDIA,NOLOGP,NOLOGS,TLOGS,COEFFS,ERRFLG,BOLHT) 
         IF(ERRFLG .NE. 0) THEN
           DO 575, I=1,15
              VOL(I) = 0.0
@@ -307,7 +308,8 @@ C-----Get board foot volumes
          
 !...  get cubic log volumes'
 !      CALL R9LGCFT(TLOGS, LOGLEN, LOGDIA, LOGVOL, TLOGVOL, tcfVol)
-!test I think it should use cfvol (5/21/2015)      
+!test I think it should use cfvol (5/21/2015)
+      cfvol = VOL(4) + VOL(7)      
       CALL R9LGCFT(TLOGS, LOGLEN, LOGDIA, LOGVOL, TLOGVOL, cfVol)
 
       NUMLOGP = NOLOGP
@@ -331,13 +333,6 @@ C-----Get board foot volumes
       WRITE  (LUDBG, 695)'total log vol ', tlogvol
   695    FORMAT (A, F7.2)
       END IF
-C calculate volume for stump and stem tip
-      VOL(14)=0.005454154*LOGDIA(1,2)*LOGDIA(1,2)*STUMP
-c VOL(1) is the total volume from stump to tip
-      IF(VOL(1).GT.0.0 .AND. VOL(4).GT.0.0) THEN
-        VOl(15)=VOL(1)-VOL(4)-VOL(7);
-        IF(VOL(15).LT.0.01) VOL(15)=0.0
-      ENDIF
 C-----Apply correction factors
       call r9cor(vol,logVol,spp,iProd)
 	
@@ -1205,8 +1200,9 @@ C  the coefficients for inside-bark calculations.
 
 C-----Get board foot volumes
        IF(NUMSEG .GT. 0)THEN
-        do 870 i=1,numSeg
+        do 870 i=1,20   !numSeg
           len=logLen(i)
+         IF(len.GT.0.0)THEN
 c--       Scribner volume
           dib=logDia(i+1,1)
 
@@ -1221,9 +1217,11 @@ c--       Scribner volume
           else
             logVol(1,i)=0.0
           endif
-
-          vol(2)=vol(2) + logVol(1,i)
-          
+          IF(i.LE.numSeg)THEN
+            vol(2)=vol(2) + logVol(1,i)
+          ELSE
+            vol(12)=vol(12) + logVol(1,i)
+          ENDIF
           IF (DEBUG%MODEL) THEN
            WRITE  (LUDBG, 860) ' R9BDFT', vol(2), ' ', logVol(1,i), dib
 860        FORMAT (A, 2x,F6.1,A,F6.1, F6.1)
@@ -1239,8 +1237,11 @@ c--       International 1/4 volume
             bdft=0.0
           endif
           logVol(7,i)=nint(bdft/5.0)*5.0
-          vol(10)=vol(10) + logVol(7,i)
+          IF(i.LE.numSeg) vol(10)=vol(10) + logVol(7,i)
           
+         ELSE   ! IF len =0, Then exit loop
+            EXIT
+         ENDIF
           
 870     continue
 

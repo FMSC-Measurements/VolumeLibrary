@@ -93,21 +93,21 @@
 !       8 - live branches
 !       9 - dead branches
 !       10 - foliage
-!       11 - roots
-!       12 - branches (0 - 1/4)
-!       13 - branches (1/4 - 1)
-!       14 - branches (1 - 3)
-!       15 - branches (3+)
+!       11 - branches (0 - 1/4)
+!       12 - branches (1/4 - 1)
+!       13 - branches (1 - 3)
+!       14 - branches (3+)
+!       15 - roots
 
-        BIO(1) = BMS(1)/(1+MC)
-        BIO(2) = (BMS(5)+BMS(6))/(1+MC)
-        BIO(3) = VOL(14)*Wf(1)/(1+MC)
-        BIO(4) = BMS(7)/(1+MC)
-        BIO(5) = (BMS(2)+BMS(3)+BMS(4))/(1+MC)
-        BIO(6) = BMS(2)/(1+MC)
-        BIO(7) = BMS(3)/(1+MC)
-        BIO(8) = BMS(4)/(1+MC)
-        BIO(9) = 0
+c        BIO(1) = BMS(1)/(1+MC)
+c        BIO(2) = (BMS(5)+BMS(6))/(1+MC)
+c        BIO(3) = VOL(14)*Wf(1)/(1+MC)
+c        BIO(4) = BMS(7)/(1+MC)
+c        BIO(5) = (BMS(2)+BMS(3)+BMS(4))/(1+MC)
+c        BIO(6) = BMS(2)/(1+MC)
+c        BIO(7) = BMS(3)/(1+MC)
+c        BIO(8) = BMS(4)/(1+MC)
+c        BIO(9) = 0
         
 !       If BIOEQ is provided, calculate the biomass and saved it to BIOMS
         IF(LEN_TRIM(BIOEQ).EQ.12) THEN

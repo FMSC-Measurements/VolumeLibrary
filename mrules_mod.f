@@ -25,7 +25,7 @@
         REAL		   DBTBH
         REAL		   MINBFD
         
-        CHARACTER     COR 
+        CHARACTER*1    COR 
         
       END TYPE MERCHRULES
    

@@ -18,10 +18,11 @@ C  DBH to logdia(1,1).
 C
 C  Revised YW 08/21/2012
 C  Added ERRFLG to R9LOGS, R9LOGDIB and R9LOGLEN subroutines.
+c  YW 04/13/2017 Modified R9LOGS to also calculate logs for topwood for sawtimber
 C_______________________________________________________________________
 C
       SUBROUTINE R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
-     &           LOGLEN, LOGDIA, NOLOGP, NOLOGS, TLOGS, COEFFS, ERRFLG)
+     &           LOGLEN,LOGDIA,NOLOGP,NOLOGS,TLOGS,COEFFS,ERRFLG,BOLHT)
 C_______________________________________________________________________
 C
 
@@ -33,7 +34,7 @@ C
 !**********************************************************************
 !...  Parameters
       REAL    SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM 
-      REAL    LOGLEN(20), LOGDIA(21,3)
+      REAL    LOGLEN(20), LOGDIA(21,3),BOLHT(21)
       INTEGER NOLOGP, NOLOGS, TLOGS, NUMSEG, ERRFLG
       TYPE(CLKCOEF):: COEFFS
       
@@ -77,7 +78,7 @@ C     Check number of logs
         LEFTOV=LMERCH-((MAXLEN+TRIM)*FLOAT(NOLOGP))-TRIM
 
 !check for saw logs
-        IF(.NOT.(LMERCH.LT. (MINLEN+TRIM) .OR. NOLOGP.LE.0 
+        IF(.NOT.(LMERCH.LT. (MINLEN+TRIM)  !.OR. NOLOGP.LE.0 
      &    .OR. (NOLOGP .EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)))) THEN 
           
             ILOG = 1
@@ -93,16 +94,23 @@ C     Check number of logs
      &                 LOGLEN(NOLOGP), LEFTOV
 220            FORMAT (F6.1,4X I2, 3F7.1)      
    		    END IF
-        
+        ENDIF
 !...TOP WOOD PORTION
 !first check to see if there's top wood
         !make sure there's a plpht value and it > sawht
-        ELSE IF (PLPHT > 0 .AND. PLPHT .GT. SAWHT) THEN
+        !ELSE IF (PLPHT > 0 .AND. PLPHT .GT. SAWHT) THEN
+        IF (PLPHT > 0 .AND. PLPHT .GT. SAWHT) THEN
+          SAWHT = STUMP
+          IF(NOLOGP.GT.0)THEN
+            DO 250, I=1,NOLOGP
+              SAWHT = SAWHT + LOGLEN(I) + TRIM
+250         CONTINUE
+          ENDIF
           LMERCH = PLPHT - SAWHT
           NOLOGS = INT(LMERCH/(MAXLEN+TRIM))
          
          !do we need a check for nologs >0???  
-         IF(LMERCH.LT. (MINLEN+TRIM) .OR. NOLOGS.LE.0 
+         IF(LMERCH.LT. (MINLEN+TRIM) !.OR. NOLOGS.LE.0 
      &    .OR. (NOLOGS.EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)) ) THEN
           RETURN
          ENDIF   
@@ -156,7 +164,7 @@ C     Check number of logs
       
 !---------------------------------------------------------------------      
 
-      CALL R9LOGDIB(TLOGS, TRIM, STUMP, LOGLEN, LOGDIA, COEFFS)
+      CALL R9LOGDIB(TLOGS, TRIM, STUMP, LOGLEN, LOGDIA, COEFFS,BOLHT)
 
 !...      WRITE OUT ALL LOGLEN/LOGDIA TO DEBUG FILE
       IF (DEBUG%MODEL) THEN
@@ -273,7 +281,7 @@ C
 C_______________________________________________________________________
 C
       SUBROUTINE R9LOGDIB(NUMSEG, TRIM, STUMP, LOGLEN, LOGDIA, 
-     &                    COEFFS)
+     &                    COEFFS,BOLHT)
 C_______________________________________________________________________
 C
       USE CLKCOEF_MOD
@@ -284,7 +292,7 @@ C
 !...  Parameters
       INTEGER NUMSEG, I
       REAL    TRIM, STUMP, LOGLEN(20), LOGDIA(21,3)
-      REAL    DIB
+      REAL    DIB, BOLHT(21)
       TYPE(CLKCOEF):: COEFFS
       
       
@@ -300,12 +308,12 @@ c--     Get DIB at 4.5'
         LOGDIA(1,2)= DIB
         LOGDIA(1,1)=INT(DIB+0.499)
 !        LOGDIA(1,3)= 0.0
-        
+        BOLHT(1) = HT
 c--     Get DIB at all log ends
         HT=STUMP
         DO 850 I=1,NUMSEG
           HT=HT+TRIM+LOGLEN(I)
-          
+          BOLHT(I+1) = HT
 !------------------------------------------------------      
 !..       don't need below for logs methinks
 c--       Never let height get above sawtimber height

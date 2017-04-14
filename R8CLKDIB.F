@@ -290,7 +290,7 @@ C-------------------------------------------------------------------------------
       
       implicit none
       TYPE(CLKCOEF):: COEFFS
-      CHARACTER*10 VOLEQ
+      CHARACTER*10 VOLEQ, VOLEQ0
       CHARACTER*2 FORST
       CHARACTER*1 CTYPE
       INTEGER ERRFLAG, EQN, IS, IB, IT, IM
@@ -298,6 +298,7 @@ C-------------------------------------------------------------------------------
       REAL R,C,E,P,B,A,Q, A17, B17, DX, AD, BD, VOLTMP(15)
       INTEGER SI, BA
       REAL HTONE, HTTWO, MTOPP
+      REAL DXcalc,FAC, topDib, totHt
 
 c      INCLUDE 'R8CLKCOEF.INC'
 c      INCLUDE 'R8DIB.INC'
@@ -361,6 +362,7 @@ C CALL R8VOL2 TO GET THE UPSHT1. THIS WILL BE SAME AS FVS
      >                  ERRFLAG)
            UPSHT1 = HTTWO
          ENDIF
+         
          TOPHT = UPSHT1
          DIB17=DBHOB*(A17+B17*(17.3/TOPHT)**2)
 c         dib=(is*(dbhib**2*(1+(c+e/dbhib**3)*((1-highht/topht)**r
@@ -389,8 +391,36 @@ C when TOPHT < 17.3 (YW 2016/03/08)
            ENDIF
          ELSEIF(IT.GT.0)THEN
            IF(TOPHT.GT.17.3)THEN
-           dib = (IT*(DIB17**2-(DIB17**2-DX**2)*(1-((TOPHT-HTUP)/
-     &      (TOPHT-17.3))**Q)))**0.5
+             IF(HTUP.LE.TOPHT)THEN
+               dib = (IT*(DIB17**2-(DIB17**2-DX**2)*(1-((TOPHT-HTUP)/
+     &        (TOPHT-17.3))**Q)))**0.5
+             ELSE
+C   For the part above UPSHT1, need to use total height equation
+C   If HTTOT is not provided, using R9 logic to calculate the total height.
+C   The dib is calculated with total equation
+               VOLEQ0 = VOLEQ
+               VOLEQ0(3:3) = '0'
+               CALL R8PREPCOEF(VOLEQ0, COEFFS, ERRFLAG)
+               COEFFS%DBHIB = DBHIB
+               COEFFS%DIB17 = DIB17
+               IF(HTTOT.LE.0.0)THEN
+                 topDib = DX
+                 a = COEFFS%A
+                 b = COEFFS%B
+                 CALL r9totHt(totHt,htTot,dbhIb,dib17,topHt,topDib,a,b,
+     &                  errFlag)
+                 HTTOT = totHt
+               ENDIF
+               COEFFS%TOTHT = HTTOT
+               CALL R9DIB(DXcalc, UPSHT1, COEFFS)
+               FAC = DX/DXcalc
+               IF(HTUP.LT.HTTOT) THEN
+                 CALL R9DIB(dib, HTUP, COEFFS)
+               ELSE
+                 dib = 0.0
+               ENDIF
+               dib = dib*FAC
+             ENDIF  
            ELSE
            dib = (DX**2-(highht-topht)/(httot-topht)*DX**2)**0.5
            ENDIF

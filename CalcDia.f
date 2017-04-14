@@ -1,6 +1,7 @@
 !*******************************************************************************************
 !*******************************************************************************************
-!== last modified  6-4-2014
+!== last modified  4-4-2017
+! Added calcdib_r subroutind for R program to use the CALCDIA (4/4/2017)
 ! Added DIB calculation for region 8 Clark equation (6/4/14)
 ! Added DIB calculation for Behr equation (1/28/2014)
 ! Added stump diameter (from ground to 4.5 ft) calculation for non profile model using Raile 1983 (YW)
@@ -20,6 +21,29 @@
   !DEC$ ATTRIBUTES DECORATE, ALIAS:'CALCDIA'::CALCDIA
       CHARACTER*(*) FORST
       CHARACTER*(*) VOLEQ
+      
+      INTEGER REGN,ERRFLAG,FCLASS,HTREF
+      REAL STUMP,DBHOB,DRCOB,HTTOT
+      REAL UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2
+      REAL DBTBH,BTR,HTUP,DIB,DOB
+      CHARACTER*10 VOLEQI
+      CHARACTER*2 FORSTI
+      
+      FORSTI = FORST(1:2)
+      VOLEQI = VOLEQ(1:10)
+      CALL CALCDIA2(REGN,FORSTI,VOLEQI,STUMP,DBHOB,
+     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
+     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
+     
+      RETURN
+      END
+C **************************************************************      
+      subroutine CALCDIA2(REGN,FORST,VOLEQ,STUMP,DBHOB,
+     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
+     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
+      
+      CHARACTER*10 VOLEQ
+      CHARACTER*2 FORST
       CHARACTER*3 MDL
 
 !     MERCH VARIABLES 
@@ -43,6 +67,9 @@
       CHARACTER prod*2
       INTEGER SPN
       REAL TLH
+      ! Variable for R4 taper
+      REAL STUMPD,BUTTCF,CF0,B
+      
       TLH = 0.
 !     ARRAYS
 ! initialize profile model  
@@ -61,22 +88,14 @@
       MTOPP = 0
       MDL = VOLEQ(4:6)
       prod = '01'
-C     Modifid BTR for Region 3 Santa Fe forest DF and PP (YW 2016/01/13)
-C     The BTR for Region 3 has not been released. It is test only
-c      IF(REGN.EQ.3.AND.FORST.EQ.'10'.AND.BTR.EQ.0)THEN
-c        IF(VOLEQ(8:10).EQ.'202') BTR = 89.12
-c        IF(VOLEQ(8:10).EQ.'122') BTR = 89.72
-c        IF(VOLEQ(8:10).EQ.'015') BTR = 91.16
-c       White pine BTR (using 200FW2W108)
-c        IF(VOLEQ(8:10).EQ.'108') BTR = 93.26               
-c      ENDIF
       
       IF(MDL.EQ.'FW2' .OR. MDL.EQ.'fw2' .OR. MDL.EQ.'FW3' .OR.
      &   MDL.EQ.'fw3' .OR. MDL.EQ.'CZ2' .OR. MDL.EQ.'cz2' .OR.
      &   MDL.EQ.'CZ3' .OR. MDL.EQ.'cz3' .OR. MDL.EQ.'WO2' .OR.     
      &   MDL.EQ.'wo2' .OR. MDL.EQ.'F32' .OR. MDL.EQ.'f32' .OR.
      &   MDL.EQ.'F33' .OR. MDL.EQ.'f33' .OR. MDL.EQ.'JB2' .OR.
-     &   MDL.EQ.'jb2') THEN
+     &   MDL.EQ.'jb2' .OR. MDL.EQ.'DEM' .OR. MDL.EQ.'CUR' .OR.
+     &   MDL.EQ.'dem' .OR. MDL.EQ.'cur') THEN
 !************************
 !    FLEWELLING MODELS  *
 !    REGION 2 MODELS    *
@@ -142,7 +161,11 @@ C     added DIB calculation for Behr equation
            CALL GETFCLASS(VOLEQ,FORST,DBHOB,FCLASS)
          ENDIF
          CALL BEHTAP(VOLEQ,DBHOB,HTTOT,TLH,HTUP,FCLASS,MTOPP,DIB)    
-           
+C     Added the calculation for R4 taper equation (03/20/2017)
+      ELSEIF (MDL.EQ.'MAT' .OR. MDL.EQ.'mat') THEN  
+         DIB = 0.0
+         CALL R4MATTAPER(VOLEQ,DBHOB,HTTOT,STUMPD,BUTTCF,CF0,B,
+     +     HTUP,DIB,ERRFLAG)      
 C calculation for diameter from ground to 4.5 ft heigh for non profile model
 C added on 7/22/2012 YW
 C using Raile 1982
@@ -156,4 +179,56 @@ C using Raile 1982
       ENDIF
 
  1000 RETURN
-      end subroutine CALCDIA
+      end subroutine CALCDIA2
+      
+C *******************************************************************************
+      subroutine calcdib_r(VOLEQ,REGN,FORST,DBHOB_d,HTTOT_d,
+     + HTUP_d,DIB_d, ERRFLAG)
+C This subroutine is for R user to calculate DIB at given height      !
+C YW 04/04/2017
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::calcdib_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'calcdib_r_'::calcdib_r
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,DIB_d,HTUP_d
+      CHARACTER*2  FORST 
+      CHARACTER*10 VOLEQ
+      INTEGER      REGN,ERRFLAG 
+      
+!   Tree variables
+      REAL 		HTTOT,HTUP,DIB,DOB 
+      REAL 		DBHOB,DRCOB,DBTBH,BTR,STUMP  
+      INTEGER   FCLASS 
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+      
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      HTUP = REAL(HTUP_d)
+C     Set the default value for other variable
+      UPSHT1 = 0.0
+      UPSD1 = 0.0
+      STUMP = 0.0
+      DBTBH = 0.0
+      BTR = 0.0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      DRCOB=0.0
+      FCLASS = 0
+
+      CALL CALCDIA2(REGN,FORST,VOLEQ,STUMP,DBHOB,
+     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
+     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
+           
+      DIB_d = DBLE(DIB)      
+
+      CONTINUE
+      RETURN
+      end subroutine calcdib_r         

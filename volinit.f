@@ -26,7 +26,8 @@ C     YW 04/19/2016 Added input variable DIST.
 C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
 !REV  Added manual debugging for use with pro vollib09 calls and
 !REV  code to check for forest = null which caused blm problems
-
+C     YW 04/13/2017 changed stump DIN calc using CALCDIA for profile model and stump volume as cylinder of stump DIB and stump height.
+C                   also changed stem tip volume calc using DIB from last log and Samlian method with tip length
 !**********************************************************************
       CHARACTER*1  HTTYPE,LIVE,CTYPE
       CHARACTER*2  FORST,PROD
@@ -64,11 +65,11 @@ C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subrouti
 C  variables for stump dia and vol
       INTEGER SPN
       REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
-      REAL DIB,DOB,HTUP  
+      REAL DIB,DOB,HTUP,MHT  
       
 c  test biomass calc variable
       REAL WF(3), BMS(8)
-      INTEGER SPCD, FOREST      
+      INTEGER SPCD, FOREST   
  !********************************************************************
 
 !=====================================================================
@@ -175,15 +176,6 @@ c  save FCLASS value
  3    CONTINUE
 
       MDL = VOLEQ(4:6)
-C     Modifid BTR for Region 3 Santa Fe forest DF and PP (YW 2016/01/13)
-C     The BTR for Region 3 has not been released. It is test only
-c      IF(REGN.EQ.3.AND.FORST.EQ.'10'.AND.BTR.EQ.0)THEN
-c        IF(VOLEQ(8:10).EQ.'202') BTR = 89.12
-c        IF(VOLEQ(8:10).EQ.'122') BTR = 89.72
-c        IF(VOLEQ(8:10).EQ.'015') BTR = 91.16
-c       White pine BTR (using 200FW2W108)
-c        IF(VOLEQ(8:10).EQ.'108') BTR = 93.26       
-c      ENDIF
 ! When total height is entered, the height type has to be feet. (2013/05/16)
       IF(HTTOT.GT.0) HTTYPE = 'F'              
       
@@ -204,18 +196,15 @@ c      ENDIF
      +      AVGZ2,HTREF,DBTBH,BTR,LOGDIA,BOLHT,LOGLEN,LOGVOL,VOL,
      +      TLOGS, NOLOGP,NOLOGS,CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,
      +      DRCOB,CTYPE,FCLASS,PROD,ERRFLAG)
-      
-
       ELSEIF (MDL.EQ.'MAT' .OR. MDL.EQ.'mat') THEN
 !**********************
 !    REGION 4 MODEL  * 
 !**********************
 
         CALL R4VOL(REGN,VOLEQ,MTOPP,HTTOT,DBHOB,HT1PRD,VOL,NOLOGP,
-     +             NOLOGS,LOGDIA,LOGLEN,LOGVOL, 
+     +             NOLOGS,LOGDIA,LOGLEN,LOGVOL,BOLHT, 
      +             CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG)
         TLOGS = ANINT(NOLOGP + NOLOGS)
-
       ELSEIF (MDL.EQ.'TRF' .OR. MDL.EQ.'trf')THEN
 C********************************
 C      PNW terif VOLUME EQUATION
@@ -423,6 +412,14 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
       ENDIF
 C  calc Tip volume and save to VOL(15)
       IF(ERRFLAG.GT.0) RETURN
+      IF(STUMP.LE.0) STUMP = 1.0
+C  calc stump DIB
+      HTUP = STUMP
+      CALL CALCDIA2(REGN,FORST,VOLEQ,STUMP,DBHOB,
+     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
+     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)   
+      IF(DIB.GT.0.0) VOL(14)=0.005454154*DIB**2*STUMP
+C  If stump DIB is not calculated, use the following to calculate stump VOL         
       IF(VOL(14).LT.0.01)THEN
         SPECIES = VOLEQ(8:10)
         READ(SPECIES,'(i3)') SPEC
@@ -430,20 +427,34 @@ C  calc Tip volume and save to VOL(15)
         CALL RAILEVOL(SPEC, DBHOB, HTUP, VOLIB, VOLOB)
         VOL(14) = VOLIB
       ENDIF
-c now calc tip volume
-      IF(VOL(15).LT.0.01 .AND. VOL(4).GT.0.0)THEN
-        VOL(15) = VOL(1)-VOL(4)-VOL(7)-VOL(14)
-        IF(VOL(15).LT.0.0) VOL(15) = 0.0
-      ENDIF
+!     Calculate the tip volume as the volume above last log
+      IF(TLOGS.GT.0.AND.LOGDIA(TLOGS+1,2).GT.0.AND.VOL(15).EQ.0)THEN
+          MHT = 0.0
+          IF(BOLHT(TLOGS+1).GT.0.0)THEN
+            MHT = BOLHT(TLOGS+1)
+          ELSEIF(HT2PRD.GT.0)THEN
+            MHT = HT2PRD
+          ELSEIF(HT1PRD.GT.0)THEN
+            MHT = HT1PRD
+          ELSE
+            MHT = STUMP
+            TRIM = 0.5
+            DO 30 I=1,TLOGS
+              MHT = MHT + LOGLEN(I) + TRIM
+ 30         CONTINUE
+          ENDIF
+          IF(MHT.GT.0.0)THEN
+          VOL(15) =0.002727*LOGDIA(TLOGS+1,2)*LOGDIA(TLOGS+1,2)
+     +     *(HTTOT-MHT)  
+          ENDIF     
+      ENDIF      
+C YW comment out the following on 3/20/2017
+c      IF(VOL(15).LT.0.01 .AND. VOL(4).GT.0.0)THEN
+c        VOL(15) = VOL(1)-VOL(4)-VOL(7)-VOL(14)
+c      ENDIF
+       IF(VOL(15).LT.0.0) VOL(15) = 0.0
 
-C Test biomass calc
-C      READ (VOLEQ(8:10),'(i3)') SPCD
-C      WF(1)=0
-C      WF(2)=0
-C      WF(3)=0
-C      REAd(FORST,'(i2)') FOREST
-C      CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,HTTOT,VOL,WF,BMS,ERRFLAG)
-                  
+                       
       IF (DEBUG%MODEL) THEN
         WRITE  (LUDBG, 100)'FORST VOLEQ     MTOPP HTTOT HT1PRD DBHOB 
      &   HTTYPE FCLASS'

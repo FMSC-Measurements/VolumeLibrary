@@ -80,6 +80,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\fwinit.f"/>
 		<File RelativePath="..\getvoleq.f"/>
 		<File RelativePath="..\grossvol.f"/>
+		<File RelativePath="..\ht2topd.f"/>
 		<File RelativePath="..\Intl78.f"/>
 		<File RelativePath="..\JENKINS.F"/>
 		<File RelativePath="..\Mrules.f"/>
