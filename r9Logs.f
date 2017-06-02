@@ -108,14 +108,15 @@ C     Check number of logs
           ENDIF
           LMERCH = PLPHT - SAWHT
           NOLOGS = INT(LMERCH/(MAXLEN+TRIM))
-         
+C         The LEFTOVER need to be calculate here (5/22/2017)          
+          LEFTOV=LMERCH-((MAXLEN+TRIM)*FLOAT(NOLOGS))-TRIM
+          
          !do we need a check for nologs >0???  
          IF(LMERCH.LT. (MINLEN+TRIM) !.OR. NOLOGS.LE.0 
      &    .OR. (NOLOGS.EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)) ) THEN
           RETURN
          ENDIF   
            
-          LEFTOV=LMERCH-((MAXLEN+TRIM)*FLOAT(NOLOGS))-TRIM
           ILOG = NOLOGP + 1
           JLOG = ILOG + NOLOGS - 1
           IF (JLOG .GT. 20) THEN

@@ -22,8 +22,10 @@ C 20161121 Removed the weight factor for douglas-fir in Siuslaw NF. They want to
 C 20170209 Added EZVOLLIB subroutine to volumelibrary.f
 C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
 C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch stem vol is calculated, the stem biomass is also calculated.
-C 20170413 Removed 532WO2W*** eqn from R5_EQN list, modified CALCDIA to include R4 MAT model, added HT2TOPD to calculate stem HT to a
+C 20170414 Removed 532WO2W*** eqn from R5_EQN list, modified CALCDIA to include R4 MAT model, added HT2TOPD to calculate stem HT to a
 C          given stem DIB, modified log vol calc for R8 and R9 to also include topwood logs, moved stump and tip vol calc to volinit sunroutine.
+C 20170525 Modified R9clark to recognize broken top input from ht1prd and mtopp ot ht2prd and mtops; Added BIOLIB subroutine to export biomass
+
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -53,7 +55,7 @@ C          given stem DIB, modified log vol calc for R8 and R9 to also include t
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170414
+      VERSION = 20170525
       RETURN
       END SUBROUTINE VERNUM
       
@@ -86,7 +88,7 @@ C          given stem DIB, modified log vol calc for R8 and R9 to also include t
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170414
+      VERSION = 20170525
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -109,7 +111,7 @@ C          given stem DIB, modified log vol calc for R8 and R9 to also include t
 
 !---------------------------------------------------------------------
      
-      VERSION = 20170414
+      VERSION = 20170525
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -125,6 +127,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20170414
+      version = 20170525
       return
       end subroutine vernum_r

@@ -418,4 +418,96 @@ c      IF(TMPSPEC.NE.8888) GOTO 999
 999   CONTINUE
       RETURN
       end subroutine vollib_r   
+C ************************************************************************
+      SUBROUTINE BIOLIB(REGN,FORST,SPEC,BIOEQ,DBHOB,HTTOT,VOL,
+     +           BIOGRN, BIODRY,ERRFLG)
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::BIOLIB
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: BIOLIB
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'BIOLIB'::BIOLIB
+
+C     The biomass component calculated in BIOGRN and BIODRY as below
+C     1 ABOVE GROUND TOTAL
+C     2 MERCH STEM WOOD
+C     3 MERCH STEM BARK
+C     4 FOLIAGE
+C     5 ROOTS
+C     6 BRANCHES
+C     7 CROWN
+C     8 MERCH STEM WOOD AND BARK
+C     9 Biomass calculated from the biomass Equation BIOEQ  
+     
+      IMPLICIT NONE
+      INTEGER REGN,SPEC,ERRFLG
+      CHARACTER*(*) FORST, BIOEQ
+      REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
+      
+      REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
+      CHARACTER*12 BMSEQ(8)
+      CHARACTER*40 REF(8)
+      REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15)
+      INTEGER STEMS, I
+      
+      DO 100, I=1,9
+        BIOGRN(I) = 0.0
+        BIODRY(I) = 0.0
+100   CONTINUE      
+!     Call Jenkin's to calculate biomass
+      CALL JENKINS(SPEC, DBHOB, BIOMS)
+!     The elements in BIOMS are dry weight in pounds as below:
+C     1 ABOVE GROUND TOTAL
+C     2 MERCH STEM WOOD
+C     3 MERCH STEM BARK
+C     4 FOLIAGE
+C     5 ROOTS
+C     6 BRANCHES
+C     7 CROWN
+C     8 MERCH STEM WOOD AND BARK
+      
+C     GET REGIONAL OR NATIONAL DEFAULT weight factor
+      CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
+      
+C     Get the moisture content from Miles $ Smith 2009
+      IF(WF(3).EQ.0)THEN
+        CALL MILESDATA(SPEC,SG)
+        WF(3) = (SG(9)-SG(10))/SG(10)*100
+      ENDIF
+      MC = WF(3)/100
+C     Calculate merch stem green weight using cubic feet volume and weight factor
+      STMGRNWT = WF(1)*(VOL(4)+VOL(7))
+      STMDRYWT = STMGRNWT/(1+MC)
+C     GET the ratio for stem calculated from weight factor and Jenkins
+      IF(BIOMS(8).GT.0)THEN
+        RATIO = STMDRYWT/BIOMS(8)
+      ELSE
+        RATIO = 1
+      ENDIF
+      IF(RATIO.LE.0) RATIO = 1
+C     Apply the ratio to biomass calculated from Jenkins and also add MC to get green weight
+      DO 200, I=1,8
+        BIODRY(I) = BIOMS(I)*RATIO
+        BIOGRN(I) = BIODRY(I)*(1+MC)  
+200   CONTINUE
+C     If BIOEQ is provided, calculate biomass from it
+      IF(LEN_TRIM(BIOEQ).EQ.12) THEN
+C       Set default values
+        CR = 0.5
+        HT1PRD = 0
+        HT2PRD = 0
+        TOPD = 0
+        STEMS = 1
+        ERRFLG = 0   
+        VOLM = VOL   
+        CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD, 
+     +       HT2PRD,TOPD, STEMS, VOLM, BIOMASS, ERRFLG)
+        IF(BIOEQ(12:12).EQ.'D')THEN
+          BIODRY(9) = BIOMASS
+          BIOGRN(9) = BIOMASS*(1+MC)
+        ELSEIF(BIOEQ(12:12).EQ.'G')THEN
+          BIOGRN(9) = BIOMASS
+          BIODRY(9) = BIOMASS/(1+MC)
+        ENDIF
+      ENDIF
+      RETURN
+      END
+            
       

@@ -33,7 +33,7 @@ c     VARIABLES FOR R4 MAT
       
 C     Variables for Clark profile  
       INTEGER SPP, GEOG,IPROD
-      REAL TOPDIB,SAWDIB,PULPDIB,SHRTHT,TOPHT,PLPDIB,DBHIB,DIB17
+      REAL TOPDIB,SAWDIB,PULPDIB,SHRTHT,TOPHT,PLPDIB,DBHIB,DIB17,brokHt
       TYPE(CLKCOEF):: COEFFS
       LOGICAL SHORT    
       
@@ -106,11 +106,16 @@ C     !OTHER PROFILE MODEL
       ELSEIF (MDL.EQ.'CLK' .OR. MDL.EQ.'clk') THEN
         IF(REGN.EQ.9)THEN
 C-----    Check input values and prepare variables
+          IF(htTot.EQ.0.AND.(ht1Prd.GT.0.OR.ht2Prd.GT.0))THEN
+c           broken top tree          
+            mTopP = UPSD1
+            mTopS = UPSD2
+          ENDIF
           call r9Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlag,
-     &            upsHt1)
+     &            upsHt1,brokHt)
           if(errFlag.ne.0) return
 
 C-----    Get DIBs at heights of 4.5' and 17.3'

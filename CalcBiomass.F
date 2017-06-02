@@ -41,7 +41,7 @@ C        18 - stem cubic volume is required for FIA biomass equation
        INCLUDE 'bioeqcoef.inc'
        CHARACTER*12 BIOEQ
        REAL DBHOB, HTTOT, TOPD, CR, VOL(15), BIOMS
-       REAL HT1PRD, HT2PRD
+       REAL HT1PRD, HT2PRD, VOLM(15)
        CHARACTER*3 MDL
        REAL DIA, HT
        INTEGER STEMS, IDX, I, SPEC, ERRFLG
@@ -64,6 +64,7 @@ C      List of unit conversion factor
        DIA = DBHOB
        HT = HTTOT
        MDL = BIOEQ(1:3)
+       VOLM = VOL
        IF(MDL.EQ.'FNW'.OR.MDL.EQ.'FRM'.OR.MDL.EQ.'FNC'
      +    .OR.MDL.EQ.'FNE'.OR.MDL.EQ.'FSE')THEN
 C      Check if the equation is a valid 
@@ -82,21 +83,21 @@ C      Flag for invalid BIOEQ
      
 C      Vol(4) should be the volume to 4" top
 C      If top wood volume is saved in VOL(7), add it back to VOL(4)
-         IF(VOL(7).GT.0) VOL(4) = VOL(4)+VOL(7)    
-         IF(VOL(1).EQ.0.AND.VOL(4).EQ.0)THEN
+         IF(VOLM(7).GT.0) VOLM(4) = VOLM(4)+VOLM(7)    
+         IF(VOLM(1).EQ.0.AND.VOLM(4).EQ.0)THEN
 C          Stem cubic volume is required for FIA biomass equation
            ERRFLG = 18
            RETURN
          ENDIF 
 C      For the FIA biomass equation call FIA subroutine     
          IF(MDL.EQ.'FNW')THEN
-           CALL FIA_NW(BIOEQ, DIA, HT, VOL, BIOMS)
+           CALL FIA_NW(BIOEQ, DIA, HT, VOLM, BIOMS)
          ELSEIF(MDL.EQ.'FRM')THEN
-           CALL FIA_RM(BIOEQ, DIA, HT, STEMS, VOL, BIOMS)
+           CALL FIA_RM(BIOEQ, DIA, HT, STEMS, VOLM, BIOMS)
          ELSEIF(MDL.EQ.'FNC')THEN
-           CALL FIA_NC(BIOEQ, DIA, HT, VOL, BIOMS)
+           CALL FIA_NC(BIOEQ, DIA, HT, VOLM, BIOMS)
          ELSEIF(MDL.EQ.'FNE')THEN
-           CALL FIA_NE(BIOEQ, DIA, HT, VOL, BIOMS)
+           CALL FIA_NE(BIOEQ, DIA, HT, VOLM, BIOMS)
          ELSEIF(MDL.EQ.'FSE')THEN
            CALL FIA_SE(BIOEQ, DIA, HT, VOL, BIOMS)
          ENDIF

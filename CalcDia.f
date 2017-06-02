@@ -143,8 +143,8 @@ C Added Clark profile model for region 9
         IF (VOLEQ(1:1).EQ.'9') THEN
           ht2Prd = UPSHT2
           ht1Prd = UPSHT1
-          mTopP = 0.0
-          mTopS = 0.0
+          mTopP = UPSD1
+          mTopS = UPSD2
           errFlag = 0
 c reset UPSHT1 to 0 (yw 09/24/2012)          
           UPSHT1 = 0

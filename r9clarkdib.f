@@ -27,7 +27,7 @@ C     Shared variables
       real      minBfD,maxLen,minLen,merchL,mTopP,mTopS,stump,trim
       real      dbhOb,ht1Prd,ht2Prd,htTot,topDib,upsHt1 
       real      vol(15),logLen(20),logVol(7,20),logDia(21,3)
-      real      DIBHT, dib
+      real      DIBHT, dib, brokHt
 C     Internal variables
       integer   numSeg,spp,i,j
       real      plpDib,sawDib,plpHt,sawHt,topHt,totHt,dbhIb,dib17
@@ -47,7 +47,7 @@ C-----Check input values and prepare variables
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
-     &            upsHt1)
+     &            upsHt1,brokHt)
       if(errFlg.ne.0) return
 
 C-----Get DIBs at heights of 4.5' and 17.3'

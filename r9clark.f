@@ -79,7 +79,7 @@ C     Internal variables
       logical   short      
       
       INTEGER   TLOGS,NOLOGP,NOLOGS      
-      REAL      NUMLOGP,NUMLOGS 
+      REAL      NUMLOGP,NUMLOGS,brokHt 
       TYPE(CLKCOEF):: COEFFS
 
       IF (DEBUG%MODEL) THEN
@@ -130,7 +130,7 @@ C  added on 04/15/2015 for prod 14 to be same as prod 01
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
-     &            upsHt1)
+     &            upsHt1,brokHt)
       if(errFlg.ne.0) return
 
 C-----Get DIBs at heights of 4.5' and 17.3'
@@ -164,7 +164,11 @@ C-----Get total height
 
 C-----Get total volume to the tip
       if(cutFlg.eq.1) then
-        call r9cuft(cfVol,COEFFS,STUMP, COEFFS%TOTHT, errFlg)
+        IF(brokHt.NE.0)THEN
+          call r9cuft(cfVol,COEFFS,STUMP, brokHt, errFlg)
+        ELSE
+          call r9cuft(cfVol,COEFFS,STUMP, COEFFS%TOTHT, errFlg)
+        ENDIF
         if(errFlg.ne.0) return
         if(short) cfVol=cfVol*shrtHt/17.3
         vol(1)=cfVol
@@ -190,10 +194,10 @@ C-----Get height to pulpwood top
           if(errFlg.ne.0) return
         endif
         if(topDib.le.plpDib .and. topHt.lt.plpHt) plpHt=topHt
+        IF(brokHt.GT.0.AND.plpHt.GT.brokHt) plpHt=brokHt
         if(plpHt.lt.minLen+stump) plpHt=0.0
         !reassign plpht to ht2prd 
         ht2prd = plpHt
-
 C-----Get total merchantable product volumes
         if(plpHt-stump.ge.minLen) then
           call r9cuft(cfVol,COEFFS,STUMP,PLPHT,errFlg)
@@ -232,6 +236,7 @@ c         Saw height calc is requested by having 1 < ht1prd < 4.5'
         endif
         if(errFlg.ne.0) return
         if(topDib.le.sawDib .and. topHt.lt.sawHt) sawHt=topHt
+        IF(brokHt.GT.0.AND.sawHt.GT.brokHt) sawHt=brokHt
         if(sawHt.lt.minLen+trim+stump) sawHt=0.0
 				!reassign sawHT to ht1prd 
          ht1prd = sawHT
@@ -366,7 +371,7 @@ C
      &                  spp,geog,COEFFS,forst,maxLen,
      &                  minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &                  prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
-     &                  upsHt1)
+     &                  upsHt1,brokHt)
 C_______________________________________________________________________
 C
 C  Parse out the info in the volume equation (volEq).  Check to see if 
@@ -384,7 +389,7 @@ C  merchantability rules for the specified species and product.
       real      dib17,upprHt,lowrHt,merchL,stump,upsHt1
       real      mTopP,mTopS,trim,minBfD,ht1Prd,ht2Prd,htTot
       TYPE(CLKCOEF):: COEFFS
-      real      plpDib,sawDib,shrtHt
+      real      plpDib,sawDib,shrtHt,brokHt
       character volEq*10,forst*2,prod*2,tmpStr*2
       logical   short
 
@@ -411,6 +416,7 @@ C  merchantability rules for the specified species and product.
       return
 220   continue
 
+      brokHt = 0
 C-----Check to determine if the heights and diameters are reasonable.
       if(dbhOb.le.0.0) then
         errFlg=3
@@ -435,6 +441,8 @@ c        errFlg=10
         errFlg=8
       elseif(ht2Prd.gt.0.0 .and. ht1Prd.gt.0.0 
      &  .and. ht2Prd.lt.ht1Prd) then
+        errFlg=7
+      ELSEIF(prod.NE.'01'.AND.ht1Prd.GT.0.0)THEN
         errFlg=7
 c      elseif(htTot.gt.35.0*sqrt(dbhOb+3.0)) then
 c        errFlg=5
@@ -566,45 +574,60 @@ C-----Get top height and top DIB
           shrtHt=htTot
         endif
       elseif(ht2Prd.gt.0) then
-        topDib=4.0
-        if(ht2Prd.ge.17.3) then
+C       For broken height, a height and a diameter are measured at the broken point      
+        IF(mTopS.NE.0)THEN
+          topDib=mTopS
           topHt=ht2Prd
-        else
-          short=.true.
-          topHt=17.4
-          shrtHt=ht2Prd
-        endif
+          brokHt = ht2Prd
+        ELSE
+          topDib=4.0
+          if(ht2Prd.ge.17.3) then
+            topHt=ht2Prd
+          else
+            short=.true.
+            topHt=17.4
+            shrtHt=ht2Prd
+          endif
+        ENDIF
       else
-        if(spp.lt.300) then
-          topDib=7.0
-        else
-          topDib=9.0
-        endif
+C       For broken height, a height and a diameter are measured at the broken point      
+        IF(mTopP.NE.0)THEN
+          topDib=mTopP
+          topHt=ht1Prd
+          brokHt = ht1Prd
+        ELSE
+      
+          if(spp.lt.300) then
+            topDib=7.0
+          else
+            topDib=9.0
+          endif
 c       if sawtimber topHt is provided, no recalc topHt. 11/15/2011 (yw)
-        if(upsHt1.gt.0) then
-          if(upsHt1.ge.17.3) then
-            topHt=upsHt1
-          else
-            short=.true.
-            topHt=17.4
-            shrtHt=ht1Prd
-          endif
-          if(ht1prd.le.0) ht1Prd = upsHt1
-        else        
-          if(ht1Prd.ge.17.3) then
-c         Use linear extrapolation from sawDib to topDib
-            if((dbhOb-sawDib).GT.0) then
-            topHt=4.5+(ht1prd-4.5)*(dbhOb-topDib)/(dbhOb-sawDib)
+          if(upsHt1.gt.0) then
+            if(upsHt1.ge.17.3) then
+              topHt=upsHt1
             else
-              errFlg=13
-              return
+              short=.true.
+              topHt=17.4
+              shrtHt=ht1Prd
             endif
-          else
-            short=.true.
-            topHt=17.4
-            shrtHt=ht1Prd
+            if(ht1prd.le.0) ht1Prd = upsHt1
+          else        
+            if(ht1Prd.ge.17.3) then
+c         Use linear extrapolation from sawDib to topDib
+              if((dbhOb-sawDib).GT.0) then
+                topHt=4.5+(ht1prd-4.5)*(dbhOb-topDib)/(dbhOb-sawDib)
+              else
+                errFlg=13
+                return
+              endif
+            else
+              short=.true.
+              topHt=17.4
+              shrtHt=ht1Prd
+            endif
           endif
-        endif
+        ENDIF
       endif
       if(dbhOb.le.topDib) errFlg=11
 
@@ -630,11 +653,11 @@ C     total height, except a17 and b17, which correspond to the top DIB.
       if(abs(topDib-0) .lt. 0.00001) then
         COEFFS%A17 = coef0(sppIdx,2)
         COEFFS%B17 = coef0(sppIdx,3)
-      elseif(abs(topDib-4) .lt. 0.00001) then
+      elseif((abs(topDib-4) .lt. 0.00001).OR.mTopS.NE.0) then
         COEFFS%A17 = coef4(sppIdx,2)
         COEFFS%B17 = coef4(sppIdx,3)
-      elseif((abs(topDib-7) .lt. 0.00001) 
-     +  .or. (abs(topDib-9) .lt. 0.00001)) then
+      elseif(((abs(topDib-7) .lt. 0.00001) 
+     +  .or. (abs(topDib-9) .lt. 0.00001)).OR.mTopP.NE.0) then
         COEFFS%A17 = coef79(sppIdx,2)
         COEFFS%B17 = coef79(sppIdx,3)
       else

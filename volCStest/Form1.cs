@@ -110,6 +110,7 @@ namespace volCStest
         float DBTBH,BTR,MTOPP,MTOPS,NOLOGP,NOLOGS, DIB,DIBHT, DOB;
         float DBH,CR;
         float STEMDIB, STEMHT;
+        float pmtHt;
         // test MRULESCS variable
         int OPT;
         float TRIM, MINLEN, MAXLEN, MERCHL;
@@ -355,11 +356,11 @@ namespace volCStest
                    {
                        //Added this to let it draw the stem when there is no total height
                        //01/03/2014 (yw)
-                       if (HTTOT == 0)
-                       {
-                           if (HT2PRD > 0)  HTTOT = HT2PRD;
-                           else if (HT1PRD > 0) HTTOT = HT1PRD;
-                       }    
+                       //if (HTTOT == 0)
+                       //{
+                       //    if (HT2PRD > 0)  HTTOT = HT2PRD;
+                       //    else if (HT1PRD > 0) HTTOT = HT1PRD;
+                       //}    
 
                        if (pmtFormOpen && pmtOpenCount < 2)
                        {
@@ -372,7 +373,8 @@ namespace volCStest
                            else
                               pmtForm.drawBehresTree(LOGDIA, LOGLEN, LOGVOL, STUMP, BOLHT, 600);
                            //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), mRules.mtopp, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
-                           pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
+                           //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
+                           pmtForm.drawTreeInfo(DBHOB, pmtHt, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
 
                        }
                        //if 2 trees have been drawn then inform the user
@@ -383,7 +385,8 @@ namespace volCStest
                        else
                        {
                            dibScalingFactor = ((1.0F / DBHOB) * 10 + 1.4F);
-                           pmtForm = new PMTForm(HTTOT, dibScalingFactor, true);
+                           //pmtForm = new PMTForm(HTTOT, dibScalingFactor, true);
+                           pmtForm = new PMTForm(pmtHt, dibScalingFactor, true);
                            this.image = pmtForm.ShowForm();
                            //pmtForm.Show();
                            pmtFormOpen = true;
@@ -395,7 +398,8 @@ namespace volCStest
                            else
                                pmtForm.drawBehresTree(LOGDIA, LOGLEN, LOGVOL, STUMP, BOLHT, 0);
                            //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), mRules.mtopp, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
-                           pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
+                           //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
+                           pmtForm.drawTreeInfo(DBHOB, pmtHt, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
 
                        }
                    }
@@ -407,10 +411,12 @@ namespace volCStest
                        //if the form is already open and only 1 tree is drawn, draw the 2nd
                        if (pmtFormOpen && pmtOpenCount < 2)
                        {
-                               pmtForm.drawTree(dibs, HTTOT, dibScalingFactor);
+                               //pmtForm.drawTree(dibs, HTTOT, dibScalingFactor);
+                               pmtForm.drawTree(dibs, pmtHt, dibScalingFactor);
                                pmtOpenCount = 2;
                                //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), mRules.mtopp, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
-                               pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
+                               //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
+                               pmtForm.drawTreeInfo(DBHOB, pmtHt, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 600);
                            
                        }
                        //if 2 trees have been drawn then inform the user
@@ -421,13 +427,15 @@ namespace volCStest
                        //form is not open so open it and draw tree 1
                        else
                        {
-                           pmtForm = new PMTForm(dibs, HTTOT, dibScalingFactor);
+                           //pmtForm = new PMTForm(dibs, HTTOT, dibScalingFactor);
+                           pmtForm = new PMTForm(dibs, pmtHt, dibScalingFactor);
                            this.image = pmtForm.ShowForm();
                            //pmtForm.Show();
                            pmtFormOpen = true;
                            pmtOpenCount++;
                            //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), mRules.mtopp, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
-                           pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
+                           //pmtForm.drawTreeInfo(DBHOB, HTTOT, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
+                           pmtForm.drawTreeInfo(DBHOB, pmtHt, VOLEQ.ToString(), TOPD, mRules.stump, mRules.trim, mRules.maxlen, mRules.minlen, mRules.opt, 0);
 
                        }
                    }
@@ -510,7 +518,7 @@ namespace volCStest
                 return;
             }
             if (string.IsNullOrEmpty(totalHtTB.Text)) totalHtTB.Text = "0";
-            MTOPP = Single.Parse(topDibPPTB.Text);
+            MTOPP = float.Parse(topDibPPTB.Text);
             MTOPS = float.Parse(topDibSPTB.Text);
             STUMP = 0.0F;
             DBHOB = float.Parse(dbhTB.Text);
@@ -523,6 +531,10 @@ namespace volCStest
             UPSHT1 = float.Parse(upsht1TB.Text);
             UPSHT2 = 0;
             HTTFLL = 0;
+            if (HTTOT > 0) pmtHt = HTTOT;
+            else if (UPSHT1 > 0) pmtHt = UPSHT1;
+            else if (HT2PRD > 0) pmtHt = HT2PRD;
+            else if (HT1PRD > 0) pmtHt = HT1PRD;
 
             if (REGN == 8)
             {
@@ -609,25 +621,36 @@ namespace volCStest
             //int PMTFLG = 1;
             float segLen = 0.0F;
             float DRC = 0.0F;
-            
+            float totHt = 0.0F;
             //# points = 300
             //those points have to be scaled so that their sum = 750.
             //750/300 = 2.5
             
             //Added this to let it draw the stem when there is no total height
             //11/15/2011 (yw)
+            //getVolPrep();
+            HTTOT = float.Parse(totalHtTB.Text);
+            HT1PRD = float.Parse(mrchHtPPTB.Text);
+            HT2PRD = float.Parse(mrchHtSPTB.Text);
+            if (HTTOT > 0) pmtHt = HTTOT;
+            else if (HT2PRD > 0) pmtHt = HT2PRD;
+            else if (HT1PRD > 0) pmtHt = HT1PRD;
+
             if (HTTOT == 0)
             {
                 if (HT2PRD > 0)
                 {
-                    HTTOT = HT2PRD;
+                    totHt = HT2PRD;
                 }
                 else if (HT1PRD > 0)
                 {
-                    HTTOT = HT1PRD;
+                    totHt = HT1PRD;
                 }
-            }    
-            segLen = HTTOT / 300;
+                else totHt = UPSHT1;
+            }
+            else totHt = HTTOT;
+
+            segLen = totHt / 300;
 
             //drcob is used as the height where you want dib
             DRCOB = 0F;
@@ -652,24 +675,24 @@ namespace volCStest
                     DIBHT = HTTOT - DRCOB;
                     NOLOGP = r6behDIB(DIBHT);                   
                 }
-                else if (VOLEQ.ToString().Contains("MAT"))
+                else //if (VOLEQ.ToString().Contains("MAT"))
                 {
                     CALCDIACS(ref REGN,FORST,VOLEQ,ref STUMP,ref DBHOB,ref DRC,ref HTTOT,ref UPSHT1,ref UPSHT2,ref UPSD1,ref UPSD2,ref HTREF,ref AVGZ1,ref AVGZ2,
                         ref FCLASS, ref DBTBH, ref BTR, ref DRCOB, ref NOLOGP, ref DOB, ref ERRFLAG, strlen, strlen);
                 }
-                else
-                {
-                    //pmtprofile is a trimmed down version of profile.f that just returns dib
-                    PMTPROFILE(FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref NOLOGP,
-                       HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
-                       ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, VOL,
-                       ref CUTFLG, ref BFPFLG, ref CUPFLG,
-                       ref CDPFLG, ref SPFLG, ref DRCOB, CTYPE, ref FCLASS, PROD, ref ERRFLAG,
-                       strlen, strlen, strlen, strlen, strlen);
+                //else
+                //{
+                //    //pmtprofile is a trimmed down version of profile.f that just returns dib
+                //    PMTPROFILE(FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref NOLOGP,
+                //       HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
+                //       ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, VOL,
+                //       ref CUTFLG, ref BFPFLG, ref CUPFLG,
+                //       ref CDPFLG, ref SPFLG, ref DRCOB, CTYPE, ref FCLASS, PROD, ref ERRFLAG,
+                //       strlen, strlen, strlen, strlen, strlen);
 
-                    //and dib is returned in NOLOGP
+                //    //and dib is returned in NOLOGP
 
-                }
+                //}
                 dibs[0, i] = NOLOGP;
                 dibs[1, i] = DRCOB;                
             }
@@ -1258,7 +1281,13 @@ namespace volCStest
                 return;
             }
 
-            //if(REGN == 9)
+            if (REGN == 9 && HTTOT == 0)
+            {
+                UPSHT1 = HT1PRD;
+                UPSD1 = MTOPP;
+                UPSHT2 = HT2PRD;
+                UPSD2 = MTOPS;
+            }
             //    R9CLARKDIB(VOLEQ, ref STUMP, ref MTOPP, ref MTOPS, ref DBHOB, ref HT1PRD, ref HT2PRD, ref HTTOT, ref DIBHT, ref DIB, PROD, ref ERRFLAG, ref UPSHT1);
             
             //else if (VOLEQ.ToString().Contains("BEH") || (REGN == 8 && VOLEQ.ToString().Contains("CLK")))
@@ -2273,7 +2302,16 @@ namespace volCStest
                 MessageBox.Show("cannot return height to the dib for this volume equation");
                 return;
             }
-
+            if (MTOPP > 0)
+            {
+                UPSD1 = MTOPP;
+                UPSHT1 = HT1PRD;
+            }
+            if (MTOPS > 0)
+            {
+                UPSD2 = MTOPS;
+                UPSHT2 = HT2PRD;
+            }
             HT2TOPDCS(ref REGN, FORST, VOLEQ, ref DBHOB, ref HTTOT, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
                 ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, ref FCLASS, ref STEMDIB, ref STEMHT, ref ERRFLAG, strlen, strlen);
 
