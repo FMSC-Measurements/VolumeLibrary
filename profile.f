@@ -37,6 +37,7 @@ C YW 07/02/2014 added errflag (13) for top diameter greater than DBH in VOLINTRP
 C YW 08/19/2015 Added VOL to SUBROUTINE TCUBIC and modified TCUBIC to calculate stump and tip vol
 C               and save value in VOL(14) and VOL(15)
 C YW 10/15/2015 Modified TAPERMODEL for call R1tap to calc vol.
+C YW 06/16/2017 Added merch height to MTOPS to HT2PRD
 C**************************************************************
 C**************************************************************
 
@@ -699,10 +700,11 @@ C--       TOP WOOD PORTION ONLY.  THERE MIGHT BE A SMALL
 C--       DIFFERENCE IN TOP WOOD LENGTH DEPENDING ON THE
 C--       SEGMENTATION LOGIC USED FOR THE MAIN STEM.
 C--   CHECK FOR REGION 5 FIREWOOD LOGIC
+C       Set the merch height to HT2PRD
+           HT2PRD = LMERCH + STUMP
 
            LMERCH = LMERCH - LENMS
 C--  SEE DEFINITION OF SUBROUTINE "NUMLOG" UNDER BDFT CACULATIONS
-
         ENDIF
 
         IF(REGN.EQ.5 .AND. PROD.EQ.'07') THEN

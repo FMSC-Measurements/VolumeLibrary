@@ -58,7 +58,7 @@ c       INCLUDE 'COMM2'
 c       INCLUDE 'COMM3'
 c       INCLUDE 'COMM8'
 
-      INCLUDE 'R8DIB.INC'
+      INCLUDE 'r8dib.inc'    !'R8DIB.INC'
 
 C      *** SET ALL VARIABLES USED TO SKIP COEF. LOOKUPS TO ZERO ***
       DATA SPECPR,GEOAPR,EQNPR,SPGRP / 0,0,0,0 /       
@@ -329,8 +329,8 @@ C       GEOA = INT ((VOLEQ(2) - 800) / 10)
 C       EQN  = VOLEQ(2) - (800 + GEOA * 10)
 
       
-      IF(EQN. NE. 0 .AND. EQN .NE. 4 .AND. EQN .NE. 7 .AND. EQN .NE. 9
-     > .AND. EQN .NE. 8) THEN
+      IF(EQN.NE.0 .AND. EQN.NE.4 .AND. EQN.NE.7 .AND. EQN.NE.9
+     > .AND. EQN.NE.8) THEN
         ERRFLAG = 1  
         GO TO 999
       ENDIF
@@ -1643,8 +1643,16 @@ C     Shared variables
 
 C The HT1PRD field is also used by pulpwood broken top height (YW 2/7/14)    	
 c	IF(UPSHT1.LE.0 .AND. HT1PRD.GT.0.AND.PROD.EQ.'01')UPSHT1=HT1PRD
-      IF(UPSHT1.LE.0.AND.HT1PRD.GT.0.AND.(EQN.EQ.'7'.OR.EQN.EQ.'9'))THEN
+      IF(UPSHT1.LE.0.AND.HT1PRD.GT.0.AND.(EQN.EQ.7.OR.EQN.EQ.9))THEN
         UPSHT1=HT1PRD
+      ENDIF
+C     YW added on 6/16/2017 for HT1PRD      
+      IF(UPSHT1.GT.0.AND.HT1PRD.LE.0.1.AND.(EQN.EQ.7.OR.EQN.EQ.9))THEN
+        HT1PRD = UPSHT1
+      ENDIF
+      IF(UPSHT1.LE.0.AND.HT1PRD.LE.0.AND.HTTOT.LE.0)THEN
+        ERRFLG = 7
+        RETURN
       ENDIF
       CALL R8VOL2 (VOLEQ,VOL,DBHOB,HT1PRD,UPSHT1,MTOPP,HTTOT,
      >                      CTYPE, ERRFLG)
@@ -1796,10 +1804,12 @@ C If pult height is not provided, calculate it
              TLOGS = NOLOGS
              CALL R8LOGDIB(VOLEQ, FORST, DBHOB, HTTOT, UPSHT1, 
      &        TLOGS, TRIM, STUMP, BOLHT,LOGLEN, LOGDIA,ERRFLG)
+C For non-saw prod, it should not calculate boardfoot volume. This is in R9clark (07/12/2017)
+C So I comment out the following lines (07/12/2017)
 C CALCULATE LOG BOARDFOOT USING R9 ROUTINE
-            IF(BFPFLG.EQ.1)THEN
-              CALL R9BDFT(VOL,LOGLEN,NUMSEG,LOGDIA,ERRFLG,LOGVOL)
-            ENDIF
+c            IF(BFPFLG.EQ.1)THEN
+c              CALL R9BDFT(VOL,LOGLEN,NUMSEG,LOGDIA,ERRFLG,LOGVOL)
+c            ENDIF
 C CALCULATE LOG CUBIC VOLUME AND ADJUST LOG VOLUME WITH MERCH CUBIC VOL
 C USING R9 ROUTINE
             CALL R9LGCFT(TLOGS, LOGLEN, LOGDIA, LOGVOL,TLOGVOL,CFVOL)  
@@ -1876,4 +1886,72 @@ c          ENDIF
           ENDIF
 850     CONTINUE
       ENDIF
+      END
+C-------------------------------------------------------------------------
+C This subroutine calculate the height to a given DIB using Clark 4, 7, 9 equation
+      SUBROUTINE R8CLKHT(VOLEQ, DBHOB, HTTOT, UPSTEMHT, DIB, HT)
+      USE CLKCOEF_MOD
+      
+      implicit none
+      CHARACTER*10 VOLEQ
+      REAL DBHOB,HTTOT,UPSTEMHT,DIB,HT,D,F
+      REAL GG,WW,XX,YY,ZZ,TT,JJ,RR,NN
+      REAL r,c,e,p,q,b,a,a4,b4,a17,b17,Dx,Hx
+      TYPE(CLKCOEF):: COEFFS
+      INTEGER ERRFLAG,IS,IB,IT
+      REAL DIB2,D2,F2,Dx2,D3,SEG1,SEG2,SEG3
+      
+      CALL R8PREPCOEF(VOLEQ, COEFFS, ERRFLAG)
+      r=COEFFS%r
+      c=COEFFS%c
+      e=COEFFS%e
+      p=COEFFS%p
+      q=COEFFS%q
+      b=COEFFS%b
+      a=COEFFS%a
+      a4=COEFFS%a4
+      b4=COEFFS%b4
+      a17=COEFFS%a17
+      b17=COEFFS%b17
+      Dx=COEFFS%FIXDI
+      Dx2=Dx*Dx
+      Hx=UPSTEMHT
+      DIB2=DIB*DIB
+      
+
+C calculate DBHIB and F17IB      
+      D=a4+b4*DBHOB
+      F=DBHOB*(a17+b17*(17.3/Hx)**2)
+      D2=D*D
+      D3=D2*D
+      F2=F*F
+      
+      IS=0
+      IB=0
+      IT=0
+      IF(DIB2.GE.D2) IS=1
+      IF(DIB2.LT.D2.AND.DIB2.GE.F2) IB=1
+      IF(DIB2.LT.F2) IT=1
+      
+      GG=(1-4.5/Hx)**r
+      WW=(c+e/D3)/(1+GG)
+      XX=(1-4.5/Hx)**p
+      YY=(1-17.3/Hx)**p
+      ZZ=(D2-F2)/(XX-YY)
+      TT=D2-ZZ*XX
+      JJ=(1-17.3/Hx)**q
+      RR=(F2-Dx2)/JJ
+      NN=F2-RR*JJ
+      
+      SEG1=0
+      SEG2=0
+      SEG3=0
+      IF(IS.EQ.1) SEG1=Hx*(1-((DIB2/D2-1)/WW+GG)**(1/r))
+      IF(IB.EQ.1) SEG2=Hx*(1-(XX-(D2-DIB2)/ZZ)**(1/p))
+      IF(IT.EQ.1) SEG3=Hx*(1-(JJ-(F2-DIB2)/RR)**(1/q))
+      HT = SEG1+SEG2+SEG3
+      RETURN
+c      HT=IS*Hx*(1-((DIB2/D2-1)/WW+GG)**(1/r))
+c     +  +IB*Hx*(1-(XX-(D2-DIB2)/ZZ)**(1/p))
+c     +  +IT*Hx*(1-(JJ-(F2-DIB2)/RR)**(1/q))
       END

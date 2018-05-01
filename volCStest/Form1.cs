@@ -536,11 +536,11 @@ namespace volCStest
             else if (HT2PRD > 0) pmtHt = HT2PRD;
             else if (HT1PRD > 0) pmtHt = HT1PRD;
 
-            if (REGN == 8)
-            {
-                if (UPSHT1 <= 0) UPSHT1 = HT2PRD;
-                if (UPSHT1 > 0 && HT1PRD == 0) HT1PRD = UPSHT1;
-            }
+            //if (REGN == 8 && VOLEQ.ToString().Substring(2,1) != "1")
+            //{
+            //    if (UPSHT1 <= 0) UPSHT1 = HT2PRD;
+            //    if (UPSHT1 > 0 && HT1PRD == 0) HT1PRD = UPSHT1;
+            //}
              //changed the above line to test region 8 broken height
             // comment out to test region 3 profile 300FW2W122  yw 07/10/12
             //else if (REGN == 3) 
@@ -563,14 +563,16 @@ namespace volCStest
             AVGZ1 = float.Parse(avgz1TB.Text);
             AVGZ2 = 0;
             if (int.Parse(formClsTB.Text) > 0) FCLASS = int.Parse(formClsTB.Text);
-            if (FCLASS == 0) FCLASS = 80;
+            else FCLASS = 0;
+            //if (FCLASS == 0) FCLASS = 80;
 
             DBTBH = float.Parse(dbtbhTB.Text);
             //DBTBH = float.Parse("0.88");  //0;//double bark thickness at breast height
             BTR = float.Parse(btrTB.Text);//bark thickness ratio
             CUTFLG = 1;//cut flag
-            if (PROD.ToString(0, 2) == "01" || PROD.ToString(0, 2) == "14") BFPFLG = 1;//board foot flag
-            else BFPFLG = 0;
+            //if (PROD.ToString(0, 2) == "01" || PROD.ToString(0, 2) == "14") BFPFLG = 1;//board foot flag
+            //else BFPFLG = 0;
+            BFPFLG = 1;
             CUPFLG = 1;//cubic foot flag;
             CDPFLG = 1;//cord volume flag;
             SPFLG = 1;//;
@@ -1078,7 +1080,7 @@ namespace volCStest
             }
             else if (REGN == 8)
             {
-                if (MDL == "CLK")
+                if (MDL == "CLK" || MDL == "NEW")
                 {
                     mRules.cor = 'Y';
                     mRules.evod = 2;
@@ -1197,7 +1199,7 @@ namespace volCStest
                 {
                     string volMDL = volEqTB.Text.ToString().ToUpper().Substring(3,2);
                     string volREGN = volEqTB.Text.ToString().ToUpper().Substring(0, 1);
-                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || (volMDL == "CL" && volREGN == "8"))
+                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || (volMDL == "CL")) // && volREGN == "8"))
                     //if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE")
                     {
                         panel2.Enabled = true;

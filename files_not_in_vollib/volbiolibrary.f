@@ -50,9 +50,11 @@
       INTEGER         ERRFLAG
 
 !     Variable for biomass      
-      REAL WF(3), BMS(8), CR, MC, BIOGRN(15),BIODRY(15), SG(11),BIOMS(8)
+      REAL WF(3), BMS(8), CR, MC, BIOGRN(8),BIODRY(8), SG(11),BIOMS(8)
+      REAL RATIO,STMDRYWT,STMGRNWT
       INTEGER SPEC
       CHARACTER*12 BIOEQ
+      CHARACTER*40 REF(8)
         
       CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
@@ -70,9 +72,9 @@ c        ENDIF
 
       IF(SPEC.EQ.0)THEN
         IF(LEN_TRIM(BIOEQ).EQ.12) THEN
-          READ (BIOEQ(4:6),*,IOSTAT=STAT) SPCD
+          READ (BIOEQ(4:6),'(I3)') SPEC
         ELSE
-          READ(VOLEQ(8:10),*,IOSTAT=STAT) SPEC
+          READ(VOLEQ(8:10),'(I3)') SPEC
         ENDIF
       ENDIF
       
@@ -89,14 +91,14 @@ C     7 CROWN
 C     8 MERCH STEM WOOD AND BARK
       
 C     GET REGIONAL OR NATIONAL DEFAULT weight factor
-      CALL CRZSPDFT(REGN,FORST,SPES,WF,BMSEQ,REF)
+      CALL CRZSPDFT(REGN,FORST,SPEC,WF,BIOEQ,REF)
 
 C     Calculate merch stem green weight using cubic feet volume and weight factor
       STMGRNWT = WF(1)*(VOL(4)+VOL(7))
       
 C     Get the moisture content from Miles $ Smith 2009
       IF(WF(3).EQ.0)THEN
-        CALL MILSDATA(SPCD,SG)
+        CALL MILSDATA(SPEC,SG)
         WF(3) = (SG(9)-SG(10))/SG(10)*100
       ENDIF
       MC = WF(3)/100

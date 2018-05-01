@@ -58,7 +58,7 @@ C **************************************************************
       REAL UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
       INTEGER HTREF
 !     OUTPUTS
-      REAL DIB,DOB
+      REAL DIB,DOB, UPSHT
 !         Variables to hold flewellings coefficients
       INTEGER SETOPT(6),JSP,MFLG,NEXTRA
       REAL RHFW(4),RFLW(6),TAPCOE(12),F,FMOD(3),PINV_Z(2)
@@ -140,17 +140,18 @@ C **************************************************************
      &      MTOPP,MFLG,CUVOL,DIB,DOB,errflag)
 C Added Clark profile model for region 9
       ELSEIF (MDL.EQ.'CLK' .OR. MDL.EQ.'clk') THEN
-        IF (VOLEQ(1:1).EQ.'9') THEN
+        IF (VOLEQ(1:1).EQ.'9'.OR.
+     +     (VOLEQ(1:1).EQ.'8'.AND.VOLEQ(3:3).EQ.'1')) THEN
           ht2Prd = UPSHT2
           ht1Prd = UPSHT1
           mTopP = UPSD1
           mTopS = UPSD2
           errFlag = 0
 c reset UPSHT1 to 0 (yw 09/24/2012)          
-          UPSHT1 = 0
+          UPSHT = 0
           CALL r9clarkdib (VOLEQ,STUMP,mTopP,mTopS,DBHOB,
      &                    ht1Prd,ht2Prd,HTTOT,HTUP,DIB,prod,errFlag,
-     &                    UPSHT1)
+     &                    UPSHT)
         ELSE
           CALL R8CLKDIB(VOLEQ, FORST, DBHOB, HTTOT, UPSHT1,HTUP,DIB, 
      &                  ERRFLAG)

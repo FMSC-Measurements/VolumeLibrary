@@ -39,6 +39,9 @@ C YW 10/06/2015 Added TLOGS,NOLOGP and NOLOGS to the R9CLARK subroutine
 C YW 01/22/2016 Added extra NaN check in r9ht routine for stemHt.
 C YW 03/02/2016 Removed the error check for small tree (<17.3) and calculation using small tree logic
 c YW 04/13/2017 Moved the stump and tip volume calc to volinit subroutine.
+c YW 12/20/2017 NCrookston modified R9HT on Sept 2017 to deal with degenerate 
+c               math when trying to exponentiate negative numbers with real-valued powers.
+c YW 01/25/2018 Removed the broken top calculation, which cause problem for CP.
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -65,7 +68,7 @@ C
 C     Shared variables
       character forst*2,prod*2,volEq*10
       integer   geog,iProd,cutFlg,bfpFlg,cupFlg,spFlg,cdpFlg
-      integer   errFlg
+      integer   errFlg,REGN
       real      minBfD,maxLen,minLen,merchL,mTopP,mTopS,stump,trim
       real      dbhOb,ht1Prd,ht2Prd,htTot,topDib,upsHt1 
       real      logVol(7,20),logDia(21,3),bolHt(21),vol(15),logLen(20)
@@ -75,13 +78,15 @@ C     Internal variables
       real      plpDib,sawDib,plpHt,sawHt,topHt,totHt,dbhIb,dib17
       real      r,c,e,p,b,a,a4,b4,a17,b17,cfVol,tcfVol,shrtHt
       real      cf1,cf2,cf3
-      REAL      TLOGVOL
+      REAL      TLOGVOL,dob17
       logical   short      
       
       INTEGER   TLOGS,NOLOGP,NOLOGS      
       REAL      NUMLOGP,NUMLOGS,brokHt 
       TYPE(CLKCOEF):: COEFFS
-
+      TYPE(CLKCOEF):: COEFFSO
+      real ht1,ht2
+      
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 10) ' -->Enter R9CLARK'
    10    FORMAT (A)   
@@ -117,27 +122,59 @@ C     Initialize output variables
          vol(i)=0.0
 130   continue
 C-----Check input values and prepare variables
+C     region upper stem height field
+C     R8 uses UPSHT1 for 4 or 7/9 HT depends on prod
+c     this is checked in r8prep
+c      IF(volEq(1:1).EQ.'8')THEN
+c        IF(upsHt1 .gt. 0.0)THEN
+c          IF(prod.EQ.'01')THEN
+c            IF(ht1Prd.LE.0.0)THEN
+c              ht1Prd = upsHt1
+c            ENDIF
+c          ELSE
+c            IF(ht2Prd.LE.0.0)THEN
+c              ht2Prd = upsHt1
+c              upsHt1 = 0
+c            ENDIF
+c          ENDIF
+c        ENDIF
+c      ELSE
+      IF(volEq(1:1).EQ.'9')THEN
+C     Region 9      
       if (upsHt1 .gt. 0.0 .and. ht1Prd .le. 0.0) then
          if (htTot .le. 0 .and. ht2prd .le.0) then
            ht1Prd = upsHt1
          endif
          upsHt1 = 0
       endif
+      ENDIF
 C  added on 04/15/2015 for prod 14 to be same as prod 01
       if (prod .eq. '14') prod = '01'
-            
+      IF(VOLEQ(1:1).EQ.'9')THEN      
       call r9Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
-     &            upsHt1,brokHt)
+     &            upsHt1)
+      ELSEIF(VOLEQ(1:1).EQ.'8')THEN 
+      call r8Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
+     &            spp,geog,COEFFS,forst,maxLen,
+     &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
+     &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
+     &            upsHt1,COEFFSO) 
+        !Treat prod 08 to be same as 01   
+        if(iProd.eq.8) iProd = 1  
+      ELSE
+        errFlg = 1
+      ENDIF
       if(errFlg.ne.0) return
-
+      
+      IF(VOLEQ(1:1).EQ.'9')THEN
 C-----Get DIBs at heights of 4.5' and 17.3'
       call r9dia417(COEFFS,topDib,dbhOb,topHt,ht1Prd,ht2Prd,
-     &               htTot,sawDib,plpDib,errFlg,upsHt1)
+     &               htTot,sawDib,plpDib,errFlg,upsHt1,volEq)
+      ENDIF
       if(errFlg.ne.0) return
-
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 200)'  DBHIB DIB17 SAWDIB PLPDIB'
   200    FORMAT (A)
@@ -146,8 +183,15 @@ C-----Get DIBs at heights of 4.5' and 17.3'
       END IF
 
 C-----Get total height
+C    R9 uses inside bark coef, R8 using outside bark coef
+      IF(VOLEQ(1:1).EQ.'9')THEN
       call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,topHt,
      &             topDib,COEFFS%a, COEFFS%b,errFlg)
+      ELSE
+      call r9totHt(COEFFS%totHt,htTot,dbhOb,COEFFSO%dib17,topHt,
+     &             topDib,COEFFSO%a, COEFFSO%b,errFlg)
+      COEFFSO%totHt = COEFFS%totHt
+      ENDIF
       if(COEFFS%totHt.le.17.3) errFlg=8
       if(errFlg.ne.0) return
       
@@ -164,11 +208,7 @@ C-----Get total height
 
 C-----Get total volume to the tip
       if(cutFlg.eq.1) then
-        IF(brokHt.NE.0)THEN
-          call r9cuft(cfVol,COEFFS,STUMP, brokHt, errFlg)
-        ELSE
-          call r9cuft(cfVol,COEFFS,STUMP, COEFFS%TOTHT, errFlg)
-        ENDIF
+        call r9cuft(cfVol,COEFFS,STUMP, COEFFS%TOTHT, errFlg)
         if(errFlg.ne.0) return
         if(short) cfVol=cfVol*shrtHt/17.3
         vol(1)=cfVol
@@ -190,11 +230,19 @@ C-----Get height to pulpwood top
         !elseif(PLPDIB .GE. COEFFS%DBHIB)THEN
         !  PLPHT = TOPHT       !biomass tree
         else
-          call r9ht(plpHt,COEFFS, plpDib,errFlg)
+          IF(VOLEQ(1:1).EQ.'9')THEN
+            call r9ht(plpHt,COEFFS, plpDib,errFlg)
+          ELSE
+            !R8 uses outsidebark diameter to calculate HT
+            IF(upsHt1.GT.0.0.AND.ht2Prd.GT.0.0)THEN
+              plpHt = ht2Prd
+            ELSE  
+              call r9ht(plpHt,COEFFSO, plpDib,errFlg)
+            ENDIF
+          ENDIF
           if(errFlg.ne.0) return
         endif
         if(topDib.le.plpDib .and. topHt.lt.plpHt) plpHt=topHt
-        IF(brokHt.GT.0.AND.plpHt.GT.brokHt) plpHt=brokHt
         if(plpHt.lt.minLen+stump) plpHt=0.0
         !reassign plpht to ht2prd 
         ht2prd = plpHt
@@ -224,19 +272,27 @@ c       volume for FVS if only total height is provided. 11/15/2011 (yw)
           if(ht1Prd.gt.4.5) then
             sawHt=ht1Prd
           else
+            IF(VOLEQ(1:1).EQ.'9')THEN
             call r9ht(sawHt,COEFFS, sawDib,errFlg)
+            ELSE
+            !R8 uses outside bark to calc HT
+              call r9ht(sawHt,COEFFSO, sawDib,errFlg)
+            ENDIF
           endif
         else
           if(ht1Prd.gt.4.5) then
             sawHt=ht1Prd
           elseif(ht1prd.le.0.01) then
 c         Saw height calc is requested by having 1 < ht1prd < 4.5'
+            IF(VOLEQ(1:1).EQ.'9')THEN
             call r9ht(sawHt,COEFFS, sawDib,errFlg)
+            ELSE
+              call r9ht(sawHt,COEFFSO, sawDib,errFlg)
+            ENDIF
           endif
         endif
         if(errFlg.ne.0) return
         if(topDib.le.sawDib .and. topHt.lt.sawHt) sawHt=topHt
-        IF(brokHt.GT.0.AND.sawHt.GT.brokHt) sawHt=brokHt
         if(sawHt.lt.minLen+trim+stump) sawHt=0.0
 				!reassign sawHT to ht1prd 
          ht1prd = sawHT
@@ -338,8 +394,9 @@ C-----Get board foot volumes
       WRITE  (LUDBG, 695)'total log vol ', tlogvol
   695    FORMAT (A, F7.2)
       END IF
+      READ(VOLEQ(1:1),'(I1)')REGN
 C-----Apply correction factors
-      call r9cor(vol,logVol,spp,iProd)
+      IF(REGN.EQ.9) call r9cor(vol,logVol,spp,iProd)
 	
       if(vol(1).gt.0.0) vol(1)= nint(vol(1)*10.0)/10.0
 	    if(vol(2).gt.0) vol(2)=  nint(vol(2))
@@ -349,7 +406,15 @@ C-----Apply correction factors
 	    if(vol(9).gt.0) vol(9)=  nint(vol(9)*10.0)/10.0
 	    if(vol(10).gt.0) vol(10)=  nint(vol(10))
 	    if(vol(12).gt.0) vol(12)=  nint(vol(12))
-	
+c   calc Tip Vol(15) and stump vol(14)
+       vol(15)=vol(1)-vol(4)-vol(7)
+       IF(vol(15).LT.0.0) vol(15)=0.0	
+       ht1 = 0.0
+       ht2 = stump
+       call r9cuft(cfVol,COEFFS,ht1, ht2, errFlg)
+       vol(14)=cfvol
+       if(vol(14).LT.0.0) vol(14) = 0.0
+       
 	    IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 700)'CRDVOLPP  CRDVOLSP'
   700    FORMAT (A)
@@ -362,7 +427,8 @@ C-----Apply correction factors
          WRITE  (LUDBG, 800) ' <--Exit R9CLARK'
   800    FORMAT (A)   
       END IF
-
+c     save the total HT (20180208)
+      IF(htTot.LE.0.01) htTot=COEFFS%totHt
       return
       end
 C_______________________________________________________________________
@@ -371,7 +437,7 @@ C
      &                  spp,geog,COEFFS,forst,maxLen,
      &                  minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &                  prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
-     &                  upsHt1,brokHt)
+     &                  upsHt1)
 C_______________________________________________________________________
 C
 C  Parse out the info in the volume equation (volEq).  Check to see if 
@@ -382,24 +448,26 @@ C  merchantability rules for the specified species and product.
       USE CLKCOEF_MOD
       
       implicit none
-      INCLUDE 'R9COEFF.INC'
+      INCLUDE 'r9coeff.inc'    !'R9COEFF.INC'
       
       integer   errFlg,spp,sppGrp,geog,iProd,k,sppIdx
       real      dbhOb,topDib,topHt,sawHt,maxLen,minLen
       real      dib17,upprHt,lowrHt,merchL,stump,upsHt1
       real      mTopP,mTopS,trim,minBfD,ht1Prd,ht2Prd,htTot
       TYPE(CLKCOEF):: COEFFS
-      real      plpDib,sawDib,shrtHt,brokHt
+      real      plpDib,sawDib,shrtHt,dbhIb
       character volEq*10,forst*2,prod*2,tmpStr*2
       logical   short
-
+      INTEGER REGN, OPT,EVOD
+      REAL MINLENT,BTR,DBTBH
+      CHARACTER*1 COR
 !      real      r,c,e,p,b,a,a4,b4,a17,b17
 
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 10) ' -->Enter R9PREP'
    10    FORMAT (A)   
    		END IF
-
+      REGN = 9
       if(volEq(10:10).lt.'0' .or. volEq(10:10).gt.'9') then
         tmpStr=volEq(8:9)
         volEq(8:10)='0'//tmpStr
@@ -416,7 +484,6 @@ C  merchantability rules for the specified species and product.
       return
 220   continue
 
-      brokHt = 0
 C-----Check to determine if the heights and diameters are reasonable.
       if(dbhOb.le.0.0) then
         errFlg=3
@@ -442,7 +509,8 @@ c        errFlg=10
       elseif(ht2Prd.gt.0.0 .and. ht1Prd.gt.0.0 
      &  .and. ht2Prd.lt.ht1Prd) then
         errFlg=7
-      ELSEIF(prod.NE.'01'.AND.ht1Prd.GT.0.0)THEN
+      ELSEIF(prod.NE.'01'.AND.ht1Prd.GT.0.0.and. ht2Prd.le.0.01 
+     &  .and. htTot.le.0.01 .and. upsHt1.le.0.01)THEN
         errFlg=7
 c      elseif(htTot.gt.35.0*sqrt(dbhOb+3.0)) then
 c        errFlg=5
@@ -536,10 +604,10 @@ C       Get species group index to assign coefficients
       endif
       
 !-----Get merchantability rules
-      maxLen=8.0
-      minLen=4.0
-      trim=0.3
-      merchL=8.0
+c      maxLen=8.0
+c      minLen=4.0
+c      trim=0.3
+c      merchL=8.0
       if(mTopP.ne.0) then
         sawDib=mTopP
       else
@@ -562,6 +630,7 @@ C       Get species group index to assign coefficients
         endif
       endif
       
+      dbhIb = coefA(sppIdx,3)+coefA(sppIdx,4)*dbhOb
 C-----Get top height and top DIB
       short=.false.
       if(htTot.gt.0.0) then
@@ -574,46 +643,32 @@ C-----Get top height and top DIB
           shrtHt=htTot
         endif
       elseif(ht2Prd.gt.0) then
-C       For broken height, a height and a diameter are measured at the broken point      
-        IF(mTopS.NE.0)THEN
-          topDib=mTopS
+        topDib=4.0
+        if(ht2Prd.ge.17.3) then
           topHt=ht2Prd
-          brokHt = ht2Prd
-        ELSE
-          topDib=4.0
-          if(ht2Prd.ge.17.3) then
-            topHt=ht2Prd
-          else
+        else
             short=.true.
             topHt=17.4
             shrtHt=ht2Prd
-          endif
-        ENDIF
+        endif
       else
-C       For broken height, a height and a diameter are measured at the broken point      
-        IF(mTopP.NE.0)THEN
-          topDib=mTopP
-          topHt=ht1Prd
-          brokHt = ht1Prd
-        ELSE
-      
-          if(spp.lt.300) then
-            topDib=7.0
-          else
-            topDib=9.0
-          endif
+        if(spp.lt.300) then
+          topDib=7.0
+        else
+          topDib=9.0
+        endif
 c       if sawtimber topHt is provided, no recalc topHt. 11/15/2011 (yw)
-          if(upsHt1.gt.0) then
-            if(upsHt1.ge.17.3) then
-              topHt=upsHt1
-            else
-              short=.true.
-              topHt=17.4
-              shrtHt=ht1Prd
-            endif
-            if(ht1prd.le.0) ht1Prd = upsHt1
-          else        
-            if(ht1Prd.ge.17.3) then
+        if(upsHt1.gt.0) then
+          if(upsHt1.ge.17.3) then
+            topHt=upsHt1
+          else
+            short=.true.
+            topHt=17.4
+            shrtHt=ht1Prd
+          endif
+          if(ht1prd.le.0) ht1Prd = upsHt1
+        else        
+          if(ht1Prd.ge.17.3) then
 c         Use linear extrapolation from sawDib to topDib
               if((dbhOb-sawDib).GT.0) then
                 topHt=4.5+(ht1prd-4.5)*(dbhOb-topDib)/(dbhOb-sawDib)
@@ -621,15 +676,15 @@ c         Use linear extrapolation from sawDib to topDib
                 errFlg=13
                 return
               endif
-            else
+          else
               short=.true.
               topHt=17.4
               shrtHt=ht1Prd
-            endif
           endif
-        ENDIF
+        endif
       endif
       if(dbhOb.le.topDib) errFlg=11
+      
 
 c      if(errFlg.ne.0) return
 
@@ -653,17 +708,21 @@ C     total height, except a17 and b17, which correspond to the top DIB.
       if(abs(topDib-0) .lt. 0.00001) then
         COEFFS%A17 = coef0(sppIdx,2)
         COEFFS%B17 = coef0(sppIdx,3)
-      elseif((abs(topDib-4) .lt. 0.00001).OR.mTopS.NE.0) then
+      elseif(abs(topDib-4) .lt. 0.00001) then
         COEFFS%A17 = coef4(sppIdx,2)
         COEFFS%B17 = coef4(sppIdx,3)
-      elseif(((abs(topDib-7) .lt. 0.00001) 
-     +  .or. (abs(topDib-9) .lt. 0.00001)).OR.mTopP.NE.0) then
+      elseif((abs(topDib-7) .lt. 0.00001) 
+     +  .or. (abs(topDib-9) .lt. 0.00001)) then
         COEFFS%A17 = coef79(sppIdx,2)
         COEFFS%B17 = coef79(sppIdx,3)
       else
         errFlg=1
         return
       endif
+      
+       CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
+     >           MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
+     >           PROD)
       
 
 
@@ -688,7 +747,7 @@ C     total height, except a17 and b17, which correspond to the top DIB.
 C_______________________________________________________________________
 C
       subroutine r9dia417(COEFFS,topDib,dbhOb,topHt,ht1Prd,ht2Prd,
-     &                    htTot,sawDib,plpDib,errFlg,upsHt1)
+     &                    htTot,sawDib,plpDib,errFlg,upsHt1,volEq)
 C_______________________________________________________________________
 C
 C  Calculates inside bark diameter at 4.5' (dbhIb), inside-bark diameter 
@@ -706,7 +765,7 @@ C  inside-bark coefficients corresponding to the specified top diameter.
       integer   errFlg
       real      dbhOb,topHt,topDib,ht1Prd,ht2Prd,htTot,upsHt1
       real      sawDib,plpDib
-
+      character*10 volEq
 !...  Local variables
       INTEGER   I
       REAL      dbhIb,dib17,a4,b4,a17,b17
@@ -757,7 +816,13 @@ C-----Calculate DIB at 17.3' from top height and DBH (eqn 9)
       elseif(abs(ht1Prd-17.3).lt.0.00001 .and. upsHt1.lt.0.01) then
         dib17=sawDib
       elseif(topHt.gt.17.3) then
-        dib17=dbhIb*(a17+b17*(17.3/topHt)**2)
+        IF(volEq(1:1).EQ.'9')THEN
+c       the regression for R9 is using dbhIb        
+          dib17=dbhIb*(a17+b17*(17.3/topHt)**2)
+        ELSE
+c       the regression for R8 is using dbhOb
+          dib17=dbhOb*(a17+b17*(17.3/topHt)**2)
+        ENDIF
         dib17=max(dib17,topDib+0.1)
       else
         dib17=topDib-0.1
@@ -1072,7 +1137,7 @@ CREV  TDH added comments and an ISNAN check to final stemHt
       
 !... Local variables
       logical  res
-      REAL      totHt,dbhIb,dib17
+      REAL      totHt,dbhIb,dib17,xxx
       real      r,c,e,p,b,a,G,W,X,Y,Z,Qa,Qb,Qc,Is,Ib,It,Im
 !======================================================================
 
@@ -1124,23 +1189,47 @@ c-----Set height indicator variables
 
 C-----Get height to specified DIB
 C     Eqn 2: split since terms are undefined when evaluated together.
+cc this section replaced by NCrookston, Sept 2017 to deal with degenerate 
+c  math when trying to exponentiate negative numbers with real-valued powers.
+c  *** note that an original version included the use of testing the results 
+c  *** for NaN, but that idea isn't valid because it happens after the math
+c  *** exception causeing an abnormal termination on some systems.
+c      if(Is.eq.1)  then
+c      !this equation causes illegal math for many species so we
+c      !catch this at the bottom of this subroutine
+c        stemHt=totHt*(1-((stmDib**2/dbhIb**2-1)/W+G)**(1/r))
+c      elseif(Ib.eq.1) then
+c        stemHt=totHt*(1-(X-(dbhIb**2-stmDib**2)/Z)**(1/p))
+c      else
+c        stemHt=17.3+(totHt-17.3)*((-Qb-(Qb**2-4*Qa*Qc)**0.5)/(2*Qa))
+c      endif     
+cc end of deleted code, start of replacement
+
+      stemHt = 0.
       if(Is.eq.1)  then
-      !this equation causes illegal math for many species so we
-      !catch this at the bottom of this subroutine
-        stemHt=totHt*(1-((stmDib**2/dbhIb**2-1)/W+G)**(1/r))
+        xxx = (stmDib**2/dbhIb**2-1)/W+G
+        if (xxx .gt. 0.) then 
+          stemHt=totHt*(1.-xxx**(1/r))
+        endif
       elseif(Ib.eq.1) then
-        stemHt=totHt*(1-(X-(dbhIb**2-stmDib**2)/Z)**(1/p))
+        xxx = X-(dbhIb**2-stmDib**2)/Z
+        if (xxx .gt. 0.) then
+          stemHt=totHt*(1-xxx**(1/p))
+        endif
       else
-        stemHt=17.3+(totHt-17.3)*((-Qb-(Qb**2-4*Qa*Qc)**0.5)/(2*Qa))
+        xxx = Qb**2-4*Qa*Qc
+        if (xxx .gt. 0.) then
+          stemHt=17.3+(totHt-17.3)*((-Qb-xxx**0.5)/(2*Qa))
+        endif
       endif
-      
+                    
       !added the ISNAN check as per the above comments
       ! Lahey doesn't provide the ISNAN intrinsic function, so
       ! we use the subroutine IISNAN (RNH)
-      call IISNAN(stemHt,res)
-      if((stemHt.lt.0.0).OR. res ) stemHt=0.0
+c      call IISNAN(stemHt,res)
+c      if((stemHt.lt.0.0).OR. res ) stemHt=0.0
 C     The following line check if stemHt is a NaN 
-      if(stemHt.ne.stemHt) stemHt=0.0
+c      if(stemHt.ne.stemHt) stemHt=0.0
       return
       end
 C

@@ -3,9 +3,8 @@ C      DEFAULT WEIGHT FACTOR AND COMPONENT BIOMASS EQUATION FOR THE REGIONAL/FOR
 C YW 2016/03/08 harded coded the weight factor for DF in Rogue Rive - Siskiyou NF
        SUBROUTINE CRZSPDFT(REGN, FORST, SPCD, WF, BMSEQ, REF)
        IMPLICIT NONE
-       INCLUDE 'WDBKWTDATA.INC'
-       INCLUDE 'REGNDFTDATA.INC'
-C       INCLUDE 'BEQINFO.INC'
+       INCLUDE 'wdbkwtdata.inc'       !'WDBKWTDATA.INC'
+       INCLUDE 'regndftdata.inc'      !'REGNDFTDATA.INC'
        INCLUDE 'beqrefinfo.inc'
        
        INTEGER REGN, IFORST, SPCD, I, J, K
@@ -102,10 +101,11 @@ C  Region 6 Rogue river - Siskiyou NF Douglas-fir has different Weight factor ba
 C  DBH < 15 weight factor = 59, DBH > 15 weight factor = 51
 C  The weight factor is hardcoded here (YW 2016/03/08)
        IF(SPCD.EQ.204) SPCD = 202
-       IF(REGN.EQ.6.AND.IFORST.EQ.10.AND.SPCD.EQ.202)THEN
-         WF(1) = 51
-         WF(2) = 59
-       ENDIF;     
+C  R6 requests to remove the following lines (YW 07/05/2017)       
+c       IF(REGN.EQ.6.AND.IFORST.EQ.10.AND.SPCD.EQ.202)THEN
+c         WF(1) = 51
+c         WF(2) = 59
+c       ENDIF;     
        IF(DONE.LE.0 .OR. WF(1).EQ.0 .OR. WF(3) .EQ.0) THEN
 C      IF THE SPECIES DOES NOT HAVE REGION DEFAULT, SEARCH NATIONAL DEFAULT
          DONE = 0
@@ -153,7 +153,7 @@ C ------------------------------------------------------------------------------
 C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO GET WOOD DENSITY
        SUBROUTINE WOODDEN(SPCD, WDEN, BDEN)
        IMPLICIT NONE
-       INCLUDE 'WDBKWTDATA.INC'
+       INCLUDE 'wdbkwtdata.inc'       !'WDBKWTDATA.INC'
        INTEGER SPCD, FIRST, LAST, HALF, DONE
        REAL WDEN, BDEN
          DONE = 0
@@ -179,7 +179,7 @@ C ------------------------------------------------------------------------------
 C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO GET SAPLING ADJUSTMENT FACTOR
        SUBROUTINE SAPLINGADJ(SPCD, ADJ)
        IMPLICIT NONE
-       INCLUDE 'WDBKWTDATA.INC'
+       INCLUDE 'wdbkwtdata.inc'       !'WDBKWTDATA.INC'
        INTEGER SPCD, FIRST, LAST, HALF, DONE
        REAL ADJ
          DONE = 0
@@ -239,9 +239,10 @@ C      IF WEIGHT FACTOR IS NOT PROVIDED, GET IT FROM REGIONAL OR NATIONAL DEFAUL
        ENDIF
 C Reset weight factor for DF based on DBH (YW 2016/03/08)      
        IF(SPCD.EQ.204) SPCD = 202
-       IF(REGN.EQ.6.AND.IFORST.EQ.10.AND.SPCD.EQ.202)THEN
-         IF(DBHOB.LT.15) WF(1) = 59
-       ENDIF    
+C R6 requests to remove the following lines (YW 07/05/2017)
+c       IF(REGN.EQ.6.AND.IFORST.EQ.10.AND.SPCD.EQ.202)THEN
+c         IF(DBHOB.LT.15) WF(1) = 59
+c       ENDIF    
        IF(WF(2).LT.0.1) WF(2) = WF(1)
 C      GET THE MERCH STEM MASS (WOOD AND BARK) FROM VOL AND WEIGHT FACTOR
        BMS(5) = VOL(4)*WF(1)
@@ -293,6 +294,8 @@ C      ADJUST BIOMASS FROM JENKINS
        BMS(1) = JNKBMS(1)*RATIO
        BMS(2) = JNKBMS(6)*RATIO
        BMS(4) = JNKBMS(4)*RATIO
+C      If tip is calculated seperately, remove it from branches
+       IF(BMS(7).GT.0) BMS(2) = BMS(2)-BMS(7)       
 C      RETURN MAINSTEM BIOMASS FROM JENKINS WHEN THERE IS NO VOLUME FOR MAINSTEM(6/13/2016)
 C      For tree DBH>=5 and no merch vol calculated, stem goes to branches (03/07/2017)      
        IF(BMS(5).EQ.0.AND.BMS(6).EQ.0.AND.DBHOB.GE.5)THEN

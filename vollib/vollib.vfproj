@@ -117,6 +117,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\R8CLKDIB.F"/>
 		<File RelativePath="..\R8dib.f"/>
 		<File RelativePath="..\R8init.f"/>
+		<File RelativePath="..\r8prep.f"/>
 		<File RelativePath="..\R8vlist.f"/>
 		<File RelativePath="..\R8vol.f"/>
 		<File RelativePath="..\R8vol1.f"/>
@@ -147,7 +148,9 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\Sf_yhat.f"/>
 		<File RelativePath="..\Sf_yhat3.f"/>
 		<File RelativePath="..\Sf_zero.f"/>
-		<File RelativePath=".\Source2.F90"/>
+		<File RelativePath=".\Source2.F90">
+			<FileConfiguration Name="Debug|Win32" ExcludedFromBuild="true"/>
+			<FileConfiguration Name="Release|Win32" ExcludedFromBuild="true"/></File>
 		<File RelativePath="..\stump.f"/>
 		<File RelativePath="..\vernum.f"/>
 		<File RelativePath="..\volapss.f"/>
@@ -167,6 +170,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\bioeqcoef.inc"/>
 		<File RelativePath="..\bioeqinfo.inc"/>
 		<File RelativePath="..\fiabioeq.inc"/>
+		<File RelativePath="..\r8cfo.inc"/>
 		<File RelativePath="..\R8clist.inc"/>
 		<File RelativePath="..\R8CLKCOEF.INC"/>
 		<File RelativePath="..\R8dib.inc"/>

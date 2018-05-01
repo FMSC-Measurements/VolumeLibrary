@@ -184,28 +184,32 @@ C  MIN SAWTIMBER LENGTH
 c min dbh tree for sawtimber
 c         MINBFD = 6.0
          MINBFD = 1.0
-      ELSEIF(REGN.EQ.8.AND.MDL.EQ.'CLK') THEN
+      ELSEIF(REGN.EQ.8.AND.(MDL.EQ.'CLK'.OR.MDL.EQ.'NEW')) THEN
          COR='Y'
          EVOD = 2
          MAXLEN = 8.0
 c         MINLEN = 8.0 
          MINLEN = 2.0
          MERCHL = 8.0
+         IF(PROD.EQ.'08') MERCHL = 12.0
          OPT = 22
          read(volEq(8:10),'(i3)') spp
-         IF(spp.LT.300) THEN
-           MTOPP = 7.0
-         ELSE
-           MTOPP = 9.0
+         IF(MTOPP.LE.0.0)THEN
+           IF(spp.LT.300) THEN
+             MTOPP = 7.0
+           ELSE
+             MTOPP = 9.0
+           ENDIF
          ENDIF
-         MTOPS = 4.0
+         IF(MTOPS.LE.0.0) MTOPS = 4.0
          TRIM = 0.5
-         IF(PROD.EQ.'01') THEN
-           STUMP = 1.0
-         ELSE
-           STUMP = 0.5
+         IF(STUMP.LE.0.0)THEN
+           IF(PROD.EQ.'01') THEN
+             STUMP = 1.0
+           ELSE
+             STUMP = 0.5
+           ENDIF
          ENDIF
-
       ELSEIF(REGN.EQ.9.AND.MDL.EQ.'CLK') THEN
          COR='Y'
          EVOD = 2
@@ -214,17 +218,21 @@ c         MINLEN = 8.0
          MERCHL = 8.0
          OPT = 22
          read(volEq(8:10),'(i3)') spp
-         IF(spp.LT.300) THEN
-           MTOPP = 7.6
-         ELSE
-           MTOPP = 9.6
+         IF(MTOPP .LE. 0.0)THEN
+           IF(spp.LT.300) THEN
+             MTOPP = 7.6
+           ELSE
+             MTOPP = 9.6
+           ENDIF
          ENDIF
-         MTOPS = 4.0
+         IF(MTOPS .LE. 0.0) MTOPS = 4.0
          TRIM = 0.3
-         IF(PROD.EQ.'01') THEN
-           STUMP = 1.0
-         ELSE
-           STUMP = 0.5
+         IF(STUMP.LE.0.0)THEN
+           IF(PROD.EQ.'01') THEN
+             STUMP = 1.0
+           ELSE
+             STUMP = 0.5
+           ENDIF
          ENDIF
       ELSEIF(REGN.EQ.10) THEN
 
@@ -265,24 +273,24 @@ c min dbh tree for sawtimber
 C Added for modified MRULE 2017/03/17
 C IF USER MODIFIED MRULE, THEN NO NEED TO CALL MRULES
       IF(MRULEMOD.EQ.'Y')THEN
-        IF(NEWCOR.NE.COR) COR = NEWCOR
+c        IF(NEWCOR.NE.COR) COR = NEWCOR
         IF(NEWEVOD.GT.0) EVOD = NEWEVOD
         IF(NEWOPT.GT.0) OPT = NEWOPT
-        IF(NEWMAXLEN.GT.0) MAXLEN = NEWMAXLEN
-        IF(NEWMINLEN.GT.0) MINLEN = NEWMINLEN
-        IF(NEWMERCHL.GT.0) MERCHL = NEWMERCHL
-        IF(NEWMINLENT.GT.0) MINLENT = NEWMINLENT
-        IF(NEWMTOPP.GT.0.AND.TREEMTOPP.LE.0) MTOPP = NEWMTOPP
-        IF(NEWMTOPS.GT.0.AND.TREEMTOPS.LE.0) MTOPS = NEWMTOPS
-        IF(NEWSTUMP.GT.0.AND.TREESTUMP.LE.0) STUMP = NEWSTUMP
-        IF(NEWTRIM.GT.0) TRIM = NEWTRIM
-        IF(NEWBTR.GT.0.AND.TREEBTR.LE.0) BTR = NEWBTR
-        IF(NEWDBTBH.GT.0.AND.TREEDBTBH.LE.0) DBTBH = NEWDBTBH
-        IF(NEWMINBFD.GT.0) MINBFD = NEWMINBFD
-        IF(NEWBTR.GT.0.0 .AND. NEWDBTBH.LE.0) THEN
+        IF(NEWMAXLEN.GT.0.1) MAXLEN = NEWMAXLEN
+        IF(NEWMINLEN.GT.0.1) MINLEN = NEWMINLEN
+        IF(NEWMERCHL.GT.0.1) MERCHL = NEWMERCHL
+        IF(NEWMINLENT.GT.0.1) MINLENT = NEWMINLENT
+        IF(NEWMTOPP.GT.0.1.AND.TREEMTOPP.LE.0) MTOPP = NEWMTOPP
+        IF(NEWMTOPS.GT.0.1.AND.TREEMTOPS.LE.0) MTOPS = NEWMTOPS
+        IF(NEWSTUMP.GT.0.1.AND.TREESTUMP.LE.0) STUMP = NEWSTUMP
+        IF(NEWTRIM.GT.0.1) TRIM = NEWTRIM
+        IF(NEWBTR.GT.0.01.AND.TREEBTR.LE.0) BTR = NEWBTR
+        IF(NEWDBTBH.GT.0.01.AND.TREEDBTBH.LE.0) DBTBH = NEWDBTBH
+        IF(NEWMINBFD.GT.0.1) MINBFD = NEWMINBFD
+        IF(NEWBTR.GT.0.01 .AND. NEWDBTBH.LE.0) THEN
           DBTBH = DBHOB-(DBHOB*NEWBTR/100.0)
         ENDIF
-c        MRULEMOD='N'          
+        MRULEMOD='N'          
       ENDIF
 
       

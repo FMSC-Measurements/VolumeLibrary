@@ -24,8 +24,14 @@ C 20170214 Added vernum_r, getvoleq_r and vollib_r for use by R program
 C 20170227 Modified crzbiomass small tree biomass calculation, i.e. when merch stem vol is calculated, the stem biomass is also calculated.
 C 20170414 Removed 532WO2W*** eqn from R5_EQN list, modified CALCDIA to include R4 MAT model, added HT2TOPD to calculate stem HT to a
 C          given stem DIB, modified log vol calc for R8 and R9 to also include topwood logs, moved stump and tip vol calc to volinit sunroutine.
-C 20170525 Modified R9clark to recognize broken top input from ht1prd and mtopp ot ht2prd and mtops; Added BIOLIB subroutine to export biomass
-
+C 20170525 Added BIOLIB subroutine to export biomass
+C 20170721 Added new equation number for R8 Clark equation using R9 codes. The new R8 equation looks like 8*1CLKE*** and update R6 weight factor.
+C          Modified R9clark to recognize broken top input from ht1prd and mtopp ot ht2prd and mtops
+C 20170918 Added VOLLIBVB in volumelibrary.f to let VB.net to call the library with MERRULES variable.
+C 20171221 Modified R9Clark for NaN error, modified Mrule for custom rule, add R8clkht to r8vol2
+C 20180125 Removed R9clark broken top calculation, which cause other problem for cruise processing
+c 20180202 modifying R8prep with outside bark coef
+c 20180312 Modified r8prep and r9clark for R8 upsHt1
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -55,7 +61,7 @@ C 20170525 Modified R9clark to recognize broken top input from ht1prd and mtopp 
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170525
+      VERSION = 20180312
       RETURN
       END SUBROUTINE VERNUM
       
@@ -88,7 +94,7 @@ C 20170525 Modified R9clark to recognize broken top input from ht1prd and mtopp 
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20170525
+      VERSION = 20180312
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -111,7 +117,7 @@ C 20170525 Modified R9clark to recognize broken top input from ht1prd and mtopp 
 
 !---------------------------------------------------------------------
      
-      VERSION = 20170525
+      VERSION = 20180312
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -127,6 +133,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20170525
+      version = 20180312
       return
       end subroutine vernum_r

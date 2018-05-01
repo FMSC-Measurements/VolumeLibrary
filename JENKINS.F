@@ -2,7 +2,7 @@
 C     This subroutine calculate biomass using DBH (inches) and return dry biomass in lb.
 C     08/15/2016 YW For woodland species, dismater is usually measured as DRC, Jenkins converted DRC to DBH
 C     for the generilized equation.
-      INCLUDE 'WDBKWTDATA.INC'
+      INCLUDE 'wdbkwtdata.inc'       !'WDBKWTDATA.INC'
       INTEGER SPEC, SPCD, SPGRPCD, FIRST, LAST, HALF, DONE
       INTEGER I0, J0
       REAL DBHOB, B0, B1, DBHIN, DBHCM

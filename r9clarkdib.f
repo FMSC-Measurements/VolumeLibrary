@@ -36,6 +36,7 @@ C     Internal variables
       logical   short
       
       TYPE(CLKCOEF):: COEFFS
+      TYPE(CLKCOEF):: COEFFSO
 
 C     Initialize output variables
       numSeg=0
@@ -43,17 +44,34 @@ C     Initialize output variables
       errFlg=0
       
 C-----Check input values and prepare variables
+      IF(VOLEQ(1:1).EQ.'8')THEN
+      call r8Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
+     &            spp,geog,COEFFS,forst,maxLen,
+     &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
+     &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
+     &            upsHt1,COEFFSO)
+       call r9totHt(COEFFS%totHt,htTot,dbhOb,COEFFSO%dib17,topHt,
+     &             topDib,COEFFSO%a, COEFFSO%b,errFlg)
+       COEFFSO%totHt = COEFFS%totHt
+
+      ELSEIF(VOLEQ(1:1).EQ.'9')THEN
       call r9Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
-     &            upsHt1,brokHt)
-      if(errFlg.ne.0) return
-
+     &            upsHt1)
 C-----Get DIBs at heights of 4.5' and 17.3'
       call r9dia417(COEFFS,topDib,dbhOb,topHt,ht1Prd,ht2Prd,
-     &              htTot,sawDib,plpDib,errFlg,upsHt1)
+     &              htTot,sawDib,plpDib,errFlg,upsHt1,volEq)
       if(errFlg.ne.0) return
+C-----Get total height
+      call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,topHt,
+     &             topDib,COEFFS%a, COEFFS%b,errFlg)
+      ELSE
+        errFlg = 1
+      ENDIF
+      if(errFlg.ne.0) return
+
 
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 200)'  DBHIB DIB17 SAWDIB PLPDIB'
@@ -62,9 +80,6 @@ C-----Get DIBs at heights of 4.5' and 17.3'
   220    FORMAT(1X, F5.1, 2X, F5.1, F5.1, 2X, F5.1)
       END IF
 
-C-----Get total height
-      call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,topHt,
-     &             topDib,COEFFS%a, COEFFS%b,errFlg)
       if(COEFFS%totHt.le.17.3) errFlg=8
       if(errFlg.ne.0) return
       

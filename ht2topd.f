@@ -15,7 +15,7 @@
       CHARACTER*3 MDL
       REAL HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2
       REAL DBTBH,BTR
-      CHARACTER*1 HTTYPE
+      CHARACTER*1 HTTYPE, VEQ
       
       REAL MAXLEN,MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,MINBFD
       INTEGER EVOD,OPT
@@ -35,10 +35,11 @@ C     Variables for Clark profile
       INTEGER SPP, GEOG,IPROD
       REAL TOPDIB,SAWDIB,PULPDIB,SHRTHT,TOPHT,PLPDIB,DBHIB,DIB17,brokHt
       TYPE(CLKCOEF):: COEFFS
+      TYPE(CLKCOEF):: COEFFSO
       LOGICAL SHORT    
       
       MDL = VOLEQ(4:6)
-      TOPD = STEMDIB
+c      TOPD = STEMDIB
       STEMHT = 0.0
       PROD = '01'
       STUMP = 0.0
@@ -50,7 +51,17 @@ c     MRULES IS EXTERNAL AND CONTAINS THE MERCHANDIZING RULES SETTINGS
         CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
      >       MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >       PROD)
-
+     
+c     Added this for no total height(12/20/2017)     
+      TOPD = MTOPP
+      IF (HTTOT.LE.0)THEN
+        IF (HT1PRD.GT.0)THEN
+          MHT = HT1PRD + STUMP
+        ELSEIF(HT2PRD.GT.0)THEN
+          MHT = HT2PRD + STUMP
+          TOPD = MTOPS
+        ENDIF
+      ENDIF
       IF(MDL.EQ.'FW2' .OR. MDL.EQ.'fw2' .OR. MDL.EQ.'FW3' .OR.
      +   MDL.EQ.'fw3' .OR. MDL.EQ.'CZ2' .OR. MDL.EQ.'cz2' .OR.
      +   MDL.EQ.'CZ3' .OR. MDL.EQ.'cz3' .OR. MDL.EQ.'WO2' .OR.     
@@ -104,48 +115,98 @@ C     !OTHER PROFILE MODEL
         CALL R4MATTAPER(VOLEQ,DBHOB,HTTOT,STUMPD,BUTTCF,CF0,B,
      +  STEMHT,STEMDIB,ERRFLAG )
       ELSEIF (MDL.EQ.'CLK' .OR. MDL.EQ.'clk') THEN
-        IF(REGN.EQ.9)THEN
-C-----    Check input values and prepare variables
-          IF(htTot.EQ.0.AND.(ht1Prd.GT.0.OR.ht2Prd.GT.0))THEN
-c           broken top tree          
-            mTopP = UPSD1
-            mTopS = UPSD2
-          ENDIF
+        IF(REGN.EQ.9.OR.
+     +     (VOLEQ(1:1).EQ.'8'.AND.VOLEQ(3:3).EQ.'1'))THEN
+          IF(VOLEQ(1:1).EQ.'8')THEN
+          call r8Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
+     &            spp,geog,COEFFS,forst,maxLen,
+     &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
+     &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlag,
+     &            upsHt1,COEFFSO)
+           call r9totHt(COEFFS%totHt,htTot,dbhOb,COEFFSO%dib17,topHt,
+     &             topDib,COEFFSO%a, COEFFSO%b,errFlag)
+           COEFFSO%totHt = COEFFS%totHt
+
+          ELSE          
           call r9Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlag,
-     &            upsHt1,brokHt)
-          if(errFlag.ne.0) return
-
+     &            upsHt1)
 C-----    Get DIBs at heights of 4.5' and 17.3'
           call r9dia417(COEFFS,topDib,dbhOb,topHt,ht1Prd,ht2Prd,
-     &              htTot,sawDib,plpDib,errFlag,upsHt1)
+     &              htTot,sawDib,plpDib,errFlag,upsHt1,volEq)
           if(errFlag.ne.0) return
 C-----Get total height
-      call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,topHt,
-     &             topDib,COEFFS%a, COEFFS%b,errFlag)
-      if(COEFFS%totHt.le.17.3) errFlag=8
-      if(errFlag.ne.0) return
+          call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,
+     &             topHt,topDib,COEFFS%a, COEFFS%b,errFlag)
+     
+          ENDIF
+          if(errFlag.ne.0) return
 
-          CALL r9ht(stemHt,COEFFS,stemDib,errFlag)
+          if(COEFFS%totHt.le.17.3) errFlag=8
+          if(errFlag.ne.0) return
+          IF(VOLEQ(1:1).EQ.'8')THEN
+            CALL r9ht(stemHt,COEFFSO,stemDib,errFlag)
+          ELSE
+            CALL r9ht(stemHt,COEFFS,stemDib,errFlag)
+          ENDIF
         ELSE ! REGION 8
 c         Currently only works with total height equation
-          IF(VOLEQ(3:3).NE.'0')THEN
-            VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
+c          IF(VOLEQ(3:3).NE.'0')THEN
+c            VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
 c            ERRFLAG=1
 c            RETURN
-          ELSE
+c          ELSE
             VOLEQ2 = VOLEQ
-          ENDIF        
+c          ENDIF     
+          VEQ = VOLEQ(3:3)   
           CALL R8PREPCOEF(VOLEQ2, COEFFS, ERRFLAG)
           DBHIB = COEFFS%A4+COEFFS%B4*DBHOB
-          DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/HTTOT)**2)
+          IF(VEQ.EQ.'0'.OR.VEQ.EQ.'8')THEN
+            DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/HTTOT)**2)
+          ELSEIF(VEQ.EQ.'4'.OR.VEQ.EQ.'7'.OR.VEQ.EQ.'9')THEN
+            IF(UPSHT1.EQ.0.)THEN
+              IF(VEQ.EQ.'4')THEN
+                IF(HT2PRD.GT.0)THEN
+                  UPSHT1 = HT2PRD
+                ELSE
+                  ERRFLAG = 9
+                  RETURN
+                ENDIF
+              ELSE
+                IF(HT1PRD.GT.0)THEN
+                  UPSHT1 = HT1PRD
+                ELSE
+                  ERRFLAG = 9
+                  RETURN
+                ENDIF
+              ENDIF
+            ENDIF
+            DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/UPSHT1)**2)
+          ENDIF
           COEFFS%DBHIB = DBHIB
           COEFFS%DIB17 = DIB17
           COEFFS%TOTHT = HTTOT
-          CALL r9ht(STEMHT,COEFFS,STEMDIB,errFlag)
-        
+          IF(VEQ.EQ.'0'.OR.VEQ.EQ.'8')THEN
+            CALL r9ht(STEMHT,COEFFS,STEMDIB,errFlag)
+          ELSEIF(VEQ.EQ.'4'.OR.VEQ.EQ.'7'.OR.VEQ.EQ.'9')THEN
+C-----First Get total height
+            topHt = UPSHT1
+            topDib = COEFFS%FIXDI
+            call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,
+     &             topHt,topDib,COEFFS%a, COEFFS%b,errFlag)
+            if(COEFFS%totHt.le.17.3) errFlag=8
+            if(errFlag.ne.0) return
+            HTTOT = COEFFS%totHt
+            IF(STEMDIB.LT.COEFFS%FIXDI)THEN
+              VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
+              CALL R8PREPCOEF(VOLEQ2, COEFFS, ERRFLAG)
+              CALL r9ht(STEMHT,COEFFS,STEMDIB,errFlag)
+            ELSE
+              CALL R8CLKHT(VOLEQ,DBHOB,HTTOT,topHt,STEMDIB,STEMHT)
+            ENDIF
+          ENDIF
         ENDIF
       ELSEIF(MDL.EQ.'DEM' .OR. MDL.EQ.'CUR' .OR.
      +       MDL.EQ.'dem' .OR. MDL.EQ.'cur') THEN

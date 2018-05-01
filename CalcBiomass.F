@@ -203,7 +203,7 @@ C            9 Green weight factor (lb/cf)
 C           10 Dry weight factor (lb/cf)
 C           11 Sapling adjustment factor
       SUBROUTINE MILESDATA(SPEC, SG)
-      INCLUDE 'WDBKWTDATA.INC'
+      INCLUDE 'wdbkwtdata.inc'       !'WDBKWTDATA.INC'
       INTEGER SPEC, FIRST, LAST, HALF, DONE
       REAL SG(11)
          DONE = 0

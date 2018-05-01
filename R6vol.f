@@ -112,7 +112,9 @@ c            only total cubic volume possible
 c            call the total cubic routines
              CALL R6VOL3(DBHOB,DBTBH,FCLASS,TTH,ZONE,VOL)
           ENDIF
-      ENDIF                                  
+      ENDIF   
+c  one foot stump should be deducted from TTH, so it need the following line (YW 2017/06/09)
+c     TTH = TTH -1.0                                     
       CALL R6DIBS(ZONE,DBHOB,BTR,FCLASS,MTOPP,TLH,TTH,NOLOGP,
      >            LOGDIA,SCALEN,XLEN,TAPCOF)
 

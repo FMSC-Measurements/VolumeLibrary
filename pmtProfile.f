@@ -96,7 +96,7 @@ C     added DIB calculation for Behr equation
       ENDIF  
 c end test 1/29/14
 c test r8 Clark
-      IF (VOLEQ(1:1).EQ.'8'.AND.
+      IF (VOLEQ(1:1).EQ.'8'.AND.VOLEQ(3:3).NE.'1'.AND.
      &   (VOLEQ(4:6).EQ.'CLK' .OR. VOLEQ(4:6).EQ.'clk')) THEN
          CALL R8CLKDIB(VOLEQ,FORST,DBHOB,HTTOT,UPSHT1,DRCOB,DIBO, 
      &                    ERRFLAG)

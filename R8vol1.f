@@ -26,7 +26,7 @@ C     CHARACTER*8 READIT
       !COFARR(162,10)
 
       include 'r8clist.inc'
-      include 'R8VLIST.inc'
+      include 'r8vlist.inc'        !'R8VLIST.inc'
 
 c      INCLUDE 'COMM0'
 
