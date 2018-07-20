@@ -2,17 +2,18 @@
 C***********************************************************************
 C***********************************************************************
       SUBROUTINE R9_MHTS(IFORST,VOLEQ,DBH,HTTOT,SI,BA,HT1PRD,HT2PRD,
-     >                   PROD,ERRFLAG)
+     >           PROD,ERRFLAG,MTOPP)
 C***********************************************************************
 C CALCULATES THE MERCH HTS BASED ON TOTAL TREE HEIGHT BY FORST AND SPECIES
+C YW 07/13/2018 Added variable MTOPP to the subroutine and use the variable to replace hardcoded 9.6
       CHARACTER*10 VOLEQ
       CHARACTER*2 PROD
       INTEGER SI,BA,VFLAG,ERRFLAG,IFORST
 	REAL DBH,HTTOT,HT1PRD,HT2PRD,B(6),BFMIND,DBHMIN,BFTOPD,TOPD
-      REAL SAWBOL,ESTSHT,FACTOR,PULBOL,ESTCHT,ESTTHT
+      REAL SAWBOL,ESTSHT,FACTOR,PULBOL,ESTCHT,ESTTHT,MTOPP
 
       IF(BA.LE.0) BA = 90
-
+      
       IF(IFORST.EQ.2 .OR. IFORST.EQ.3 .OR. IFORST.EQ.4 .OR. IFORST.EQ.6
      >   .OR. IFORST.EQ.7 .OR. IFORST.EQ.9 .OR. IFORST.EQ.10) THEN
 C     LS
@@ -40,7 +41,9 @@ C     NE
             DBHMIN = 5.0
             BFMIND = 9.0
 	   ENDIF
-         BFTOPD = 7.6
+C         BFTOPD = 7.6
+         IF(MTOPP.LT.0.1) MTOPP = 7.6
+         BFTOPD = MTOPP
          TOPD = 4.0
       ELSE
          IF(IFORST.EQ.4 .OR. IFORST.EQ.10 .OR. IFORST.EQ.13 .OR. 
@@ -84,7 +87,9 @@ C     NE
             DBHMIN = 6.0
             BFMIND = 11.0
 	   ENDIF
-         BFTOPD = 9.6
+C         BFTOPD = 9.6
+         IF(MTOPP.LT.0.1) MTOPP = 9.6
+         BFTOPD = MTOPP
          TOPD = 4.0
       ENDIF
       

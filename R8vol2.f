@@ -8,6 +8,7 @@ C YW 02/26/2014 Modified TOTHT subrouine to have broken height less then HTTWO a
 C               total height is passed in with UPSHT1(HTTWO) variable befor cal TOTHT subroutine.
 C YW 03/12/2014 Fixed HT479 for smal tree problem (HT2<17.3)
 C YW 04/13/2017 Modified R8CLARK for the log volume calculation to also include logs for topwood
+C YW 07/13/2018 Modified R8CLARK to check number of logs over 20 and return errflag 12
       SUBROUTINE R8VOL2(VOLEQ,VOL,DBHOB,HTONE,HTTWO,MTOPP,HTTOT,CTYPE,
      >                  ERRFLAG)
 C      *** SUBROUTINE TO CALCULATE NEW VOLUMES ***
@@ -1696,7 +1697,13 @@ C        First do the sawlog
          IF(HT1PRD.GT.0.0)THEN  
            LMERCH = HT1PRD - STUMP
            CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
-      
+           IF(NUMSEG.GT.20)THEN
+             ERRFLG = 12
+             do 131,i=1,15
+               vol(i)=0.0
+131          continue
+             RETURN
+           ENDIF
 C--         SUBROUTINE "SEGMNT" WILL DETERMINE THE LENGTH OF EACH
 C--         SEGMENT, GIVEN A MERCHANTABLE LENGTH OF TREE STEM AND
 C--         THE NUMBER OF SEGMENTS IN IT (DETERMINED IN SUBROUTINE
@@ -1744,6 +1751,13 @@ C        Then do the topwood/pulp
              NUMSEG = 0
              LMERCH = HT2PRD - LMERCH
              CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
+             IF(NUMSEG.GT.20)THEN
+               ERRFLG = 12
+               do 132,i=1,15
+                 vol(i)=0.0
+132            continue
+               RETURN
+             ENDIF
              CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
      >               LOGLEN2)
              NOLOGS = NUMSEG
@@ -1798,6 +1812,13 @@ C If pult height is not provided, calculate it
              NUMSEG = 0
              LMERCH = HT2PRD - STUMP
              CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
+             IF(NUMSEG.GT.20)THEN
+               ERRFLG = 12
+               do 133,i=1,15
+                 vol(i)=0.0
+133            continue               
+               RETURN
+             ENDIF
              CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
      >               LOGLEN)
              NOLOGS = NUMSEG

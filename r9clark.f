@@ -42,6 +42,7 @@ c YW 04/13/2017 Moved the stump and tip volume calc to volinit subroutine.
 c YW 12/20/2017 NCrookston modified R9HT on Sept 2017 to deal with degenerate 
 c               math when trying to exponentiate negative numbers with real-valued powers.
 c YW 01/25/2018 Removed the broken top calculation, which cause problem for CP.
+c YW 07/13/2018 Modified R9cor to remove the adjustment factor for yellow-poplar (621).
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -1401,7 +1402,8 @@ C  to bring volumes in line with mill studies and legacy system.
         cf2=1.04
         cf3=1.04
         cf4=1.04
-      elseif(spp.ge.741 .and. spp.le.746) then
+      elseif((spp.ge.741.and.spp.le.746) .or. spp.eq.621) then
+C Added species 621 relow-poplar (YW 07/13/2018)      
         cf1=1.0
         cf2=1.0
         cf3=1.0

@@ -61,7 +61,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20180312
+      VERSION = 20180713
       RETURN
       END SUBROUTINE VERNUM
       
@@ -94,7 +94,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20180312
+      VERSION = 20180713
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -117,7 +117,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
 
 !---------------------------------------------------------------------
      
-      VERSION = 20180312
+      VERSION = 20180713
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -133,6 +133,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20180312
+      version = 20180713
       return
       end subroutine vernum_r
