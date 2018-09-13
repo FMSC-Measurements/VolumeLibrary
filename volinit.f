@@ -376,7 +376,7 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
          CALL DVEST (VOLEQ,DBHOB,DRCOB,HTTOT,MTOPP,FCLASS,HTLOG,
      +              HT1PRD,HT2PRD, FORST,BTR,VOL,CUTFLG,BFPFLG,CUPFLG,
      +              CDPFLG,SPFLG,PROD,HTTYPE,HTTFLL,NOLOGP,LIVE,BA,
-     +              SI,CTYPE,errflag)
+     +              SI,CTYPE,errflag,MTOPS)
       
       ELSEIF (MDL.EQ.'HAN' .OR. MDL.EQ.'han')THEN
 !******************************

@@ -1,6 +1,7 @@
 !== last modified  01-18-2013
 C 01/18/2013 Added calculation for stump VOL(14) and tip VOL(15)
 C 04/13/2017 moved stump and tip vol calc to voinit
+c 08/07/2018 Added species code 64 to the Juniper species for use by FIA equation
       SUBROUTINE  R5HARV (VOLEQ,DBHOB,HTTOT,MTOPP,VOL,BFPFLG,CUPFLG,
      >                    ERRFLAG)
 C FROM THE PNW RESEARCH NOTE PNW-414
@@ -109,7 +110,7 @@ C CHECK FOR VALID SPECIES AND IF NOT SET VOLUME TO -1 AND RETURN
       endif    
       
       IF (BFPFLG.EQ.1 .OR. CUPFLG.EQ.1) THEN
-        IF(VOLEQ(8:10).EQ.'060') THEN      
+        IF(VOLEQ(8:10).EQ.'060'.OR.VOLEQ(8:10).EQ.'064') THEN      
           SPEC = 0
         ELSEIF(VOLEQ(8:10).EQ.'351') THEN      
           SPEC = 1

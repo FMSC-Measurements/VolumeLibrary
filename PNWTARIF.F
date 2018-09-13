@@ -1,7 +1,7 @@
 C  12/17/2012
 C  The tarif volume equation used by FIA PNW
 C  Created by YW 12/17/2012
-C
+C  2018/08/08 YW Added species code 116, 119 and 020 for FIA equation
       SUBROUTINE PNWTARIF(VOLEQ,DBHOB,HTTOT,MTOPP,VOL,BFPFLG,CUPFLG,
      >                    ERRFLAG)
      
@@ -32,6 +32,10 @@ C
       READ(SPEC,'(i3)') SPN
       READ(VOLEQ(2:3), '(I2)') SCRBLOGL
       IF(VOLEQ(1:1).EQ.'6')THEN
+        CV4 = 0.0
+        CVT = 0.0
+        CVTS = 0.0
+        TARIF = 0.0
 C       REGION 6 EQUATION
         IF(SPEC.EQ.'202') THEN
           IF(SCRBLOGL.EQ.32)THEN
@@ -148,9 +152,9 @@ C        OTHER HARDWOOD FIA EQ#31 USED FOR EUCALYPTUS
  5        CONTINUE
           RETURN
         ENDIF
-        CALL GET_TARIF_FROM_CVTS(DBH,CVTS,TARIF)
-        CV4=TARIF*(BA-0.087266)/0.912733
-        CVT=CVTS*(0.9679-0.105*0.5525**(DBH-1.5))
+        IF(TARIF.EQ.0.0) CALL GET_TARIF_FROM_CVTS(DBH,CVTS,TARIF)
+        IF(CV4.EQ.0.0) CV4=TARIF*(BA-0.087266)/0.912733
+        IF(CVT.EQ.0.0) CVT=CVTS*(0.9679-0.105*0.5525**(DBH-1.5))
         VOL(1) = CVTS
         CALL GET_MERCH_VOL(SPN,DBH,MTOPP,SCRBLOGL,
      &           CV4,CVT,TARIF,VOL,ERRFLAG)
@@ -174,7 +178,7 @@ C           FIA EQ#3
             CF4_TMP=0.248569+0.0253524*(HT/TMP_DBH)
      &               -0.0000560175*(HT**2/TMP_DBH)
 	      CALL CHECK_CF(CF4_TMP)
-          ELSEIF(SPEC.EQ.'122')THEN
+          ELSEIF(SPEC.EQ.'122'.OR.SPEC.EQ.'116')THEN
 C           FIA EQ#5          
             CF4 = 0.402060 - 0.899914 * (1/DBH)
 	      CALL CHECK_CF(CF4)
@@ -186,7 +190,7 @@ C           FIA EQ#16
 	      CALL CHECK_CF(CF4)
             CF4_TMP = 0.422709 - 0.0000612236 * (HT**2/TMP_DBH)
 	      CALL CHECK_CF(CF4_TMP)
-          ELSEIF(SPEC.EQ.'021')THEN
+          ELSEIF(SPEC.EQ.'021'.OR.SPEC.EQ.'020')THEN
 C           FIA EQ#18          
             CF4 = 0.231237 + 0.028176 * (HT/DBH)
 	      CALL CHECK_CF(CF4)
@@ -198,7 +202,7 @@ C           FIA EQ#19
 	      IF(CF4.LT.0.27) CF4=0.27
             CF4_TMP = 0.225786 + 4.44236 * (1/HT)
 	      IF(CF4_TMP.LT.0.27) CF4_TMP=0.27
-	    ELSEIF(SPEC.EQ.'117')THEN
+	    ELSEIF(SPEC.EQ.'117'.OR.SPEC.EQ.'119')THEN
 c           FIA EQ#20	    
             CF4 = 0.358550 - 0.488134 * (1/DBH)
 	      CALL CHECK_CF(CF4)
@@ -217,6 +221,7 @@ c           FIA EQ# 23
  15          CONTINUE
             RETURN
 	    ENDIF
+	    
 C         For ease of use and to improve readability of equations, calculate the following term and use it 
 C         in the equations that follow. Note that actual DBH and BA are used for all trees. 
 C         Do not use TMP_DBH or BA_TMP here.
@@ -257,12 +262,12 @@ C       OTHER HARDWOOD IN REGION 5 CALL R5HARV
           CALL R5HARV(VOLEQ,DBHOB,HTTOT,MTOPP,VOL,BFPFLG,CUPFLG,ERRFLAG)
         ENDIF
       ENDIF              
-c     get Stump volume which is CVTS-CVT      
-c      IF(VOL(14).LE.0.0) VOL(14) = CVTS-CVT
-c      IF(VOL(14).LT.0.0) VOL(14)=0.0
-c     get stem tip volume which is cvt-cv4
-c      IF(VOL(15).LE.0.0) VOL(15) = CVT-CV4
-c      IF(VOL(15).LT.0.0) VOL(15)=0.0
+!     get Stump volume which is CVTS-CVT      
+      IF(VOL(14).LE.0.0) VOL(14) = CVTS-CVT
+      IF(VOL(14).LT.0.0) VOL(14)=0.0
+!     get stem tip volume which is cvt-cv4
+      IF(VOL(15).LE.0.0) VOL(15) = CVT-CV4
+      IF(VOL(15).LT.0.0) VOL(15)=0.0
       
 999   RETURN
       END SUBROUTINE PNWTARIF

@@ -32,6 +32,8 @@ C 20171221 Modified R9Clark for NaN error, modified Mrule for custom rule, add R
 C 20180125 Removed R9clark broken top calculation, which cause other problem for cruise processing
 c 20180202 modifying R8prep with outside bark coef
 c 20180312 Modified r8prep and r9clark for R8 upsHt1
+! 20180913 Modify FCLASS for use with single/multi-stem as: =1 single, =0 multistems in the consistent way for R2 and R3.
+!          Also added Hahn (NC-250) equations (R9) to the library
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -61,7 +63,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20180713
+      VERSION = 20180913
       RETURN
       END SUBROUTINE VERNUM
       
@@ -94,7 +96,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20180713
+      VERSION = 20180913
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -117,7 +119,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
 
 !---------------------------------------------------------------------
      
-      VERSION = 20180713
+      VERSION = 20180913
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -133,6 +135,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20180713
+      version = 20180913
       return
       end subroutine vernum_r
