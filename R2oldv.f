@@ -105,7 +105,7 @@ C--***********  ASPEN-RM232-TOP=4
       ELSEIF (VOLEQ(8:10).EQ.'746' .AND. VOLEQ(1:3).EQ.'201') THEN
          DIB = (0.8954*DBHOB)+0.3168
          X1 = LOG10(DIB-4.0)
-         X2 = LOG10(THT-4.5)
+         X2 = LOG10(HTTOT-4.5)
          X3 = X1*X2
          GCUFT = (10**((0.0827*X1)+(0.4045*X2)+(.6593*X3)-0.4721))+0.3
 C--***********  ASPEN-RM232-TOTAL PG3

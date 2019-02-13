@@ -34,6 +34,7 @@ c 20180202 modifying R8prep with outside bark coef
 c 20180312 Modified r8prep and r9clark for R8 upsHt1
 ! 20180913 Modify FCLASS for use with single/multi-stem as: =1 single, =0 multistems in the consistent way for R2 and R3.
 !          Also added Hahn (NC-250) equations (R9) to the library
+! 20181210 Added FIA volume equations to the library
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -63,7 +64,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20180913
+      VERSION = 20181210
       RETURN
       END SUBROUTINE VERNUM
       
@@ -96,7 +97,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20180913
+      VERSION = 20181210
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -119,7 +120,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
 
 !---------------------------------------------------------------------
      
-      VERSION = 20180913
+      VERSION = 20181210
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -135,6 +136,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20180913
+      version = 20181210
       return
       end subroutine vernum_r

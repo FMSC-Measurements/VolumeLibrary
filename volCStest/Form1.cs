@@ -490,7 +490,7 @@ namespace volCStest
             //MessageBox.Show("htType.text=" + htTypeTB.Text);
             HTTYPE.Append(htTypeTB.Text.Substring(0,1));
             VOLEQ.Append(volEqTB.Text);
-            CONSPEC.Append(m_sConSpec);
+            //CONSPEC.Append(m_sConSpec);
 
             LIVE.Append("L");
             if (string.IsNullOrEmpty(ctypeTB.Text)) ctypeTB.Text = "F";
@@ -595,14 +595,21 @@ namespace volCStest
 
             ERRFLAG = 0;//error flag
             VERSION = 0;
-
+            string EQTYPE = " ";
+            if (VOLEQ.Length > 0) EQTYPE = VOLEQ.ToString().Substring(0, 2);
             //if volume equation not provided, then get it
-            if (VOLEQ.Length < 10)
+            if (VOLEQ.Length < 10 && EQTYPE != "CU" && EQTYPE != "BD")
                 GETVOLEQ3(ref REGN, FORST, DIST, ref SPCODE, PROD, VOLEQ, ref ERRFLAG, strlen, strlen, strlen, strlen);
 
             //GETVARIANTCS(ref REGN, FORST, DIST, VAR, strlen, strlen, strlen);
             //MessageBox.Show(VAR.ToString());
-
+            if (EQTYPE == "CU" || EQTYPE == "BD")
+            {
+                if (speciesTB.Text.Length == 1) speciesTB.Text = "00" + speciesTB.Text;
+                if (speciesTB.Text.Length == 2) speciesTB.Text = "0" + speciesTB.Text;
+                m_sConSpec = speciesTB.Text;
+            }
+            CONSPEC.Append(m_sConSpec);
             MDL = VOLEQ.ToString().Substring(3, 3);
             //added for A00F32W*** equation (08/27/2013)
             if (MDL == "F32" || MDL == "f32") HTLOG = 32;
@@ -876,6 +883,8 @@ namespace volCStest
 
         private void setMerchDefaults()
         {
+            string EQTYPE = VOLEQ.ToString(0, 2);
+            if (EQTYPE == "CU" || EQTYPE == "BD") return;
             string MDL = VOLEQ.ToString(3,3);
             int num;
             bool isNum =int.TryParse(VOLEQ.ToString(7, 3),out num);

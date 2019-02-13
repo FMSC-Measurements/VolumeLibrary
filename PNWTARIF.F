@@ -120,11 +120,11 @@ C         REDALDER FIA EQ#25
           ENDIF
           Z = (THT-0.5-DBH/24)/(THT-4.5)
           Z25 = Z**2.5
-          F = 0.3651*Z25-7.9032*Z25*DBH/1000+3.295*Z25 * THT/1000
-     &         - 1.9856*Z25*THT*DBH/100000-2.9668*Z25*THT**2/1000000
-     &         + 1.5092*Z25*THT**.5/1000+4.9395*Z**4*DBH/1000
-     &         - 2.05937*Z**4*THT/1000+1.5042*Z**33*THT*DBH/1000000
-     &         - 1.1433*Z**33*THT**0.5/10000+1.809*Z**41*THT**2/10000000
+          F = 0.3651*Z25-7.9032*Z25*DBH/1000.0+3.295*Z25 * THT/1000.0
+     &         - 1.9856*Z25*THT*DBH/100000.0-2.9668*Z25*THT**2/1000000.0
+     &         + 1.5092*Z25*THT**.5/1000.0+4.9395*Z**4*DBH/1000.0
+     &         - 2.05937*Z**4*THT/1000.0+1.5042*Z**33*THT*DBH/1000000.0
+     &    - 1.1433*Z**33*THT**0.5/10000.0+1.809*Z**41*THT**2/10000000.0
           CVT = 0.00545415*DBH**2*(THT-4.5)*F
           CVTS = CVT/(0.9679-0.105*0.5525**(DBH-1.5))
           CALL GET_TARIF_FROM_CVT(DBH,CVT,TARIF)
@@ -155,7 +155,9 @@ C        OTHER HARDWOOD FIA EQ#31 USED FOR EUCALYPTUS
         IF(TARIF.EQ.0.0) CALL GET_TARIF_FROM_CVTS(DBH,CVTS,TARIF)
         IF(CV4.EQ.0.0) CV4=TARIF*(BA-0.087266)/0.912733
         IF(CVT.EQ.0.0) CVT=CVTS*(0.9679-0.105*0.5525**(DBH-1.5))
-        VOL(1) = CVTS
+        VOL(1) = CVT
+        VOL(4) = CV4
+        VOL(14) = CVTS - CVT
         CALL GET_MERCH_VOL(SPN,DBH,MTOPP,SCRBLOGL,
      &           CV4,CVT,TARIF,VOL,ERRFLAG)
       ELSEIF(VOLEQ(1:1).EQ.'5')THEN
@@ -180,9 +182,9 @@ C           FIA EQ#3
 	      CALL CHECK_CF(CF4_TMP)
           ELSEIF(SPEC.EQ.'122'.OR.SPEC.EQ.'116')THEN
 C           FIA EQ#5          
-            CF4 = 0.402060 - 0.899914 * (1/DBH)
+            CF4 = 0.402060 - 0.899914 * (1.0/DBH)
 	      CALL CHECK_CF(CF4)
-            CF4_TMP = 0.402060 - 0.899914 * (1/TMP_DBH)
+            CF4_TMP = 0.402060 - 0.899914 * (1.0/TMP_DBH)
 	      CALL CHECK_CF(CF4_TMP)
           ELSEIF(SPEC.EQ.'108')THEN
 C           FIA EQ#16          
@@ -198,21 +200,21 @@ C           FIA EQ#18
 	      CALL CHECK_CF(CF4_TMP)
           ELSEIF(SPEC.EQ.'081')THEN
 C           FIA EQ#19
-            CF4 = 0.225786 + 4.44236 * (1/HT)
+            CF4 = 0.225786 + 4.44236 * (1.0/HT)
 	      IF(CF4.LT.0.27) CF4=0.27
-            CF4_TMP = 0.225786 + 4.44236 * (1/HT)
+            CF4_TMP = 0.225786 + 4.44236 * (1.0/HT)
 	      IF(CF4_TMP.LT.0.27) CF4_TMP=0.27
 	    ELSEIF(SPEC.EQ.'117'.OR.SPEC.EQ.'119')THEN
 c           FIA EQ#20	    
-            CF4 = 0.358550 - 0.488134 * (1/DBH)
+            CF4 = 0.358550 - 0.488134 * (1.0/DBH)
 	      CALL CHECK_CF(CF4)
-            CF4_TMP = 0.358550 - 0.488134 * (1/TMP_DBH) 
+            CF4_TMP = 0.358550 - 0.488134 * (1.0/TMP_DBH) 
 	      CALL CHECK_CF(CF4_TMP)
 	    ELSEIF(SPEC.EQ.'015')THEN
 c           FIA EQ# 23	    
-	      CF4 =0.299039+1.91272*(1/HT)+0.0000367217 * (HT**2/DBH)
+	      CF4 =0.299039+1.91272*(1.0/HT)+0.0000367217 * (HT**2/DBH)
 	      CALL CHECK_CF(CF4)
-	      CF4_TMP=0.299039+1.91272*(1/HT)+0.0000367217*(HT**2/TMP_DBH)
+	      CF4_TMP=0.299039+1.91272*(1.0/HT)+0.0000367217*(HT**2/TMP_DBH)
 	      CALL CHECK_CF(CF4_TMP)
           ELSE
             ERRFLAG = 1
@@ -240,16 +242,17 @@ C         Do not use TMP_DBH or BA_TMP here.
             TARIF_TMP=(CV4_TMP * 0.912733)/(BA_TMP - 0.087266)
 	      IF (TARIF_TMP.LE.0.0) TARIF_TMP = 0.01
 C           CALCULATE An ADJUSTED  TARIF FOR SMALL TREES (Both DBH and TMP_DBH are used)
-            TARIF=TARIF_TMP*(0.5*(TMP_DBH-DBH)**2
-     &             +(1.0+0.063*(TMP_DBH-DBH)**2))
+            TARIF=0.5*(TMP_DBH-DBH)**2
+     &             +(1.0+0.063*(TMP_DBH-DBH)**2)*TARIF_TMP
      
 	     IF(TARIF.LE.0.0) TARIF = 0.01
            CVTS  = TARIF * TERM
-           CVT=TARIF*(0.9679-0.1051*0.5523**(DBH-1.5))*TERM/0.912733
+           CVT=TARIF*(0.9679-0.1051*0.5523**(DBH-1.5))*TERM   !/0.912733
            CV4= CF4 * BA * HT 
 C          CV4 calculated with actual DBH and BA
           ENDIF
-          VOL(1)=CVTS
+          VOL(1)=CVT
+          VOL(4)=CV4
           IF(DBH.LT.5.0) CV4=0.0
           CALL GET_MERCH_VOL(SPN,DBH,MTOPP,SCRBLOGL,
      &           CV4,CVT,TARIF,VOL,ERRFLAG)
@@ -284,61 +287,72 @@ C     CALCULATE MERCH VOLUME
       SV632=0.0
       XINT6=0.0
       XINT8=0.0
-      IF(DBH.GE.9.0)THEN
+      IF(DBH.GE.9.0.AND.MTOPP.GE.6.0)THEN
         RC6 = 0.993-0.993*0.62**(DBH-6.0)
 C     CALCULATION FOR SOFTWOOD AND HARDWOOD ARE DIFFERENT      
-        IF(SPN.LT.300) THEN
-          CV6 = RC6*CV4
-        ELSE
-          CV6=RC6*CVT
-        ENDIF
+!        IF(SPN.LT.300) THEN
+!          CV6 = RC6*CV4
+!        ELSE
+!          CV6=RC6*CVT
+!        ENDIF
+        CV6 = RC6*CV4
         IF(CV6.GT.CV4) CV6=CV4
+        VOL(4)=CV6
         CUBUS = CV4-CV6
+        VOL(7) = CUBUS
         B4 = TARIF/0.912733
         RS616L=(.174439+.117594*log10(DBH)*log10((TARIF/.912733))
      &              -8.210585/DBH**2+.236693*log10((TARIF/.912733))
      &              -.00001345*(TARIF/.912733)**2-.00001937*DBH**2)
         RS616=10**RS616L
         SV616=RS616*CV6
+        VOL(2) = SV616
         IF(SCRBLOGL.EQ.32)THEN
           RS632=1.001491-6.924097/TARIF+0.00001351*DBH**2
           SV632=RS632*SV616
+          VOL(2) = SV632
         ENDIF
         RI6=(-2.904154+3.466328*log10(DBH*TARIF)
      &       -.02765985*DBH-.00008205*TARIF**2+11.29598/DBH**2)
         XINT6=RI6*CV6
-        IF(DBH.GE.11.0)THEN
+        VOL(10) = XINT6
+C        IF(DBH.GE.11.0)THEN
+        IF(MTOPP.GE.8.0)THEN
           CV8=CV4*(.983-.983*.65**(DBH-8.6))
+          VOL(4) = CV8
+          VOL(7) = CV4-CV8
           RS816= (.99-.58*.484**(DBH-9.5))
           SV816=RS816*SV616
+          VOL(2) = SV816
           RI8=0.99-0.55*0.485 ** (DBH-9.5)
           XINT8=XINT6*RI8
+          VOL(10) = XINT8
         ENDIF
       ENDIF
-      
-      IF(MTOPP.LT.0.1)THEN
-        VOL(4)=CV4
-      ELSEIF(MTOPP.LT.3.0)THEN
-        VOL(4)=CVT
-      ELSEIF(MTOPP.LT.5.0)THEN
-        VOL(4)=CV4
-      ELSEIF(MTOPP.LT.7.0)THEN
-        VOL(4)=CV6
-      ELSE
-        VOL(4)=CV8
-      ENDIF
-      IF(MTOPP.LT.7.0.OR.(MTOPP.LT.0.1.AND.SPN.LT.300))THEN  
-        VOL(2)=SV616
-        IF(SCRBLOGL.EQ.32)THEN
-          VOL(2)=SV632
-        ENDIF
-        VOL(7)=CV4-CV6
-        VOL(10)=XINT6
-      ELSEIF(MTOPP.LE.9.0.OR.(MTOPP.LT.0.1.AND.SPN.GE.300))THEN
-        VOL(2)=SV816
-        VOL(7)=CV4-CV8
-        VOL(10)=XINT8
-      ENDIF  
+! THE VOL HAS BEEN SET UP IN THE ABOVE, SO COMMENT OUT THE BELOW LINES (2018/11/02)      
+!      IF(MTOPP.LT.0.1)THEN
+!        VOL(4)=CV4
+!      ELSEIF(MTOPP.LT.3.0)THEN
+!        VOL(4)=CVT
+!      ELSEIF(MTOPP.LT.5.0)THEN
+!        VOL(4)=CV4
+!      ELSEIF(MTOPP.LT.7.0)THEN
+!        VOL(4)=CV6
+!      ELSE
+!        VOL(4)=CV8
+!      ENDIF
+!      IF(MTOPP.LT.7.0.OR.(MTOPP.LT.0.1.AND.SPN.LT.300))THEN  
+!        VOL(2)=SV616
+!        IF(SCRBLOGL.EQ.32)THEN
+!          VOL(2)=SV632
+!        ENDIF
+!        IF(MTOPP.GT.4.0) VOL(7)=CV4-CV6
+!        VOL(10)=XINT6
+!      ELSEIF(MTOPP.LE.9.0.OR.(MTOPP.LT.0.1.AND.SPN.GE.300))THEN
+!        VOL(2)=SV816
+!        IF(MTOPP.GT.4.0) VOL(7)=CV4-CV8
+!        VOL(10)=XINT8
+!      ENDIF  
       RETURN
       END SUBROUTINE GET_MERCH_VOL
       

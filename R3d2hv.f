@@ -140,11 +140,11 @@ C==
         ELSE
           ENTIRE = 0.237204154 + 0.00221122919 * D2H
           UM6 =.0185465259+(0.000788175798*((6.0**3 *HTTOT)/DBHOB**1.0))
-     &      + (.00505513624*DBH**2)
+     &      + (.00505513624*DBHOB**2)
           GCUFT6=ENTIRE-UM6
           IF(GCUFT6.LT.0) GCUFT6 = 0
           UM4 =.0185465259+(0.000788175798*((4.0**3 *HTTOT)/DBHOB**1.0))
-     &      + (.00505513624*DBH**2)
+     &      + (.00505513624*DBHOB**2)
           GCUFT4 = ENTIRE - UM4
           TWVOL = UM6 - UM4
           INTBDFT=GCUFT6*(7.10051404-(7.97921881*DBHOB**(-1))
@@ -210,7 +210,7 @@ C-------------- LINCOLN,COCONINO,TONTO
          SCBDFT = INTBDFT*(1.0-(1.888144*DBHOB**(-1))-(8.851449*
      >              DBHOB**(-2)))
 
-         UM4 = -0.182700+(0.001248*((4.0**3 *HTTOT)/DBHOB**1.5)) +
+         UM4 = -0.182700+(0.001248*((4.0**3 *HTTOT)/DBHOB**1.0)) +
      >              (.006245*DBHOB**2)
          GCUFT4 = ENTIRE - UM4
          TWVOL = UM6 - UM4
@@ -372,6 +372,7 @@ C--Woodland Volume Equations for Arizona Fort Apache and San Carlos Indian Reser
              ELSE
                TCVOL = 5.961+2.1608*D2HA-20.112/D2HA
              ENDIF
+             GCUFT4 = TCVOL
            ELSE
 C--INT-391, Chojnacky, 1988
 C--Juniper, Pinyon, Oak and Mesquite Volume Equations for Arizona

@@ -398,7 +398,7 @@ C----------
       ID = DBHOB - 0.5
 
       IF(ID.GT.100) ID = 100
-
+      IF(TOPD.LT.1.0) TOPD = 6.0   !ADDED TO AVOID ITD = 0
       ITD = TOPD - 0.5
       IF(ITD.GT.100) ITD = 100
 

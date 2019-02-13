@@ -163,7 +163,7 @@ C*********************
         if(FCLASS.eq.0) then
              ERRFLAG = 2
         else
-          call R12VOL(VOLEQ,MTOPP,HT1PRD,DBHOB,VOL,NOLOGP,
+          call R12VOL(VOLEQ,MTOPP,HT1PRD,DBHOB,HTTOT,VOL,NOLOGP,
      *                NOLOGS,FCLASS,CUTFLG,BFPFLG,CUPFLG,ERRFLAG)
           TLOGS = ANINT(NOLOGP + NOLOGS)
         endif

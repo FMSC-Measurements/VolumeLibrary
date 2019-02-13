@@ -209,7 +209,13 @@ C    R9 uses inside bark coef, R8 using outside bark coef
 
 C-----Get total volume to the tip
       if(cutFlg.eq.1) then
-        call r9cuft(cfVol,COEFFS,STUMP, COEFFS%TOTHT, errFlg)
+        IF(VOLEQ(1:1).EQ.'8'.AND.
+     &    (VOLEQ(7:7).EQ.'O'.OR.VOLEQ(7:7).EQ.'0'))THEN
+!        R8 OUTSIDE BARK VOLUME (EQ 8*1CLKO***)
+          CALL r9cuft(cfVol,COEFFSO,STUMP, COEFFS%TOTHT, errFlg)
+        ELSE
+          call r9cuft(cfVol,COEFFS,STUMP, COEFFS%TOTHT, errFlg)
+        ENDIF
         if(errFlg.ne.0) return
         if(short) cfVol=cfVol*shrtHt/17.3
         vol(1)=cfVol
@@ -249,7 +255,13 @@ C-----Get height to pulpwood top
         ht2prd = plpHt
 C-----Get total merchantable product volumes
         if(plpHt-stump.ge.minLen) then
-          call r9cuft(cfVol,COEFFS,STUMP,PLPHT,errFlg)
+          IF(VOLEQ(1:1).EQ.'8'.AND.
+     &      (VOLEQ(7:7).EQ.'O'.OR.VOLEQ(7:7).EQ.'0'))THEN
+!        R8 OUTSIDE BARK VOLUME (EQ 8*1CLKO***)
+            CALL r9cuft(cfVol,COEFFSO,STUMP,PLPHT,errFlg)
+          ELSE
+            call r9cuft(cfVol,COEFFS,STUMP,PLPHT,errFlg)
+          ENDIF
           if(errFlg.ne.0) return
           if(short) cfVol=cfVol*shrtHt/17.3
           tcfVol=cfVol
@@ -274,7 +286,7 @@ c       volume for FVS if only total height is provided. 11/15/2011 (yw)
             sawHt=ht1Prd
           else
             IF(VOLEQ(1:1).EQ.'9')THEN
-            call r9ht(sawHt,COEFFS, sawDib,errFlg)
+              call r9ht(sawHt,COEFFS, sawDib,errFlg)
             ELSE
             !R8 uses outside bark to calc HT
               call r9ht(sawHt,COEFFSO, sawDib,errFlg)
@@ -286,7 +298,7 @@ c       volume for FVS if only total height is provided. 11/15/2011 (yw)
           elseif(ht1prd.le.0.01) then
 c         Saw height calc is requested by having 1 < ht1prd < 4.5'
             IF(VOLEQ(1:1).EQ.'9')THEN
-            call r9ht(sawHt,COEFFS, sawDib,errFlg)
+              call r9ht(sawHt,COEFFS, sawDib,errFlg)
             ELSE
               call r9ht(sawHt,COEFFSO, sawDib,errFlg)
             ENDIF
@@ -300,7 +312,13 @@ c         Saw height calc is requested by having 1 < ht1prd < 4.5'
          
 C-----Get sawtimber cubic volumes
         if(cupFlg.eq.1 .or. spFlg.eq.1) then
-          call r9cuft(cfVol,COEFFS,STUMP,SAWHT,errFlg)
+          IF(VOLEQ(1:1).EQ.'8'.AND.
+     &      (VOLEQ(7:7).EQ.'O'.OR.VOLEQ(7:7).EQ.'0'))THEN
+!        R8 OUTSIDE BARK VOLUME (EQ 8*1CLKO***)
+            CALL r9cuft(cfVol,COEFFSO,STUMP,SAWHT,errFlg)
+          ELSE
+            call r9cuft(cfVol,COEFFS,STUMP,SAWHT,errFlg)
+          ENDIF
           if(errFlg.ne.0) return
           if(short) cfVol=cfVol*shrtHt/17.3
           if(cupFlg.eq.1) vol(4)=cfVol

@@ -72,7 +72,9 @@ C NOR-6
          
 C Equations for Subdivision 2 and Unit 4 (NOR-5)
           IF(CUPFLG .EQ. 1 .AND. DBHOB .GT. 4.0)THEN
-             VOL(4) = -2.0555+(0.2982*DBHOB)+(0.00181*D2H)
+C             VOL(4) = -2.0555+(0.2982*DBHOB)+(0.00181*D2H)
+C THE ABOVE FORMULA IS FROM NOR-6. I CHANGED TO THE ONE FROM NOR-5 (YW 2018/11/07)
+            VOL(4) = -.69934+.0021294646*D2H
           ENDIF
 
 	    IF(BFPFLG.EQ. 1 .AND. DBHOB .GT. 6.0)THEN

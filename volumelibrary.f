@@ -86,7 +86,43 @@ c      ENDIF
  4000 RETURN
       
       END SUBROUTINE VOLUMELIBRARY
-C ---------------------------------------------------------------------      
+C ---------------------------------------------------------------------
+      SUBROUTINE FIAVOL(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
+     & FIAVTYPE,FIAEQVOL,BFMIND)
+! Expose subroutine VOLUMELIBRARY to users of this DLL
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::FIAVOL
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: FIAVOL
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'FIAVOL'::FIAVOL
+      CHARACTER*(*) VOLEQ,FIAVTYPE,GEOSUB
+      REAL DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,MTOPS,VOL(15),BFMIND,STUMP
+      REAL DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,FIAEQVOL
+      INTEGER BA,SI,ERRFLG,SPN
+      CALL FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
+     & FIAVTYPE,FIAEQVOL,BFMIND)
+      RETURN
+      END
+C ---------------------------------------------------------------------
+      SUBROUTINE FIAVOLTYPE(VOLEQ, MTOPP, VOLTYPE, ERRFLAG)
+! Expose subroutine VOLUMELIBRARY to users of this DLL
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::FIAVOLTYPE
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: FIAVOLTYPE
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'FIAVOLTYPE'::FIAVOLTYPE
+      CHARACTER*(*)   VOLEQ,VOLTYPE
+      CHARACTER*10 GEOSUB,NVELEQ
+      REAL            MTOPP    
+      INTEGER ERRFLAG, SPN
+      SPN = 0
+      GEOSUB = '0'
+      NVELEQ = "          "
+      IF(MTOPP.EQ.0.0) MTOPP = 4.0
+      IF(MTOPP.GT.20.0) MTOPP = 99.0
+      CALL FIAEQ2NVELEQ(VOLEQ,SPN,GEOSUB,MTOPP,NVELEQ,VOLTYPE,
+     & ERRFLAG)  
+      RETURN
+      END   
+C ---------------------------------------------------------------------   
       SUBROUTINE VOLLIBVB8(EQNUM, REGN,DBHOB, HTTOT, TOPD,
      +  TOTCU, MERCHCU, BDFT, XINT)
 !... 03-23-2015     This function is make the DLL be called from VB.NET
@@ -293,6 +329,123 @@ C 2017/02/08
       VOLEQI = VOLEQ // char(0)
       RETURN
       END SUBROUTINE EZVOLLIB   
+C ************************************************************************
+      subroutine fiavoltype_r(FIAVOLEQ,FIAVOLTYPE,ERRFLAG)
+C This subroutine is for R user to get voltype for a FIA voleq      !
+C YW 12/03/2018
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::fiavoltype_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'fiavoltype_r_'::fiavoltype_r
+      IMPLICIT NONE
+      CHARACTER*10 FIAVOLEQ, FIAVOLTYPE, GEOSUB, NVELEQ
+      INTEGER ERRFLAG,SPN
+      CHARACTER*2 EQTYPE
+      REAL MTOPP
+      SPN = 0
+      GEOSUB = '0'
+      NVELEQ = "          "
+      MTOPP = 99.0
+      EQTYPE = FIAVOLEQ(1:2)
+      IF(EQTYPE.EQ.'CU'.OR.EQTYPE.EQ.'BD'.OR.
+     &  EQTYPE.EQ.'cu'.OR.EQTYPE.EQ.'bd')THEN
+        CALL FIAEQ2NVELEQ(FIAVOLEQ,SPN,GEOSUB,MTOPP,NVELEQ,FIAVOLTYPE,
+     &   ERRFLAG)  
+      ELSE
+        ERRFLAG = 1
+        FIAVOLTYPE = " "
+      ENDIF
+      RETURN
+      end subroutine fiavoltype_r
+C ************************************************************************
+      subroutine fiavol_r(VOLEQ,SPN,DBHOB_d,HTTOT_d,MTOPP_d,VOLTYPE,
+     & FIAVOL_d,ERRFLAG)
+C This subroutine is for R user to calc FIA vol using FIA voleq or
+C NVEL voleq. When using NVEL voleq, VOLTYPE is required !
+C YW 12/03/2018
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::fiavol_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'fiavol_r_'::fiavol_r
+      IMPLICIT NONE
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,MTOPP_d,FIAVOL_d
+      CHARACTER*10 VOLEQ,VOLTYPE,GEOSUB,VOLEQ2
+      INTEGER ERRFLAG
+      REAL DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,MTOPS,VOL(15),BFMIND,STUMP
+      REAL DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,FIAEQVOL
+      INTEGER BA,SI,SPN
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      MTOPP = REAL(MTOPP_d)
+      GEOSUB = "0"
+      VOLTYPE = "          "
+      VOL = 0.0
+      FIAEQVOL = 0.0
+      HT1PRD = 0.0
+      HT2PRD = 0.0
+      MTOPS = 0.0
+      BFMIND = 0.0
+      STUMP = 1.0
+      DRCOB = 0.0
+      UPSHT1 = 0.0
+      UPSD1 = 0.0
+      UPSHT2 = 0.0
+      UPSD2 = 0.0
+      BA = 85
+      SI = 65
+      VOLEQ2 = VOLEQ
+      CALL FIA_VOLINIT(VOLEQ2,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLAG,
+     & VOLTYPE,FIAEQVOL,BFMIND)
+      DBHOB_d = DBLE(DBHOB)
+      HTTOT_d = DBLE(HTTOT)
+      MTOPP_d = DBLE(MTOPP)
+      FIAVOL_d = DBLE(FIAEQVOL)
+      RETURN
+      end subroutine fiavol_r
+C ************************************************************************
+      subroutine advfiavol_r(VOLEQ,SPN,DBHOB_d,HTTOT_d,HT1PRD_d,
+     & HT2PRD_d,MTOPP_d,UPSTEMHT_d,UPSTEMDIA_d,BROKENHT_d,
+     & CENTROIDHT_d,CENTROIDHTDIA_d,STANDBA,SI,GEOSUB,VOLTYPE,
+     & FIAVOL_d,ERRFLAG)
+C This subroutine is for R user to calc FIA vol using FIA voleq or
+C NVEL voleq. When using NVEL voleq, VOLTYPE is required !
+C This is the advanced version and has more input variables.
+C YW 12/03/2018
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::advfiavol_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'advfiavol_r_'::advfiavol_r
+      IMPLICIT NONE
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,HT1PRD_d,HT2PRD_d,MTOPP_d
+      DOUBLE PRECISION UPSTEMHT_d,UPSTEMDIA_d,BROKENHT_d,FIAVOL_d
+      DOUBLE PRECISION CENTROIDHT_d,CENTROIDHTDIA_d
+      CHARACTER*10 VOLEQ,VOLTYPE,GEOSUB,VOLEQ2
+      INTEGER SPN,ERRFLAG,STANDBA,SI,BA
+      REAL DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,MTOPS,VOL(15),STUMP
+      REAL DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,FIAVOL,BFMIND
+      VOL = 0.0
+      FIAVOL = 0.0
+      ERRFLAG = 0
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      HT1PRD = REAL(HT1PRD_d)
+      HT2PRD = REAL(HT2PRD_d)
+      MTOPP = REAL(MTOPP_d)
+      UPSHT1 = REAL(UPSTEMHT_d)
+      UPSD1 = REAL(UPSTEMDIA_d)
+      IF(CENTROIDHT_d.GT.0.0.AND.CENTROIDHTDIA_d.GT.0.0)THEN
+        UPSHT2 = REAL(CENTROIDHT_d)
+        UPSD2 = REAL(CENTROIDHTDIA_d)
+      ELSEIF(BROKENHT_d.GT.0.0)THEN
+        UPSHT2 = REAL(BROKENHT_d)
+        UPSD2 = 0.0
+      ELSE
+        UPSHT2 = 0.0
+        UPSD2 = 0.0
+      ENDIF
+      BA = STANDBA
+      VOLEQ2 = VOLEQ
+      CALL FIA_VOLINIT(VOLEQ2,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLAG,
+     & VOLTYPE,FIAVOL,BFMIND)
+      FIAVOL_d = DBLE(FIAVOL)
+      RETURN
+      end subroutine advfiavol_r
 C *******************************************************************************
       subroutine vollib_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,HTTOT_d,
      + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,

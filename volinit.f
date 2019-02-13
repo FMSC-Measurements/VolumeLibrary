@@ -26,13 +26,14 @@ C     YW 04/19/2016 Added input variable DIST.
 C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
 !REV  Added manual debugging for use with pro vollib09 calls and
 !REV  code to check for forest = null which caused blm problems
-C     YW 04/13/2017 changed stump DIN calc using CALCDIA for profile model and stump volume as cylinder of stump DIB and stump height.
+C     YW 04/13/2017 changed stump DIB calc using CALCDIA for profile model and stump volume as cylinder of stump DIB and stump height.
 C                   also changed stem tip volume calc using DIB from last log and Samlian method with tip length
+C 2018/11/07 YW ADDED HTTOT TO R12VOL FOR TOTAL CUBIC VOLUME
 !**********************************************************************
-      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*1  HTTYPE,LIVE,CTYPE,VOLEQREGN
       CHARACTER*2  FORST,PROD
       character*4  CONSPEC
-      CHARACTER*10 VOLEQ
+      CHARACTER*10 VOLEQ,FIAVTYPE,GEOSUB,NVELEQ
       CHARACTER*3  MDL,SPECIES
       CHARACTER*2  DIST,VAR
    
@@ -65,11 +66,11 @@ C                   also changed stem tip volume calc using DIB from last log an
 C  variables for stump dia and vol
       INTEGER SPN
       REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
-      REAL DIB,DOB,HTUP,MHT  
+      REAL DIB,DOB,HTUP,MHT,FIAVOL,BFMIND
       
 c  test biomass calc variable
       REAL WF(3), BMS(8)
-      INTEGER SPCD, FOREST   
+      INTEGER SPCD, FOREST 
  !********************************************************************
 
 !=====================================================================
@@ -140,8 +141,53 @@ c  test biomass calc variable
         ERRFLAG = 3
         GOTO 4000
       ENDIF
+!Check for FIA volume equation (2018/10/02)
+! P = PACIFIC COAST REGION
+! R = ROCKY MOUNTAIN REGION
+! N = NORTHERN REGION
+! S = SOUTHERN REGION
+      IF(VOLEQ(1:2).EQ.'cu') VOLEQ(1:2)='CU'
+      IF(VOLEQ(1:2).EQ.'bd') VOLEQ(1:2)='BD'
+      IF(VOLEQ(1:2).EQ.'CU'.OR.VOLEQ(1:2).EQ.'BD') THEN
+        IF(CONSPEC(1:1).GE.'0'.AND.CONSPEC(1:1).LE.'9')THEN
+          IF(CONSPEC(4:4).GE.'0'.AND.CONSPEC(4:4).LE.'9')THEN
+           READ(CONSPEC(1:4),'(I4)')SPN
+          ELSEIF(CONSPEC(3:3).GE.'0'.AND.CONSPEC(3:3).LE.'9')THEN
+           READ(CONSPEC(1:3),'(I3)')SPN
+          ELSEIF(CONSPEC(2:2).GE.'0'.AND.CONSPEC(2:2).LE.'9')THEN
+           READ(CONSPEC(1:2),'(I2)')SPN
+          ELSE
+           READ(CONSPEC(1:1),'(I1)')SPN
+          ENDIF
+        ELSE
+          SPN = 0
+        ENDIF
+        CALL FIAEQ2NVELEQ(VOLEQ,SPN,GEOSUB,MTOPP,NVELEQ,FIAVTYPE,
+     & ERRFLAG)
+        IF(ERRFLAG.GT.0) RETURN
+        VOLEQ = NVELEQ
+      ELSE
+        SPN = 0
+      ENDIF
+      VOLEQREGN = VOLEQ(1:1)
+      IF(STUMP.EQ.0.0) STUMP = 1.0
+      IF(MTOPP.EQ.0.0) MTOPP = 6.0
+      IF(VOLEQREGN.EQ.'P'.OR.VOLEQREGN.EQ.'R'.OR.
+     &   VOLEQREGN.EQ.'N'.OR.VOLEQREGN.EQ.'S') THEN
+        GEOSUB = '0'
+        FIAVOL = 0.0
+        VOL = 0.0
+        IF(SI.EQ.0) SI = 65
+        IF(BA.EQ.0) BA = 80
+        BFMIND = 9.0
+        CALL FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     &  STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLAG,
+     &  FIAVTYPE,FIAVOL,BFMIND)
+        RETURN
+      ENDIF     
 !-----Set the default DIST to 01---------------------      
-      IF(IDIST.NE.IDIST) IDIST = 1
+!      IF(IDIST.NE.IDIST) IDIST = 1
+      IF(IDIST.EQ.0) IDIST = 1
       WRITE (DIST, '(I2)') IDIST
       IF(DIST(1:1) .LT. '0') DIST(1:1) = '0'
 !-----End for DIST (04/19/2016)
@@ -357,7 +403,7 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
         if(FCLASS.eq.0) then
            ERRFLAG = 2
         else
-          call R12VOL(VOLEQ,MTOPP,HT1PRD,DBHOB,VOL,NOLOGP,
+          call R12VOL(VOLEQ,MTOPP,HT1PRD,DBHOB,HTTOT,VOL,NOLOGP,
      &                NOLOGS,FCLASS,CUTFLG,BFPFLG,CUPFLG,errflag)
           TLOGS = ANINT(NOLOGP + NOLOGS)
         endif
@@ -444,7 +490,7 @@ c        UPSD2 = MTOPS
       IF(DIB.GT.0.0) VOL(14)=0.005454154*DIB**2*STUMP
       ENDIF  !end stump vol calc
 C  If stump DIB is not calculated, use the following to calculate stump VOL         
-      IF(VOL(14).LT.0.01)THEN
+      IF(VOL(14).LE.0.0)THEN
         SPECIES = VOLEQ(8:10)
         READ(SPECIES,'(i3)') SPEC
         HTUP = STUMP

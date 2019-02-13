@@ -233,3 +233,54 @@ C     Set the default value for other variable
       CONTINUE
       RETURN
       end subroutine calcdib_r         
+C *******************************************************************************
+      subroutine calcdob_r(VOLEQ,REGN,FORST,DBHOB_d,HTTOT_d,
+     + HTUP_d,DOB_d, ERRFLAG)
+C This subroutine is for R user to calculate DIB at given height      !
+C YW 11/29/2018
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::calcdob_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'calcdob_r_'::calcdob_r
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,DOB_d,HTUP_d
+      CHARACTER*2  FORST 
+      CHARACTER*10 VOLEQ
+      INTEGER      REGN,ERRFLAG 
+      
+!   Tree variables
+      REAL 		HTTOT,HTUP,DIB,DOB 
+      REAL 		DBHOB,DRCOB,DBTBH,BTR,STUMP  
+      INTEGER   FCLASS 
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+      
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      HTUP = REAL(HTUP_d)
+C     Set the default value for other variable
+      UPSHT1 = 0.0
+      UPSD1 = 0.0
+      STUMP = 0.0
+      DBTBH = 0.0
+      BTR = 0.0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      DRCOB=0.0
+      FCLASS = 0
+
+      CALL CALCDIA2(REGN,FORST,VOLEQ,STUMP,DBHOB,
+     &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
+     &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)
+           
+      DOB_d = DBLE(DOB)      
+
+      CONTINUE
+      RETURN
+      end subroutine calcdob_r         

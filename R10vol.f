@@ -70,6 +70,8 @@ C--      USE D SQUARED H EQUATIONS FOR SMALL TREES
             IF (VOL(1) .LT. 0.0) THEN
                VOL(1) = 0.0
             ENDIF
+C           THE VOL(1) IS CVTS. SET A VERY SMALL NUMBER FOR STUMP, SO THERE WILL BE NO STUMP VOL CALC
+            VOL(14) = 0.0001               
             GO TO 1000
          ENDIF
       ENDIF
