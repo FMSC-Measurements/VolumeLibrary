@@ -179,7 +179,7 @@ C-- BEHRE'S HYPERBOLA PORTION TO Calculate DIB ************************
      &        //'   SMALLH  LN  DIBCOR  TOP  PROFILE  B0     B1   B2'
      &        //'   B3'
 300           FORMAT (A)
-  		        WRITE  (LUDBG, 320)A, B, C, H, HTTOT, SMALLH, LN, DIBCOR
+  		       WRITE  (LUDBG, 320)A, B, C, H, HTTOT, SMALLH, LN, DIBCOR
      &        ,TOP, PROFILE, BLMTHT(1,PROFILE), BLMTHT(2,PROFILE),
      &        BLMTHT(3,PROFILE), BLMTHT(4,PROFILE)
 320           FORMAT(5F6.1, 3X, 5F6.1, 2X,4F6.3)

@@ -35,6 +35,10 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
 ! 20180913 Modify FCLASS for use with single/multi-stem as: =1 single, =0 multistems in the consistent way for R2 and R3.
 !          Also added Hahn (NC-250) equations (R9) to the library
 ! 20181210 Added FIA volume equations to the library
+C 20190426 Changed volinit.f to set the default stump and MTOPP for FIA equation only
+C          Added equation for BIA I16BEHW000 (Behr), I00DVEW000 (Johnson formclass) and C00DVEE***.
+C          Added Equation for FVS A02DVEW094 (Malone et al 2013) for statewide white spruce
+C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 300HAB1122
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -64,7 +68,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20181210
+      VERSION = 20190426
       RETURN
       END SUBROUTINE VERNUM
       
@@ -97,7 +101,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20181210
+      VERSION = 20190426
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -120,7 +124,7 @@ c 20180312 Modified r8prep and r9clark for R8 upsHt1
 
 !---------------------------------------------------------------------
      
-      VERSION = 20181210
+      VERSION = 20190426
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -136,6 +140,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20181210
+      version = 20190426
       return
       end subroutine vernum_r

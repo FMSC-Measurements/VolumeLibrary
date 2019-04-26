@@ -1871,7 +1871,8 @@ namespace volCStest
             */
             string[] R3VolEq = {"300FW2W122","300FW3W122","300DVEW060","300DVEW093","300DVEW106",
                                 "300DVEW113","300DVEW122","300DVEW310","300DVEW314","300DVEW746",
-                                "300DVEW800","300DVEW999","301DVEW015","302DVEW015","301DVEW202","302DVEW202"};
+                                "300DVEW800","300DVEW999","301DVEW015","302DVEW015","301DVEW202",
+                                "302DVEW202","301HAB0122","302HAB0122","300HAB1122"};
             /*
             string[] R4VolEq = {"I15FW2W017","I15FW2W093","I15FW2W122","I15FW2W202","407FW2W093",
                                 "400MATW015","400MATW019","400MATW020","400MATW073","400MATW081",
@@ -1973,8 +1974,8 @@ namespace volCStest
                                 "B00BEHW122","B00BEHW231","B00BEHW260","B00BEHW263","B00BEHW312",
                                 "B00BEHW351","B00BEHW361","B00BEHW431","B00BEHW542","B00BEHW631",
                                 "B00BEHW747","B00BEHW800","B00BEHW998","B01BEHW202","B02BEHW202",
-                                "B03BEHW202","601DVEW205","601DVEW263","601DVEW015","602DVEW204",
-                                "602DVEW015","602DVEW108","600DVEW122","616TRFW019","616TRFW073",
+                                "B03BEHW202","I16BEHW000","601DVEW205","601DVEW263","601DVEW015","602DVEW204",
+                                "602DVEW015","602DVEW108","600DVEW122","I00DVEW000","616TRFW019","616TRFW073",
                                 "616TRFW094","616TRFW098","616TRFW108","616TRFW122","616TRFW202",
                                 "616TRFW242","616TRFW263","616TRFW264","616TRFW351","616TRFW746",
                                 "616TRFW747","616TRFW998","632TRFW011","632TRFW073","632TRFW098",
@@ -2002,6 +2003,10 @@ namespace volCStest
                             400,407,531,540,541,543,621,740,741,742,
                             743,746,752,760,762,800,802,806,809,823,
                             833,837,950,951,970,972,998};
+            int[] C00VolSp = {12,71,94,95,97,105,125,129,
+                            241,261,315,316,317,318,330,
+                            371,375,379,531,541,543,742,
+                            743,746,762,833,951,990,999};
             int[] R8C1Sp = { 100, 107, 111, 121, 128, 131, 221, 222, 300, 316, 500, 611, 621, 653, 694, 800, 802, 827, 831 };
             int[] R8C2Sp = { 100, 110, 121, 131, 132, 300, 316, 400, 500, 611, 621, 731, 800, 802, 806, 812, 827, 832, 837, 970 };
             int[] R8C3Sp = { 100, 110, 126, 129, 132, 261, 300, 316, 330, 370, 400, 500, 531, 541, 621, 693, 800, 802, 806, 812, 832, 833, 837, 901, 950 };
@@ -2146,11 +2151,19 @@ namespace volCStest
             }
             else if (regn == 9)
             {
+                List<string> list = new List<string>();
                 for (int i = 0; i < R9VolSp.Length; i++)
                 {
-                    volEqAryTmp[i] = "900CLKE" + R9VolSp[i].ToString().PadLeft(3, '0');
+                    //volEqAryTmp[i] = "900CLKE" + R9VolSp[i].ToString().PadLeft(3, '0');
+                    list.Add("900CLKE" + R9VolSp[i].ToString().PadLeft(3, '0'));
                 }
-                volEqAry = volEqAryTmp;
+                //adding Honer equations
+                for (int j = 0; j < C00VolSp.Length; j++)
+                {
+                    list.Add("C00DVEE" + C00VolSp[j].ToString().PadLeft(3, '0'));
+                }
+                //volEqAry = volEqAryTmp;
+                volEqAry = list.ToArray();
             }
             else if (regn == 10) volEqAry = R10VolEq;
 

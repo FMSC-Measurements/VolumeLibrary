@@ -51,6 +51,8 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<Filter Name="Header Files" Filter="fi;fd"/>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<File RelativePath="..\bia_behres.f"/>
+		<File RelativePath="..\bia_johnson.f"/>
 		<File RelativePath="..\BIOMASSFORMULA.F"/>
 		<File RelativePath="..\Blmtap.f"/>
 		<File RelativePath="..\blmvol.f"/>
@@ -98,6 +100,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\fwinit.f"/>
 		<File RelativePath="..\getvoleq.f"/>
 		<File RelativePath="..\grossvol.f"/>
+		<File RelativePath="..\honer.f"/>
 		<File RelativePath="..\ht2topd.f"/>
 		<File RelativePath="..\Intl78.f"/>
 		<File RelativePath="..\JENKINS.F"/>
@@ -189,6 +192,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\volinput_mod.f"/>
 		<File RelativePath="..\vollib09.f"/>
 		<File RelativePath="..\vollibcs.f"/>
+		<File RelativePath="..\vollibfia.f"/>
 		<File RelativePath="..\volumelib.f"/>
 		<File RelativePath="..\volumelibrary.f"/></Filter>
 		<File RelativePath="..\BEQINFO.INC"/>

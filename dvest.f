@@ -2,6 +2,7 @@
 C 01/18/2013 Added calculation for cordwood VOL(6) for region 1,2,4,5,10
 C 2018/08/01 YW Added call to HAHN_NC250 for Region 9
 ! 2018/09/05 ADDED PROD AND MTOPP TO CALL R2OLDV
+C 2019/04/04 YW added call to Canadian Honer equation for BIA
 C     SUBROUTINE FINDS VOLUMES USING DIRECT VOLUME ESTIMATORS
       SUBROUTINE DVEST(VOLEQ,DBHOB,DRC,HTTOT,MTOPP,FCLASS,HTLOG,HT1PRD,
      >           HT2PRD,FORST,BTR,VOL,CUTFLG,BFPFLG,CUPFLG,CDPFLG,
@@ -64,7 +65,7 @@ c          byrne
 C*****************************
 C      REGION 2 D2H ROUTINES *
 C*****************************
-        CALL R2OLDV(VOLEQ,HTTOT,DBHOB,DRC,FCLASS,VOL,ERRFLAG,PROD,MTOPP)
+       CALL R2OLDV(VOLEQ,HTTOT,DBHOB,DRC,FCLASS,VOL,ERRFLAG,PROD,MTOPP)
         VOL(6)=(VOL(4)+VOL(7))/90 
       ELSEIF(VOLEQ(1:1).EQ.'3') THEN
 C*****************************
@@ -73,12 +74,12 @@ C*****************************
 C--------- SAWTIMBER TREES
         IF (PROD.EQ.'01') THEN
            UNIT = 1
-           CALL R3D2HV (VOLEQ,UNIT,HTTOT,HT1PRD,DBHOB,DRC,FCLASS,HTTFLL,
+          CALL R3D2HV (VOLEQ,UNIT,HTTOT,HT1PRD,DBHOB,DRC,FCLASS,HTTFLL,
      >                  VOL,ERRFLAG)  
 C-------------- PULPWOOD TREES
         ELSE
            UNIT = 3
-           CALL R3D2HV (VOLEQ,UNIT,HTTOT,HT1PRD,DBHOB,DRC,FCLASS,HTTFLL,
+           CALL R3D2HV(VOLEQ,UNIT,HTTOT,HT1PRD,DBHOB,DRC,FCLASS,HTTFLL,
      >                  VOL,ERRFLAG)
         ENDIF
       ELSEIF(VOLEQ(1:1).EQ.'4') THEN
@@ -91,7 +92,7 @@ C*****************************
 C*****************************
 C      REGION 5 D2H ROUTINES * 
 C*****************************
-         CALL R5HARV (VOLEQ,DBHOB,HTTOT,MTOPP,VOL,BFPFLG,CUPFLG,ERRFLAG)
+         CALL R5HARV(VOLEQ,DBHOB,HTTOT,MTOPP,VOL,BFPFLG,CUPFLG,ERRFLAG)
          VOL(6)=VOL(4)/90 
       ELSEIF(VOLEQ(1:1).EQ.'9') THEN
         IF(VOLEQ(2:3).EQ.'25')THEN
@@ -110,7 +111,7 @@ C      REGION 10 D2H ROUTINES *
 C*****************************
 
           CALL R10D2H(VOLEQ,DBHOB,HTTOT,VOL,CUTFLG,CUPFLG,BFPFLG,
-     >                                                         ERRFLAG)
+     >         MTOPP,ERRFLAG)
          VOL(6)=VOL(4)/90
       ELSEIF(VOLEQ(1:1).EQ.'M' .or. voleq(1:1).eq.'m') THEN
 C******************************
@@ -126,6 +127,12 @@ C******************************
           ERRFLAG = 7
         ENDIF
       
+      ELSEIF(VOLEQ(1:1).EQ.'C' .or. voleq(1:1).eq.'c') THEN
+C******************************
+C      Canadian Honor Equation used by BIA in eastern region* 
+C******************************
+        CALL Voleq_Honer(VOLEQ,DBHOB,HTTOT,MTOPP,MTOPS,
+     & VOL,ERRFLAG)
       ENDIF
       
 C     ROUND ALL VOLUMES 10TH CUBIC AND CORD, NEAREST BDFT

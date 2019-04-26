@@ -43,6 +43,7 @@ c YW 12/20/2017 NCrookston modified R9HT on Sept 2017 to deal with degenerate
 c               math when trying to exponentiate negative numbers with real-valued powers.
 c YW 01/25/2018 Removed the broken top calculation, which cause problem for CP.
 c YW 07/13/2018 Modified R9cor to remove the adjustment factor for yellow-poplar (621).
+C YW 02/14/2019 Check height greater than merchL (it was checking minLen before) for volume calculation
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -250,7 +251,8 @@ C-----Get height to pulpwood top
           if(errFlg.ne.0) return
         endif
         if(topDib.le.plpDib .and. topHt.lt.plpHt) plpHt=topHt
-        if(plpHt.lt.minLen+stump) plpHt=0.0
+C       check height greater than merchL (20190214)        
+        if(plpHt.lt.merchL+stump+trim) plpHt=0.0
         !reassign plpht to ht2prd 
         ht2prd = plpHt
 C-----Get total merchantable product volumes
@@ -306,7 +308,8 @@ c         Saw height calc is requested by having 1 < ht1prd < 4.5'
         endif
         if(errFlg.ne.0) return
         if(topDib.le.sawDib .and. topHt.lt.sawHt) sawHt=topHt
-        if(sawHt.lt.minLen+trim+stump) sawHt=0.0
+C       check height greater than merchL (20190214)      
+        if(sawHt.lt.merchL+trim+stump) sawHt=0.0
 				!reassign sawHT to ht1prd 
          ht1prd = sawHT
          

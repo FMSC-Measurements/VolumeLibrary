@@ -1,6 +1,6 @@
 !== last modified  2-21-2012
       SUBROUTINE r10d2h(VOLEQ,DBHOB,HTTOT,VOL,CUTFLG,CUPFLG,BFPFLG,
-     >                                                          ERRFLAG)
+     >           MTOPP,ERRFLAG)
 
 C    subroutine implements volume equations developed by Larsen and Winterberger.
 c            PNW-RN-478.
@@ -15,8 +15,9 @@ C
 C    A00DVEW094, A00DVEW375, and A00DVEW747 are from PNW-RN-478 and PNW-RN-495 by Larson et al 1988 and 1990
 C    A01DVEW094, A01DVEW375, and A01DVEW747 are from NOR-5 by Haack 1963 and NOR-6 by Gregory et al 1964
 C    A00DVEW108, A00DVEW310, and A00DVEW351 are from Brackett 1973
+C    2019/04/04 Added A02DVEW094 from Malone et al 2013. The equation is for AK statewide
       CHARACTER*10 VOLEQ
-      REAL DBHOB,HTTOT,VOL(15)
+      REAL DBHOB,HTTOT,VOL(15),MTOPP
       INTEGER CUTFLG,CUPFLG,BFPFLG,ERRFLAG,spn
       CHARACTER*2 EQN
 
@@ -41,6 +42,8 @@ C    A00DVEW108, A00DVEW310, and A00DVEW351 are from Brackett 1973
      +   .or. (voleq(3:3) .eq. 'I') .or. (voleq(3:3) .eq. 'L')
      +   .or. (voleq(3:3) .eq. 'i')) THEN
          EQN = '01'
+      ELSEIF(VOLEQ(2:3).EQ.'02')THEN
+        EQN = '02'
       ELSE
          ERRFLAG = 1
          RETURN
@@ -63,7 +66,7 @@ c  A00DVEW094
 C XINTT from equation 6 (PNW-RN-495)	      
 	      VOL(10) = 0.00078*(D2H**1.26485)
           ENDIF
-        ELSE
+        ELSEIF(EQN.EQ.'01')THEN
 C A01DVEW094        
 C NOR-6
           IF(CUTFLG .EQ. 1)THEN
@@ -72,9 +75,9 @@ C NOR-6
          
 C Equations for Subdivision 2 and Unit 4 (NOR-5)
           IF(CUPFLG .EQ. 1 .AND. DBHOB .GT. 4.0)THEN
-C             VOL(4) = -2.0555+(0.2982*DBHOB)+(0.00181*D2H)
+             VOL(4) = -2.0555+(0.2982*DBHOB)+(0.00181*D2H)
 C THE ABOVE FORMULA IS FROM NOR-6. I CHANGED TO THE ONE FROM NOR-5 (YW 2018/11/07)
-            VOL(4) = -.69934+.0021294646*D2H
+C            VOL(4) = -.69934+.0021294646*D2H
           ENDIF
 
 	    IF(BFPFLG.EQ. 1 .AND. DBHOB .GT. 6.0)THEN
@@ -82,6 +85,18 @@ C THE ABOVE FORMULA IS FROM NOR-6. I CHANGED TO THE ONE FROM NOR-5 (YW 2018/11/0
      +            0.77651*DBHOB**2 - 1.63023*HTTOT
 	      VOL(10) = -67.1116+(0.013663011*D2H) + (3344.33/(DBHOB**2))
           ENDIF
+        ELSEIF(EQN.EQ.'02')THEN
+C Malone 2013 equation for statewide AK white spruce
+          VOL(1) = EXP(-6.1352+1.8517*LOG(DBHOB)+1.069*LOG(HTTOT))  
+C         Merch volume to 2, 4, 6-in top          
+          IF(MTOPP.LT.3.0)THEN
+            VOL(4)=-0.987+0.948*VOL(1)+0.0825*DBHOB+0.0138*HTTOT
+          ELSEIF(MTOPP.LT.5.0)THEN
+            VOL(4)=-1.96+0.941*VOL(1)+0.144*DBHOB+0.0116*HTTOT
+          ELSE
+            VOL(4)=-5.14+0.92*VOL(1)+0.386*DBHOB-0.00095*HTTOT
+          ENDIF
+          IF(VOL(4).GT.VOL(1)) VOL(4) = VOL(1)
         ENDIF  
       ELSEIF(voleq(8:10) .eq. '375' .or.
      +       voleq(8:10) .eq. '746' .or. 

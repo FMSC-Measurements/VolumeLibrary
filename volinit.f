@@ -29,6 +29,8 @@ C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subrouti
 C     YW 04/13/2017 changed stump DIB calc using CALCDIA for profile model and stump volume as cylinder of stump DIB and stump height.
 C                   also changed stem tip volume calc using DIB from last log and Samlian method with tip length
 C 2018/11/07 YW ADDED HTTOT TO R12VOL FOR TOTAL CUBIC VOLUME
+C YW 2019/02/14 Set the default stump and MTOPP for FIA equation only
+C YW 2019/04/04 Added call to BIA behr and johnson equation
 !**********************************************************************
       CHARACTER*1  HTTYPE,LIVE,CTYPE,VOLEQREGN
       CHARACTER*2  FORST,PROD
@@ -170,13 +172,14 @@ c  test biomass calc variable
         SPN = 0
       ENDIF
       VOLEQREGN = VOLEQ(1:1)
-      IF(STUMP.EQ.0.0) STUMP = 1.0
-      IF(MTOPP.EQ.0.0) MTOPP = 6.0
       IF(VOLEQREGN.EQ.'P'.OR.VOLEQREGN.EQ.'R'.OR.
      &   VOLEQREGN.EQ.'N'.OR.VOLEQREGN.EQ.'S') THEN
         GEOSUB = '0'
         FIAVOL = 0.0
         VOL = 0.0
+C       the default for stump and mtopp should be here for FIA equation (20190214)        
+        IF(STUMP.EQ.0.0) STUMP = 1.0
+        IF(MTOPP.EQ.0.0) MTOPP = 6.0
         IF(SI.EQ.0) SI = 65
         IF(BA.EQ.0) BA = 80
         BFMIND = 9.0
@@ -324,6 +327,24 @@ C ADDED ON 07/30/2014 ROUND LOGS BASED ON JEFF PENMAN LOG RULES
      +               VOL,LOGDIA,LOGLEN,LOGVOL,TLOGS,NOLOGP,NOLOGS,
      +               BFPFLG,CUPFLG,errflag)
 
+      ELSEIF(VOLEQ(1:6).EQ.'I16BEH'.OR.VOLEQ(1:6).EQ.'i16beh'
+     +   .OR.VOLEQ(1:6).EQ.'I00DVE'.OR.VOLEQ(1:6).EQ.'i00dve') THEN
+!*************************
+!   BIA behres I16BEHW000 and Johnson I00DVEW000 VOLUME ROUTINES *
+!*************************
+        IF(FCLASS .LE. 0) THEN
+          IF(CTYPE .EQ. 'F') THEN
+          !  GET FORMCLASS
+            CALL GETFCLASS(VOLEQ,FORST,DBHOB,FCLASS)
+          ENDIF
+        ENDIF
+        IF(MDL.EQ.'BEH' .OR. MDL.EQ.'beh')THEN
+          CALL BIA_Behres_Hyperobla(DBHOB,HTTOT,FCLASS,
+     &         MTOPP, VOL)
+        ENDIF
+        IF(MDL.EQ.'DVE' .OR. MDL.EQ.'dve')THEN
+          CALL VolEq_Johnson(DBHOB, HTTOT, FCLASS, VOL)
+        ENDIF
       ELSEIF (VOLEQ(1:1).EQ.'8') THEN
 !********************
 !    REGION 8 MODEL  * 
@@ -442,6 +463,12 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
 !      +                TRIM,DBHOB,HTTOT,
 !     &       CR,VERROR,TERROR,VWARNING,TWARNING,IERROR,VOL(4),VOL(2))
 
+      ELSEIF (MDL.EQ.'HAB' .OR. MDL.EQ.'hab')THEN
+!******************************
+!  HANN and Bare equation for Ponderosa pine young-growth and old-growth
+!  blackjack pine and Yellow pine
+!******************************
+        CALL HANN_PP(VOLEQ,DBHOB,HTTOT,PROD,MTOPP,VOL,ERRFLAG)
       ELSE 
 !        ERROR MESSAGE
          ERRFLAG = 1
