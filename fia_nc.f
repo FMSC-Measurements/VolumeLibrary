@@ -4,9 +4,11 @@
       REAL DBHOB, HTTOT, BMS, DBH
       REAL VOL(15)
       INTEGER SPN, SPLIST(49), DONE, LAST, ERRFLG, STEMS, I
-      REAL BOLE_WD, BOLE_BK
+      REAL BOLE_WD,BOLE_BK,ABV_GRD,ADJ
       REAL BK_RAT(49), C1(49), C2(49), A1(49)
       INTEGER WD_DWT(49),WD_GWT(49), BK_DWT(49), BK_GWT(49)
+      REAL WD_CFWT,BK_CFWT,BOLE,TOP_WDVOL,TOP_WD,TOP_BKVOL,TOP_BK
+      REAL TOP_LIMB,STUMP_WDVOL,STUMP_WD,STUMP_BKVOL,STUMP_BK,STUMP
 
       DATA (SPLIST(I),I=1,49)/
      + 12, 68, 71, 94, 95,103,105,110,122,125, 
@@ -100,8 +102,8 @@ C     First check the species for in the SPLIST1
         BOLE = BOLE_WD + BOLE_BK
 
         TOP_WDVOL = (C1(DONE) + (1.0/DBH**C2(DONE)))*VOL(4)
-        TOP_WD = TOP_WDVOL*WDCFWT
-        TOP_BKVOL = TOPWDVOL*BK_RAT(DONE)
+        TOP_WD = TOP_WDVOL*WD_CFWT
+        TOP_BKVOL = TOP_WDVOL*BK_RAT(DONE)
         TOP_BK = TOP_BKVOL*BK_CFWT
         TOP_LIMB = TOP_WD + TOP_BK
 
@@ -121,7 +123,7 @@ C     First check the species for in the SPLIST1
 
 C       Return the biomass for the BEQ       
 C       Stem and branches wood and bark 
-        IF(COMP.EQ.'AGT')THEN
+        IF(COMP.EQ.'AWB')THEN
           BMS = ABV_GRD
 C       Merch stem total (wood and bark)
         ELSEIF(COMP.EQ.'MST')THEN

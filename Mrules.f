@@ -94,12 +94,15 @@ c        MINBFD = 7.0
         MINLEN = 2.0
         minlent = 2.0
 C Karen requested to change back to 2' for minimum log length (02/13/2015)
-c        IF(PROD.EQ.'01')THEN
-c          MINLEN = 8.0
-c        ELSE
-c          MINLEN = 10.0
-c        ENDIF
-c        minlent = 10.0
+! Karen asked to change min log length for 8 for prod 01 and 10 for prod 02 (2019/07/18)
+        IF(PROD.EQ.'01')THEN
+          MINLEN = 8.0
+          minlent = 8.0
+        ELSE
+          MINLEN = 10.0
+          minlent = 10.0
+        ENDIF
+!        minlent = 10.0
         OPT = 22 
         IF(STUMP.LE.0.0) STUMP = 1.0
         IF(MTOPP .LE. 0.0) MTOPP = 6.0
@@ -110,7 +113,89 @@ C  MIN SAWTIMBER LENGTH
 c min dbh tree for sawtimber
 c        MINBFD = 7.0
         MINBFD = 1.0
-
+! 2019/07/18 Temp change for Karen to run CruiseProcessing with modified rules
+! Proposal 1
+!        IF(PROD.EQ.'01')THEN
+!          MINLEN = 16.0
+!          MTOPP = 8.0
+!          MTOPS = 6.0
+!          OPT = 23
+!          MINBFD = 14.0
+!        ELSEIF(PROD.EQ.'08'.OR.PROD.EQ.'14')THEN
+!          MINLEN = 8.0
+!          MTOPP = 6.0
+!          MTOPS = 4.0
+!          OPT = 23
+!          MINBFD = 8.0
+!        ELSEIF(PROD.EQ.'20')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 2.0
+!          OPT = 23
+!          MINBFD = 5.0
+!        ENDIF  
+! Proposal 3
+!        IF(PROD.EQ.'01')THEN
+!          MINLEN = 8.0
+!          MTOPP = 6.0
+!          MTOPS = 4.0
+!          OPT = 23
+!          MINBFD = 14.0
+!        ELSEIF(PROD.EQ.'08'.OR.PROD.EQ.'14')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 2.0
+!          OPT = 23
+!          MINBFD = 8.0
+!        ELSEIF(PROD.EQ.'20')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 2.0
+!          OPT = 23
+!          MINBFD = 5.0
+!        ENDIF  
+! Proposal 4
+!        IF(PROD.EQ.'01')THEN
+!          MINLEN = 10.0
+!          MTOPP = 6.0
+!          MTOPS = 4.0
+!          OPT = 23
+!          MINBFD = 14.0
+!        ELSEIF(PROD.EQ.'08'.OR.PROD.EQ.'14')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 4.0
+!          OPT = 23
+!          MINBFD = 8.0
+!        ELSEIF(PROD.EQ.'20')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 4.0
+!          OPT = 23
+!          MINBFD = 5.0
+!        ENDIF  
+! Proposal 5
+!        IF(PROD.EQ.'01')THEN
+!          MINLEN = 10.0
+!          MTOPP = 6.0
+!          MTOPS = 4.0
+!          OPT = 22
+!          MINBFD = 14.0
+!        ELSEIF(PROD.EQ.'08'.OR.PROD.EQ.'14')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 4.0
+!          OPT = 22
+!          MINBFD = 8.0
+!        ELSEIF(PROD.EQ.'20')THEN
+!          MINLEN = 10.0
+!          MTOPP = 4.0
+!          MTOPS = 4.0
+!          OPT = 22
+!          MINBFD = 5.0
+!        ENDIF  
+        
+        minlent = MINLEN
       ELSEIF(REGN.EQ.4) THEN
 
          COR='Y'
@@ -195,10 +280,14 @@ c         MINLEN = 8.0
          OPT = 22
          read(volEq(8:10),'(i3)') spp
          IF(MTOPP.LE.0.0)THEN
-           IF(spp.LT.300) THEN
-             MTOPP = 7.0
+           IF(PROD.EQ.'08')THEN
+             MTOPP = 0.1
            ELSE
-             MTOPP = 9.0
+             IF(spp.LT.300) THEN
+               MTOPP = 7.0
+             ELSE
+               MTOPP = 9.0
+             ENDIF
            ENDIF
          ENDIF
          IF(MTOPS.LE.0.0) MTOPS = 4.0

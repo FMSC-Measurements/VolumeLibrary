@@ -1,27 +1,54 @@
-      SUBROUTINE BROWN(BIOEQ, DBHOB, HTTOT, CR, BIOMAS)
+      SUBROUTINE BROWN(BIOEQ, DBHOB, HTTOT, CR, BIOMAS, ERRFLG)
       IMPLICIT NONE
       REAL DBHOB, HTTOT, CR, CFWT(7), BIOMAS
       CHARACTER*12 BIOEQ
-      INTEGER SPEC
+      INTEGER SPEC, ERRFLG,SPLIST(24),LAST,DONE,I
       CHARACTER*3 CMP
-      
+C  YW 2019/05/01 changed the biomass component code to B0Q and BQ1  
+C Valid species code for Brown's fraction biomasss  
+C 011,015,017,019,020,021,022,041,042,073,081,093,098
+C 101,108,116,117,119,121,122,202,242,260,263  
+C List of Brown fraction equations:
+C BRN***FOT00D, BRN***B0Q00D,BRN***BQ100D,BRN***B1300D,BRN***B3P00D,
+C BRN***LCR00D,BRN***DCR00D, 
+      DATA (SPLIST(I), I=1,24)/
+     + 011,015,017,019,020,021,022,041,042,073,081,093,
+     + 098,101,108,116,117,119,121,122,202,242,260,263/
       CMP = BIOEQ(7:9)
       READ (BIOEQ(4:6),'(I3)') SPEC
+C     First check the species for in the SPLIST
+      LAST = 24
+      DONE = 0
+      CALL SEARCH(LAST,SPLIST,SPEC,DONE,ERRFLG)
+      IF(DONE.LE.0)THEN
+        ERRFLG = 15
+        RETURN
+      ENDIF
       CALL BROWNCROWNFRACTION(SPEC, DBHOB, HTTOT,CR, CFWT)
       IF(CMP.EQ.'FOT')THEN
+C     1 - NEEDLES  
         BIOMAS = CFWT(1)
-      ELSEIF(CMP.EQ.'B04')THEN
+      ELSEIF(CMP.EQ.'B0Q'.OR.CMP.EQ.'B04')THEN
+C     2 - 0 TO 1/4"      
         BIOMAS = CFWT(2)
-      ELSEIF(CMP.EQ.'B41')THEN
+      ELSEIF(CMP.EQ.'BQ1'.OR.CMP.EQ.'B41')THEN
+C     3 - 1/4 TO 1"      
         BIOMAS = CFWT(3)
       ELSEIF(CMP.EQ.'B13')THEN
+C     4 - 1 TO 3"      
         BIOMAS = CFWT(4)
       ELSEIF(CMP.EQ.'B3P')THEN
+C     5 - 3" AND UP      
         BIOMAS = CFWT(5)
       ELSEIF(CMP.EQ.'LCR')THEN
+C     6 - Live Crown      
         BIOMAS = CFWT(6)
       ELSEIF(CMP.EQ.'DCR')THEN
+C     7 - Dead crown      
         BIOMAS = CFWT(7)
+      ELSE
+        ERRFLG = 15
+        RETURN
       ENDIF
       
       RETURN
@@ -46,7 +73,15 @@ C     7 - Dead crown
       REAL DST1, DST2, DST3, SW
       REAL CONST2, CONST3, CONST4
       REAL LIVEPROP, DEADPROP
-      
+C test biomass equation 2019/05/08
+!      CHARACTER*12 BMEQ
+!      REAL tmpD,tmpH,tmpCR
+!      BMEQ = 'AFF019BRL01D'
+!      tmpD = 15.0
+!      tmpH = 65.0
+!      tmpCR = 30.0/65.0
+!      CALL CALCFROMBIOEQDB(BMEQ,tmpD,tmpH,tmpCR,DCW)
+C end test biomass equation 2019/05/08            
       LCW = 0.0
       DCW = 0.0
 C     ASSOCIATE SPECIES CODE WITH BROWN SPECIES CODE
@@ -175,7 +210,6 @@ C     THIS SUBROUTINE CALCULATE LIVE CROWN DRY WEIGHT
       INTEGER SPCD
       CHARACTER*12 BMEQ
       DF34PLUSLCW(DBH) = EXP(0.0168 + 1.949*LOG(DBH))
-c      P3 = 0
       LCW = -1
       IF(DBH.GT.50) DBH = 50
       IF(DBH.LT.1) DBH = 1
@@ -238,7 +272,7 @@ c       eqn 323
       ENDIF
       IF(LCW.LT.0)THEN
         LCW = 0
-        CALL CalcBiomass(BMEQ, DBH, THT, CR,LCW)
+        CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, CR,LCW)
       ENDIF
       END
 C ---------------------------------------------------------------------
@@ -259,7 +293,7 @@ c       eqn 310
         ELSEIF(DBH.LE.20)THEN
 c       eqn 309
           BMEQ = 'BRN017LCR02D'
-          CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
+          CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, CR,LCW)
           DCW = LCW*0.38
         ELSE
           DBH = 20
@@ -273,13 +307,13 @@ c       eqn 313
         ELSE
 c       eqn 312
           BMEQ = 'BRN019LCR01D'
-          CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
+          CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, CR,LCW)
           DCW = LCW*0.31
         ENDIF
       ELSEIF(SPCD.EQ.108)THEN
 c       eqn 323
         BMEQ = 'BRN108LCR01D'
-        CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
+        CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, CR,LCW)
         DCW = LCW*0.235  
       ELSEIF(SPCD.EQ.73)THEN
         DCW = 0
@@ -310,10 +344,10 @@ c       eqn 332
       ELSEIF(SPCD.EQ.101)THEN
 c       eqn 324
         BMEQ = 'BRN119LCR01D'
-        CALL CALCBIOMASS(BMEQ, DBH, THT, CR,LCW)
+        CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, CR,LCW)
         DCW = LCW*0.235
       ENDIF
-      IF(DCW.LT.0) CALL CALCBIOMASS(BMEQ, DBH, THT, CR,DCW)
+      IF(DCW.LT.0) CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, CR,DCW)
       IF(DCW.LT.0) DCW = 0
       END
 C ---------------------------------------------------------------------
@@ -420,7 +454,7 @@ c       eqn 325
       ELSE
         STSWT = 0    
       ENDIF
-      IF(STSWT.LT.0) CALL CALCBIOMASS(BMEQ, DBH, THT, P3, STSWT)
+      IF(STSWT.LT.0) CALL CALCFROMBIOEQDB(BMEQ, DBH, THT, P3, STSWT)
       IF(STSWT.LT.0) STSWT = 0
       RETURN
       END  
@@ -793,5 +827,14 @@ C     TWFLAG IS THE FLAG FOR: 1 = TOPWOOD, 0 = LOG / CHUNK
       IF(TWFLG.EQ.0) RATIO = RATIO2
       DRYWT = GCUFTS*RATIO*WD
       WOODDRYWEIGHT = DRYWT
+      RETURN
+      END   
+!**********************************************************************
+      SUBROUTINE CALCFROMBIOEQDB(BMEQ,DBH,THT,CR,BIOMS)
+      CHARACTER*12 BMEQ
+      REAL DBH,THT,CR,LCW,HT1,HT2,BIOMS,TOPD
+      INTEGER ERRFLG
+!C      For equations saved in the SQLite database, calculate biomass with its equation formula
+      CALL BIOEQDB(BMEQ,DBH,THT,HT1,HT2,CR,TOPD,BIOMS,ERRFLG)      
       RETURN
       END   

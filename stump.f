@@ -246,24 +246,30 @@ C  Raile and sum of segments using Smailian formula
 
 C  This rubroutine searches an array to find the maching element
       SUBROUTINE SEARCH(M,ARY,SPC,DONE,ERRFLAG)
-      INTEGER M
+      INTEGER M, I
       integer ARY(M)
       INTEGER SPC,LOC,FIRST,LAST,HALF,DONE,ERRFLAG
       FIRST=1
       LAST=M
       DONE=0
-      DO 5, WHILE (DONE.EQ.0)
-         HALF = (LAST - FIRST +1)/2 + FIRST
-          IF(ARY(HALF) .EQ. SPC)THEN
-             DONE = HALF
-          ELSEIF(FIRST .EQ. LAST) THEN
-             ERRFLAG = 1
-             DONE = -1
-         ELSE IF (ARY(HALF) .LT. SPC) THEN
-             FIRST = HALF
-          ELSE
-             LAST = HALF - 1
-          ENDIF
+!      DO 5, WHILE (DONE.EQ.0)
+!         HALF = (LAST - FIRST +1)/2 + FIRST
+!          IF(ARY(HALF) .EQ. SPC)THEN
+!             DONE = HALF
+!          ELSEIF(FIRST .EQ. LAST) THEN
+!             ERRFLAG = 1
+!             DONE = -1
+!         ELSE IF (ARY(HALF) .LT. SPC) THEN
+!             FIRST = HALF
+!          ELSE
+!             LAST = HALF - 1
+!          ENDIF
+      DO 5 I = FIRST, LAST
+        IF(ARY(I).EQ.SPC)THEN
+          DONE = I
+          EXIT
+        ENDIF
   5   CONTINUE 
+      IF(DONE.EQ.0) ERRFLAG = 1
       RETURN
       END       

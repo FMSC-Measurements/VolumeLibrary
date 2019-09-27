@@ -39,6 +39,14 @@ C 20190426 Changed volinit.f to set the default stump and MTOPP for FIA equation
 C          Added equation for BIA I16BEHW000 (Behr), I00DVEW000 (Johnson formclass) and C00DVEE***.
 C          Added Equation for FVS A02DVEW094 (Malone et al 2013) for statewide white spruce
 C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 300HAB1122
+! 20190514 Added biomass equation from Affleck 2019, added more input variables to BIOLIB subroutine,
+!          added UPSHT1 and UPSD1 to calcdib_r, calc_dob_r,ht2topd_r subroutines,
+!          added new subroutine biomasslib_r for biomass calculation
+! 20190531 Changed volinit.f to use 80 for CF to cord convertor for R3. 
+!          And put back the boardfoot calculation for topwood made on 20170414
+! 20190718 Temp change for R3 Mrules to run a particular cruise processing
+! 20190925 Made biomass library also able to use FIA biomass equation number and also changed R8 new clark equation for prod 08 to use MTOPP as DIB
+
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -68,7 +76,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20190426
+      VERSION = 20190925
       RETURN
       END SUBROUTINE VERNUM
       
@@ -101,7 +109,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20190426
+      VERSION = 20190925
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -124,7 +132,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20190426
+      VERSION = 20190925
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -140,6 +148,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20190426
+      version = 20190925
       return
       end subroutine vernum_r

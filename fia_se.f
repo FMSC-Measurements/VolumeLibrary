@@ -1,7 +1,8 @@
       SUBROUTINE FIA_SE(BEQ, DBHOB, HTTOT, VOL, BMS)
       CHARACTER(12) BEQ
       CHARACTER(3) COMP
-      REAL DBHOB, HTTOT, BMS, DBH, D2H
+      CHARACTER(10) VOLEQ
+      REAL DBHOB, HTTOT, BMS, DBH, D2H, BFMIND
       REAL VOL(15)
       INTEGER SPN, SPLIST(30), DONE, LAST, ERRFLG, I
       REAL A1(30), A2(30), A3(30), B1(30), B2(30), B3(30)
@@ -10,7 +11,7 @@
 
       DATA (SPLIST(I),I=1,30)/
      + 43, 90,107,110,111,121,123,129,131,132, 
-     +221,316,400,491,631,540,611,621,693,740,
+     +221,316,400,491,531,540,611,621,693,740,
      +802,806,812,823,827,832,833,835,842,999/
 
       DATA (A1(I),I=1,30)/
@@ -82,7 +83,17 @@ C     First check the species for in the SPLIST
           ENDIF
 C         Adjust to remove stump
           GRN_MERCH = GRN_TOT*B3(DONE)
-C         Convert fro total stem to 4 inch top biomass
+C         Convert from total stem to 4 inch top biomass
+          VOL = 0.0
+          BFMIND = 0.0
+          ERRFLG = 0
+          VOLEQ = 'S00SRS0999'
+          VOLEQ(8:10) = BEQ(4:6)
+          CALL SRS_VOL(VOLEQ,DBHOB,HTTOT,BFMIND,VOL,ERRFLG)
+          IF(VOL(7).GT.0.0)THEN
+            VOL(4) = VOL(4) + VOL(7)
+            VOL(7) = 0.0
+          ENDIF
           IF(VOL(1).GT.0.AND.VOL(4).GT.0) THEN
             VOL_RAT = VOL(4)/VOL(1)
             GRN_MERCH = GRN_TOT*VOL_RAT

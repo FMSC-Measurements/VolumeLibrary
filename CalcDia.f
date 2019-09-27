@@ -1,6 +1,7 @@
 !*******************************************************************************************
 !*******************************************************************************************
-!== last modified  4-4-2017
+!== last modified  2019/05/09
+! Added UPSHT! and UPSD1 to calcdib_r and calcdob_r (2019/05/08)
 ! Added calcdib_r subroutind for R program to use the CALCDIA (4/4/2017)
 ! Added DIB calculation for region 8 Clark equation (6/4/14)
 ! Added DIB calculation for Behr equation (1/28/2014)
@@ -184,7 +185,7 @@ C using Raile 1982
       
 C *******************************************************************************
       subroutine calcdib_r(VOLEQ,REGN,FORST,DBHOB_d,HTTOT_d,
-     + HTUP_d,DIB_d, ERRFLAG)
+     + HTUP_d,DIB_d, ERRFLAG, UPSHT1_d,UPSD1_d)
 C This subroutine is for R user to calculate DIB at given height      !
 C YW 04/04/2017
 
@@ -194,6 +195,7 @@ C YW 04/04/2017
       IMPLICIT NONE
       
       DOUBLE PRECISION DBHOB_d,HTTOT_d,DIB_d,HTUP_d
+      DOUBLE PRECISION UPSHT1_d,UPSD1_d
       CHARACTER*2  FORST 
       CHARACTER*10 VOLEQ
       INTEGER      REGN,ERRFLAG 
@@ -210,9 +212,9 @@ C YW 04/04/2017
       DBHOB = REAL(DBHOB_d)
       HTTOT = REAL(HTTOT_d)
       HTUP = REAL(HTUP_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
 C     Set the default value for other variable
-      UPSHT1 = 0.0
-      UPSD1 = 0.0
       STUMP = 0.0
       DBTBH = 0.0
       BTR = 0.0
@@ -235,7 +237,7 @@ C     Set the default value for other variable
       end subroutine calcdib_r         
 C *******************************************************************************
       subroutine calcdob_r(VOLEQ,REGN,FORST,DBHOB_d,HTTOT_d,
-     + HTUP_d,DOB_d, ERRFLAG)
+     + HTUP_d,DOB_d, ERRFLAG, UPSHT1_d,UPSD1_d)
 C This subroutine is for R user to calculate DIB at given height      !
 C YW 11/29/2018
 
@@ -245,6 +247,7 @@ C YW 11/29/2018
       IMPLICIT NONE
       
       DOUBLE PRECISION DBHOB_d,HTTOT_d,DOB_d,HTUP_d
+      DOUBLE PRECISION UPSHT1_d,UPSD1_d
       CHARACTER*2  FORST 
       CHARACTER*10 VOLEQ
       INTEGER      REGN,ERRFLAG 
@@ -261,9 +264,11 @@ C YW 11/29/2018
       DBHOB = REAL(DBHOB_d)
       HTTOT = REAL(HTTOT_d)
       HTUP = REAL(HTUP_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
 C     Set the default value for other variable
-      UPSHT1 = 0.0
-      UPSD1 = 0.0
+c      UPSHT1 = 0.0
+c      UPSD1 = 0.0
       STUMP = 0.0
       DBTBH = 0.0
       BTR = 0.0

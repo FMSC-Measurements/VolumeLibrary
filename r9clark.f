@@ -44,6 +44,7 @@ c               math when trying to exponentiate negative numbers with real-valu
 c YW 01/25/2018 Removed the broken top calculation, which cause problem for CP.
 c YW 07/13/2018 Modified R9cor to remove the adjustment factor for yellow-poplar (621).
 C YW 02/14/2019 Check height greater than merchL (it was checking minLen before) for volume calculation
+C YW 09/24/2019 R08 prod 08 uses MTOPP (DIB), so changed to use COEFFS to get sawHt (same as PROD8 subroutine)
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -87,7 +88,7 @@ C     Internal variables
       REAL      NUMLOGP,NUMLOGS,brokHt 
       TYPE(CLKCOEF):: COEFFS
       TYPE(CLKCOEF):: COEFFSO
-      real ht1,ht2
+      real ht1,ht2,TEMPVOL(15)
       
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 10) ' -->Enter R9CLARK'
@@ -165,7 +166,7 @@ C  added on 04/15/2015 for prod 14 to be same as prod 01
      &            prod,iProd,sawDib,plpDib,short,shrtHt,errFlg,
      &            upsHt1,COEFFSO) 
         !Treat prod 08 to be same as 01   
-        if(iProd.eq.8) iProd = 1  
+        !if(iProd.eq.8) iProd = 1  
       ELSE
         errFlg = 1
       ENDIF
@@ -280,14 +281,16 @@ C-----Get total merchantable product volumes
 !***********************************************************************
 C-----Get height to sawtimber top
       sawHt=0.0
-      if(iProd.eq.1) then
+      !Added R08 prod 08 here (2019/09/23)
+      if(iProd.eq.1.OR.(VOLEQ(1:1).EQ.'8'.AND.iprod.EQ.8)) then
 c       cType is checked to let Volume Tester program to calculate boardfoot
 c       volume for FVS if only total height is provided. 11/15/2011 (yw)
         if(cType.eq.'F' .or. cType.eq.'f') then
           if(ht1Prd.gt.4.5) then
             sawHt=ht1Prd
           else
-            IF(VOLEQ(1:1).EQ.'9')THEN
+            IF(VOLEQ(1:1).EQ.'9'
+     &       .OR.(VOLEQ(1:1).EQ.'8'.AND.iprod.EQ.8))THEN
               call r9ht(sawHt,COEFFS, sawDib,errFlg)
             ELSE
             !R8 uses outside bark to calc HT
@@ -299,7 +302,8 @@ c       volume for FVS if only total height is provided. 11/15/2011 (yw)
             sawHt=ht1Prd
           elseif(ht1prd.le.0.01) then
 c         Saw height calc is requested by having 1 < ht1prd < 4.5'
-            IF(VOLEQ(1:1).EQ.'9')THEN
+            IF(VOLEQ(1:1).EQ.'9'
+     &       .OR.(VOLEQ(1:1).EQ.'8'.AND.iprod.EQ.8))THEN
               call r9ht(sawHt,COEFFS, sawDib,errFlg)
             ELSE
               call r9ht(sawHt,COEFFSO, sawDib,errFlg)
@@ -320,7 +324,18 @@ C-----Get sawtimber cubic volumes
 !        R8 OUTSIDE BARK VOLUME (EQ 8*1CLKO***)
             CALL r9cuft(cfVol,COEFFSO,STUMP,SAWHT,errFlg)
           ELSE
-            call r9cuft(cfVol,COEFFS,STUMP,SAWHT,errFlg)
+            !R8 Prod 08 uses PROD8 subroutine to calculate vol (2019/09/25)
+            IF(VOLEQ(1:1).EQ.'8'.AND.iprod.EQ.8)THEN
+              TEMPVOL = 0.0
+              CALL PROD8(TEMPVOL,DBHOB,HTTOT,COEFFS%FIXDI,SPP,      
+     >        COEFFS%SPGRP,COEFFS%R,COEFFS%C,COEFFS%E,COEFFS%P,COEFFS%B,
+     >        COEFFS%A,COEFFS%A4,COEFFS%B4,COEFFS%A17,COEFFS%B17,
+     >        COEFFSO%R,COEFFSO%C,COEFFSO%E,COEFFSO%P,COEFFSO%B,
+     >        COEFFSO%A,COEFFS%AFI,COEFFS%BFI,MTOPP)
+              cfVol = TEMPVOL(4)
+            ELSE
+              call r9cuft(cfVol,COEFFS,STUMP,SAWHT,errFlg)
+            ENDIF
           ENDIF
           if(errFlg.ne.0) return
           if(short) cfVol=cfVol*shrtHt/17.3
@@ -379,6 +394,12 @@ C-----Get board foot volumes
       
         CALL R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
      &       LOGLEN,LOGDIA,NOLOGP,NOLOGS,TLOGS,COEFFS,ERRFLG,BOLHT) 
+!     Added calculate boardfoot volume if flag is turned on (YW 2019/05/29)    
+        NUMSEG = NOLOGS
+        if(bfpFlg.eq.1) then
+          call r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol)
+          if(errFlg.ne.0) return
+        endif
         IF(ERRFLG .NE. 0) THEN
           DO 575, I=1,15
              VOL(I) = 0.0
@@ -1153,7 +1174,7 @@ CREV  TDH added comments and an ISNAN check to final stemHt
       
 !...  Parameters     
       integer   errFlg,i
-      real      stemHt
+      real      stemHt,stemHt1,stemHt2,stemHt3
       TYPE(CLKCOEF)::COEFFS
       REAL      stmDib
       
@@ -1244,7 +1265,6 @@ cc end of deleted code, start of replacement
           stemHt=17.3+(totHt-17.3)*((-Qb-xxx**0.5)/(2*Qa))
         endif
       endif
-                    
       !added the ISNAN check as per the above comments
       ! Lahey doesn't provide the ISNAN intrinsic function, so
       ! we use the subroutine IISNAN (RNH)

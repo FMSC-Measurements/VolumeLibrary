@@ -84,6 +84,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&
 		<File RelativePath="..\fia_ne_vol.for"/>
 		<File RelativePath="..\fia_nw.f"/>
 		<File RelativePath="..\fia_nw_tarif.for"/>
+		<File RelativePath="..\fia_pi.f"/>
 		<File RelativePath="..\fia_pi_vol.for"/>
 		<File RelativePath="..\fia_pnw266.for"/>
 		<File RelativePath="..\fia_rm.f"/>

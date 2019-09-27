@@ -1,12 +1,12 @@
 C WARNING! The codes were created by NBEL Tester program. Please do NOT modify
-C Last modified on 3/14/2017
+C Last modified on 9/17/2019
        TYPE REFINFO
          CHARACTER*3 ABRV
          CHARACTER*40 AUTH
        END TYPE REFINFO
-       TYPE(REFINFO) BEQREF(189)
-       INTEGER I6, REFCNT /189/
-       DATA (BEQREF(I6),I6=1,189) /
+       TYPE(REFINFO) BEQREF(202)
+       INTEGER I6, REFCNT /202/
+       DATA (BEQREF(I6),I6=1,202) /
 C      REFINFO(ABRV, AUTH)
      + REFINFO('BAL','Baldwin 1989'),
      + REFINFO('BAR','Barclay et al. 1986'),
@@ -196,4 +196,17 @@ C      REFINFO(ABRV, AUTH)
      + REFINFO('WAB','Wang 2012b'),
      + REFINFO('CLC','Clark and Saucier 1990'),
      + REFINFO('OSW','Oswald et al 2010'),
-     + REFINFO('CHO','Chojnacky et al 2014')/
+     + REFINFO('CHO','Chojnacky et al 2014'),
+     + REFINFO('AFF','Affleck 2019'),
+     + REFINFO('ALM','Alemdag 1984'),
+     + REFINFO('MAN','Manning etal 1984'),
+     + REFINFO('WEA','Weaver and Gillespie 1992'),
+     + REFINFO('SCT','Scatena, F. N. etal 1993'),
+     + REFINFO('BR6','Brandeis, T. J. etal 2006'),
+     + REFINFO('FRA','Frangi and Lugo 1985'),
+     + REFINFO('CIN','Cintron 1984'),
+     + REFINFO('FRO','Fromard, F. etal. 1998.'),
+     + REFINFO('ASN','Asner, G.P. et al 2011'),
+     + REFINFO('CAB','Chave J, Andalo C, Brown S, et al. 2005'),
+     + REFINFO('CHV','Chave, J. et al. 2014'),
+     + REFINFO('FPI','NIMS_BIOMASS_PACIFIC_ISLANDS.PKB')/

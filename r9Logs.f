@@ -20,6 +20,8 @@ C  Revised YW 08/21/2012
 C  Added ERRFLG to R9LOGS, R9LOGDIB and R9LOGLEN subroutines.
 c  YW 04/13/2017 Modified R9LOGS to also calculate logs for topwood for sawtimber
 c  YW 01/18/2018 Removed the changes made on 4/13/2017.
+C  YW 05/30/2019 R9 do want logs calculation for the topwood of the sawtimber. 
+C                So I put the change back again.
 C_______________________________________________________________________
 C
       SUBROUTINE R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
@@ -79,7 +81,7 @@ C     Check number of logs
         LEFTOV=LMERCH-((MAXLEN+TRIM)*FLOAT(NOLOGP))-TRIM
 
 !check for saw logs
-        IF(.NOT.(LMERCH.LT. (MINLEN+TRIM)  .OR. NOLOGP.LE.0 
+        IF(.NOT.(LMERCH.LT. (MINLEN+TRIM)  !.OR. NOLOGP.LE.0 
      &    .OR. (NOLOGP .EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)))) THEN 
           
             ILOG = 1
@@ -95,23 +97,25 @@ C     Check number of logs
      &                 LOGLEN(NOLOGP), LEFTOV
 220            FORMAT (F6.1,4X I2, 3F7.1)      
    		    END IF
+   		ENDIF    
 !...TOP WOOD PORTION
 !first check to see if there's top wood
         !make sure there's a plpht value and it > sawht
-        ELSE IF (PLPHT > 0 .AND. PLPHT .GT. SAWHT) THEN
-c          SAWHT = STUMP
-c          IF(NOLOGP.GT.0)THEN
-c            DO 250, I=1,NOLOGP
-c              SAWHT = SAWHT + LOGLEN(I) + TRIM
-c250         CONTINUE
-c          ENDIF
+!        ELSE IF (PLPHT > 0 .AND. PLPHT .GT. SAWHT) THEN
+        IF (PLPHT > 0 .AND. PLPHT .GT. SAWHT) THEN
+          SAWHT = STUMP
+          IF(NOLOGP.GT.0)THEN
+            DO 250, I=1,NOLOGP
+              SAWHT = SAWHT + LOGLEN(I) + TRIM
+250         CONTINUE
+          ENDIF
           LMERCH = PLPHT - SAWHT
           NOLOGS = INT(LMERCH/(MAXLEN+TRIM))
 C         The LEFTOVER need to be calculate here (5/22/2017)          
           LEFTOV=LMERCH-((MAXLEN+TRIM)*FLOAT(NOLOGS))-TRIM
           
          !do we need a check for nologs >0???  
-         IF(LMERCH.LT. (MINLEN+TRIM) .OR. NOLOGS.LE.0 
+         IF(LMERCH.LT. (MINLEN+TRIM) !.OR. NOLOGS.LE.0 
      &    .OR. (NOLOGS.EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)) ) THEN
           RETURN
          ENDIF   

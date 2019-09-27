@@ -73,6 +73,22 @@ C  variables for stump dia and vol
 c  test biomass calc variable
       REAL WF(3), BMS(8)
       INTEGER SPCD, FOREST 
+      
+C Test fiaeq2nveleq 2019/08/21
+!      CHARACTER*12 FIABEQ,NVELBEQ,GEOSUB2
+!      INTEGER BEQNUM,STEMS
+!      REAL TOPD,BIOMS
+!      VOL(1) = 20.0
+!      VOL(4) = 20.0
+!      SPN = HTREF 
+!      BEQNUM = FCLASS
+!      GEOSUB2 = '1'
+!      CALL FIABEQ2NVELBEQ(BEQNUM,SPN,NVELBEQ,GEOSUB2,ERRFLAG)  
+!      ERRFLAG = 0
+!      CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
+!     + HT2PRD,TOPD,STEMS,VOL,BIOMS,ERRFLAG,SPN,GEOSUB2)
+!      CONTINUE
+          
  !********************************************************************
 
 !=====================================================================
@@ -550,7 +566,8 @@ c      IF(VOL(15).LT.0.01 .AND. VOL(4).GT.0.0)THEN
 c        VOL(15) = VOL(1)-VOL(4)-VOL(7)-VOL(14)
 c      ENDIF
        IF(VOL(15).LT.0.0) VOL(15) = 0.0
-
+C YW R3 requests to use 80 for CF to Cord 2019/05/16
+      IF(REGN.EQ.3) VOL(6)=VOL(4)/80.0
                        
       IF (DEBUG%MODEL) THEN
         WRITE  (LUDBG, 100)'FORST VOLEQ     MTOPP HTTOT HT1PRD DBHOB 

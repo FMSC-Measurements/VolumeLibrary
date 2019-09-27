@@ -44,7 +44,7 @@ C  merchantability rules for the specified species and product.
       READ(VOLEQ(8:10),'(I3)',err=211)SPEC
       READ(VOLEQ(2:2),'(I1)',err=211)GEOA
       READ(VOLEQ(1:1),'(I1)',err=211)REGN
-	
+	spp = SPEC
       IF (GEOA.LT.1 .OR. GEOA.GT.9 .OR. GEOA.EQ.8)THEN
          ERRFLG = 1
          GO TO 999
@@ -208,6 +208,8 @@ C     total height, except a17 and b17, which correspond to the top DIB.
         COEFFS%A = TOTAL(sppIdx,7)
         COEFFS%A4 = R8CF(PTR,4)
         COEFFS%b4 = R8CF(PTR,5)
+        COEFFS%FIXDI = FIXDI4
+        COEFFS%SPGRP = SPGRP
         
 C-----Get coefficients for outside-bark calculations. All are for 
 C     total height
@@ -234,9 +236,11 @@ C     total height
 
       IF(htTot.gt.0.0) then
         COEFFS%A17 = R8CF(PTR,14)
-        COEFFS%B17 = R8CF(PTR,15)   
+        COEFFS%B17 = R8CF(PTR,15)
+        COEFFS%AFI = R8CF(PTR,6)
+        COEFFS%BFI = R8CF(PTR,7)   
         COEFFSO%A17 = R8CFO(PTR,4)
-        COEFFSO%B17 = R8CFO(PTR,5)   
+        COEFFSO%B17 = R8CFO(PTR,5) 
       ELSEIF(upsHt1.GT.0.0)THEN
         IF(PROD.EQ.'01')THEN
 c       upsHT1 is the height to 7/9 top
@@ -351,6 +355,7 @@ C
           FCDIB = DBH * FCMIN * .01
           IF (THT.LT.47.5 .AND. FCLSS.LT.FCDIB) FCLSS = FCDIB
           COEFFS%DIB17 = FCLSS
+          COEFFSO%DIB17 = (FCLSS - COEFFS%AFI)/COEFFS%BFI
         ENDIF
       ELSEIF(upsHt1.GT.0.0)THEN
         IF(PROD.EQ.'01')THEN
@@ -483,7 +488,9 @@ c       if sawtimber topHt is provided, no recalc topHt. 11/15/2011 (yw)
       if(dbhOb.le.topDib) errFlg=11
 
       COEFFSO%DBHIB = dbhOb
-      COEFFSO%DIB17=dbhOb*(COEFFSO%A17+COEFFSO%B17*(17.3/topHt)**2)
+      IF(htTot.LE.0.0)THEN
+        COEFFSO%DIB17=dbhOb*(COEFFSO%A17+COEFFSO%B17*(17.3/topHt)**2)
+      ENDIF
       IF(COEFFSO%DIB17.LT.COEFFS%DIB17) COEFFSO%DIB17=COEFFS%DIB17
       IF(COEFFSO%DIB17.LT.topDib) then
         !COEFFSO%DIB17=topDib

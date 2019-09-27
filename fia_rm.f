@@ -1,15 +1,25 @@
       SUBROUTINE FIA_RM(BEQ, DBHOB, HTTOT, STEMS, VOL, BMS)
       CHARACTER(12) BEQ
-      REAL DBHOB, HTTOT, BMS, DBH
+      REAL DBHOB, HTTOT, BMS, DBH, HT
       REAL VOL(15), WD_DEN(15), BK_RAT(15), WT2(15), WT4(15), SG(13)
       INTEGER SPN,SPLIST1(15),SPLIST2(13),DONE,LAST,ERRFLG,STEMS,I
       REAL BOLE_WD,BOLE_BK,WDDEN,BKRAT,BOLE,TOP_LIMB,K,ABOVE_STUMP 
       REAL SPSG, Bio3_M, WT_FOL, WT_BRA, WT_FOL_M
-
+! VALID EQUATION NUMBER:
+! FROM Van Hooser and Chojnacky 1983. INT-29
+! FRM***WB101D, FRM***MST01D, FRM***MSW01D, FRM***MSB01D, FRM***BTP01D
+! WHERE *** IS 15, 17, 19, 73, 93,108, 119, 122, 202, 242, 263, 299, 746, 740, 999
+! FRM202WB102D, FRM202MST02D, FRM202MSW02D, FRM202MSB02D, FRM202BTP02D
+! FRM999WB102D, FRM999MST02D, FRM999MSW02D, FRM999MSB02D, FRM999BTP02D
+! FROM Chojnacky CV TO 3" TOP
+! FRM***WB101D, FRM***MST01D, FRM***AST01D, FRM***BRT01D, FRM***FOT01D
+! FROM Chojnacky CV TO 1.5" TOP
+! FRM***WB102D, FRM***MST02D, FRM***AST02D, FRM***BRT02D, FRM***FOT02D
+! WHERE *** IS 57,63,65,69,106,310,475,755,756,757,758,810,814
       DATA (SPLIST1(I),I=1,15)/15, 17, 19, 73, 93, 
      + 108, 119, 122, 202, 242, 263, 299, 746, 740, 999/
       DATA (WD_DEN(I),I=1,15)/23.09,21.84,19.34,29.95,20.59,
-     + 23.71,21.84,23.71,28.08,19.34,26.31,23.71,21.84,19.34,24.96/
+     + 23.71,21.84,23.71,28.08,19.34,26.21,23.71,21.84,19.34,24.96/
       DATA (BK_RAT(I),I=1,15)/0.18,0.18,0.18,0.10,0.13,
      + 0.08,0.16,0.19,0.15,0.10,0.13,0.10,0.27,0.27,0.27/
       DATA (WT2(I),I=1,15)/10,10,11,10,12,10,9,10,11,9,10,10,4,4,4/
@@ -23,6 +33,9 @@
       LAST = 15
       DONE = 0
       DBH = DBHOB
+      HT = HTTOT
+      WT_BRA = 0.0
+      WT_FOL = 0.0
 
 C     First check the species for in the SPLIST1
       CALL SEARCH(LAST,SPLIST1,SPN,DONE,ERRFLG)
@@ -62,7 +75,7 @@ C         For Douglas-fir and other hardwood species in CO, UT,
 C      
 C       Return the biomass for the BEQ       
 C       Stem and branches wood and bark 
-        IF(BEQ(7:9).EQ.'AWB')THEN
+        IF(BEQ(7:9).EQ.'WB1')THEN
           BMS = ABOVE_STUMP
 C       Merch stem total (wood and bark)
         ELSEIF(BEQ(7:9).EQ.'MST')THEN
@@ -81,16 +94,18 @@ C       Top limb (branched plus stem tip)
 C     Check species in the SPLIST2 (woodland species)
         LAST = 13
         DONE = 0
-        CALL SEARCH(LAST,SPLIST1,SPN,DONE,ERRFLG)
+        CALL SEARCH(LAST,SPLIST2,SPN,DONE,ERRFLG)
         IF(DONE.GT.0)THEN
           SPSG = SG(DONE)
 C       First check if the input vol(4) is the volume to 1.5 inch branch diameter. 
 C       This is the volume calculated from Chojnacky (1985) equation. In this case,
 C       the VOL(4) is set to be same as VOL(1)
-          IF(VOL(4).EQ.VOL(1))THEN
-            CALL CHO_WDBK_1530(SPN,DBH,HTTOT,VOL(4),STEMS,SPSG,BIO3)
-          ELSE
+C          IF(VOL(4).EQ.VOL(1))THEN
+C       CHANGED TO USE EQUATION NUMBER 02 FOR USING CV FOR 1.5" TOP.(YW 2019/05/20)
+          IF(BEQ(10:11).EQ.'01') THEN
             BIO3 = VOL(4)*SPSG*62.4
+          ELSEIF(BEQ(10:11).EQ.'02') THEN
+            CALL CHO_WDBK_1530(SPN,DBH,HTTOT,VOL(1),STEMS,SPSG,BIO3)
           ENDIF
           BIO3_M = BIO3/2.2046
           IF(SPN.GE.300)THEN
@@ -101,27 +116,32 @@ C       the VOL(4) is set to be same as VOL(1)
               IF(BIO3_M.LE.468.028)THEN
                WT_FOL_M = EXP(1.0254+.559*LOG(BIO3_M))
               ELSE
-               WT_FOL_M=EXP(1.0254+.559*(1+LOG(468.028)-468.028/BIO3_M))
+               WT_FOL_M=EXP(1.0254+.559*(1.0+LOG(468.028)
+     &         -468.028/BIO3_M))
               ENDIF
             ELSE
-              IF(BIO3_M.LE.150)THEN
-                WT_FOL_M = EXP(1.2867+.649*LOG(BIO3_M))
+              IF(BIO3_M.LE.150.0)THEN
+               WT_FOL_M = EXP(1.2867+.649*LOG(BIO3_M))
               ELSE
-                WT_FOL_M = EXP(1.2867+.649*(1+LOG(150.0)-150/BIO3_M))
+               WT_FOL_M = EXP(1.2867+.649*(1.0+LOG(150.0)-150.0/BIO3_M))
               ENDIF
             ENDIF
             WT_FOL = WT_FOL_M*2.2046
+            IF(BEQ(10:11).EQ.'02') THEN
+              WT_BRA = WT_FOL*0.75
+              WT_FOL = WT_FOL*0.25
+            ENDIF
           ENDIF
 
 C         Return component biomass
 C         Above stump wood and bark (stem plus branches)
-          IF(BEQ(7:9).EQ.'AWB')THEN
+          IF(BEQ(7:9).EQ.'WB1')THEN
             BMS = BIO3 + WT_BRA
 C         Above stump total (stem, branches and foliages)
           ELSEIF(BEQ(7:9).EQ.'AST')THEN
             BMS = BIO3 + WT_BRA + WT_FOL
-C         merch stem total
-          ELSEIF(BEQ(7:9).EQ.'MST')THEN
+C         merch stem total TO 1.5"/3.0* TOP DIB
+          ELSEIF(BEQ(7:9).EQ.'WB2')THEN
             BMS = BIO3
 C         Total branches
           ELSEIF(BEQ(7:9).EQ.'BRT')THEN

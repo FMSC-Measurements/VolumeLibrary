@@ -796,3 +796,214 @@
       ENDIF
       RETURN
       END SUBROUTINE FIAEQ2NVELEQ
+! =====================================================================
+      SUBROUTINE FIABEQ2NVELBEQ(BEQNUM,SPN,NVELBEQ,GEOSUB,ERRFLG)
+      CHARACTER*12 NVELBEQ,COMP,GEOSUB
+      CHARACTER*4 SPC
+      INTEGER SPN,ERRFLG,I,J,FIRST,LAST,DONE,FIABEQNUM,BEQNUM
+      CHARACTER*12 BEQLIST(124,2)
+      DATA ((BEQLIST(J,I), I=1,2), J=1,124) /
+     & '000001', 'FNC***AWB01D', 
+     & '000002', 'FNC***MST01D', 
+     & '000003', 'FNC***AWB01G', 
+     & '000004', 'FNC***MST01G', 
+     & '000005', 'FSE***STW01G', 
+     & '000006', 'FSE***MSW01G', 
+     & '000007', 'FSE***STW01D', 
+     & '000008', 'FSE***MSW01D', 
+     & '000009', 'FNE***STT01D', 
+     & '000010', 'FNE***AWB01D', 
+     & '000011', 'FRM***WB101D', 
+     & '000013', 'FRM***MST01D', 
+     & '000012', 'FRM***WB102D', 
+     & '000014', 'FRM***MST02D', 
+     & '000015', 'FRM***WB101D', 
+     & '000016', 'FRM***WB201D', 
+     & '000017', 'FRM***WB102D', 
+     & '000018', 'FRM***WB202D', 
+     & '000019', 'FNW***MSW01D', 
+     & '000019', 'FNW***STW01D', 
+     & '000020', 'GHZ***BRD01D', 
+     & '000021', 'GHZ***BRL01D', 
+     & '000022', 'GHZ***FOT01D', 
+     & '000023', 'GHZ202RTT01D', 
+     & '000024', 'GHZ***STB01D', 
+     & '000025', 'GHZ***STW01D', 
+     & '000026', 'FNW***AGTG2D', 
+     & '000027', 'FNW***AWBG2D', 
+     & '000028', 'FNW***AWBG1D', 
+     & '000029', 'STA***FOT01D', 
+     & '000030', 'STA***BRL01D', 
+     & '000031', 'STA***B0Q01D', 
+     & '000032', 'STA***AST01D', 
+     & '000033', 'STA***STW01D', 
+     & '000034', 'STA***STB01D', 
+     & '000035', 'FNW***AWBSTD', 
+     & '000036', 'STA204FOT01D', 
+     & '000037', 'STA204BRL01D', 
+     & '000038', 'STA204B0Q01D', 
+     & '000039', 'STA204AST01D', 
+     & '000040', 'STA204STW01D', 
+     & '000041', 'STA204STB01D', 
+     & '000042', 'FNW204AWBSTD', 
+     & '000043', 'SHA***AGT01D', 
+     & '000044', 'SHA***BRL01D', 
+     & '000045', 'SHA***FOT01D', 
+     & '000046', 'SHA202RTT01D', 
+     & '000047', 'SHA***STB01D', 
+     & '000048', 'SHA***STT01D', 
+     & '000049', 'SHA***STW01D', 
+     & '000050', 'FNW***AWBSHD', 
+     & '000051', 'FNW***AWB51D', 
+     & '000052', 'COC122BRL02D', 
+     & '000053', 'COC122BRL01D', 
+     & '000054', 'COC122FOT01D', 
+     & '000055', 'COC122STB01D', 
+     & '000056', 'COC122AGT01D', 
+     & '000057', 'HAN***STB01D', 
+     & '000058', 'SAC263STW01D', 
+     & '000059', 'SAC263FOT01D', 
+     & '000060', 'SAC263BRL01D', 
+     & '000061', 'SAC263BRL02D', 
+     & '000062', 'SAC263BRD01D', 
+     & '000063', 'SAC263BRD02D', 
+     & '000064', 'SAC263BRS01D', 
+     & '000065', 'SAC263STB01D', 
+     & '000066', 'SNE***BRD01D', 
+     & '000067', 'SNE***CRW01D', 
+     & '000068', 'SNE***STT01D', 
+     & '000069', 'SNE***BRL01D', 
+     & '000070', 'SNE***FOT01D', 
+     & '000071', 'FNW***MSBPID', 
+     & '000072', 'FNW***AWB72D', 
+     & '000073', 'FRM***WB202D', 
+     & '000074', 'ALM***STW01D', 
+     & '000075', 'ALM***STB01D', 
+     & '000076', 'ALM***FTG01D', 
+     & '000077', 'ALM***BRL01D', 
+     & '000078', 'ALM***BRD01D', 
+     & '000079', 'ALM***AGT01D', 
+     & '000080', 'ALM***STW01G', 
+     & '000081', 'ALM***STB01G', 
+     & '000082', 'ALM***FTG01G', 
+     & '000083', 'ALM***BRL01G', 
+     & '000084', 'ALM***AGT01G', 
+     & '000085', 'MAN***AGT01D', 
+     & '000086', 'MAN***BRL01D', 
+     & '000087', 'MAN***FTG01D', 
+     & '000088', 'MAN***STB01D', 
+     & '000089', 'MAN***STW01D', 
+     & '000090', 'MAN***AGT01G', 
+     & '000091', 'MAN***BRL01G', 
+     & '000092', 'MAN***FTG01G', 
+     & '000093', 'MAN***STB01G', 
+     & '000094', 'MAN***STW01G', 
+     & '000095', 'MAN***BRD01G', 
+     & '000096', 'SIN***AGT03D', 
+     & '000097', 'SIN***STW03D', 
+     & '000098', 'SIN***STB03D', 
+     & '000099', 'SIN***B1P03D', 
+     & '000100', 'SIN***FTG03D', 
+     & '000101', 'SIN***AWB03D', 
+     & '000102', 'FNW211STBHAD', 
+     & '000103', 'WEA999AGT01D', 
+     & '000104', 'SCT999AGT01D', 
+     & '000105', 'BR****AGT01D', 
+     & '000106', 'FRA999AGT01D', 
+     & '000107', 'CIN***AGT01D', 
+     & '000108', 'FRO986AGT01D', 
+     & '000109', 'XXXXXXXXXX', 
+     & '000110', 'SNE***STB01D', 
+     & '000111', 'FNW***STB02D', 
+     & '000120', 'FPI999MST01D', 
+     & '000121', 'FPI999AGT*1D', 
+     & '000122', 'FPI999MSW*1D', 
+     & '000123', 'FPI999AGT04D', 
+     & '000124', 'CAB999AGT*1D', 
+     & '000125', 'CHV999AGT01D', 
+     & '000126', 'ASN999AGT01D', 
+     & '000127', 'AS6006AGT01D', 
+     & '000128', 'AS7783AGT01D', 
+     & '000129', 'AS8355AGT01D', 
+     & '000130', 'FPI999MSW04D', 
+     & '351001', 'MEA351STB01D'/
+      
+      ERRFLG = 0
+      DONE = 0
+      FIRST = 1
+      LAST = 124
+      !BEQNUM = 0
+!      IF(VERIFY(TRIM(FIABEQ),'0123456789').EQ.0)THEN
+!        READ (FIABEQ,'(I6)') BEQNUM
+!        IF(BEQNUM.EQ.19)THEN
+!          IF(GEOSUB(1:1).EQ.'4')THEN
+!            NVELBEQ = 'FNW***MSW01D'
+!          ELSE
+!            NVELBEQ = 'FNW***STW01D'
+!          ENDIF
+!!          DONE = 19
+!!          LAST = 1
+!        ENDIF
+!      ENDIF
+!      IF(BEQNUM.EQ.0)THEN
+!        ERRFLG = 15
+!        RETURN
+!      ENDIF
+      !test write message
+      !open(1, file = 'testdata1.dat', status = 'new')
+      !write(1,*) FIABEQ
+      !test start
+      !NVELBEQ = 'FNW122MSW01D'
+      !test end
+      DO 30 I = FIRST, LAST
+        READ (BEQLIST(I,1)(1:6), '(I6)') FIABEQNUM
+        IF(BEQNUM.EQ.FIABEQNUM)THEN
+          IF(BEQNUM.EQ.19)THEN
+            IF(GEOSUB(1:1).EQ.'4')THEN
+              NVELBEQ = 'FNW***MSW01D'
+            ELSE
+              NVELBEQ = 'FNW***STW01D'
+            ENDIF
+          ELSE
+            NVELBEQ = BEQLIST(I,2)
+          ENDIF
+          DONE = I
+          EXIT
+        ENDIF
+   30 CONTINUE 
+      IF(DONE.GT.0)THEN
+        WRITE (SPC,'(I4)') SPN
+        SPC = TRIM(ADJUSTL(SPC))
+        IF(NVELBEQ(3:6).EQ.'****')THEN
+          IF(SPN.LT.10)THEN
+            SPC = '000'//SPC
+          ELSEIF(SPN.LT.100)THEN
+            SPC = '00'//SPC
+          ELSEIF(SPN.LT.1000)THEN
+            SPC = '0'//SPC
+          ENDIF
+          NVELBEQ(3:6) = SPC
+        ELSEIF(NVELBEQ(4:6).EQ.'***')THEN
+          IF(SPN.LT.10)THEN
+            SPC = '00'//SPC
+          ELSEIF(SPN.LT.100)THEN
+            SPC = '0'//SPC
+          ELSEIF(SPN.GT.999)THEN
+            ERRFLG = 6
+            RETURN
+          ENDIF
+          NVELBEQ(4:6) = SPC
+        ENDIF
+        IF(NVELBEQ(10:10).EQ.'*')THEN
+          IF(GEOSUB(1:1).GT.'0'.AND.GEOSUB(1:1).LE.'3')THEN
+            NVELBEQ(10:10) = GEOSUB(1:1)
+          ELSE
+            NVELBEQ(10:10) = '0'
+          ENDIF
+        ENDIF
+        !FIABEQ(1:12) = NVELBEQ(1:12)
+      ELSE
+        ERRFLG = 15
+      ENDIF
+      RETURN
+      END    

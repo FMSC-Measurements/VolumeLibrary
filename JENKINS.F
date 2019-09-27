@@ -62,7 +62,8 @@ C     The SPCD is jenkins group code
       ELSE
 C     The SPCD is the species FIA code  
         FIRST = 1
-        LAST = 455
+        !LAST = 455
+        LAST = TOTSPC
         DONE = 0
 C     FIND THE SPECIES GROUP CODE FROM THE ARRAY      
         DO 5, WHILE (DONE.EQ.0)
@@ -77,7 +78,7 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
              LAST = HALF - 1
           ENDIF
   5     CONTINUE 
-        IF(DONE.LT.0) DONE = 455
+        IF(DONE.LT.0) DONE = TOTSPC  !455
         SPCLS = WDBKWT(DONE,2)
         SPGRPCD = WDBKWT(DONE,3) 
       ENDIF

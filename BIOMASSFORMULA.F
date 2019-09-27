@@ -15,12 +15,14 @@ C     Default TopD to 4" when no value provided
 C ***********************************************************************      
       SUBROUTINE BioeqFormula(EQFORM,DBH,THT,CR,TopD,a,b,c,d,e,BMS)
       INTEGER EQFORM
-      REAL DBH, THT, CR, BMS, TopD
+      REAL DBH, THT, CR, BMS, TopD,CL
       REAL a, b, c, d, e
       
       BMS = 0
 C     CR as crown ratio (crown length/total height)      
       IF(CR.GT.1.OR.CR.LE.0) CR = 0.5
+C     Crown Length
+      CL = CR*THT      
 C     Default TopD to 4" when no value provided
       IF(TopD.LE.0) TopD = 4      
       IF (EQFORM.EQ.1) THEN
@@ -87,6 +89,7 @@ C     CR as crown ratio (crown length/total height)
          BMS = EXP(BMS)
       ELSE IF(EQFORM.EQ.19) THEN
 C     ratio = 1 - EXP(a*TopD^b*DBH^c)
+C     This is the Tip biomass to total stem above stump ratio
          BMS = 1-EXP(a*TopD**b*DBH**c)        
       ELSE IF (EQFORM.EQ.33) THEN 
         IF(DBH.LT.11)THEN
@@ -105,10 +108,22 @@ C     ratio = 1 - EXP(a*TopD^b*DBH^c)
       ELSEIF(EQFORM.EQ.36)THEN
         BMS = a+b*DBH**2+c*DBH**2*THT+d*DBH*THT*CR+e*DBH**2*THT*CR
       ELSEIF(EQFORM.EQ.37)THEN
-        BMS = a+b*LOG(THT)+c*LOG(THT*CR)
+        BMS = a+b*LOG(DBH*THT)+c*LOG(THT*CR)
         BMS = EXP(BMS)
       ELSEIF(EQFORM.EQ.38)THEN
         BMS = a+b*THT+c*THT*CR+d*DBH*THT*CR
+      ELSEIF(EQFORM.EQ.39)THEN
+        BMS = a*DBH**b*THT**c*EXP(d*CR)
+      ELSEIF(EQFORM.EQ.40)THEN
+        BMS = a+b*DBH**c*THT**d*CL**e
+      ELSEIF(EQFORM.EQ.41)THEN
+C       ratio equation      
+        BMS = 1/(1+a*DBH**b)
+      ELSEIF(EQFORM.EQ.42)THEN
+        BMS = a*DBH**b*EXP(c*THT)  
+      ELSEIF(EQFORM.EQ.43)THEN
+        BMS = a*DBH**2*THT*(b+c*TopD/DBH+d*(Topd/DBH)**2)/100.0  
+          
       ENDIF 
       END
             

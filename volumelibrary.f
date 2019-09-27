@@ -572,8 +572,10 @@ c      IF(TMPSPEC.NE.8888) GOTO 999
       RETURN
       end subroutine vollib_r   
 C ************************************************************************
+C YW 2019/05/07 ADDED INPUT VARIABLES HT1PRD,HT2PRD,HTTFLL
+! YW 2019/08/05 Added input variable GROSUB. This is for pacific islands equation
       SUBROUTINE BIOLIB(REGN,FORST,SPEC,BIOEQ,DBHOB,HTTOT,VOL,
-     +           BIOGRN, BIODRY,ERRFLG)
+     +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUB)
       !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::BIOLIB
       !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: BIOLIB
       !DEC$ ATTRIBUTES DECORATE, ALIAS:'BIOLIB'::BIOLIB
@@ -591,14 +593,14 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
      
       IMPLICIT NONE
       INTEGER REGN,SPEC,ERRFLG
-      CHARACTER*(*) FORST, BIOEQ
+      CHARACTER*(*) FORST, BIOEQ,GEOSUB
       REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
       
       REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
-      CHARACTER*12 BMSEQ(8)
+      CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
       CHARACTER*40 REF(8)
-      REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15)
-      INTEGER STEMS, I
+      REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
+      INTEGER STEMS, I, LEN,NOINT,FIAEQNUM,STAT
       
       DO 100, I=1,9
         BIOGRN(I) = 0.0
@@ -622,17 +624,17 @@ C     GET REGIONAL OR NATIONAL DEFAULT weight factor
 C     Get the moisture content from Miles $ Smith 2009
       IF(WF(3).EQ.0)THEN
         CALL MILESDATA(SPEC,SG)
-        WF(3) = (SG(9)-SG(10))/SG(10)*100
+        WF(3) = (SG(9)-SG(10))/SG(10)*100.0
       ENDIF
-      MC = WF(3)/100
+      MC = WF(3)/100.0
 C     Calculate merch stem green weight using cubic feet volume and weight factor
       STMGRNWT = WF(1)*(VOL(4)+VOL(7))
-      STMDRYWT = STMGRNWT/(1+MC)
+      STMDRYWT = STMGRNWT/(1.0+MC)
 C     GET the ratio for stem calculated from weight factor and Jenkins
       IF(BIOMS(8).GT.0)THEN
         RATIO = STMDRYWT/BIOMS(8)
       ELSE
-        RATIO = 1
+        RATIO = 1.0
       ENDIF
       IF(RATIO.LE.0) RATIO = 1
 C     Apply the ratio to biomass calculated from Jenkins and also add MC to get green weight
@@ -641,23 +643,46 @@ C     Apply the ratio to biomass calculated from Jenkins and also add MC to get 
         BIOGRN(I) = BIODRY(I)*(1+MC)  
 200   CONTINUE
 C     If BIOEQ is provided, calculate biomass from it
-      IF(LEN_TRIM(BIOEQ).EQ.12) THEN
+      LEN = LEN_TRIM(BIOEQ)
+      FIAEQNUM = -1
+      IF(LEN.GT.0)THEN
+        CALL str2int(BIOEQ, FIAEQNUM, STAT)
+        IF(STAT.EQ.0)THEN
+          GEOSUB2 = GEOSUB(1:1)
+          ERRFLG = 0
+          CALL FIABEQ2NVELBEQ(FIAEQNUM,SPEC,NVELBEQ,GEOSUB2,ERRFLG)
+          IF(FIAEQNUM.EQ.109)THEN
+            BIODRY(9) = 0.0
+            BIOGRN(9) = 0.0
+            RETURN
+          ENDIF
+        ELSE
+          NVELBEQ = BIOEQ
+        ENDIF
+
 C       Set default values
-        CR = 0.5
-        HT1PRD = 0
-        HT2PRD = 0
+        CR = (HTTOT-HTTFLL)/HTTOT
+        IF(CR.LE.0.0.OR.CR.GT.1.0) CR = 0.5
+C        HT1PRD = 0
+C        HT2PRD = 0
         TOPD = 0
         STEMS = 1
         ERRFLG = 0   
         VOLM = VOL   
-        CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD, 
-     +       HT2PRD,TOPD, STEMS, VOLM, BIOMASS, ERRFLG)
-        IF(BIOEQ(12:12).EQ.'D')THEN
+        CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
+     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB)
+        IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
+        !The result returned from BiomassLibrary2 is dry biomass
+        !even though the equation is green. Here save the green and dry
+        !biomass into different variables.
           BIODRY(9) = BIOMASS
-          BIOGRN(9) = BIOMASS*(1+MC)
-        ELSEIF(BIOEQ(12:12).EQ.'G')THEN
+          BIOGRN(9) = BIOMASS*(1.0+MC)
+!        ELSEIF(NVELBEQ(12:12).EQ.'G')THEN
+!          BIOGRN(9) = BIOMASS
+!          BIODRY(9) = BIOMASS/(1.0+MC)
+        ELSE
+          BIODRY(9) = BIOMASS
           BIOGRN(9) = BIOMASS
-          BIODRY(9) = BIOMASS/(1+MC)
         ENDIF
       ENDIF
       RETURN
@@ -734,5 +759,17 @@ c     +    BA,SI,CTYPE,ERRFLAG,IDIST)
 
  1000 RETURN
       
-      END SUBROUTINE VOLLIBVB            
+      END SUBROUTINE VOLLIBVB   
+! --------------------------------------------------------------------
+      subroutine str2int(str,int,stat)
+      implicit none
+      ! Arguments
+      ! stat = 0, convertion OK
+      ! stat != 0, cinversion error
+      character(len=*),intent(in) :: str
+      integer,intent(out)         :: int
+      integer,intent(out)         :: stat
+
+      read(str,*,iostat=stat)  int
+      end subroutine str2int               
       

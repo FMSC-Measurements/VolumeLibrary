@@ -1,12 +1,13 @@
       SUBROUTINE FIA_NW(BEQ, DBHOB, HTTOT, VOL, BMS)
+!      INCLUDE 'wdbkwtdata.inc'       !'WDBKWTDATA.INC'
       CHARACTER(12) BEQ, BIOEQ
       CHARACTER(3) COMP
       REAL DBHOB,HTTOT,BMS,DBH,HT1PRD, HT2PRD,CR,TOPD
-      REAL VOL(15)
+      REAL VOL(15),BIOMS(8)
       INTEGER SPN, SPLIST(123),DONE,LAST,ERRFLG,I,STEMS
-      REAL WD_DEN(123)
+      REAL WD_DEN(123), SG(11),WDDEN,BKDEN
       REAL STEM_WDTOT, STEM_WDMCH, BRCH_L, BRCH_D, STEM_BRCH
-      REAL STEM_BK, FOL, BRCH_TOT, ABVGRD_TOT, CRWN
+      REAL STEM_BK, FOL, BRCH_TOT, ABVGRD_TOT, CRWN,BRATIO
       CHARACTER(2) EQMDL
 
       DATA (SPLIST(I),I=1,123)/
@@ -48,12 +49,15 @@
       DBH = DBHOB
 
 C     First check the species for in the SPLIST
-      CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
-      IF(DONE.GT.0) THEN
+      !CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+      !IF(DONE.GT.0) THEN
 C       First calculate the total stem wood and merch stem wood using cubic volume
-        STEM_WDTOT = VOL(1)*WD_DEN(DONE)
-        STEM_WDMCH = VOL(4)*WD_DEN(DONE)
-
+      !  STEM_WDTOT = VOL(1)*WD_DEN(DONE)
+      !  STEM_WDMCH = VOL(4)*WD_DEN(DONE)
+      CALL WOODDEN(SPN, WDDEN, BKDEN)
+      STEM_WDTOT = VOL(1)*WDDEN
+      STEM_WDMCH = VOL(4)*WDDEN
+      
         BIOEQ(4:6) = BEQ(4:6)
         BIOEQ(10:12) = '01D'
 
@@ -69,29 +73,39 @@ C           SHAW EQUSTION
 C           GHOLZ EQUSTION
             BIOEQ(1:3) = 'GHZ'
           ENDIF
-
-          BIOEQ(7:9) = 'BRL'
-          BIOEQ(10:12) = '01D'        
-C          BRCH_L = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
-          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,
-     +     HT2PRD,TOPD,STEMS,VOL,BRCH_L,ERRFLG)
+!         FIA equation 000051 and 000072 use local biomass config equation for bark and branches
+!         the local config equation, so here using Jenkins bark and branches for now 2019/07/26
+          IF(EQMDL.EQ.'51'.OR.EQMDL.EQ.'72')THEN
+            CALL JENKINS(SPN,DBH,BIOMS)
+            STEM_BK = BIOMS(3)
+            BRCH_L = BIOMS(6)
+            IF(EQMDL.EQ.'72')THEN
+              CALL MILESDATA(SPN, SG)
+              STEM_WDTOT = STEM_WDTOT*(1.0+SG(8)/100.0)
+              STEM_BRCH = STEM_WDTOT + BRCH_L
+            ELSE
+              STEM_BRCH = STEM_WDTOT + STEM_BK + BRCH_L
+            ENDIF
+          ELSE       
+            BIOEQ(7:9) = 'BRL'
+            BIOEQ(10:12) = '01D'        
+            CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,
+     +       HT2PRD,TOPD,STEMS,VOL,BRCH_L,ERRFLG)
 
 C         STEM BARK
-          BIOEQ(7:9) = 'STB'
-C          STEM_BK = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
-          CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
-     +    STEMS,VOL,STEM_BK,ERRFLG)
+            BIOEQ(7:9) = 'STB'
+           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
+     +     STEMS,VOL,STEM_BK,ERRFLG)
+           STEM_BRCH = STEM_WDTOT + STEM_BK + BRCH_L
+          ENDIF
           
-          STEM_BRCH = STEM_WDTOT + STEM_BK + BRCH_L
           IF(EQMDL.EQ.'G2')THEN
 C           THE STEM WOOD IS ALSO CALCULATED USING GHOLZ EQUATION
             BIOEQ(7:9) = 'BRD'
-C            BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
             CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +      STEMS,VOL,BRCH_D,ERRFLG)
             
             BIOEQ(7:9) = 'STW'
-C            STEM_WDTOT = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
             CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +      STEMS,VOL,STEM_WDTOT,ERRFLG)
             
@@ -103,28 +117,23 @@ C         CALCULATE ABOVE GROUND TOTAL USING GHOLZ EQUATION
           BIOEQ(1:3) = 'GHZ'
           BIOEQ(7:9) = 'BRL'
           BIOEQ(10:12) = '01D'        
-C          BRCH_L = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,BRCH_L,ERRFLG)
           
 C         STEM BARK
           BIOEQ(7:9) = 'STB'
-C          STEM_BK = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,STEM_BK,ERRFLG)
           
           BIOEQ(7:9) = 'STW'
-C          STEM_WDTOT = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,STEM_WDTOT,ERRFLG)
           
           BIOEQ(7:9) = 'FOT'
-C          FOL = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,FOL,ERRFLG)
           
           BIOEQ(7:9) = 'BRD'
-C          BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,BRCH_D,ERRFLG)
           
@@ -134,24 +143,24 @@ C          BRCH_D = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
 C         CALCULATE BRANCHES USING SNALL EQUATION
           BIOEQ(1:3) = 'SNE'
           BIOEQ(7:9) = 'CRW'
-C          CRWN = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,CRWN,ERRFLG)
           
           BIOEQ(7:9) = 'FOT'
-C          FOL = CALCBIOMASS(BIOEQ,DBHOB,HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,FOL,ERRFLG)
           
           BRCH_TOT = CRWN - FOL
         ELSEIF(COMP.EQ.'MSB'.AND.EQMDL.EQ.'PI')THEN
           CALL PILLSBSTMBRKVOL(SPN,DBHOB,HTTOT, BRKVOL)
-          STEM_BK = BRKVOL*WD_DEN(DONE)
-        ELSEIF(SPN.EQ.212.AND.COMP.EQ.'STB')THEN
+          !CALL MILESDATA(SPN, SG)
+          !STEM_BK = BRKVOL*SG(5)    !SG(5) = bark weight (lb/cf)
+          STEM_BK = BRKVOL*BKDEN
+        ELSEIF(SPN.EQ.211.AND.COMP.EQ.'STB')THEN
 C         Redwood stem bark
 C         It uses Harmon for large trees and Shaw cedar for small trees.
           BIOEQ(7:9) = 'STB'
-          BIOEQ(10:12) = '01'
+          BIOEQ(10:11) = '01'
           IF(DBHOB.GT.39.37)THEN
             BIOEQ(1:3) = 'HAN'
             BIOEQ(4:6) = '212'           
@@ -159,21 +168,45 @@ C         It uses Harmon for large trees and Shaw cedar for small trees.
             BIOEQ(1:3) = 'SHA'
             BIOEQ(4:6) = '242'
           ENDIF
-C          STEM_BK = CALCBIOMASs(BIOEQ, DBHOB, HTTOT)
           CALL BiomassLibrary(BIOEQ,DBHOB,HTTOT,CR,HT1PRD,HT2PRD,TOPD,
      +    STEMS,VOL,STEM_BK,ERRFLG)
-          
+        ELSEIF(COMP.EQ.'STB'.OR.COMP.EQ.'MSB')THEN  
+          BRATIO = 0.0
+          IF(SPN.EQ.312)then
+            BRATIO = 0.14
+          ELSEIF(SPN.EQ.351)THEN
+            BRATIO = 0.18
+          ELSEIF(SPN.EQ.361)THEN
+            BRATIO = 0.05
+          ELSEIF(SPN.EQ.431)THEN
+            BRATIO = 0.22
+          ELSEIF(SPN.EQ.631)THEN
+            BRATIO = 0.24
+          ENDIF
+          IF(COMP.EQ.'STB')THEN
+            STEM_BK = STEM_WDTOT*BRATIO
+          ELSEIF(COMP.EQ.'MSB')THEN
+            STEM_BK = STEM_WDMCH*BRATIO
+          ENDIF
         ENDIF
 
 C       Return the biomass for the BEQ       
 C       Total stem wood 
         IF(COMP.EQ.'STW')THEN
+          IF(VOL(1).EQ.0.0)THEN
+            ERRFLG = 18
+            RETURN
+          ENDIF
           BMS = STEM_WDTOT
 C       TOTAL STEM BARK
-        ELSEIF(COMP.EQ.'STB')THEN
+        ELSEIF(COMP.EQ.'STB'.OR.COMP.EQ.'MSB')THEN
           BMS = STEM_BK
 C       Merch stem wood
         ELSEIF(COMP.EQ.'MSW')THEN
+          IF(VOL(4).EQ.0.0)THEN
+            ERRFLG = 18
+            RETURN
+          ENDIF
           BMS = STEM_WDMCH
 C       STEM AND BRANCHES
         ELSEIF(COMP.EQ.'AWB') THEN
@@ -187,7 +220,7 @@ C       ABOVE GROUND TOTAL
         ENDIF
         
 
-      ENDIF
+      !ENDIF
       END
 C ------------------------------------------------------------------------------------
 C Computes DBH+DBT at breast high then feeds both DBH and DBH+DBT into Pillsbury CV4 to 
@@ -202,9 +235,9 @@ C get bark volume.
      + 312,361,431,631,801,805,807,811,815,818,821,839,981/
 
       DATA (T1(I), I=1,13)/
-     + 0.21235, 0.03425, 0.39534, 4.1177, 1.92379, 
-     + 0.48584, 0.44003, 1.99573, 0.78034, 0.68133, 
-     + 0.97254, 0.12237, 0.32491/
+     + 0.21235, -0.03425, 0.39534, -4.1177, -1.92379, 
+     + -0.48584, -0.44003, -1.99573, -0.78034, -0.68133, 
+     + -0.97254, 0.12237, -0.32491/
 
       DATA (T2(I), I=1,13)/
      + 0.94782, 0.98155, 0.90182, 0.95354, 0.93475, 
@@ -224,7 +257,7 @@ C get bark volume.
       DATA (C3(I), I=1,13)/
      + 0.69586, 1.01532, 0.77467, 1.14078, 0.60764, 
      + 0.74348, 0.50591, 0.31103, 0.87108, 0.83339, 
-     + 1.62443, 0.77843, 1.05293/
+     + 0.98878, 0.77843, 1.05293/
 
       LAST = 13
       DONE = 0

@@ -3,7 +3,7 @@
       CHARACTER(3) COMP
       REAL DBHOB, HTTOT, BMS, DBH
       REAL VOL(15)
-      INTEGER SPN, SPLIST(21), DONE, LAST, ERRFLG, I
+      INTEGER SPN, SPLIST(21), DONE, FIRST, LAST, ERRFLG, I
       REAL Y1(21), Y2(21)
       INTEGER MDL(21)
       REAL ABVGRD_TOT, PCT_FOL, PCT_BRA, PCT_STP_RT, PCT_MST
@@ -23,7 +23,7 @@
      +2.4017,2.3316,2.4490,2.2453,2.3865,
      +1.9269,2.3617,2.3804,2.3376,2.6087,
      +2.6209,2.5153,2.4253,2.7010,2.5344,
-     +2.6598,2.4395,2.5030,-0.6661,-0.3257,-0.2337/
+     +2.6598,2.4395,2.5030,-0.3661,-0.3257,-0.2337/
 
       DATA (MDL(I),I=1,21)/
      +1,1,1,1,1,1,1,1,1,1,
@@ -32,19 +32,26 @@
 
       READ(BEQ(4:6),'(I3)') SPN
       COMP = BEQ(7:9)
+      FIRST = 1
       LAST = 21
       DONE = 0
       DBH = DBHOB
 
 C     First check the species for in the SPLIST
-      CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+      !CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+      DO 10 I = FIRST, LAST
+        IF(SPN.EQ.SPLIST(I))THEN
+          DONE = I
+          EXIT
+        ENDIF
+10    CONTINUE
       IF(DONE.GT.0) THEN
 C       First calculate the total above ground dry biomass including stump, branches and foliage
 C       Created from FCS_TREE_BIOM_NERS written by Carol Alerich
         IF (MDL(DONE).EQ.1) THEN
           ABVGRD_TOT = EXP(Y1(DONE) + Y2(DONE)*LOG(DBH))  
         ELSEIF(MDL(DONE).EQ.2) THEN
-          ABVGRD_TOT = 10**(LOG10(Y1(DONE) + Y2(DONE)*LOG10(DBH)))
+          ABVGRD_TOT = 10**(LOG10(Y1(DONE)) + Y2(DONE)*LOG10(DBH))
         ELSEIF(MDL(DONE).EQ.3) THEN
           IF(SPN.EQ.318) THEN
             M3 = 0.0076
@@ -101,9 +108,9 @@ C       Then calculate component ratio
             PCT_STP_RT = 0.231
             PCT_MST = 0.7884
           ENDIF
-          PCT_STEM = 1 - PCT_BRA - PCT_FOL
-          PCT_STEM_BRA = 1 - PCT_FOL
         ENDIF
+        PCT_STEM = 1 - PCT_BRA - PCT_FOL
+        PCT_STEM_BRA = 1 - PCT_FOL
 
 C       calculate component biomass with ratio        
 
@@ -135,7 +142,7 @@ C       ABOVE GROUND TOTAL
         ELSEIF(COMP.EQ.'AGT') THEN
           BMS = ABVGRD_TOT
         ENDIF
-        
-
+      ELSE        
+        ERRFLG = 15
       ENDIF
       END

@@ -24,7 +24,9 @@ C      DEFAULT WEIGHT FACTOR AND COMPONENT BIOMASS EQUATION FOR THE REGIONAL/FOR
 3      CONTINUE
        DONE = 0
        I = 0
-C      First to check if the species has a regional/forest default record       
+C      First to check if the species has a regional/forest default record  
+C      Skip search regional default if REGN = 0 (YW 20190918)   
+       IF(REGN.EQ.0) DONE = -1  
        DO 5, WHILE (DONE.EQ.0)
          I = I + 1
          IF(SPREGNDFTWF(I,1).EQ.REGN) THEN  

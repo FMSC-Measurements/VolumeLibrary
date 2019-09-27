@@ -228,7 +228,7 @@ C          region 10 call to determine total height or merch height
       END
 C ************************************************************************
       subroutine ht2topd_r(VOLEQ,REGN,FORST,DBHOB_d,HTTOT_d,
-     + STMDIB_d,STMHT_d, ERRFLAG)
+     + STMDIB_d,STMHT_d, ERRFLAG, UPSHT1_d,UPSD1_d)
 C This subroutine is for R user to calculate stem height to a given top DIB      !
 C YW 04/10/2017
 
@@ -237,6 +237,7 @@ C YW 04/10/2017
 
       IMPLICIT NONE
       DOUBLE PRECISION DBHOB_d,HTTOT_d,STMDIB_d,STMHT_d
+      DOUBLE PRECISION UPSHT1_d,UPSD1_d
       CHARACTER*2  FORST 
       CHARACTER*10 VOLEQ
       INTEGER      REGN,ERRFLAG 
@@ -247,9 +248,11 @@ C YW 04/10/2017
       DBHOB = REAL(DBHOB_d)
       HTTOT = REAL(HTTOT_d)
       STMDIB = REAL(STMDIB_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
 C     Set the default value for other variable
-      UPSHT1 = 0.0
-      UPSD1 = 0.0
+c      UPSHT1 = 0.0
+c      UPSD1 = 0.0
       DBTBH = 0.0
       BTR = 0.0
       AVGZ1=0.0
