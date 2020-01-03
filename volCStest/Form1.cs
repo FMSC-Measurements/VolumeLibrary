@@ -974,31 +974,70 @@ namespace volCStest
                 mRules.cor = 'Y';
                 mRules.evod = 2;
                 mRules.maxlen = 16;
+                mRules.minlen = 2;
+                mRules.minlent = 2;
+                mRules.opt = 22;
                 //changed min log length for region 3 (03/25/14)
                 if (mProd == "01") 
                 {
-                    mRules.minlen = 8;
+                    mRules.minlen = 4;
+                    mRules.stump = 1;
+                    mRules.mtopp = 6;
+                    mRules.mtops = 4;
+                    mRules.minlent = 10;
+                    mRules.minbfd = 14;
+                }
+                else if (mProd == "14")
+                {
+                    mRules.minlen = 4;
+                    mRules.stump = 0.5F;
+                    mRules.mtopp = 4;
+                    mRules.mtops = 4;
+                    mRules.minlent = 10;
+                    mRules.minbfd = 6;
+                }
+                else if (mProd == "20")
+                {
+                    mRules.stump = 0.5F;
+                    mRules.mtopp = 1;
+                    mRules.mtops = 1;
+                    mRules.opt = 23;
+                    mRules.minbfd = 2;
+                }
+                else if (mProd == "07")
+                {
+                    mRules.minlen = 4;
+                    mRules.stump = 0.5F;
+                    mRules.mtopp = 2;
+                    mRules.mtops = 2;
+                    mRules.opt = 23;
+                    mRules.minbfd = 5;
                 }
                 else
                 {
-                    mRules.minlen = 10;
+                    mRules.minlen = 4;
+                    mRules.stump = 0.5F;
+                    mRules.mtopp = 6;
+                    mRules.mtops = 4;
+                    mRules.minlent = 10;
+                    mRules.minbfd = 9;
                 }
-                mRules.minlent = 10;
-                mRules.opt = 22;
+                //mRules.minlent = 10;
+                //mRules.opt = 22;
                 //changed to 23 for test only YW (7/11/12)
                 //mRules.opt = 23;
                 //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
+                //    mRules.stump = 1;
                 //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 6;
+                //    mRules.mtopp = 6;
                 //if (mRules.mtops <= 0) 
-                    mRules.mtops = 4;
+                 //   mRules.mtops = 4;
                 mRules.trim = 0.5F;
                 // MIN SAWTIMBER LENGTH
                 mRules.merchl = 8;
                 //min dbh tree for sawtimber
                 //       mRules.minbfd = 7
-                mRules.minbfd = 1;
+                //mRules.minbfd = 1;
             }
             else if (REGN == 4)
             {

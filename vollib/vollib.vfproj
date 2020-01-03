@@ -25,7 +25,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDi
 				<Tool Name="VFPreBuildEventTool"/>
 				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;
 copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;
-copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python33&quot;" Description="copy vollib.dll to volumetester"/>
+copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python27&quot;" Description="copy vollib.dll to volumetester"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Debug|x64" ConfigurationType="typeDynamicLibrary">
 				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Interfaces="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>

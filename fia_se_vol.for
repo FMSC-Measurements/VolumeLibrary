@@ -396,3 +396,65 @@
       ENDIF
       RETURN
       END SUBROUTINE SRS_VOL
+! ---------------------------------------------------------------------
+! Volume quation for paulownia
+! Reference:
+! Berg, EC etal 2019. Survivorship, attained diameter, height and volume of three
+! Paulownia species after 9 years in the southern Appalachians,USA. J. For. Res.    
+! Equation number:
+! S00BER0712 (DBH only), S01BER0712 (D2H), S02BER0712 (DRC, THT)
+      SUBROUTINE BERG_VOL(VOLEQ,DBHOB,HTTOT,VOL,ERRFLG)
+      REAL DBHOB,HTTOT,VOL(15),D,H,V,D1,STUMPV,TIPV,D2,TIPL
+      CHARACTER*10 VOLEQ
+      INTEGER ERRFLG
+      ERRFLG = 0
+! CONVERT DBHOB FROM IN TO CM, HTTOT FROM FT TO M
+      D = DBHOB*2.54
+      H = HTTOT*0.3048
+      V = 0.0
+      IF((VOLEQ(2:3).EQ.'01'.OR.VOLEQ(2:3).EQ.'02')
+     &   .AND.HTTOT.LT.4.5)THEN
+        ERRFLG = 4
+        RETURN
+      ENDIF
+      IF(VOLEQ(2:3).EQ.'00')THEN
+        V = 0.0004*D*D
+      ELSEIF(VOLEQ(2:3).EQ.'01')THEN
+        V=EXP(-8.5006+0.7891*LOG(D*D*H))
+      ELSEIF(VOLEQ(2:3).EQ.'02')THEN
+        V=EXP(-9.848+0.859*LOG(D*D*H))
+      ELSE
+        ERRFLG = 1
+        RETURN
+      ENDIF
+! CONVERT V FROM CUBIC M TO CUBIC FT  
+      V = V*35.3147
+      VOL(1) = V
+
+! Calculate merch vol for DBHOB > 5 inch
+      IF(VOLEQ(2:3).EQ.'02')THEN
+        D = (D-3.212)/1.296
+        DBHOB = D*0.3937
+      ENDIF
+      IF(HTTOT.LE.0.0)THEN
+        H = 0.747 + 3.73*LOG(D)
+        HTTOT = H/0.3048
+      ENDIF
+      IF(DBHOB.GE.5.0.AND.HTTOT.GT.5.0)THEN
+! Diameter at ground level
+        D1= 3.212 + 1.296*D
+! Convert D1 from cm to in
+        D1 = D1*0.3937        
+! Diameter at 0.5 ft stump        
+        D2 = SQRT(D1*D1-(D1*D1-DBHOB*DBHOB)*(0.5/4.5))
+        STUMPV = (D1*D1+D2*D2)*0.5*0.0027274
+! Tip length
+        TIPL = (HTTOT-4.5)*(16.0/(DBHOB*DBHOB))
+! Top Vol        
+        TIPV = 16.0*TIPL*0.0027274   
+        VOL(4) = V-STUMPV-TIPV
+        VOL(14) = STUMPV
+        VOL(15) = TIPV     
+      ENDIF             
+      RETURN
+      END SUBROUTINE BERG_VOL            

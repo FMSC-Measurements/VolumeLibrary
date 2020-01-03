@@ -38,6 +38,7 @@ C YW 08/19/2015 Added VOL to SUBROUTINE TCUBIC and modified TCUBIC to calculate 
 C               and save value in VOL(14) and VOL(15)
 C YW 10/15/2015 Modified TAPERMODEL for call R1tap to calc vol.
 C YW 06/16/2017 Added merch height to MTOPS to HT2PRD
+C YW 12/20/2019 Added check REGN=3 for FIREWOOD in two places with REGN 5
 C**************************************************************
 C**************************************************************
 
@@ -338,6 +339,10 @@ C--   CHECK FOR REGION 5 FIREWOOD LOGIC
      >           LMERCH,DBTBH,MTOPP,STUMP,HEX,DEX,ZEX,RHFW,RFLW,
      >           TAPCOE,F,FMOD,PINV_Z,TOP6,TCVOL,slope,errflag)
 	      VOL(4) = TCVOL
+C--   Added cordwood calculation (YW 2019/12/20)	      
+	      IF (CDPFLG .EQ. 1) THEN
+               VOL(6) = ANINT((VOL(4)/90.0)*10)/10.0
+            ENDIF
 	      GO TO 500
 	    ENDIF
           
@@ -662,7 +667,7 @@ C--   MERCHANDISE THE UPPER TREE BOLE FOR SECONDARY PRODUCTS
 
 C--     LENMS IS THE LENGTH OF MAIN STEM FOR WHICH A
 C--        PRODUCT WAS DETERMINED.
-        IF(REGN.EQ.5 .AND. PROD.EQ.'07') THEN
+        IF((REGN.EQ.5.OR.REGN.EQ.3) .AND. PROD.EQ.'07') THEN
 	    LENMS = LMERCH
 	  ELSE
           LENMS = 0.0
@@ -707,11 +712,15 @@ C       Set the merch height to HT2PRD
 C--  SEE DEFINITION OF SUBROUTINE "NUMLOG" UNDER BDFT CACULATIONS
         ENDIF
 
-        IF(REGN.EQ.5 .AND. PROD.EQ.'07') THEN
+        IF((REGN.EQ.5.OR.REGN.EQ.3) .AND. PROD.EQ.'07') THEN
           CALL FIREWOOD (VOLEQ,FORST,JSP,NEXTRA,SETOPT,DBHOB,HTTOT,
      >         LMERCH,DBTBH,MTOPS,LENMS,HEX,DEX,ZEX,RHFW,RFLW,
      >         TAPCOE,F,FMOD,PINV_Z,TOP6,TCVOL,slope,errflag)
 	    VOL(7) = TCVOL
+C--   Added cordwood calculation (YW 2019/12/20)	      
+	    IF (CDPFLG .EQ. 1) THEN
+             VOL(9) = ANINT((VOL(7)/90.0)*10)/10.0
+          ENDIF
 	    GO TO 1000
         ENDIF
 
