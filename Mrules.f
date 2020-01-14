@@ -115,10 +115,10 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
           MINBFD = 14.0
         ELSEIF(PROD.EQ.'14')THEN
           MINLEN = 4.0
-          minlent = 10.0
+          minlent = 2.0
           IF(STUMP.LE.0.0) STUMP = 0.5
           IF(MTOPP .LE. 0.0) MTOPP = 4.0
-          IF(MTOPS .LE. 0.0) MTOPS = 4.0
+          IF(MTOPS .LE. 0.0) MTOPS = 1.0
           MINBFD = 6.0
         ELSEIF(PROD.EQ.'20')THEN
           OPT = 23
@@ -229,7 +229,7 @@ c        MINBFD = 7.0
 !          MINBFD = 5.0
 !        ENDIF  
         
-        minlent = MINLEN
+!        minlent = MINLEN
       ELSEIF(REGN.EQ.4) THEN
 
          COR='Y'

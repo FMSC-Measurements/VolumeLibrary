@@ -261,9 +261,9 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:NVELTester"
-        "ProductCode" = "8:{FB46498E-068B-4F6F-8AFF-73D51D027DC8}"
-        "PackageCode" = "8:{61CC70EC-DA47-41DE-B823-6E82F4230EFA}"
-        "UpgradeCode" = "8:{4C3F21AE-CC07-4B3F-BAA6-FF3D11AB9618}"
+        "ProductCode" = "8:{3E35C94A-8444-4C73-870E-2F46972CD850}"
+        "PackageCode" = "8:{79F59F20-4417-4FA5-862C-CA269C0C4DBC}"
+        "UpgradeCode" = "8:{6F2C51EF-C5BC-4315-99D1-93B919ED51C9}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"

@@ -838,13 +838,17 @@ namespace volCStest
         
         private void updateMerRulesForm()
         {
-            if (PROD.ToString(0,2) == "01") 
-            {
-                topDIBTB.Text = mRules.mtopp.ToString();
-            }
+            if (REGN == 3) topDIBTB.Text = mRules.mtopp.ToString();
             else
             {
-                topDIBTB.Text = mRules.mtops.ToString();
+                if (PROD.ToString(0, 2) == "01")
+                {
+                    topDIBTB.Text = mRules.mtopp.ToString();
+                }
+                else
+                {
+                    topDIBTB.Text = mRules.mtops.ToString();
+                }
             }
             maxLenTB.Text = mRules.maxlen.ToString();
             minLenTB.Text = mRules.minlen.ToString();
@@ -992,8 +996,8 @@ namespace volCStest
                     mRules.minlen = 4;
                     mRules.stump = 0.5F;
                     mRules.mtopp = 4;
-                    mRules.mtops = 4;
-                    mRules.minlent = 10;
+                    mRules.mtops = 1;
+                    mRules.minlent = 2;
                     mRules.minbfd = 6;
                 }
                 else if (mProd == "20")
