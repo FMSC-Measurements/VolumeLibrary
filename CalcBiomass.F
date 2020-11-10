@@ -478,7 +478,7 @@ C ********************************************************************
 C This subroutine is for R user to calculate biomass      !
 C YW 05/09/2019
 ! YW 2019/08/05 Added input variables SPN and GEOSUB and also make BIOEQ
-! be able to use FIUA biomass equation number.
+! be able to use FIA biomass equation number.
 
       !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::biomasslib_r
       !DEC$ ATTRIBUTES DECORATE, ALIAS:'biomasslib_r_'::biomasslib_r
@@ -516,3 +516,27 @@ C YW 05/09/2019
       GRNBIOMAS_d = DBLE(GRNBIOMAS)
       RETURN
       END
+C ********************************************************************
+C This subroutine return the species default weight factor for R
+      subroutine getwtfactor_r(REGN,FORST,SPEC,GRNWF_d,DRYWF_d)
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::getwtfactor_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'getwtfactor_r_'::getwtfactor_r
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION GRNWF_d,DRYWF_d
+      REAL WF(3),DRYWF
+      INTEGER REGN,SPEC
+      CHARACTER*2 FORST
+      CHARACTER*12 BMSEQ(8), BIOEQ
+      CHARACTER*40 REF(8)
+      WF = 0.0
+      CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
+      
+      DRYWF = WF(1)/(1.0+WF(3)/100.0)
+      GRNWF_d = DBLE(WF(1))
+      DRYWF_d = DBLE(DRYWF)
+      RETURN
+      END
+      
+      

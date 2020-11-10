@@ -234,7 +234,7 @@
                 {
                     "{9EF0B969-E518-4E46-987F-47570745A589}:_4DD9421DC08B47399834995FBE5B4DF9"
                     {
-                    "Name" = "8:USDA Forest Service"
+                    "Name" = "8:FMSC Software"
                     "AlwaysCreate" = "11:FALSE"
                     "Condition" = "8:"
                     "Transitive" = "11:FALSE"
@@ -260,15 +260,15 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:NVELTester"
-        "ProductCode" = "8:{3E35C94A-8444-4C73-870E-2F46972CD850}"
-        "PackageCode" = "8:{79F59F20-4417-4FA5-862C-CA269C0C4DBC}"
+        "ProductName" = "8:NVEL Tester"
+        "ProductCode" = "8:{06D9AAAC-E56D-4E89-8EF2-743869BF944A}"
+        "PackageCode" = "8:{9FD10906-FB46-4574-8007-C7A6C30906C3}"
         "UpgradeCode" = "8:{6F2C51EF-C5BC-4315-99D1-93B919ED51C9}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.0"
+        "ProductVersion" = "8:3.1.1"
         "Manufacturer" = "8:USDA Forest Service"
         "ARPHELPTELEPHONE" = "8:970-295-5771"
         "ARPHELPLINK" = "8:"
@@ -383,7 +383,7 @@
         {
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_0972A29851AA4AD797C4C16262C78B20"
             {
-            "Name" = "8:VolumeTesterPMT"
+            "Name" = "8:NVELTester"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"
@@ -411,7 +411,7 @@
             }
             "{970C0BB2-C7D0-45D7-ABFA-7EC378858BC0}:_D01A3793D44746E5B5548499FB539988"
             {
-            "Name" = "8:volCStest"
+            "Name" = "8:NVEL Tester"
             "Arguments" = "8:"
             "Description" = "8:"
             "ShowCmd" = "3:1"

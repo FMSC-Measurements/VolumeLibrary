@@ -39,6 +39,7 @@ C               and save value in VOL(14) and VOL(15)
 C YW 10/15/2015 Modified TAPERMODEL for call R1tap to calc vol.
 C YW 06/16/2017 Added merch height to MTOPS to HT2PRD
 C YW 12/20/2019 Added check REGN=3 for FIREWOOD in two places with REGN 5
+C YW 02/19/2020 Changed variable MINLEN/MINLENT for call NUMLOG and SEGMNT
 C**************************************************************
 C**************************************************************
 
@@ -387,7 +388,10 @@ C--         NOTE - THE VARIABLE LMERCH WHEN PASSED IS THE TOTAL
 C--           MERCH LENGTH, BUT IS RETURNED AS THE MERCH LENGTH
 C--           WITH TRIM AND UNUSABLE PORTION OF THE TOP SUBTRACTED.
 
-           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
+!           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,
+!     >               LOGLEN)
+! 2020/02/19 changed to use the variable MINLENT instead of MINLEN
+           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG,
      >               LOGLEN)
 
 C--         SET NOLOGP TO THE NUMBER OF 16 FOOT SEGMENTS
@@ -731,7 +735,9 @@ c       check for mainstem piece, if not, topwood must meet minimum merch length
            ENDIF
 	  ENDIF
 
-        CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG)
+!        CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG)
+!  2020/02/19 changed to use the variable MINLEN instead of MINLENT
+        CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
 
         if((NUMSEG + LOGST) .GT. 20) THEN
            DO 401, I=1,15

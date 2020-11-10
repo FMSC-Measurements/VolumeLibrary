@@ -48,7 +48,11 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20190925 Made biomass library also able to use FIA biomass equation number and also changed R8 new clark equation for prod 08 to use MTOPP as DIB
 ! 20191231 Merch rule changes for Region 3 and added FIA equation for paulownia from Berg etal 2019
 ! 20200109 Correct R3 MINLENT error (it was set to = MINLEN)
-
+! 20200219 Correct MERCHL for prod 01, 08, 20 to 10.0
+! 20200319 R6 requests to use 102.4 for cuft to Cord
+! 20200520 Added getwtfactor_r for R program
+! 20200729 Added vollib2_r with log info variables.
+! 20201109 Modified r9clark to check HTTOT value for R8 prod 08 calculation and modified FIA_volinit
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -78,7 +82,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20200109
+      VERSION = 20201109
       RETURN
       END SUBROUTINE VERNUM
       
@@ -111,7 +115,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20200109
+      VERSION = 20201109
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -134,7 +138,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20200109
+      VERSION = 20201109
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -150,6 +154,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20200109
+      version = 20201109
       return
       end subroutine vernum_r

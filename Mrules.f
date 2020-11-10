@@ -97,6 +97,7 @@ c        MINBFD = 7.0
         OPT = 22 
         MINBFD = 1.0
         TRIM = 0.5
+        MERCHL = 8
 C Karen requested to change back to 2' for minimum log length (02/13/2015)
 ! Karen asked to change min log length for 8 for prod 01 and 10 for prod 02 (2019/07/18)
 ! Mrules changed for Region 3 as Karen asked(12/20/2019)
@@ -113,6 +114,7 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
           IF(MTOPP .LE. 0.0) MTOPP = 6.0
           IF(MTOPS .LE. 0.0) MTOPS = 4.0
           MINBFD = 14.0
+          MERCHL = 10.0
         ELSEIF(PROD.EQ.'14')THEN
           MINLEN = 4.0
           minlent = 2.0
@@ -120,6 +122,7 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
           IF(MTOPP .LE. 0.0) MTOPP = 4.0
           IF(MTOPS .LE. 0.0) MTOPS = 1.0
           MINBFD = 6.0
+          MERCHL = 10.0
         ELSEIF(PROD.EQ.'20')THEN
           OPT = 23
           IF(STUMP.LE.0.0) STUMP = 0.5
@@ -138,13 +141,14 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
           IF(MTOPP .LE. 0.0) MTOPP = 6.0
           IF(MTOPS .LE. 0.0) MTOPS = 4.0
           MINBFD = 9.0
+          MERCHL = 10.0
         ENDIF
 !        minlent = 10.0
         IF(STUMP.LE.0.0) STUMP = 1.0
         IF(MTOPP .LE. 0.0) MTOPP = 6.0
         IF(MTOPS .LE. 0.0) MTOPS = 4.0
 C  MIN SAWTIMBER LENGTH
-        MERCHL = 8
+!        MERCHL = 8
 c min dbh tree for sawtimber
 c        MINBFD = 7.0
 ! 2019/07/18 Temp change for Karen to run CruiseProcessing with modified rules
@@ -314,6 +318,8 @@ c         MINLEN = 8.0
          OPT = 22
          read(volEq(8:10),'(i3)') spp
          IF(MTOPP.LE.0.0)THEN
+C         For Prod 08, if top diameter 0, means the whole tree volume. So set MTOPP = 0.1
+C         Confirmed with Adam Moore for this default
            IF(PROD.EQ.'08')THEN
              MTOPP = 0.1
            ELSE

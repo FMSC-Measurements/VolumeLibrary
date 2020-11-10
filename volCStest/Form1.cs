@@ -319,7 +319,7 @@ namespace volCStest
            VolS = VOL[6];
            VolN = VolS - 0.2F;
            fliw = 0.5F;
-           //BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
+           BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
            //BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
            VolS = 302.7F;
            VolN = 293.9F;

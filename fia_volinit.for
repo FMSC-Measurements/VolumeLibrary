@@ -1,5 +1,6 @@
 ! This subroutine initiate call to its subroutine baseed on VOLEQ
 ! Created by YW 2018/08/08
+! 2020/11/09 Corrected the vol for CVT and CVTS and made subroutine FIAVOLUME for FIA equations call
       SUBROUTINE FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
      & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
      & FIAVTYPE,FIAVOL,BFMIND)
@@ -68,6 +69,128 @@
            VOLEQ = VOLEQ2
          ENDIF
       ENDIF
+      
+      REGN = VOLEQ(1:1)
+      IF(REGN.EQ.'P'.OR.REGN.EQ.'R'.OR.REGN.EQ.'N'.OR.REGN.EQ.'S')THEN
+        CALL FIAVOLUME(VOLEQ,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     &  STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
+     &  BFMIND)
+     
+
+      ELSE
+! REGULAR NVEL EQUATION CALL VOLINIT SUBROUTINE
+        I15 = 15
+        I21 = 21
+        I20 = 20
+        I7 = 7
+        I3 = 3
+        DRCOB = 0.0
+        MTOPS = 4.0
+        STUMP = 1.0
+        HTTYPE = 'F'
+        HTREF = 0
+        UPSHT1 = 0.0
+        UPSD1 = 0.0
+        UPSHT2 = 0.0
+        UPSD2 = 0.0
+        HT1PRD = 0.0
+        HT2PRD = 0.0
+        BA = 0
+        SI = 0
+        AVGZ1 = 0.0
+        AVGZ2 = 0.0
+        FCLASS = 80
+        DBTBH = 0.0
+        BTR = 0.0
+        LOGVOL = 0.0
+        LOGDIA = 0.0
+        LOGLEN = 0.0
+        BOLHT = 0.0
+        HTLOG = 0
+        TLOGS = 0
+        NOLOGP = 0
+        NOLOGS = 0
+        CUTFLG = 1
+        BFPFLG = 1
+        CUPFLG = 1
+        CDPFLG = 0
+        SPFLG = 1
+        PROD = '01'
+        IF(DBHOB.LT.BFMIND) PROD = '02'
+!        IF(SPN.LT.300)THEN
+!          IF(DBHOB.LT.BFMIND) PROD = '02'
+!        ELSE
+!          IF(DBHOB.LT.BFMIND) PROD = '02'
+!        ENDIF
+        HTTFLL = 0
+        LIVE = 'L'
+        CTYPE = 'F'
+        CONSPEC = "    "
+        FORST = '01'
+        IDIST = 1
+!       NEED TO SET MTOPP BASED ON FIAVTYPE   
+!       MTOPP = ?
+!       
+        IF(VOLEQ(1:1).EQ.'A'.OR.VOLEQ(1:1).EQ.'a')THEN
+          IREGN = 10
+        ELSEIF(VOLEQ(1:1).EQ.'I'.OR.VOLEQ(1:1).EQ.'i')THEN
+          IREGN = 1
+        ELSEIF(VOLEQ(1:1).EQ.'H'.OR.VOLEQ(1:1).EQ.'h')THEN
+          IREGN = 5
+        ELSEIF(VOLEQ(1:1).EQ.'F'.OR.VOLEQ(1:1).EQ.'F')THEN
+          IREGN = 6
+        ELSEIF(VOLEQ(1:1).EQ.'B'.OR.VOLEQ(1:1).EQ.'b')THEN
+          IREGN = 7
+        ELSE
+          READ (VOLEQ(1:1), '(I1)') IREGN
+        ENDIF  
+        CALL VOLINIT(IREGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLG,IDIST)
+      ENDIF 
+      IF(ERRFLG.GT.0) RETURN
+      !Correct the vol for CVT and CVTS (2020/11/05)
+      IF(FIAVTYPE(1:4).EQ.'CVTS')THEN
+        !FIAVOL = VOL(1) + VOL(14)
+        FIAVOL = VOL(1)
+      ELSEIF(FIAVTYPE(1:3).EQ.'CVT')THEN
+        !FIAVOL = VOL(1)
+        FIAVOL = VOL(1) + VOL(14)
+      ELSEIF(FIAVTYPE(1:3).EQ.'CV4')THEN
+        FIAVOL = VOL(4) + VOL(7)
+      ELSEIF(FIAVTYPE(1:2).EQ.'SV')THEN
+        FIAVOL = VOL(2)
+      ELSEIF(FIAVTYPE(1:2).EQ.'IV')THEN
+        FIAVOL = VOL(10)
+        IF(FIAEQ(1:8).EQ.'BD000030') FIAVOL = VOL(2)
+      ELSEIF(FIAVTYPE(1:2).EQ.'CV')THEN
+        FIAVOL = VOL(4)    
+      ELSEIF(FIAVTYPE(1:3).EQ.'TIP')THEN
+        FIAVOL = VOL(15) + VOL(7)
+      ELSEIF(FIAVTYPE(1:5).EQ.'CROWN')THEN
+        FIAVOL = CROWN
+      ELSEIF(FIAVTYPE(1:7).EQ.'TOTTREE')THEN
+        FIAVOL = TOTTREE  
+      ENDIF
+      RETURN
+      END SUBROUTINE FIA_VOLINIT                         
+C ---------------------------------------------------------------------
+C FIA volume equations brought to NVEL
+      SUBROUTINE FIAVOLUME(VOLEQ,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+     & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
+     & BFMIND)
+      CHARACTER*10 VOLEQ,GEOSUB
+      REAL DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,MTOPS,VOL(15),BFMIND,STUMP
+      REAL DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2
+      REAL CENTROID_HT,CENTROID_DIA
+      INTEGER BA,SI,ERRFLG
+      CHARACTER*3 MDL
+      CHARACTER*1 REGN      
+      REAL CROWN,TOTTREE
+      
       REGN = VOLEQ(1:1)
       MDL = VOLEQ(4:6)
       IF(STUMP.LE.0.0) STUMP = 1.0
@@ -216,85 +339,6 @@
         ELSEIF(MDL.EQ.'SRS')THEN
           CALL SRS_VOL(VOLEQ,DBHOB,HTTOT,BFMIND,VOL,ERRFLG)
         ENDIF
-      ELSE
-! REGULAR NVEL EQUATION CALL VOLINIT SUBROUTINE
-        I15 = 15
-        I21 = 21
-        I20 = 20
-        I7 = 7
-        I3 = 3
-        MTOPS = 4.0
-        STUMP = 1.0
-        HTTYPE = 'F'
-        HTREF = 0
-        AVGZ1 = 0.0
-        AVGZ2 = 0.0
-        FCLASS = 80
-        DBTBH = 0.0
-        BTR = 0.0
-        LOGVOL = 0.0
-        LOGLEN = 0.0
-        BOLHT = 0.0
-        TLOGS = 0
-        NOLOGP = 0
-        NOLOGS = 0
-        CUTFLG = 1
-        BFPFLG = 1
-        CUPFLG = 1
-        CDPFLG = 0
-        SPFLG = 1
-        PROD = '01'
-        IF(SPN.LT.300)THEN
-          IF(DBHOB.LT.BFMIND) PROD = '02'
-        ELSE
-          IF(DBHOB.LT.BFMIND) PROD = '02'
-        ENDIF
-        HTTFLL = 0
-        LIVE = 'L'
-        CTYPE = 'F'
-!       NEED TO SET MTOPP BASED ON FIAVTYPE   
-!       MTOPP = ?
-!       
-        IF(VOLEQ(1:1).EQ.'A'.OR.VOLEQ(1:1).EQ.'a')THEN
-          IREGN = 10
-        ELSEIF(VOLEQ(1:1).EQ.'I'.OR.VOLEQ(1:1).EQ.'i')THEN
-          IREGN = 1
-        ELSEIF(VOLEQ(1:1).EQ.'H'.OR.VOLEQ(1:1).EQ.'h')THEN
-          IREGN = 5
-        ELSEIF(VOLEQ(1:1).EQ.'F'.OR.VOLEQ(1:1).EQ.'F')THEN
-          IREGN = 6
-        ELSEIF(VOLEQ(1:1).EQ.'B'.OR.VOLEQ(1:1).EQ.'b')THEN
-          IREGN = 7
-        ELSE
-          WRITE (VOLEQ(1:1), '(I1)') IREGN
-        ENDIF  
-        CALL VOLINIT(IREGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
-     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
-     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
-     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
-     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLG,IDIST)
-      ENDIF 
-      IF(ERRFLG.GT.0) RETURN
-      IF(FIAVTYPE(1:4).EQ.'CVTS')THEN
-        FIAVOL = VOL(1) + VOL(14)
-      ELSEIF(FIAVTYPE(1:3).EQ.'CVT')THEN
-        FIAVOL = VOL(1)
-      ELSEIF(FIAVTYPE(1:3).EQ.'CV4')THEN
-        FIAVOL = VOL(4) + VOL(7)
-      ELSEIF(FIAVTYPE(1:2).EQ.'SV')THEN
-        FIAVOL = VOL(2)
-      ELSEIF(FIAVTYPE(1:2).EQ.'IV')THEN
-        FIAVOL = VOL(10)
-        IF(FIAEQ(1:8).EQ.'BD000030') FIAVOL = VOL(2)
-      ELSEIF(FIAVTYPE(1:2).EQ.'CV')THEN
-        FIAVOL = VOL(4)    
-      ELSEIF(FIAVTYPE(1:3).EQ.'TIP')THEN
-        FIAVOL = VOL(15) + VOL(7)
-      ELSEIF(FIAVTYPE(1:5).EQ.'CROWN')THEN
-        FIAVOL = CROWN
-      ELSEIF(FIAVTYPE(1:7).EQ.'TOTTREE')THEN
-        FIAVOL = TOTTREE  
       ENDIF
       RETURN
-      END SUBROUTINE FIA_VOLINIT                   
+      END

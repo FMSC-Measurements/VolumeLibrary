@@ -31,6 +31,8 @@ C                   also changed stem tip volume calc using DIB from last log an
 C 2018/11/07 YW ADDED HTTOT TO R12VOL FOR TOTAL CUBIC VOLUME
 C YW 2019/02/14 Set the default stump and MTOPP for FIA equation only
 C YW 2019/04/04 Added call to BIA behr and johnson equation
+C YW 2020/03/18 R6 requests to use 102.4 for cuft to Cord 
+C YW 2020/11/06 Changed the subroutine name to call FIA volume equations
 !**********************************************************************
       CHARACTER*1  HTTYPE,LIVE,CTYPE,VOLEQREGN
       CHARACTER*2  FORST,PROD
@@ -199,9 +201,13 @@ C       the default for stump and mtopp should be here for FIA equation (2019021
         IF(SI.EQ.0) SI = 65
         IF(BA.EQ.0) BA = 80
         BFMIND = 9.0
-        CALL FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+!        CALL FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+!     &  STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLAG,
+!     &  FIAVTYPE,FIAVOL,BFMIND)
+        CALL FIAVOLUME(VOLEQ,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
      &  STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLAG,
-     &  FIAVTYPE,FIAVOL,BFMIND)
+     &  BFMIND)
+     
         RETURN
       ENDIF     
 !-----Set the default DIST to 01---------------------      
@@ -568,6 +574,8 @@ c      ENDIF
        IF(VOL(15).LT.0.0) VOL(15) = 0.0
 C YW R3 requests to use 80 for CF to Cord 2019/05/16
       IF(REGN.EQ.3) VOL(6)=VOL(4)/80.0
+C YW R6 requests to use 102.4 for cuft to Cord 2020/03/18
+      IF(REGN.EQ.6) VOL(6) = AINT((VOL(4)/102.4)*10)/10.0     
                        
       IF (DEBUG%MODEL) THEN
         WRITE  (LUDBG, 100)'FORST VOLEQ     MTOPP HTTOT HT1PRD DBHOB 

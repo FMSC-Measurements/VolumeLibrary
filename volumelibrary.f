@@ -94,6 +94,7 @@ C ---------------------------------------------------------------------
       !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::FIAVOL
       !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: FIAVOL
       !DEC$ ATTRIBUTES DECORATE, ALIAS:'FIAVOL'::FIAVOL
+      IMPLICIT NONE
       CHARACTER*(*) VOLEQ,FIAVTYPE,GEOSUB
       REAL DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,MTOPS,VOL(15),BFMIND,STUMP
       REAL DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,FIAEQVOL
@@ -571,6 +572,139 @@ c      IF(TMPSPEC.NE.8888) GOTO 999
 999   CONTINUE
       RETURN
       end subroutine vollib_r   
+C *******************************************************************************
+      subroutine vollib2_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,HTTOT_d,
+     + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
+     + FCLASS,DBTBH_d,BTR_d,VOL_d,LOGVOL_d,LOGDIA_d,LOGLEN_d,BOLHT_d,
+     + TLOGS,NOLOGP_d,NOLOGS_d,ERRFLAG)
+C This subroutine is for R user to calculate volume from vollib      !
+C with output variable for logs LOGDIA,LOGVOL,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS
+C YW 07/29/2020
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollib2_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollib2_r_'::vollib2_r
+
+	USE CHARMOD
+	USE DEBUG_MOD
+      USE VOLINPUT_MOD
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,MTOPP_d,MTOPS_d,STUMP_d
+      DOUBLE PRECISION HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d
+      DOUBLE PRECISION DBTBH_d,BTR_d,VOL_d(15)
+      DOUBLE PRECISION LOGVOL_d(7,20),LOGDIA_d(21,3),LOGLEN_d(20)
+      DOUBLE PRECISION BOLHT_d(21),NOLOGP_d,NOLOGS_d
+      
+      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*2  FORST,PROD
+      character*4  CONSPEC
+      CHARACTER*10 VOLEQ
+      CHARACTER*3  MDL,SPECIES
+      CHARACTER*2  DIST,VAR
+   
+      INTEGER      SPEC,TMPSPEC,NULEQ
+
+!   MERCH VARIABLES 
+      INTEGER      REGN,HTTFLL,BA,SI,IFORST,IDIST
+      REAL         STUMP,MTOPP,MTOPS  !,THT1,MAXLEN
+      INTEGER      CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+      REAL         TIPDIB,TIPLEN
+      
+!   Tree variables
+      REAL 		HTTOT,HT1PRD,HT2PRD  !,LEFTOV 
+      REAL 		DBHOB,DRCOB,DBTBH,BTR  !,CR,TRIM
+      INTEGER   FCLASS,HTLOG  !,SPCODE, WHOLELOGS
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+    
+!   OUTPUTS
+      REAL      NOLOGP,NOLOGS
+      INTEGER   TLOGS  !,IFORST, IDIST
+    
+!   ARRAYS
+      INTEGER   I15,I21,I20,I7,I3,I,J
+      REAL 		VOL(15),LOGVOL(7,20)
+      REAL		LOGDIA(21,3),LOGLEN(20),BOLHT(21)
+      
+      
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      MTOPP = REAL(MTOPP_d)
+      MTOPS = REAL(MTOPS_d)
+      HT1PRD = REAL(HT1PRD_d)
+      HT2PRD = REAL(HT2PRD_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
+      STUMP = REAL(STUMP_d)
+      DBTBH = REAL(DBTBH_d)
+      BTR = REAL(BTR_d)
+      
+      READ (DIST, '(I2)') IDIST
+C     Set the default value for other variable
+      PROD='01'
+      HTTYPE='F'
+      HTLOG=0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      CONSPEC='    '
+      DRCOB=0.0
+      HTTFLL=0
+      BA=0
+      SI=0
+      CTYPE='F'
+      CUTFLG=1
+      CUPFLG=1
+      SPFLG=1
+      BFPFLG=1
+      I3 = 3
+      I7 = 7
+      I15 = 15
+      I20 = 20
+      I21 =21
+      
+C     Check if the VOLEQ is valid. If not valid, return error flag 1      
+c      NULEQ = INDEX(VOLEQ,' ')
+c      IF(LEN_TRIM(VOLEQ).EQ.0.OR.NULEQ.GT.0)THEN
+c        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG) 
+c      ENDIF
+c      TMPSPEC = 9999
+c      CALL VOLEQDEF(VAR,REGN,FORST,DIST,TMPSPEC,PROD,VOLEQ,ERRFLAG)
+c      IF(TMPSPEC.NE.8888) GOTO 999
+      
+      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      
+      VOL_d = DBLE(VOL)
+      DBHOB_d = DBLE(DBHOB)
+      HTTOT_d = DBLE(HTTOT)
+      MTOPP_d = DBLE(MTOPP)
+      MTOPS_d = DBLE(MTOPS)
+      HT1PRD_d = DBLE(HT1PRD)
+      HT2PRD_d = DBLE(HT2PRD)
+      UPSHT1_d = DBLE(UPSHT1)
+      UPSD1_d = DBLE(UPSD1)
+      STUMP_d = DBLE(STUMP)
+      DBTBH_d = DBLE(DBTBH)
+      BTR_d = DBLE(BTR)
+      LOGVOL_d = DBLE(LOGVOL)
+      LOGDIA_d = DBLE(LOGDIA)
+      LOGLEN_d = DBLE(LOGLEN)
+      BOLHT_d = DBLE(BOLHT)
+      NOLOGP_d = DBLE(NOLOGP)
+      NOLOGS_d = DBLE(NOLOGS)
+      
+      RETURN
+      end subroutine vollib2_r   
 C ************************************************************************
 C YW 2019/05/07 ADDED INPUT VARIABLES HT1PRD,HT2PRD,HTTFLL
 ! YW 2019/08/05 Added input variable GROSUB. This is for pacific islands equation

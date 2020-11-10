@@ -179,6 +179,36 @@ C Brown topwood dry weight = gross CUFT sedondary volume times breakage ratio ti
       IMPLICIT NONE
       REAL GCUFTS, WT, WOODDRYWEIGHT
       INTEGER SPN
+!      !test===============================================================
+!      CHARACTER*10 VOLEQ,FIAVTYPE,VOLEQ2,GEOSUB,FIAEQ
+!      REAL DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,MTOPS,VOL(15),BFMIND,STUMP
+!      REAL DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,FIAVOL
+!      REAL CENTROID_HT,CENTROID_DIA
+!      INTEGER BA,SI,ERRFLG
+!      VOLEQ = 'CU108102'
+!      SPN = 108
+!      DBHOB = 15
+!      HTTOT = 76
+!      HT1PRD = 0.0
+!      HT2PRD = 0.0
+!      MTOPP = 6.0
+!      STUMP = 1.0
+!      DRCOB = 0.0
+!      UPSHT1 = 0.0
+!      UPSD1 = 0.0
+!      UPSHT2 = 0.0
+!      UPSD2 = 0.0
+!      VOL = 0.0
+!      BA = 85
+!      SI = 65
+!      GEOSUB = '0'
+!      ERRFLG = 0
+!      FIAVOL = 0.0
+!      BFMIND = 9
+!      CALL FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
+!     & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
+!     & FIAVTYPE,FIAVOL,BFMIND)
+!      !end test==========================================================
       WT = WOODDRYWEIGHT(SPN, GCUFTS, 1)
       END
 C ---------------------------------------------------------------------

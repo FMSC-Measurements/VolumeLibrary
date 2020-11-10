@@ -234,7 +234,7 @@ C     total height
         COEFFSO%B = OTOTAL(sppIdx,6)
         COEFFSO%A = OTOTAL(sppIdx,7)
 
-      IF(htTot.gt.0.0) then
+666   IF(htTot.gt.0.0) then
         COEFFS%A17 = R8CF(PTR,14)
         COEFFS%B17 = R8CF(PTR,15)
         COEFFS%AFI = R8CF(PTR,6)
@@ -319,7 +319,7 @@ C    This includes MTOPP, MTOPS, sawDib, plpDib, topDib
 
 C-----Get top height and top DIB
       short=.false.
-      if(htTot.gt.0.0) then
+      IF(htTot.gt.0.0) then
         topDib=0.0
         if(htTot.ge.17.3) then
           topHt=htTot
@@ -360,6 +360,10 @@ C
       ELSEIF(upsHt1.GT.0.0)THEN
         IF(PROD.EQ.'01')THEN
           GOTO 888
+!        ELSEIF(PROD.EQ.'08')THEN
+!        !Old equation may enter TotalHt into UPSHT1 field
+!          htTot = upsHt1
+!          GOTO 666
         ELSE
           GOTO 777
         ENDIF  

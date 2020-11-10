@@ -327,6 +327,14 @@ C-----Get sawtimber cubic volumes
             !R8 Prod 08 uses PROD8 subroutine to calculate vol (2019/09/25)
             IF(VOLEQ(1:1).EQ.'8'.AND.iprod.EQ.8)THEN
               TEMPVOL = 0.0
+C             Check if HTTOT is entered (2020/10/28)
+              IF(HTTOT.LE.0.0)THEN
+                IF(COEFFS%TOTHT.GT.0.0)THEN
+                  HTTOT =  COEFFS%TOTHT
+                ELSE
+                  HTTOT = HT2PRD
+                ENDIF
+              ENDIF              
               CALL PROD8(TEMPVOL,DBHOB,HTTOT,COEFFS%FIXDI,SPP,      
      >        COEFFS%SPGRP,COEFFS%R,COEFFS%C,COEFFS%E,COEFFS%P,COEFFS%B,
      >        COEFFS%A,COEFFS%A4,COEFFS%B4,COEFFS%A17,COEFFS%B17,
