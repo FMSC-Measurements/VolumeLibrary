@@ -53,6 +53,9 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20200520 Added getwtfactor_r for R program
 ! 20200729 Added vollib2_r with log info variables.
 ! 20201109 Modified r9clark to check HTTOT value for R8 prod 08 calculation and modified FIA_volinit
+! 20201123 Updated R3 region wide weight_factor and moiture content for 122,202,15 and 119
+! 20210105 Corrected R10 Larson equation for small trees (DBH<6) in R10d2h.f. This affects volume of A00DVEW094,A00DVEW375,A00DVEW747.
+!          Also corrected Demar small tree volume of A01DEMW000 and A02DEMW000 in R10vol.f
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -82,7 +85,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20201109
+      VERSION = 20210105
       RETURN
       END SUBROUTINE VERNUM
       
@@ -115,7 +118,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
    15    FORMAT (A)   
    		END IF
 
-      VERSION = 20201109
+      VERSION = 20210105
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -138,7 +141,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20201109
+      VERSION = 20210105
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -154,6 +157,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20201109
+      version = 20210105
       return
       end subroutine vernum_r

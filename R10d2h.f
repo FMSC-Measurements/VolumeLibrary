@@ -16,6 +16,7 @@ C    A00DVEW094, A00DVEW375, and A00DVEW747 are from PNW-RN-478 and PNW-RN-495 b
 C    A01DVEW094, A01DVEW375, and A01DVEW747 are from NOR-5 by Haack 1963 and NOR-6 by Gregory et al 1964
 C    A00DVEW108, A00DVEW310, and A00DVEW351 are from Brackett 1973
 C    2019/04/04 Added A02DVEW094 from Malone et al 2013. The equation is for AK statewide
+C    2020/12/21 Added volume correction factor for small tree (DBH<6) total cubic volume of Larson equation.
       CHARACTER*10 VOLEQ
       REAL DBHOB,HTTOT,VOL(15),MTOPP
       INTEGER CUTFLG,CUPFLG,BFPFLG,ERRFLAG,spn
@@ -55,6 +56,9 @@ c  A00DVEW094
         IF(EQN .eq. '00') THEN
           IF(CUTFLG .EQ. 1)THEN
              VOL(1) = 0.65559+0.00191*D2H
+             IF(DBHOB.LT.6.0.AND.DBHOB.GT.0.0)THEN
+               VOL(1) = VOL(1)-(0.65559*(1.0-(DBHOB/6.0)**3))
+             ENDIF
           ENDIF
 
           IF(CUPFLG .EQ. 1 .AND. DBHOB .GT. 4.0)THEN
@@ -105,6 +109,9 @@ C A00DVEW375
         IF(EQN .eq. '00') THEN
           IF(CUTFLG .EQ. 1)THEN
              VOL(1) = 0.64456+0.00206*D2H
+             IF(DBHOB.LT.6.0.AND.DBHOB.GT.0.0)THEN
+               VOL(1) = VOL(1)-(0.64456*(1.0-(DBHOB/6.0)**3))
+             ENDIF
           ENDIF
         
           IF(CUPFLG .EQ. 1 .AND. DBHOB .GT. 4.0)THEN
@@ -135,6 +142,9 @@ C A00DVEW747
         IF(EQN .eq. '00') THEN
           IF(CUTFLG .EQ. 1)THEN
              VOL(1) = 0.9864+0.00181*D2H
+             IF(DBHOB.LT.6.0.AND.DBHOB.GT.0.0)THEN
+               VOL(1) = VOL(1)-(0.9864*(1.0-(DBHOB/6.0)**3))
+             ENDIF
           ENDIF
         
           IF(CUPFLG .EQ. 1 .AND. DBHOB .GT. 4.0)THEN
@@ -238,7 +248,7 @@ c      Volume, board feet International 1/4", to 8" top
        IF(CUPFLG .EQ. 1)THEN
          VOL(4) = CVSL
        ENDIF
-
+       VOL(7) = CV4-VOL(4)
 	 IF(BFPFLG.EQ. 1)THEN
 	   VOL(2) = SCFT
 	   VOL(10) = XINTT
@@ -250,5 +260,6 @@ c      Volume, board feet International 1/4", to 8" top
       IF(VOL(4) .LT. 0) VOL(4) = 0
       IF(VOL(1) .LT. 0) VOL(1) = 0
       IF(VOL(10) .LT. 0) VOL(10) = 0
+      IF(VOL(7) .LT. 0) VOL(7) = 0
       RETURN
       END

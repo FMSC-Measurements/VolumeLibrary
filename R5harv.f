@@ -331,6 +331,7 @@ C************************************************
            CUFTGROS = 0.0
         ENDIF
         VOL(4) = CUFTGROS
+        VOL(7) = CV4-CUFTGROS
         vol(1) = cvt
 C END CUFT CALCULATIONS
 C

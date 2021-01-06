@@ -1,6 +1,7 @@
 ! This subroutine initiate call to its subroutine baseed on VOLEQ
 ! Created by YW 2018/08/08
 ! 2020/11/09 Corrected the vol for CVT and CVTS and made subroutine FIAVOLUME for FIA equations call
+! 2020/12/04 Reverse the changes made on 2020/11/09
       SUBROUTINE FIA_VOLINIT(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
      & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
      & FIAVTYPE,FIAVOL,BFMIND)
@@ -152,13 +153,11 @@
      +    BA,SI,CTYPE,ERRFLG,IDIST)
       ENDIF 
       IF(ERRFLG.GT.0) RETURN
-      !Correct the vol for CVT and CVTS (2020/11/05)
+      IF(VOL(1).EQ.0.0) VOL(1)=VOL(4)+VOL(7)+VOL(15)
       IF(FIAVTYPE(1:4).EQ.'CVTS')THEN
-        !FIAVOL = VOL(1) + VOL(14)
-        FIAVOL = VOL(1)
-      ELSEIF(FIAVTYPE(1:3).EQ.'CVT')THEN
-        !FIAVOL = VOL(1)
         FIAVOL = VOL(1) + VOL(14)
+      ELSEIF(FIAVTYPE(1:3).EQ.'CVT')THEN
+        FIAVOL = VOL(1)
       ELSEIF(FIAVTYPE(1:3).EQ.'CV4')THEN
         FIAVOL = VOL(4) + VOL(7)
       ELSEIF(FIAVTYPE(1:2).EQ.'SV')THEN
@@ -340,5 +339,6 @@ C FIA volume equations brought to NVEL
           CALL SRS_VOL(VOLEQ,DBHOB,HTTOT,BFMIND,VOL,ERRFLG)
         ENDIF
       ENDIF
+      IF(VOL(1).EQ.0.0) VOL(1)=VOL(4)+VOL(7)+VOL(15)
       RETURN
       END

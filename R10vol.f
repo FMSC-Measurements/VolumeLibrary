@@ -1,4 +1,5 @@
 !== last modified  06-29-2004
+! 01/05/2021 Corrected SECGRO subroutine for checking value less than zero.
       SUBROUTINE R10VOL(VOLEQ,MTOPP,MTOPS,HTTOT,HT1PRD,DBHOB,
      >           HTTYPE,VOL,NOLOGP,NOLOGS,TLOGS,LOGLEN,LOGDIA,LOGVOL,
      >           BFPFLG,CUPFLG,SPFLG,ERRFLAG)
@@ -140,13 +141,15 @@ C---------------
       REAL D, H, VN
 
       VN = -5.577 + 1.9067 * ALOG(D) + 0.9416 * ALOG(H)
-
-      IF (VN.GT.0.0) THEN
-         VN = EXP(VN)
-      ELSE
-        VN=0.0
-      ENDIF
-
+! It is not necessary to check the negative value for VN. This cause volume error.
+! Commended out the following lines on 01/05/2021 (YW)
+!      IF (VN.GT.0.0) THEN
+!         VN = EXP(VN)
+!      ELSE
+!        VN=0.0
+!      ENDIF
+      VN = EXP(VN)
+      
       RETURN
       END
 

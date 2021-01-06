@@ -261,9 +261,9 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:NVEL Tester"
-        "ProductCode" = "8:{06D9AAAC-E56D-4E89-8EF2-743869BF944A}"
-        "PackageCode" = "8:{9FD10906-FB46-4574-8007-C7A6C30906C3}"
-        "UpgradeCode" = "8:{6F2C51EF-C5BC-4315-99D1-93B919ED51C9}"
+        "ProductCode" = "8:{4B71071D-9668-4B1E-ACBD-4A60FAB3870D}"
+        "PackageCode" = "8:{FB7A9C77-C54F-4853-9C16-1290B7C149A6}"
+        "UpgradeCode" = "8:{95EE78CD-546D-4C0F-AFE1-E356D5FAD4E3}"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
