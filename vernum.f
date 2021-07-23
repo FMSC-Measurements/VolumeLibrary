@@ -56,10 +56,13 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20201123 Updated R3 region wide weight_factor and moiture content for 122,202,15 and 119
 ! 20210105 Corrected R10 Larson equation for small trees (DBH<6) in R10d2h.f. This affects volume of A00DVEW094,A00DVEW375,A00DVEW747.
 !          Also corrected Demar small tree volume of A01DEMW000 and A02DEMW000 in R10vol.f
+! 20210219 Added fwdbt_r for R program to get Flewelling Equation double bark thikness at given ht and dob
+! 20210701 Added subroutine vollibfsveg for FSVeg to call the library
+! 20200719 Set FCLASS initial to 0 in vollibfia.f in order to get the species default form class.
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
-			USE DEBUG_MOD
+!			USE DEBUG_MOD
 
       IMPLICIT NONE
       
@@ -80,12 +83,12 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
       INTEGER VERSION
 
 !---------------------------------------------------------------------
-      IF (DEBUG%ANALYSIS) THEN
-         WRITE  (LUDBG, 15) ' -->Enter VERNUM'
-   15    FORMAT (A)   
-   		END IF
+!      IF (DEBUG%ANALYSIS) THEN
+!         WRITE  (LUDBG, 15) ' -->Enter VERNUM'
+!   15    FORMAT (A)   
+!   		END IF
 
-      VERSION = 20210105
+      VERSION = 20210719
       RETURN
       END SUBROUTINE VERNUM
       
@@ -95,7 +98,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
-	USE DEBUG_MOD
+!	USE DEBUG_MOD
 
       IMPLICIT NONE
       
@@ -113,12 +116,12 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
       INTEGER VERSION
 
 !---------------------------------------------------------------------
-      IF (DEBUG%ANALYSIS) THEN
-         WRITE  (LUDBG, 15) ' -->Enter VERNUM'
-   15    FORMAT (A)   
-   		END IF
+!      IF (DEBUG%ANALYSIS) THEN
+!         WRITE  (LUDBG, 15) ' -->Enter VERNUM'
+!   15    FORMAT (A)   
+!   		END IF
 
-      VERSION = 20210105
+      VERSION = 20210719
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -141,7 +144,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20210105
+      VERSION = 20210719
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -157,6 +160,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20210105
+      version = 20210719
       return
       end subroutine vernum_r

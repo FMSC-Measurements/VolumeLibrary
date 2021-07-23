@@ -375,6 +375,16 @@ C ADDED ON 07/30/2014 ROUND LOGS BASED ON JEFF PENMAN LOG RULES
           IF(VOLEQ(3:3).EQ.'1'.OR.VOLEQ(3:3).EQ.'I')THEN
 C         THe new R8 Clark equation using number 1 for the third character in the VOLEQ.
 C         The new equation using R9 Clark equation codes
+C 02/24/2021 The UPSHT1 can be height to 4 or 7/9. If it is the height to 4, set to HT2PRD
+            IF (HTTOT.LE.0.0)THEN
+              IF(UPSHT1.GT.0.0)THEN
+                IF(UPSD1.EQ.4.0.OR.(UPSD1.EQ.0.0.AND.PROD.NE.'01'))THEN
+                  HT2PRD = UPSHT1
+                  UPSHT1 = 0.0
+                ENDIF
+              ENDIF
+            ENDIF
+            
             CALL R9CLARK (VOLEQ,STUMP,MTOPP,MTOPS,DBHOB,HT1PRD,HT2PRD,
      +                HTTOT, LOGDIA,BOLHT,LOGLEN,LOGVOL,VOL,CUTFLG,
      +                BFPFLG,CUPFLG, CDPFLG,SPFLG,PROD,ERRFLAG,CTYPE,

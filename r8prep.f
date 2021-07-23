@@ -358,15 +358,16 @@ C
           COEFFSO%DIB17 = (FCLSS - COEFFS%AFI)/COEFFS%BFI
         ENDIF
       ELSEIF(upsHt1.GT.0.0)THEN
-        IF(PROD.EQ.'01')THEN
+c 02/24/2021 not necessary to check Prod. HT to 4 is already set to HT2PRD      
+c        IF(PROD.EQ.'01')THEN
           GOTO 888
 !        ELSEIF(PROD.EQ.'08')THEN
 !        !Old equation may enter TotalHt into UPSHT1 field
 !          htTot = upsHt1
 !          GOTO 666
-        ELSE
-          GOTO 777
-        ENDIF  
+c        ELSE
+c          GOTO 777
+c        ENDIF  
       elseif(ht2Prd.gt.0) then
 777       topDib=4
           !topDib=FIXDI4

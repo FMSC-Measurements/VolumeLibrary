@@ -4,6 +4,7 @@ C 03/25/2014 changed default equation for Region 3 (R3_EQN) Ponderosa pine in th
 C 09/09/2016 Modified R3_EQN default equation for PP, DF, WF, and WP in Sante Fe NF
 C 09/15/2016 Corrected R4 default equation for other species to DVE equation
 C 04/12/2017 removed 532WO2W*** equation from R5_EQN per the email from Craig Bodenhausen (4/12/2017)
+C 07/19/2021 Changed R8_CEQN to use the R8 new Clark equation 8*1CLKE***
       SUBROUTINE VOLEQDEF (VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
 C
 C    SUBROUTINE WILL RETURN THE DEFAULT VOLUME EQUATION NUMBER
@@ -1986,20 +1987,27 @@ C                     // Francis Marion/Sumpter
 C     CREATE THE VOLUME EQUATION NUMBER
       VOLEQ(1:1) = '8'
       VOLEQ(2:2) = GEOAREA
-      IF(PROD.EQ.'01')THEN
-         IF(SPEC.LT.300) THEN
+C     Changed to use New Clark equation 8*1CLKE*** (YW 20210719)      
+!      IF(PROD.EQ.'01')THEN
+!         IF(SPEC.LT.300) THEN
 C           7 INCH TOP
-            VOLEQ(3:3) = '7'
-          ELSE
+!            VOLEQ(3:3) = '7'
+!          ELSE
 C           9 INCH TOP
-            VOLEQ(3:3) = '9'
-          ENDIF
-       ELSEIF (PROD.EQ.'08') THEN
+!            VOLEQ(3:3) = '9'
+!          ENDIF
+!       ELSEIF (PROD.EQ.'08') THEN
+C           USE PRODUCT 08 LOGIC
+!          VOLEQ(3:3) = '8'
+!       ELSE
+C           4 INCH TOP
+!         VOLEQ(3:3) = '4'
+!       ENDIF
+       IF (PROD.EQ.'08') THEN
 C           USE PRODUCT 08 LOGIC
           VOLEQ(3:3) = '8'
        ELSE
-C           4 INCH TOP
-         VOLEQ(3:3) = '4'
+         VOLEQ(3:3) = '1'
        ENDIF
       VOLEQ(4:7) = 'CLKE'
 

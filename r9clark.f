@@ -45,6 +45,7 @@ c YW 01/25/2018 Removed the broken top calculation, which cause problem for CP.
 c YW 07/13/2018 Modified R9cor to remove the adjustment factor for yellow-poplar (621).
 C YW 02/14/2019 Check height greater than merchL (it was checking minLen before) for volume calculation
 C YW 09/24/2019 R08 prod 08 uses MTOPP (DIB), so changed to use COEFFS to get sawHt (same as PROD8 subroutine)
+! YW 2021/06/21 Comment out the subroutine iisnan(x,res). It is not used and cause compile error on some system (Mac).
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -142,15 +143,17 @@ c            ENDIF
 c          ENDIF
 c        ENDIF
 c      ELSE
-      IF(volEq(1:1).EQ.'9')THEN
+! 2021/02/25 The following height check looks not right. I comment out
+!      IF(volEq(1:1).EQ.'9')THEN
 C     Region 9      
-      if (upsHt1 .gt. 0.0 .and. ht1Prd .le. 0.0) then
-         if (htTot .le. 0 .and. ht2prd .le.0) then
-           ht1Prd = upsHt1
-         endif
-         upsHt1 = 0
-      endif
-      ENDIF
+!      if (upsHt1 .gt. 0.0 .and. ht1Prd .le. 0.0) then
+!         if (htTot .le. 0 .and. ht2prd .le.0) then
+!           ht1Prd = upsHt1
+!         endif
+!         upsHt1 = 0
+!      endif
+!      ENDIF
+! End comment out
 C  added on 04/15/2015 for prod 14 to be same as prod 01
       if (prod .eq. '14') prod = '01'
       IF(VOLEQ(1:1).EQ.'9')THEN      
@@ -715,9 +718,11 @@ c       if sawtimber topHt is provided, no recalc topHt. 11/15/2011 (yw)
           else
             short=.true.
             topHt=17.4
-            shrtHt=ht1Prd
+            shrtHt=upsHt1
+c            shrtHt=ht1Prd
           endif
-          if(ht1prd.le.0) ht1Prd = upsHt1
+! For R9, HT1PRD is not same as UPSHT1. So comment out the foling line          
+c          if(ht1prd.le.0) ht1Prd = upsHt1
         else        
           if(ht1Prd.ge.17.3) then
 c         Use linear extrapolation from sawDib to topDib
@@ -1086,6 +1091,7 @@ C  for inside-bark calculations.
       integer   i
       real      r,c,e,p,b,a,totHt,dbhIb,dib17
       real      Is,Ib,It,Im,StTot
+      REAL Ds,Db,Dt
 !======================================================================      
 
 !...  reassign the coefficients to local variables to keep things tidy   		
@@ -1134,19 +1140,43 @@ c-----Set height indicator variables
 !...  things up
       StTot=stemHt/TOTHT
       IF(LOG(1.-StTot).LT.(-20./ABS(R)))StTot=1.
-      
+
+C The calculation needs to be done seperately. Otherwise it may cause calculation error 
+C Replaced this piece code with the code below. (YW 2021/02/26)      
 C-----Get DIB at specified height
-      stmDib=(Is*(DBHIB**2 * (1 + (C + E/DBHIB**3)*
+!      stmDib=(Is*(DBHIB**2 * (1 + (C + E/DBHIB**3)*
+!     &   ((1-StTot)**R - (1-4.5/TOTHT)**R)/
+!     &   (1-(1-4.5/TOTHT)**R)))
+!     &   +Ib*(DBHIB**2-(DBHIB**2-DIB17**2)*
+!     &   ((1-4.5/TOTHT)**P
+!     &     -(1-stemHt/TOTHT)**P)/((1-4.5/TOTHT)
+!     &   **P-(1-17.3/TOTHT)**P))
+!     &   +It*(DIB17**2*(B*(((stemHt-17.3)/
+!     &   (TOTHT-17.3))-1)**2
+!     &   +Im*((1-B)/A**2)*(A-(stemHt-17.3)/
+!     &   (TOTHT-17.3))**2)))**0.5
+      
+      Ds = 0.0
+      Db = 0.0
+      Dt = 0.0
+      IF(Is.EQ.1.0)THEN
+        Ds = (DBHIB**2 * (1 + (C + E/DBHIB**3)*
      &   ((1-StTot)**R - (1-4.5/TOTHT)**R)/
      &   (1-(1-4.5/TOTHT)**R)))
-     &   +Ib*(DBHIB**2-(DBHIB**2-DIB17**2)*
+      ENDIF
+      IF(Ib.EQ.1.0)THEN
+        Db = (DBHIB**2-(DBHIB**2-DIB17**2)*
      &   ((1-4.5/TOTHT)**P
      &     -(1-stemHt/TOTHT)**P)/((1-4.5/TOTHT)
      &   **P-(1-17.3/TOTHT)**P))
-     &   +It*(DIB17**2*(B*(((stemHt-17.3)/
+      ENDIF
+      IF(It.EQ.1.0)THEN
+        Dt = (DIB17**2*(B*(((stemHt-17.3)/
      &   (TOTHT-17.3))-1)**2
      &   +Im*((1-B)/A**2)*(A-(stemHt-17.3)/
-     &   (TOTHT-17.3))**2)))**0.5
+     &   (TOTHT-17.3))**2))
+      ENDIF
+      StmDib = (Ds+Db+Dt)**0.5
       
       if(stmDib.lt.0.0) stmDib=0.0
       
@@ -1283,12 +1313,15 @@ c      if(stemHt.ne.stemHt) stemHt=0.0
       return
       end
 C
-      subroutine iisnan(x,res)
-      real, intent(in) :: x
-      logical :: res
-      integer, parameter :: NaN = Z"7FC00000"
-      res = ieor(transfer(x,Nan), NaN) == 0
-      end subroutine
+!     Comment out the following subroutine. It is not used but caused compile error on some system (Mac)
+!     YW 2021/06/21
+!      subroutine iisnan(x,res)
+!      real, intent(in) :: x
+!      logical :: res
+!      integer, parameter :: NaN = Z"7FC00000"
+!      res = ieor(transfer(x,Nan), NaN) == 0
+!      end subroutine
+
       subroutine r9bdft(vol,logLen,NUMSEG,logDia,errFlg,logVol)
 C_______________________________________________________________________
 C

@@ -218,7 +218,7 @@ c  test biomass calc variable
       ENDIF
       HT1PRD=0.0
       HT2PRD=0.0
-      FCLASS=80
+      FCLASS=0
       DBTBH=0.0
       BTR=0.0
       PROD='01'
@@ -342,7 +342,7 @@ C  variables for stump dia and vol
       ENDIF
       HT1PRD=0.0
       HT2PRD=0.0
-      FCLASS=80
+      FCLASS=0
       DBTBH=0.0
       BTR=0.0
       HTTYPE='F'
@@ -391,6 +391,129 @@ C  variables for stump dia and vol
         mcu = 0.0
         scrbbf = 0.0
         intlbf = 0.0
+      ENDIF
+      RETURN
+      END
+c================================================================
+      subroutine vollibfsveg(regn,iforst,idist,voleqi,dbhob,httot,
+     +           mtopp,stems,tcu, mcu, bdf, errflag)
+c--------------------------------------------------------------
+c    This subroutine is created for FSVeg to call the library
+!  YW 20210719 Set FCLASS initial to 0 in order to pick the species default form class
+
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::vollibfsveg
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: vollibfsveg
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibfsveg'::vollibfsveg
+
+      IMPLICIT NONE
+      character*(*) voleqi
+      real tcu,mcu,bdf
+      integer stems
+c     variables from VOLINIT
+!**********************************************************************
+      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*2  FORST,PROD
+      character*4  CONSPEC
+      CHARACTER*10 VOLEQ
+      CHARACTER*3  MDL,SPECIES
+      CHARACTER*2  DIST,VAR
+   
+      CHARACTER*10 EQNUM
+      INTEGER      SPEC
+
+!   MERCH VARIABLES 
+      INTEGER        REGN,HTTFLL,BA,SI
+      REAL           STUMP,MTOPP,MTOPS,THT1,MAXLEN
+      INTEGER        CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+      REAL         TIPDIB,TIPLEN
+      
+!   Tree variables
+      REAL 	HTTOT,HT1PRD,HT2PRD,LEFTOV 
+      REAL 	DBHOB,DRCOB,DBTBH,BTR,CR,TRIM
+      INTEGER   FCLASS,HTLOG,SPCODE, WHOLELOGS
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+    
+!   OUTPUTS
+      REAL      NOLOGP,NOLOGS
+      INTEGER   TLOGS,IFORST, IDIST
+    
+!   ARRAYS
+      INTEGER   I15,I21,I20,I7,I3,I,J
+      REAL 	VOL(15),LOGVOL(7,20)
+      REAL	LOGDIA(21,3),LOGLEN(20),BOLHT(21)
+C  variables for stump dia and vol
+      INTEGER SPN
+      REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
+      REAL DIB,DOB,HTUP,MHT  
+      
+c  test biomass calc variable
+      REAL WF(3), BMS(8)
+      INTEGER SPCD, FOREST   
+ !********************************************************************
+      VOLEQ   = VOLEQI(1:10)
+!     Set default value for unused variables
+      IF(IFORST.GT.99) THEN
+        FORST = '01'
+      ELSE 
+        WRITE (FORST, '(I2)') IFORST
+      ENDIF
+      IF(FORST(2:2) .LT. '0') THEN 
+        FORST(2:2) = FORST(1:1)
+        FORST(1:1) = '0'
+        IF(FORST(2:2) .LT. '0') FORST(2:2) = '0'
+      ENDIF
+      HT1PRD=0.0
+      HT2PRD=0.0
+      FCLASS=0
+      IF(STEMS.GT.0) FCLASS=STEMS
+      DBTBH=0.0
+      BTR=0.0
+      PROD='01'
+      HTTYPE='F'
+      HTLOG=0
+      STUMP=0.0
+      UPSHT1=0.0
+      UPSD1=0.0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      CONSPEC='    '
+      DRCOB=0.0
+      HTTFLL=0
+      BA=0
+      SI=0
+      CTYPE='F'
+      CUTFLG=1
+      CUPFLG=1
+      SPFLG=1
+      BFPFLG=1
+c      MTOPP=0.0
+      MTOPS=0.0
+      I3 = 3
+      I7 = 7
+      I15 = 15
+      I20 = 20
+      I21 =21
+
+      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      IF(ERRFLAG.EQ.0)THEN
+        tcu = VOL(1)
+        mcu = VOL(4)
+        bdf = VOL(2)
+      ELSE
+        tcu = 0.0
+        mcu = 0.0
+        bdf = 0.0
       ENDIF
       RETURN
       END

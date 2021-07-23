@@ -612,7 +612,7 @@ namespace volCStest
             CONSPEC.Append(m_sConSpec);
             MDL = VOLEQ.ToString().Substring(3, 3);
             //added for A00F32W*** equation (08/27/2013)
-            if (MDL == "F32" || MDL == "f32") HTLOG = 32;
+            if (MDL == "F32" || MDL == "f32" || VOLEQ.ToString().Substring(0, 3) == "A32") HTLOG = 32;
             
             //add test biomass calc variable
             SPCD = int.Parse(speciesTB.Text);
@@ -1337,8 +1337,43 @@ namespace volCStest
 
             if (REGN == 9 && HTTOT == 0)
             {
-                UPSHT1 = HT1PRD;
-                UPSD1 = MTOPP;
+                if (UPSHT1 == 0)
+                {
+                    UPSHT1 = HT1PRD;
+                    UPSD1 = MTOPP;
+                }
+                else
+                {
+                    if (Int32.Parse(VOLEQ.ToString().Substring(7, 3)) < 300) UPSD1 = 7;
+                    else UPSD1 = 9;
+                }
+                UPSHT2 = HT2PRD;
+                UPSD2 = MTOPS;
+            }
+            else if (VOLEQ.ToString().Substring(3, 3) == "CLK" && VOLEQ.ToString().Substring(2, 1) == "1")
+            {
+                if (HTTOT == 0 && UPSHT1 > 0)
+                {
+                    if ((UPSD1 == 4) || (PROD.ToString() != "01" && (UPSD1 != 7 || UPSD1 != 9)))
+                    {
+                        UPSHT2 = UPSHT1;
+                        UPSD2 = 4;
+                        UPSHT1 = 0;
+                    }
+                }
+                else
+                {
+                    UPSHT1 = HT1PRD;
+                    UPSHT2 = HT2PRD;
+                }
+            }
+            else
+            {
+                if (UPSHT1 == 0)
+                {
+                    UPSHT1 = HT1PRD;
+                    UPSD1 = MTOPP;
+                }
                 UPSHT2 = HT2PRD;
                 UPSD2 = MTOPS;
             }
@@ -1369,6 +1404,7 @@ namespace volCStest
                 VOLEQ.ToString().Contains("F3") ||
                    VOLEQ.ToString().Contains("CZ") ||
                    VOLEQ.ToString().Contains("DEM") ||
+                   VOLEQ.ToString().Contains("CUR") ||
                     VOLEQ.ToString().Contains("WO2") ||
                    VOLEQ.ToString().Contains("MAT")||
                    VOLEQ.ToString().Contains("CLK")||
@@ -1387,6 +1423,7 @@ namespace volCStest
                 VOLEQ.ToString().Contains("F3") ||
                   MDL.Contains("CZ") ||
                   MDL.Contains("DEM") ||
+                  MDL.Contains("CUR") ||
                   MDL.Contains("WO2") ||
                   //(REGN == 9 && MDL.Contains("CLK")) ||
                   MDL.Contains("CLK") ||
@@ -2369,15 +2406,29 @@ namespace volCStest
                 MessageBox.Show("cannot return height to the dib for this volume equation");
                 return;
             }
-            if (MTOPP > 0)
+            if (VOLEQ.ToString().Substring(3,3)=="CLK")
             {
-                UPSD1 = MTOPP;
-                UPSHT1 = HT1PRD;
+                if (VOLEQ.ToString().Substring(0, 1) == "8")
+                {
+                    if ((UPSD1 == 4.0) || (PROD.ToString() != "01" && (UPSD1 != 7.0 || UPSD1 != 9.0)))
+                    {
+                        HT2PRD = UPSHT1;
+                        UPSHT1 = 0.0f;
+                    }
+                }
             }
-            if (MTOPS > 0)
+            else
             {
-                UPSD2 = MTOPS;
-                UPSHT2 = HT2PRD;
+                if (MTOPP > 0)
+                {
+                    UPSD1 = MTOPP;
+                    UPSHT1 = HT1PRD;
+                }
+                if (MTOPS > 0)
+                {
+                    UPSD2 = MTOPS;
+                    UPSHT2 = HT2PRD;
+                }
             }
             HT2TOPDCS(ref REGN, FORST, VOLEQ, ref DBHOB, ref HTTOT, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
                 ref AVGZ1, ref AVGZ2, ref HTREF, ref DBTBH, ref BTR, ref FCLASS, ref STEMDIB, ref STEMHT, ref ERRFLAG, strlen, strlen);

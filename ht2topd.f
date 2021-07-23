@@ -14,8 +14,8 @@
       CHARACTER*2 FORST
       CHARACTER*3 MDL
       REAL HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2
-      REAL DBTBH,BTR
-      CHARACTER*1 HTTYPE, VEQ
+      REAL DBTBH,BTR,VOL(15)
+      CHARACTER*1 HTTYPE, VEQ, CTYPE
       
       REAL MAXLEN,MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,MINBFD
       INTEGER EVOD,OPT
@@ -26,7 +26,7 @@ C     Variables to hold flewellings coefficients
       INTEGER SETOPT(6),JSP,NEXTRA
       REAL RHFW(4),RFLW(6),TAPCOE(12),F,FMOD(3),PINV_Z(2)
       REAL HEX(2),dex(2),ZEX(2),UHT,MHT,LMERCH
-      REAL TOP6,HT2,TOPD
+      REAL TOP6,HT2,TOPD,HTTOTC
 
 c     VARIABLES FOR R4 MAT
       REAL STUMPD,BUTTCF,CF0,B
@@ -34,7 +34,7 @@ c     VARIABLES FOR R4 MAT
 C     Variables for Clark profile  
       INTEGER SPP, GEOG,IPROD
       REAL TOPDIB,SAWDIB,PULPDIB,SHRTHT,TOPHT,PLPDIB,DBHIB,DIB17,brokHt
-      TYPE(CLKCOEF):: COEFFS
+      TYPE(CLKCOEF):: COEFFS,COEFFST
       TYPE(CLKCOEF):: COEFFSO
       LOGICAL SHORT    
       
@@ -118,6 +118,14 @@ C     !OTHER PROFILE MODEL
         IF(REGN.EQ.9.OR.
      +     (VOLEQ(1:1).EQ.'8'.AND.VOLEQ(3:3).EQ.'1'))THEN
           IF(VOLEQ(1:1).EQ.'8')THEN
+          !R8 use UPSHT1 for ht479. Need to set ht4 to HT2PRD
+            IF(HTTOT.LE.0.0.AND.UPSHT1.GT.0.0)THEN
+              IF(UPSD1.EQ.4.0.OR.
+     &         (Prod.NE.'01'.AND.(UPSD1.NE.7.OR.UPSD1.NE.9)))THEN
+                HT2PRD = UPSHT1
+                UPSHT1 = 0.0
+              ENDIF
+            ENDIF
           call r8Prep(volEq,dbhOb,topDib,topHt,ht1Prd,ht2Prd,htTot,
      &            spp,geog,COEFFS,forst,maxLen,
      &            minLen,merchL,mTopP,mTopS,stump,trim,minBfD,
@@ -147,7 +155,9 @@ C-----Get total height
           if(COEFFS%totHt.le.17.3) errFlag=8
           if(errFlag.ne.0) return
           IF(VOLEQ(1:1).EQ.'8')THEN
-            CALL r9ht(stemHt,COEFFSO,stemDib,errFlag)
+          ! COEFFSO is coefficients for outside bark. Should use COEFFS for inside bark (2021/03/02)
+          !  CALL r9ht(stemHt,COEFFSO,stemDib,errFlag)
+            CALL r9ht(stemHt,COEFFS,stemDib,errFlag)
           ELSE
             CALL r9ht(stemHt,COEFFS,stemDib,errFlag)
           ENDIF
@@ -158,30 +168,35 @@ c            VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
 c            ERRFLAG=1
 c            RETURN
 c          ELSE
-            VOLEQ2 = VOLEQ
+c            VOLEQ2 = VOLEQ
 c          ENDIF     
           VEQ = VOLEQ(3:3)   
-          CALL R8PREPCOEF(VOLEQ2, COEFFS, ERRFLAG)
+          CALL R8PREPCOEF(VOLEQ, COEFFS, ERRFLAG)
           DBHIB = COEFFS%A4+COEFFS%B4*DBHOB
           IF(VEQ.EQ.'0'.OR.VEQ.EQ.'8')THEN
             DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/HTTOT)**2)
           ELSEIF(VEQ.EQ.'4'.OR.VEQ.EQ.'7'.OR.VEQ.EQ.'9')THEN
             IF(UPSHT1.EQ.0.)THEN
-              IF(VEQ.EQ.'4')THEN
-                IF(HT2PRD.GT.0)THEN
-                  UPSHT1 = HT2PRD
+c            ! CALC upsht1 from HTTOT (2021/03/03)     
+              VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
+              CALL R8PREPCOEF(VOLEQ2, COEFFST, ERRFLAG)
+              COEFFST%TOTHT = HTTOT
+              COEFFST%DBHIB = COEFFST%A4+COEFFST%B4*DBHOB
+              COEFFST%DIB17=DBHOB*(COEFFST%A17+COEFFST%B17*
+     &                      (17.3/HTTOT)**2)
+              CALL r9ht(UPSHT1,COEFFST,COEFFS%FIXDI,errFlag)
+              
+              IF(UPSHT1.EQ.0)THEN
+                IF(VEQ.EQ.'4')THEN
+                  IF(HT2PRD.GT.0) UPSHT1 = HT2PRD
                 ELSE
-                  ERRFLAG = 9
-                  RETURN
-                ENDIF
-              ELSE
-                IF(HT1PRD.GT.0)THEN
-                  UPSHT1 = HT1PRD
-                ELSE
-                  ERRFLAG = 9
-                  RETURN
-                ENDIF
+                  IF(HT1PRD.GT.0) UPSHT1 = HT1PRD
+                ENDIF  
               ENDIF
+            ENDIF
+            IF(UPSHT1.EQ.0)THEN
+              ERRFLAG = 9
+              RETURN
             ENDIF
             DIB17=DBHOB*(COEFFS%A17+COEFFS%B17*(17.3/UPSHT1)**2)
           ENDIF
@@ -194,15 +209,32 @@ c          ENDIF
 C-----First Get total height
             topHt = UPSHT1
             topDib = COEFFS%FIXDI
-            call r9totHt(COEFFS%totHt,htTot,COEFFS%dbhIb,COEFFS%dib17,
-     &             topHt,topDib,COEFFS%a, COEFFS%b,errFlag)
-            if(COEFFS%totHt.le.17.3) errFlag=8
-            if(errFlag.ne.0) return
-            HTTOT = COEFFS%totHt
-            IF(STEMDIB.LT.COEFFS%FIXDI)THEN
+            IF(HTTOT.LE.0.0)THEN
               VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
-              CALL R8PREPCOEF(VOLEQ2, COEFFS, ERRFLAG)
-              CALL r9ht(STEMHT,COEFFS,STEMDIB,errFlag)
+              CALL R8PREPCOEF(VOLEQ2, COEFFST, ERRFLAG)
+              COEFFST%TOTHT = HTTOT
+              COEFFST%DBHIB = DBHIB
+              COEFFST%dib17 = DIB17
+              call r9totHt(COEFFST%totHt,htTot,COEFFST%dbhIb,
+     &         COEFFST%dib17,topHt,topDib,COEFFST%a, COEFFST%b,errFlag)
+              if(COEFFST%totHt.le.17.3) errFlag=8
+              if(errFlag.ne.0) return
+              HTTOTC = COEFFST%totHt
+            ENDIF
+            IF(STEMDIB.LE.COEFFS%FIXDI)THEN
+              VOLEQ2 = VOLEQ(1:2)//'0'//VOLEQ(4:10)
+              CALL R8PREPCOEF(VOLEQ2, COEFFST, ERRFLAG)
+              IF(HTTOT.EQ.0.0)THEN
+                COEFFST%TOTHT = HTTOTC
+                COEFFST%DBHIB = DBHIB
+                COEFFST%dib17 = DIB17
+              ELSE
+                COEFFST%TOTHT = HTTOT
+                COEFFST%DBHIB = COEFFST%A4+COEFFST%B4*DBHOB
+                COEFFST%dib17 = DBHOB*(COEFFST%A17+COEFFST%B17*
+     &                      (17.3/HTTOT)**2)
+              ENDIF
+              CALL r9ht(STEMHT,COEFFST,STEMDIB,errFlag)
             ELSE
               CALL R8CLKHT(VOLEQ,DBHOB,HTTOT,topHt,STEMDIB,STEMHT)
             ENDIF

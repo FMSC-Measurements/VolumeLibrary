@@ -144,12 +144,16 @@ C Added Clark profile model for region 9
         IF (VOLEQ(1:1).EQ.'9'.OR.
      +     (VOLEQ(1:1).EQ.'8'.AND.VOLEQ(3:3).EQ.'1')) THEN
           ht2Prd = UPSHT2
-          ht1Prd = UPSHT1
-          mTopP = UPSD1
-          mTopS = UPSD2
-          errFlag = 0
 c reset UPSHT1 to 0 (yw 09/24/2012)          
           UPSHT = 0
+          IF(UPSD1.EQ.7.0.OR.UPSD1.EQ.9.0)THEN
+            UPSHT = UPSHT1
+          ELSE
+            ht1Prd = UPSHT1
+          ENDIF
+          mTopP = 0.0  !UPSD1
+          mTopS = 0.0  !UPSD2
+          errFlag = 0
           CALL r9clarkdib (VOLEQ,STUMP,mTopP,mTopS,DBHOB,
      &                    ht1Prd,ht2Prd,HTTOT,HTUP,DIB,prod,errFlag,
      &                    UPSHT)
@@ -289,3 +293,236 @@ c      UPSD1 = 0.0
       CONTINUE
       RETURN
       end subroutine calcdob_r         
+! *******************************************************************************
+      subroutine fwdbt_r(VOLEQ,DBHOB_d,HTTOT_d,HTUP_d,DOB_d,DBT_d,
+     & ERRFLAG)
+C This subroutine is for R user to calculate double bark thickness (DBT) at given height      !
+C YW 02/19/2021
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::fwdbt_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'fwdbt_r_'::fwdbt_r
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,DOB_d,HTUP_d,DBT_d
+      CHARACTER*10 VOLEQ
+      REAL*4 RHFW(4),RFLW(6),TAPCOE(12),F 
+      REAL DBHOB,HTTOT,DBTBH,BTR,HTUP,DOB,DBT,DIB
+      CHARACTER*1 GEOCODE
+      CHARACTER*2 GEOSUB
+      CHARACTER*3 SPEC
+      INTEGER JSP,SETOPT(6),ERRFLAG
+      REAL FDBT_C2,BRK_UPB2
+      REAL RATIO,BRK_UPA2,BRK_WS,BARK_R,fdbt_c1
+
+
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      HTUP = REAL(HTUP_d)
+      DOB = REAL(DOB_d)
+C------------------------------------------------------------------------------      
+C The following code is copied from fwinit.f      
+      SETOPT(1)=1
+c                              Region effects on bark predictions
+      SETOPT(2)=1
+      SETOPT(3)=1
+       
+c                          The following white noise option is ALWAYS set
+c                            to zero (off). For future development.
+      SETOPT(4)=0
+
+      GEOCODE = VOLEQ(1:1)
+      GEOSUB = VOLEQ(2:3)
+      SPEC = VOLEQ(8:10)
+
+C       ERROR CHECK THE GEOSUB CODE
+      IF(GEOSUB.EQ.'OO' .OR. GEOSUB.EQ.'oo') GEOSUB = '00'
+      
+      IF(GEOCODE.EQ.'I' .OR. GEOCODE.EQ.'i' .OR. GEOCODE.EQ.'1') THEN
+        IF (SPEC.EQ.'202'.or.spec.eq.'205'.or.spec.eq.'204') THEN
+c     Douglas fir
+          JSP = 11
+        ELSEIF(SPEC.EQ.'073'.or.SPEC.EQ.'070') THEN
+c     Western Larch
+          JSP = 12
+        ELSEIF(SPEC.EQ.'017') THEN
+c     Grand fir
+          JSP = 13
+        ELSEIF(SPEC.EQ.'122') THEN
+C     Ponderosa pine
+          JSP = 14
+        ELSEIF(SPEC.EQ.'108') THEN
+c     Lodgepole pine        
+          JSP = 15
+        ELSEIF(SPEC.EQ.'242'.or.SPEC.EQ.'240') THEN
+c     Western Red Cedar        
+          JSP = 16
+        ELSEIF(SPEC.EQ.'260'.or.SPEC.EQ.'263'.OR.SPEC.EQ.'264') THEN
+c     Mountain Hemlock
+          JSP = 17
+        ELSEIF(SPEC.EQ.'119') THEN
+c     White pine
+          JSP = 18
+        ELSEIF(SPEC.EQ.'093'.or.SPEC.EQ.'090') THEN
+c     Engelmann Spruce
+          JSP = 19
+        ELSEIF(SPEC.EQ.'019') THEN
+c     Subalpine fir
+          JSP = 20
+        ELSEIF(SPEC.EQ.'012') THEN
+c     Balsam fir
+          JSP = 21
+        ELSE
+          ERRFLAG = 1
+          RETURN
+        ENDIF
+
+C                                WESTSIDE SPECIES
+      ELSEIF(GEOCODE.EQ.'F' .OR. GEOCODE.EQ.'f') THEN
+        IF (SPEC.EQ.'202'.or.spec.eq.'205'.or.spec.eq.'204') THEN
+c     Douglas fir
+          JSP = 3 
+        ELSEIF(SPEC.EQ.'263') THEN
+c     Western Hemlock
+          JSP = 4
+        ELSEIF(SPEC.EQ.'242') THEN
+c     Western Red Cedar        
+          JSP = 5
+        ELSE
+          ERRFLAG = 1
+          RETURN
+        ENDIF
+
+C                                 REGION 2      
+      ELSE IF(GEOCODE.EQ.'2') THEN
+        IF(SPEC.EQ.'122') THEN
+c         Black Hills model
+          IF(GEOSUB.EQ.'03') THEN
+            JSP = 22
+          ELSE
+c         region wide and san juan
+              JSP = 23
+          ENDIF
+        ELSEIF(SPEC.EQ.'108') THEN
+c         Lodgepole model
+           JSP=25
+        ELSEIF(SPEC.EQ.'202') THEN
+c         Douglas Fir model
+           JSP = 26
+        ELSEIF(SPEC.EQ.'015') THEN
+c         White fir model
+           JSP = 27
+        ELSE IF(SPEC.EQ.'746')THEN
+c         Aspen model
+	     JSP = 28
+	  ELSE
+          ERRFLAG = 1
+          RETURN
+        ENDIF
+C                                 REGION 4
+      ELSE IF(GEOCODE.EQ.'4') THEN
+        IF(GEOSUB.EQ.'07')THEN
+          IF(SPEC.EQ.'093') THEN
+c         Engelmann spruce model
+            JSP = 24
+          ELSE IF(SPEC.EQ.'122') THEN
+c         R2 Ponderosa Pine model with R4 bark
+            JSP = 23
+          ELSE
+            ERRFLAG = 1
+            RETURN
+          ENDIF
+        ELSE
+          ERRFLAG = 1
+          RETURN
+        ENDIF
+C                                 REGION 3
+C     REGION 3
+      ELSE IF (GEOCODE.EQ.'3') THEN
+         IF(GEOSUB.EQ.'00')THEN
+           IF(SPEC.EQ.'122')THEN
+             JSP = 29
+           ELSE
+             ERRFLAG = 1
+             RETURN
+           ENDIF
+C        GEOSUB 01 is for Santa Fe NF
+         ELSEIF(GEOSUB.EQ.'01') THEN
+            IF(SPEC.EQ.'122') THEN
+              JSP = 29
+              IF(BTR.LE.0) BTR = 89.12
+C         SPECIES 202, 015, AND 108 USE REGION 2 PROFILE
+            ELSEIF(SPEC.EQ.'108')THEN
+              JSP = 25
+              IF(BTR.LE.0) BTR = 93.26
+            ELSEIF(SPEC.EQ.'202')THEN
+              JSP = 26
+              IF(BTR.LE.0) BTR = 89.72
+            ELSEIF(SPEC.EQ.'015')THEN
+              JSP = 27
+              IF(BTR.LE.0) BTR = 91.16
+            ELSE
+              ERRFLAG = 1
+              RETURN
+            ENDIF
+         ELSE
+           ERRFLAG = 1
+           RETURN
+         ENDIF
+C                                 REGION 10
+      ELSE IF(GEOCODE.EQ.'A') THEN
+          IF(SPEC.EQ.'042') THEN
+c         Alaska yellow cedar
+            JSP = 31
+          ELSE IF(SPEC.EQ.'242') THEN
+c         Western Red Cedar
+            JSP = 32
+          ELSE IF(SPEC.EQ.'098') THEN
+c         Spruce
+            IF(GEOSUB.EQ.'02') THEN
+	        JSP=35
+            ELSE
+              JSP = 33
+	      ENDIF
+          ELSE IF(SPEC.EQ.'263'.OR.SPEC.EQ.'260'.OR.SPEC.EQ.'264') THEN
+c         Hemlock
+            IF(GEOSUB.EQ.'02') THEN
+	        JSP=36
+            ELSE
+              JSP = 34
+    	      ENDIF
+          ELSE
+            ERRFLAG = 1
+            RETURN
+          ENDIF
+      ELSE
+        ERRFLAG = 1
+        RETURN
+      ENDIF
+      
+c      IF(BTR.GT.0.0 .AND. DBTBH.LE.0) DBTBH = DBHOB-(DBHOB*BTR/100.0)
+c      CALL sf_2pt(JSP,GEOSUB,SETOPT,DBHOB,HTTOT,DBTBH,F,RHFW,
+c     >                                              RFLW,TAPCOE)
+C End code from fwinit.f
+C ---------------------------------------------------------------------------
+C Code from Brk_up.f
+      DIB =DOB
+      DBT =0.0
+      DBTBH = 0.0
+      IF (JSP.GE.22 .AND. JSP.LE.30) THEN
+          CALL BRK_OT(JSP,geosub,DBHOB,DOB,HTUP,DBTBH,DIB,dbt)
+      elseif (jsp.ge.11 .and. jsp.lt.22) then
+c          RATIO = BRK_UPA2(JSP,DBHOB,HTTOT,DBTBH,HTUP,dib)
+c          dbt = RATIO/(1.0-RATIO)*DIB
+          DBTBH = FDBT_C2(JSP,GEOSUB,SETOPT,DBHOB,HTTOT)
+          BTR = BRK_UPB2(JSP,DBHOB,HTTOT,DBTBH,HTUP,DOB)
+          DBT = BTR*DOB
+      else if(JSP.GE.3 .AND. JSP.LE.5) THEN  
+         DBTBH = fdbt_c1(JSP,GEOSUB,DBHOB,HTTOT)   
+         BARK_R = BRK_WS(JSP,DBHOB,HTTOT,DBTBH,HTUP)
+         dbt = dib * (bark_r / (1.0-bark_r))
+c         DBT=BARK_R*DOB
+      ENDIF 
+    
+      DBT_d = DBLE(DBT)
+      end subroutine fwdbt_r

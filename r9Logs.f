@@ -22,6 +22,7 @@ c  YW 04/13/2017 Modified R9LOGS to also calculate logs for topwood for sawtimbe
 c  YW 01/18/2018 Removed the changes made on 4/13/2017.
 C  YW 05/30/2019 R9 do want logs calculation for the topwood of the sawtimber. 
 C                So I put the change back again.
+!  YW 03/11/2021 When topwood not long for a min log, set NOLOGS to 0 and continue
 C_______________________________________________________________________
 C
       SUBROUTINE R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
@@ -117,9 +118,10 @@ C         The LEFTOVER need to be calculate here (5/22/2017)
          !do we need a check for nologs >0???  
          IF(LMERCH.LT. (MINLEN+TRIM) !.OR. NOLOGS.LE.0 
      &    .OR. (NOLOGS.EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)) ) THEN
-          RETURN
+          !RETURN
+          NOLOGS = 0
          ENDIF   
-           
+         IF(NOLOGS.GT.0)THEN  
           ILOG = NOLOGP + 1
           JLOG = ILOG + NOLOGS - 1
           IF (JLOG .GT. 20) THEN
@@ -129,6 +131,7 @@ C         The LEFTOVER need to be calculate here (5/22/2017)
           CALL R9LOGLEN(ILOG, JLOG, NOLOGS, MINLEN, MAXLEN, TRIM,
      &                 LOGLEN, LEFTOV, ERRFLG)
           IF(ERRFLG .NE. 0) RETURN
+         ENDIF
           IF (DEBUG%MODEL) THEN
            WRITE  (LUDBG, 300)'LMERCH  NOLOGS ilog  jlog'
      &                    //' LEFTOV'
@@ -154,14 +157,16 @@ C         The LEFTOVER need to be calculate here (5/22/2017)
         
         IF(LMERCH.LT. (MINLEN+TRIM) !.OR. NOLOGS.LE.0 
      &    .OR. (NOLOGS.EQ.0 .AND. LEFTOV.LT.(MINLEN+TRIM)) ) THEN
-          RETURN
+        !  RETURN
+          NOLOGS = 0
         ENDIF
-      
-        ILOG = 1
-        JLOG = NOLOGS     
-        CALL R9LOGLEN (ILOG, JLOG, NOLOGS, MINLEN, MAXLEN, TRIM,
+        IF(NOLOGS.GT.0)THEN
+          ILOG = 1
+          JLOG = NOLOGS     
+          CALL R9LOGLEN (ILOG, JLOG, NOLOGS, MINLEN, MAXLEN, TRIM,
      &                 LOGLEN, LEFTOV, ERRFLG)
-        IF(ERRFLG .NE. 0) RETURN
+          IF(ERRFLG .NE. 0) RETURN
+        ENDIF
       ENDIF
       
       TLOGS = INT(NOLOGP + NOLOGS)
