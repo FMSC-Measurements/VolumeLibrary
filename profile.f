@@ -40,6 +40,7 @@ C YW 10/15/2015 Modified TAPERMODEL for call R1tap to calc vol.
 C YW 06/16/2017 Added merch height to MTOPS to HT2PRD
 C YW 12/20/2019 Added check REGN=3 for FIREWOOD in two places with REGN 5
 C YW 02/19/2020 Changed variable MINLEN/MINLENT for call NUMLOG and SEGMNT
+C YW 08/19/2021 Changed stump for Demar model DBH > 36
 C**************************************************************
 C**************************************************************
 
@@ -1118,7 +1119,11 @@ c     find DBHOB inside bark
         LOGDIA(1,3)= DOB
         BOLHT(1) = 4.5
       ENDIF
-
+C     Demar stump fix for DBH>36      
+       IF((VOLEQ(4:6).EQ.'DEM'.OR.VOLEQ(4:6).EQ.'CUR').AND.
+     &  DBHOB.GT.36)THEN
+        STUMP=DBHOB/36
+       ENDIF
        HT2 = STUMP
        DO 20 I=1+LOGST,NUMSEG+LOGST
           HT2=HT2+TRIM+LOGLEN(I)

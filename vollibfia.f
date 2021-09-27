@@ -396,15 +396,12 @@ C  variables for stump dia and vol
       END
 c================================================================
       subroutine vollibfsveg(regn,iforst,idist,voleqi,dbhob,httot,
-     +           mtopp,stems,tcu, mcu, bdf, errflag)
+     +       mtopp,stems,dbtbh,stump,ba,si,tcu, mcu, bdf, errflag)
 c--------------------------------------------------------------
 c    This subroutine is created for FSVeg to call the library
 !  YW 20210719 Set FCLASS initial to 0 in order to pick the species default form class
-
-      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::vollibfsveg
-      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: vollibfsveg
-      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibfsveg'::vollibfsveg
-
+!  YW 20210727 Added DBTBH as an input variable to the subroutine
+!  YW 20200811 Added stump, ba and si as input variables
       IMPLICIT NONE
       character*(*) voleqi
       real tcu,mcu,bdf
@@ -415,17 +412,17 @@ c     variables from VOLINIT
       CHARACTER*2  FORST,PROD
       character*4  CONSPEC
       CHARACTER*10 VOLEQ
-      CHARACTER*3  MDL,SPECIES
+c      CHARACTER*3  MDL,SPECIES
       CHARACTER*2  DIST,VAR
    
-      CHARACTER*10 EQNUM
-      INTEGER      SPEC
+c      CHARACTER*10 EQNUM
+c      INTEGER      SPEC
 
 !   MERCH VARIABLES 
       INTEGER        REGN,HTTFLL,BA,SI
       REAL           STUMP,MTOPP,MTOPS,THT1,MAXLEN
       INTEGER        CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
-      REAL         TIPDIB,TIPLEN
+c      REAL         TIPDIB,TIPLEN
       
 !   Tree variables
       REAL 	HTTOT,HT1PRD,HT2PRD,LEFTOV 
@@ -445,13 +442,13 @@ c     variables from VOLINIT
       REAL 	VOL(15),LOGVOL(7,20)
       REAL	LOGDIA(21,3),LOGLEN(20),BOLHT(21)
 C  variables for stump dia and vol
-      INTEGER SPN
-      REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
-      REAL DIB,DOB,HTUP,MHT  
+c      INTEGER SPN
+c      REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
+c      REAL DIB,DOB,HTUP,MHT  
       
 c  test biomass calc variable
-      REAL WF(3), BMS(8)
-      INTEGER SPCD, FOREST   
+c      REAL WF(3), BMS(8)
+c      INTEGER SPCD, FOREST   
  !********************************************************************
       VOLEQ   = VOLEQI(1:10)
 !     Set default value for unused variables
@@ -468,13 +465,19 @@ c  test biomass calc variable
       HT1PRD=0.0
       HT2PRD=0.0
       FCLASS=0
-      IF(STEMS.GT.0) FCLASS=STEMS
-      DBTBH=0.0
+C     FOR WOODLAND SPECIES, NO-OF-STEMS IS PASSED IN USING FCLASS
+      IF(VOLEQ(4:6).EQ.'DVE'.AND.
+     &  (VOLEQ(1:1).EQ.'2'.OR.VOLEQ(1:1).EQ.'3'.OR.
+     &   VOLEQ(1:1).EQ.'4'))THEN
+        FCLASS = 1       
+        IF(STEMS.GT.1) FCLASS=STEMS
+      ENDIF
+C      DBTBH=0.0
       BTR=0.0
       PROD='01'
       HTTYPE='F'
       HTLOG=0
-      STUMP=0.0
+c      STUMP=0.0
       UPSHT1=0.0
       UPSD1=0.0
       AVGZ1=0.0
@@ -485,9 +488,10 @@ c  test biomass calc variable
       CONSPEC='    '
       DRCOB=0.0
       HTTFLL=0
-      BA=0
-      SI=0
+c      BA=0
+c      SI=0
       CTYPE='F'
+      LIVE='L'
       CUTFLG=1
       CUPFLG=1
       SPFLG=1
@@ -508,6 +512,12 @@ c      MTOPP=0.0
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
       IF(ERRFLAG.EQ.0)THEN
         tcu = VOL(1)
+C R8 old clark equation does not have tatal cubic volume.
+C Use volume to 4" top as total cubic volume        
+        IF(tcu.EQ.0.0.AND.REGN.EQ.8.AND.
+     +     VOLEQ(4:6).EQ.'CLK'.AND.VOLEQ(3:3).NE.'1')THEN
+          tcu = VOL(4)+VOL(7)
+        ENDIF
         mcu = VOL(4)
         bdf = VOL(2)
       ELSE

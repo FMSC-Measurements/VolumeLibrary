@@ -8,6 +8,7 @@ C             R8 VOLUMES.
 C  10/11/2012 YW Changed to set VOL(7) to 0.5 if it is 0 for PROD 08 and for other prod set vol(4) to 0.5.
 C  02/07/2014 YW modified to allow enter broken top height to HT1PRD field for pulp tree
 C  06/04/2014 YW Changed the merch height calculation to use R8_MHT
+C  08/03/2021 YW Enable to use R8_MHTS again for FSVeg to test old R8 DVE equations
 C  DECLARE VARIABLES
       CHARACTER*1 CTYPE
       CHARACTER*2 PROD,FORST, VAR, DIST
@@ -56,14 +57,19 @@ C The HT1PRD field is also used by pulpwood broken top height (YW 2/7/14)
 C           R8_MHTS has problem to calculate merch height because the original species FIA code
 C           is not retained in the VOLEQ. Changed to call R8VOL2 to calc merch height
 C           YW 12/08/2011
-c	       CALL R8_MHTS(FORST,VOLEQ,DBHOB,HTTOT,SI,BA,HT1PRD,ERRFLAG)
-             READ (VOLEQ(8:10),'(I3)') VOLSP
+c           YW 08/03/2021 Enable to use R8_MHTS again for FSVeg to test the old R8 DE equation
+             CALL R8_MHTS(FORST,VOLEQ,DBHOB,HTTOT,SI,BA,HT1PRD,ERRFLAG)
+             IF(HT1PRD.LE.0)THEN
+               READ (VOLEQ(8:10),'(I3)') VOLSP
 c      get the default Clark equation
-             DIST='01'
-             CALL R8_CEQN(FORST,DIST,VOLSP,PROD,VAR,VOLEQTMP,ERRFLAG)
-             ERRFLAG=0
-             CALL R8VOL2 (VOLEQTMP,VOLTMP,DBHOB,HT1PRD,UPSHT1,MTOPP,
+               DIST='01'
+               CALL R8_CEQN(FORST,DIST,VOLSP,PROD,VAR,VOLEQTMP,ERRFLAG)
+               ERRFLAG=0
+               VOLEQTMP(3:3) = '7'
+               IF (VOLSP.GE.300) VOLEQTMP(3:3) = '9'
+               CALL R8VOL2 (VOLEQTMP,VOLTMP,DBHOB,HT1PRD,UPSHT1,MTOPP,
      >                      HTTOT,CTYPE, ERRFLAG)
+             ENDIF
 	    ENDIF
 	  ENDIF
        IF(VOL1) CALL R8VOL1 (VOLEQ,DBHOB,HT1PRD,UPSHT1,PROD,VOL,ERRFLAG)

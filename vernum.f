@@ -59,6 +59,10 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20210219 Added fwdbt_r for R program to get Flewelling Equation double bark thikness at given ht and dob
 ! 20210701 Added subroutine vollibfsveg for FSVeg to call the library
 ! 20200719 Set FCLASS initial to 0 in vollibfia.f in order to get the species default form class.
+! 20210727 Added DBTBH as input variable for vollibfsveg and also modified default for FCLASS for DVE equation in Region 2,3,4
+! 20210811 (1) Set R6 default stump=1.0 in mrules.f, (2)add input variable stump, ba and si to vollibfsveg, (3) enabled r8vol to call r8_mhts for fsveg test
+! 20210823 Modified Mrules to reset R3 MINBFD back to 1.0
+
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -88,7 +92,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20210719
+      VERSION = 20210823
       RETURN
       END SUBROUTINE VERNUM
       
@@ -121,7 +125,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20210719
+      VERSION = 20210823
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -144,7 +148,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20210719
+      VERSION = 20210823
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -160,6 +164,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20210719
+      version = 20210823
       return
       end subroutine vernum_r

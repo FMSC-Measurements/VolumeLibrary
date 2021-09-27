@@ -580,8 +580,8 @@ namespace volCStest
             TLOGS = 0;//total # logs;
             NOLOGP = 0.0F;//# logs primary product
             NOLOGS = 0.0F;//# logs secondary product
-            BA = 0; //basal area
-            SI = 0; //site index
+            BA = int.Parse(baTB.Text);  //0; //basal area
+            SI = int.Parse(siTB.Text);  //0; //site index
 
             if (speciesTB.TextLength > 0)
                 SPCODE = int.Parse(speciesTB.Text); //spcode
@@ -1097,7 +1097,7 @@ namespace volCStest
                 mRules.minlent = 2;
                 mRules.opt = 23;
                 //if (mRules.stump <= 0) 
-                    mRules.stump = 0;
+                    mRules.stump = 1;
                 //if (mRules.mtopp <= 0) 
                     mRules.mtopp = 2;
                 //if (mRules.mtops <= 0) 
