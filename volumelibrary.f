@@ -734,6 +734,117 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
       CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
       CHARACTER*40 REF(8)
       REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
+      CHARACTER(2) FORSTI,GEOSUBI
+      CHARACTER(12) BIOEQI
+
+      FORSTI = FORST(1:2)
+      GEOSUBI = GEOSUB(1:2)
+      BIOEQI = BIOEQ(1:12)
+      CALL BIOLIB2(REGN,FORSTI,SPEC,BIOEQI,DBHOB,HTTOT,VOL,
+     +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUBI)
+     
+C The following code has been moved to BIOLIB2
+!      INTEGER STEMS, I, LEN,NOINT,FIAEQNUM,STAT
+      
+!      DO 100, I=1,9
+!        BIOGRN(I) = 0.0
+!        BIODRY(I) = 0.0
+!100   CONTINUE      
+!!     Call Jenkin's to calculate biomass
+!      CALL JENKINS(SPEC, DBHOB, BIOMS)
+!!     The elements in BIOMS are dry weight in pounds as below:
+!C     1 ABOVE GROUND TOTAL
+!C     2 MERCH STEM WOOD
+!C     3 MERCH STEM BARK
+!C     4 FOLIAGE
+!C     5 ROOTS
+!C     6 BRANCHES
+!C     7 CROWN
+!C     8 MERCH STEM WOOD AND BARK
+!      
+!C     GET REGIONAL OR NATIONAL DEFAULT weight factor
+!      CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
+!      
+!C     Get the moisture content from Miles $ Smith 2009
+!      IF(WF(3).EQ.0)THEN
+!        CALL MILESDATA(SPEC,SG)
+!        WF(3) = (SG(9)-SG(10))/SG(10)*100.0
+!      ENDIF
+!      MC = WF(3)/100.0
+!C     Calculate merch stem green weight using cubic feet volume and weight factor
+!      STMGRNWT = WF(1)*(VOL(4)+VOL(7))
+!      STMDRYWT = STMGRNWT/(1.0+MC)
+!C     GET the ratio for stem calculated from weight factor and Jenkins
+!      IF(BIOMS(8).GT.0)THEN
+!        RATIO = STMDRYWT/BIOMS(8)
+!      ELSE
+!        RATIO = 1.0
+!      ENDIF
+!      IF(RATIO.LE.0) RATIO = 1
+!C     Apply the ratio to biomass calculated from Jenkins and also add MC to get green weight
+!      DO 200, I=1,8
+!        BIODRY(I) = BIOMS(I)*RATIO
+!        BIOGRN(I) = BIODRY(I)*(1+MC)  
+!200   CONTINUE
+!C     If BIOEQ is provided, calculate biomass from it
+!      LEN = LEN_TRIM(BIOEQ)
+!      FIAEQNUM = -1
+!      IF(LEN.GT.0)THEN
+!        CALL str2int(BIOEQ, FIAEQNUM, STAT)
+!        IF(STAT.EQ.0)THEN
+!          GEOSUB2 = GEOSUB(1:1)
+!          ERRFLG = 0
+!          CALL FIABEQ2NVELBEQ(FIAEQNUM,SPEC,NVELBEQ,GEOSUB2,ERRFLG)
+!          IF(FIAEQNUM.EQ.109)THEN
+!            BIODRY(9) = 0.0
+!            BIOGRN(9) = 0.0
+!            RETURN
+!          ENDIF
+!        ELSE
+!          NVELBEQ = BIOEQ
+!        ENDIF
+!
+!C       Set default values
+!        CR = (HTTOT-HTTFLL)/HTTOT
+!        IF(CR.LE.0.0.OR.CR.GT.1.0) CR = 0.5
+!C        HT1PRD = 0
+!C        HT2PRD = 0
+!        TOPD = 0
+!        STEMS = 1
+!        ERRFLG = 0   
+!        VOLM = VOL   
+!        CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
+!     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB)
+!        IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
+!        !The result returned from BiomassLibrary2 is dry biomass
+!        !even though the equation is green. Here save the green and dry
+!        !biomass into different variables.
+!          BIODRY(9) = BIOMASS
+!          BIOGRN(9) = BIOMASS*(1.0+MC)
+!!        ELSEIF(NVELBEQ(12:12).EQ.'G')THEN
+!!          BIOGRN(9) = BIOMASS
+!!          BIODRY(9) = BIOMASS/(1.0+MC)
+!        ELSE
+!          BIODRY(9) = BIOMASS
+!          BIOGRN(9) = BIOMASS
+!        ENDIF
+!      ENDIF
+      RETURN
+      END
+C ----------------------------------------------------------------------------------
+      SUBROUTINE BIOLIB2(REGN,FORST,SPEC,BIOEQ,DBHOB,HTTOT,VOL,
+     +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUB)
+C This is duplicated subroutine BIOLIB, but not using pointer for FORST, BIOEQ, GEOSUB
+      IMPLICIT NONE
+      INTEGER REGN,SPEC,ERRFLG
+      CHARACTER(2) FORST,GEOSUB
+      CHARACTER(12) BIOEQ
+      REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
+      
+      REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
+      CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
+      CHARACTER*40 REF(8)
+      REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
       INTEGER STEMS, I, LEN,NOINT,FIAEQNUM,STAT
       
       DO 100, I=1,9
@@ -803,8 +914,9 @@ C        HT2PRD = 0
         STEMS = 1
         ERRFLG = 0   
         VOLM = VOL   
+        GEOSUB2 = GEOSUB(1:2)
         CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
-     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB)
+     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB2)
         IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
         !The result returned from BiomassLibrary2 is dry biomass
         !even though the equation is green. Here save the green and dry
@@ -820,7 +932,7 @@ C        HT2PRD = 0
         ENDIF
       ENDIF
       RETURN
-      END
+      END      
 C ----------------------------------------------------------------------------------
       SUBROUTINE VOLLIBVB(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,
      +    DBHOB,
@@ -903,7 +1015,17 @@ c     +    BA,SI,CTYPE,ERRFLAG,IDIST)
       character(len=*),intent(in) :: str
       integer,intent(out)         :: int
       integer,intent(out)         :: stat
-
-      read(str,*,iostat=stat)  int
-      end subroutine str2int               
+      integer i
+      !read(str,*,iostat=stat)  int
+      stat = 0
+      do i=1, len(str)
+        if (str(i:i) < '0' .or. str(i:i) > '9') then
+          stat = i
+          exit
+        end if
+      end do
+      if (stat.eq.0) read(str, *) int
       
+      end subroutine str2int               
+
+            
