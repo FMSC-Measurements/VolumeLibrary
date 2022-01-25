@@ -4,7 +4,7 @@ C 03/25/2014 changed default equation for Region 3 (R3_EQN) Ponderosa pine in th
 C 09/09/2016 Modified R3_EQN default equation for PP, DF, WF, and WP in Sante Fe NF
 C 09/15/2016 Corrected R4 default equation for other species to DVE equation
 C 04/12/2017 removed 532WO2W*** equation from R5_EQN per the email from Craig Bodenhausen (4/12/2017)
-C 07/19/2021 Changed R8_CEQN to use the R8 new Clark equation 8*1CLKE***
+C 07/19/2021 Changed R8_CEQN to use the R8 new Clark equation 8*1CLKE***. Added 1 to TOPCODE array.
       SUBROUTINE VOLEQDEF (VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
 C
 C    SUBROUTINE WILL RETURN THE DEFAULT VOLUME EQUATION NUMBER
@@ -1856,7 +1856,7 @@ C USE OTHER SOFTWOOD 298
       END
 C//////////////////////////////////////////////////////////////////
       SUBROUTINE R8_CEQN(FORST,DIST,SPEC,PROD,VAR,VOLEQ,ERRFLAG)
-      CHARACTER*1 GEOAREA,TOPCODE(4),ICHAR
+      CHARACTER*1 GEOAREA,TOPCODE(5),ICHAR
       CHARACTER*2 PROD,VAR,FORST,DIST
       CHARACTER*10 VOLEQ,VEQTEM
       CHARACTER*3 SNSP(92)
@@ -1888,7 +1888,7 @@ c     match species to valid species equation code
      &'835',
      &'901','300','300','300','970','970','970','970','300','300'/
 C
-      DATA TOPCODE / '4','7','8','9' /
+      DATA TOPCODE / '1','4','7','8','9' /
 C
 C  SEARCH FOR VALID EQUATION NUMBER
 C
@@ -1898,7 +1898,7 @@ C
         DO I=1,7
         WRITE(ICHAR,'(I1)')I
         VEQTEM(2:2)=ICHAR
-        DO J=1,4
+        DO J=1,5
         VEQTEM(3:3)=TOPCODE(J)
 C  SN
         DO K=1,92

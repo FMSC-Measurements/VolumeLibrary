@@ -7,6 +7,8 @@ C     YW 04/15/14 Added region 9 Clark merch rule.
 C     YW 02/13/15 Changed the merch rule for Region 3 MINLEN and MINLENT to 2'
 C     YW 08/25/15 Added merch rule for Region 8 Clark equation
 C     YW 12/20/2019 merch rule changes for Region 3
+C     YW 08/11/2021 Set R6 stump default to 1.0
+C     YW 08/23/2021 Reset R3 MINBFD to 1.0
       SUBROUTINE MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
@@ -106,14 +108,14 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
 ! prod 14 minimum log length 10 TopD 4.0 MinDBH 6.0 Stump 0.5
 ! prod 20 minimum log length 2 TopD 1.0 MinDBH 2.0 Stump 0.5
 ! prod 07 minimum log length 4 TopD 2.0 MinDBH 5.0 Stump 0.5
-
+! Removed MinDBH as request by R3 (Karen 2021/08/21), so it back to MINBFD=1
         IF(PROD.EQ.'01')THEN
           MINLEN = 4.0
           minlent = 10.0
           IF(STUMP.LE.0.0) STUMP = 1.0
           IF(MTOPP .LE. 0.0) MTOPP = 6.0
           IF(MTOPS .LE. 0.0) MTOPS = 4.0
-          MINBFD = 14.0
+!          MINBFD = 14.0
           MERCHL = 10.0
         ELSEIF(PROD.EQ.'14')THEN
           MINLEN = 4.0
@@ -121,7 +123,7 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
           IF(STUMP.LE.0.0) STUMP = 0.5
           IF(MTOPP .LE. 0.0) MTOPP = 4.0
           IF(MTOPS .LE. 0.0) MTOPS = 1.0
-          MINBFD = 6.0
+!          MINBFD = 6.0
           MERCHL = 10.0
         ELSEIF(PROD.EQ.'20')THEN
           OPT = 23
@@ -140,7 +142,7 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
           IF(STUMP.LE.0.0) STUMP = 0.5
           IF(MTOPP .LE. 0.0) MTOPP = 6.0
           IF(MTOPS .LE. 0.0) MTOPS = 4.0
-          MINBFD = 9.0
+!          MINBFD = 9.0
           MERCHL = 10.0
         ENDIF
 !        minlent = 10.0
@@ -282,6 +284,8 @@ C Added Region 11 for DOD, using same as R6 (03/26/2014)
            minlent = 2.0
            OPT = 23
            IF(STUMP.LE.0.0) STUMP = 0.0
+C STUMP = 1.0 added for test FSVeg           
+C           IF(STUMP.LE.0.0) STUMP = 1.0
            IF(MTOPP .LE. 0.0) MTOPP = 2.0
            IF(MTOPS .LE. 0.0) MTOPS = 2.0
            TRIM = .5
@@ -379,8 +383,7 @@ C  MIN SAWTIMBER LENGTH
          MERCHL = 8
 c min dbh tree for sawtimber
 c         MINBFD = 6.0
-        MINBFD = 1.0
-      
+        MINBFD = 1.0      
 c default merch rules
       ELSE
          COR='Y'

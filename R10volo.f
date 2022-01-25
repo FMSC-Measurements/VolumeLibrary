@@ -106,6 +106,8 @@ c place values into logdia and loglen first
 
 c fill logdia array      
         HTSEG(1) = 1.0
+C Correction for stump when DBH > 36 (08/19/2021)
+        IF(DBHOB.GT.36) HTSEG(1)=HTSEG(2)-16.3        
         LOGDIA(1,2) = DIB(1)
         LOGDIA(1,1) = ANINT(DIB(1))
         DO 30, I=1,INT(NLOG)   

@@ -9,6 +9,7 @@ C 12/05/11  YW Added an array for the coefficients from Ed etal 1984. The old
 C              coef was incorrect for (B4, B5 and B6),
 C 06/04/2014 YW Changed the species list to be the one from FVS SN variant and 
 C               use coefficient from SN variant nbolts.f
+C 08/19/2021 YW Correct typo for variable VFLAG
 C*********************************
 C       DECLARE VARIBLES         *
 C*********************************
@@ -802,7 +803,8 @@ C     END BINARY SEARCH
       ELSE
          BFMIND = 12
       ENDIF
-      IF(VGLAG.EQ.1)THEN
+!      IF(VGLAG.EQ.1)THEN
+      IF(VFLAG.EQ.1)THEN
         B(1) = B1(PTR)
         B(2) = B2(PTR)
         B(3) = B3(PTR)

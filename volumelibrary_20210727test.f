@@ -261,6 +261,7 @@ C -------------------------------------------------------------------------
       BA=0
       SI=0
       CTYPE='F'
+      LIVE='L'
       CUTFLG=1
       CUPFLG=1
       SPFLG=1
@@ -705,6 +706,142 @@ c      IF(TMPSPEC.NE.8888) GOTO 999
       
       RETURN
       end subroutine vollib2_r   
+C======================================================================
+      subroutine vollibfsveg_r(regn,iforst,idist,voleq,dbhob_d,httot_d,
+     +           mtopp_d,stems,dbtbh_d,tcu, mcu, bdf, errflag)
+c--------------------------------------------------------------
+c    This subroutine is created for FSVeg to call the library
+!  YW 20210719 Set FCLASS initial to 0 in order to pick the species default form class
+!  YW 20210726 Added DBTBH as an input variable
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollibfsveg_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibfsveg_r_'::vollibfsveg_r
+      
+      IMPLICIT NONE
+c      character*(*) voleqi
+      DOUBLE PRECISION tcu,mcu,bdf
+      integer stems
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,MTOPP_d,DBTBH_d
+c     variables from VOLINIT
+!**********************************************************************
+      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*2  FORST,PROD
+      character*4  CONSPEC
+      CHARACTER*10 VOLEQ
+C      CHARACTER*3  MDL,SPECIES
+      CHARACTER*2  DIST,VAR
+   
+C      CHARACTER*10 EQNUM
+C      INTEGER      SPEC
+
+!   MERCH VARIABLES 
+      INTEGER        REGN,HTTFLL,BA,SI
+      REAL           STUMP,MTOPP,MTOPS,THT1,MAXLEN
+      INTEGER        CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+C      REAL         TIPDIB,TIPLEN
+      
+!   Tree variables
+      REAL 	HTTOT,HT1PRD,HT2PRD,LEFTOV 
+      REAL 	DBHOB,DRCOB,DBTBH,BTR,CR,TRIM
+      INTEGER   FCLASS,HTLOG,SPCODE, WHOLELOGS
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+    
+!   OUTPUTS
+      REAL      NOLOGP,NOLOGS
+      INTEGER   TLOGS,IFORST, IDIST
+    
+!   ARRAYS
+      INTEGER   I15,I21,I20,I7,I3,I,J
+      REAL 	VOL(15),LOGVOL(7,20)
+      REAL	LOGDIA(21,3),LOGLEN(20),BOLHT(21)
+C  variables for stump dia and vol
+C      INTEGER SPN
+C      REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
+C      REAL DIB,DOB,HTUP,MHT  
+      
+c  test biomass calc variable
+c      REAL WF(3), BMS(8)
+c      INTEGER SPCD, FOREST   
+ !********************************************************************
+c      VOLEQ   = VOLEQI(1:10)
+!     Set default value for unused variables
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      MTOPP = REAL(MTOPP_d)
+      DBTBH = REAL(DBTBH_d)
+      IF(IFORST.GT.99) THEN
+        FORST = '01'
+      ELSE 
+        WRITE (FORST, '(I2)') IFORST
+      ENDIF
+      IF(FORST(2:2) .LT. '0') THEN 
+        FORST(2:2) = FORST(1:1)
+        FORST(1:1) = '0'
+        IF(FORST(2:2) .LT. '0') FORST(2:2) = '0'
+      ENDIF
+      HT1PRD=0.0
+      HT2PRD=0.0
+      FCLASS=0
+C      IF(STEMS.GT.0) FCLASS=STEMS
+C     FOR WOODLAND SPECIES, NO-OF-STEMS IS PASSED IN USING FCLASS
+      IF(VOLEQ(4:6).EQ.'DVE'.AND.
+     +  (VOLEQ(1:1).EQ.'2'.OR.VOLEQ(1:1).EQ.'3'
+     +  .OR.VOLEQ(1:1).EQ.'4'))THEN
+        FCLASS=1
+        IF(STEMS.GT.1) FCLASS = STEMS
+      ENDIF
+c      DBTBH=0.0
+      BTR=0.0
+      PROD='01'
+      HTTYPE='F'
+      HTLOG=0
+      STUMP=0.0
+      UPSHT1=0.0
+      UPSD1=0.0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      CONSPEC='    '
+      DRCOB=0.0
+      HTTFLL=0
+      BA=0
+      SI=0
+      CTYPE='F'
+      LIVE='L'
+      CUTFLG=1
+      CUPFLG=1
+      SPFLG=1
+      BFPFLG=1
+c      MTOPP=0.0
+      MTOPS=0.0
+      I3 = 3
+      I7 = 7
+      I15 = 15
+      I20 = 20
+      I21 =21
+
+      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      IF(ERRFLAG.EQ.0)THEN
+        tcu = DBLE(VOL(1))
+        mcu = DBLE(VOL(4))
+        bdf = DBLE(VOL(2))
+      ELSE
+        tcu = 0.0
+        mcu = 0.0
+        bdf = 0.0
+      ENDIF
+      RETURN
+      END subroutine vollibfsveg_r     
 C ************************************************************************
 C YW 2019/05/07 ADDED INPUT VARIABLES HT1PRD,HT2PRD,HTTFLL
 ! YW 2019/08/05 Added input variable GROSUB. This is for pacific islands equation
@@ -728,117 +865,6 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
       IMPLICIT NONE
       INTEGER REGN,SPEC,ERRFLG
       CHARACTER*(*) FORST, BIOEQ,GEOSUB
-      REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
-      
-      REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
-      CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
-      CHARACTER*40 REF(8)
-      REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
-      CHARACTER(2) FORSTI,GEOSUBI
-      CHARACTER(12) BIOEQI
-
-      FORSTI = FORST(1:2)
-      GEOSUBI = GEOSUB(1:2)
-      BIOEQI = BIOEQ(1:12)
-      CALL BIOLIB2(REGN,FORSTI,SPEC,BIOEQI,DBHOB,HTTOT,VOL,
-     +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUBI)
-     
-C The following code has been moved to BIOLIB2
-!      INTEGER STEMS, I, LEN,NOINT,FIAEQNUM,STAT
-      
-!      DO 100, I=1,9
-!        BIOGRN(I) = 0.0
-!        BIODRY(I) = 0.0
-!100   CONTINUE      
-!!     Call Jenkin's to calculate biomass
-!      CALL JENKINS(SPEC, DBHOB, BIOMS)
-!!     The elements in BIOMS are dry weight in pounds as below:
-!C     1 ABOVE GROUND TOTAL
-!C     2 MERCH STEM WOOD
-!C     3 MERCH STEM BARK
-!C     4 FOLIAGE
-!C     5 ROOTS
-!C     6 BRANCHES
-!C     7 CROWN
-!C     8 MERCH STEM WOOD AND BARK
-!      
-!C     GET REGIONAL OR NATIONAL DEFAULT weight factor
-!      CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
-!      
-!C     Get the moisture content from Miles $ Smith 2009
-!      IF(WF(3).EQ.0)THEN
-!        CALL MILESDATA(SPEC,SG)
-!        WF(3) = (SG(9)-SG(10))/SG(10)*100.0
-!      ENDIF
-!      MC = WF(3)/100.0
-!C     Calculate merch stem green weight using cubic feet volume and weight factor
-!      STMGRNWT = WF(1)*(VOL(4)+VOL(7))
-!      STMDRYWT = STMGRNWT/(1.0+MC)
-!C     GET the ratio for stem calculated from weight factor and Jenkins
-!      IF(BIOMS(8).GT.0)THEN
-!        RATIO = STMDRYWT/BIOMS(8)
-!      ELSE
-!        RATIO = 1.0
-!      ENDIF
-!      IF(RATIO.LE.0) RATIO = 1
-!C     Apply the ratio to biomass calculated from Jenkins and also add MC to get green weight
-!      DO 200, I=1,8
-!        BIODRY(I) = BIOMS(I)*RATIO
-!        BIOGRN(I) = BIODRY(I)*(1+MC)  
-!200   CONTINUE
-!C     If BIOEQ is provided, calculate biomass from it
-!      LEN = LEN_TRIM(BIOEQ)
-!      FIAEQNUM = -1
-!      IF(LEN.GT.0)THEN
-!        CALL str2int(BIOEQ, FIAEQNUM, STAT)
-!        IF(STAT.EQ.0)THEN
-!          GEOSUB2 = GEOSUB(1:1)
-!          ERRFLG = 0
-!          CALL FIABEQ2NVELBEQ(FIAEQNUM,SPEC,NVELBEQ,GEOSUB2,ERRFLG)
-!          IF(FIAEQNUM.EQ.109)THEN
-!            BIODRY(9) = 0.0
-!            BIOGRN(9) = 0.0
-!            RETURN
-!          ENDIF
-!        ELSE
-!          NVELBEQ = BIOEQ
-!        ENDIF
-!
-!C       Set default values
-!        CR = (HTTOT-HTTFLL)/HTTOT
-!        IF(CR.LE.0.0.OR.CR.GT.1.0) CR = 0.5
-!C        HT1PRD = 0
-!C        HT2PRD = 0
-!        TOPD = 0
-!        STEMS = 1
-!        ERRFLG = 0   
-!        VOLM = VOL   
-!        CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
-!     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB)
-!        IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
-!        !The result returned from BiomassLibrary2 is dry biomass
-!        !even though the equation is green. Here save the green and dry
-!        !biomass into different variables.
-!          BIODRY(9) = BIOMASS
-!          BIOGRN(9) = BIOMASS*(1.0+MC)
-!!        ELSEIF(NVELBEQ(12:12).EQ.'G')THEN
-!!          BIOGRN(9) = BIOMASS
-!!          BIODRY(9) = BIOMASS/(1.0+MC)
-!        ELSE
-!          BIODRY(9) = BIOMASS
-!          BIOGRN(9) = BIOMASS
-!        ENDIF
-!      ENDIF
-      RETURN
-      END
-C ----------------------------------------------------------------------------------
-      SUBROUTINE BIOLIB2(REGN,FORST,SPEC,BIOEQ,DBHOB,HTTOT,VOL,
-     +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUB)
-C This is duplicated subroutine BIOLIB, but not using pointer for FORST, BIOEQ, GEOSUB
-      IMPLICIT NONE
-      INTEGER REGN,SPEC,ERRFLG
-      CHARACTER(2) FORST,GEOSUB
-      CHARACTER(12) BIOEQ
       REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
       
       REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
@@ -914,9 +940,8 @@ C        HT2PRD = 0
         STEMS = 1
         ERRFLG = 0   
         VOLM = VOL   
-        GEOSUB2 = GEOSUB(1:2)
         CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
-     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB2)
+     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB)
         IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
         !The result returned from BiomassLibrary2 is dry biomass
         !even though the equation is green. Here save the green and dry
@@ -932,7 +957,7 @@ C        HT2PRD = 0
         ENDIF
       ENDIF
       RETURN
-      END      
+      END
 C ----------------------------------------------------------------------------------
       SUBROUTINE VOLLIBVB(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,
      +    DBHOB,
@@ -1015,17 +1040,7 @@ c     +    BA,SI,CTYPE,ERRFLAG,IDIST)
       character(len=*),intent(in) :: str
       integer,intent(out)         :: int
       integer,intent(out)         :: stat
-      integer i
-      !read(str,*,iostat=stat)  int
-      stat = 0
-      do i=1, len(str)
-        if (str(i:i) < '0' .or. str(i:i) > '9') then
-          stat = i
-          exit
-        end if
-      end do
-      if (stat.eq.0) read(str, *) int
-      
-      end subroutine str2int               
 
-            
+      read(str,*,iostat=stat)  int
+      end subroutine str2int               
+      

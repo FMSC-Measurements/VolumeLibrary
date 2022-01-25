@@ -63,6 +63,8 @@ C       INCLUDE 'bioeqcoef.inc'
        REAL SG(11), MC,JNKBMS(8),RATIO
        REAL DTMP,HTMP,HT1,HT2,CV4,WDEN,BDEN,CV4MS
        INTEGER EqForm,BEQNUM,stat,LEN,isint
+       
+       ERRFLG = 0
        ! Check if BIOEQ is FIA equation number
        CALL str2int(BIOEQ,BEQNUM,stat)
        IF(stat.EQ.0)THEN
@@ -501,6 +503,9 @@ C YW 05/09/2019
       TOPD = REAL(TOPD_d)
       VOL(4) = CV4
       CL = REAL(CL_d)
+      ERRFLAG = 0
+      DRYBIOMAS = 0.0
+      GRNBIOMAS = 0.0
       IF(HTTOT.GT.1.0.AND.CL.GT.1.0) CR = CL/HTTOT
       CALL BiomassLibrary2(BIOEQ,DBHOB,HTTOT,CR,HT1PRD, 
      + HT2PRD,TOPD,STEMS,VOL,DRYBIOMAS, ERRFLAG,SPN,GEOSUB)
