@@ -75,7 +75,8 @@ C **************************************************************
 !     ARRAYS
 ! initialize profile model  
 !C  heck for a DBH of less than 1.  Drop out of volume if true.  10/97
-      if(dbhob.lt.1) then
+!   Added check for height 08/2022 DW       
+      if(dbhob.lt.1 .or. HTTOT.lt.5) then
         errflag = 3
         goto 1000
       endif
@@ -172,6 +173,9 @@ C     Added the calculation for R4 taper equation (03/20/2017)
          DIB = 0.0
          CALL R4MATTAPER(VOLEQ,DBHOB,HTTOT,STUMPD,BUTTCF,CF0,B,
      +     HTUP,DIB,ERRFLAG)      
+C     Added the calc for R2 small trees equation for Black Hills         
+      ELSEIF(VOLEQ.EQ.'223DVEW122')THEN
+          CALL GetHTDIB(DBHOB,HTTOT,HTUP,DIB)
 C calculation for diameter from ground to 4.5 ft heigh for non profile model
 C added on 7/22/2012 YW
 C using Raile 1982

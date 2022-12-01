@@ -33,6 +33,10 @@ C YW 2019/02/14 Set the default stump and MTOPP for FIA equation only
 C YW 2019/04/04 Added call to BIA behr and johnson equation
 C YW 2020/03/18 R6 requests to use 102.4 for cuft to Cord 
 C YW 2020/11/06 Changed the subroutine name to call FIA volume equations
+C YW 2022/05/03 Set the total cubic vol to VOL(4) if MTOPP=0.1
+C YW 2022/08/08 added variable STUMP to the call DVEST
+C YW 2022/10/25 Fix the change made on 2022/05/03 to check VOL(1) before reset VOL(4)
+C YW 2022/11/23 Added the call TOP6LEN R2 Black Hills equation 223DVEW122
 !**********************************************************************
       CHARACTER*1  HTTYPE,LIVE,CTYPE,VOLEQREGN
       CHARACTER*2  FORST,PROD
@@ -471,12 +475,16 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
 !    REGION 9      *
 !    ARMY BASE     * 
 !********************
-      
-         CALL DVEST (VOLEQ,DBHOB,DRCOB,HTTOT,MTOPP,FCLASS,HTLOG,
+        IF(VOLEQ.EQ.'223DVEW122')THEN
+          CALL BH_NonSawPP(DBHOB,HTTOT,STUMP,MTOPP,MTOPS,
+     +      HT1PRD,HT2PRD,VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,
+     +      NOLOGP,NOLOGS,SPFLG,PROD,ERRFLAG)
+        ELSE
+          CALL DVEST (VOLEQ,DBHOB,DRCOB,HTTOT,MTOPP,FCLASS,HTLOG,
      +              HT1PRD,HT2PRD, FORST,BTR,VOL,CUTFLG,BFPFLG,CUPFLG,
      +              CDPFLG,SPFLG,PROD,HTTYPE,HTTFLL,NOLOGP,LIVE,BA,
-     +              SI,CTYPE,errflag,MTOPS)
-      
+     +              SI,CTYPE,errflag,MTOPS,STUMP)
+        ENDIF
       ELSEIF (MDL.EQ.'HAN' .OR. MDL.EQ.'han')THEN
 !******************************
 !  HANN PROFILE MODEL FOR BLM * 
@@ -586,7 +594,12 @@ C YW R3 requests to use 80 for CF to Cord 2019/05/16
       IF(REGN.EQ.3) VOL(6)=VOL(4)/80.0
 C YW R6 requests to use 102.4 for cuft to Cord 2020/03/18
       IF(REGN.EQ.6) VOL(6) = AINT((VOL(4)/102.4)*10)/10.0     
-                       
+C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
+      IF(REGN.EQ.2.AND.MTOPP.EQ.0.1)THEN
+        IF(VOL(1).GT.0.0) THEN
+          VOL(4) = VOL(1)
+        ENDIF
+      ENDIF
       IF (DEBUG%MODEL) THEN
         WRITE  (LUDBG, 100)'FORST VOLEQ     MTOPP HTTOT HT1PRD DBHOB 
      &   HTTYPE FCLASS'

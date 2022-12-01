@@ -1,7 +1,7 @@
 !== last modified  3-29-2004
       SUBROUTINE R2OLDV(VOLEQ,HTTOT,DBHOB,DRC,FCLASS,VOL,ERRFLAG,PROD,
      & MTOPP)
-
+      IMPLICIT NONE
 C--  THIS SUBROUTINE DETERMINES THE VOLUME OF A TREE
 C--  USING REGION 2 D*D*H VOLUME DETERMINATION EQUATIONS.
 ! YW 2018/09/05 Added International boardfoot volume and sawlog portion cubic volume calculation
@@ -10,6 +10,9 @@ C--  USING REGION 2 D*D*H VOLUME DETERMINATION EQUATIONS.
 ! YW 2018/09/06 Added 201DEVW746 AND MYERS(1964) RM-6 TOP=8 (Scribner and international)
 ! YW 2018/09/12 Changed the FCLASS to be: 1 = sngle, others = multistem
 !               This is to make it consistent with R3 DVE equation.
+! YW 2022/08/05 Added new equation (223DVEW122) for Black Hills non-saw product (DBH<9)
+!               also add the input variable STUMP to the subroutine
+! YW 2022/11/22 Moved the codes for equation 223DVEW122 to its own subroution
 C**************************************************************
 
       CHARACTER*10 VOLEQ
@@ -17,10 +20,11 @@ C**************************************************************
       CHARACTER*2 PROD
       REAL MTOPP,TOPWOOD,CV6,SPF,DIB,X1,X2,X3
       REAL DBHOB,DRC,D2H,HTTOT,VOL(15),grsbdt,GCUFT,TCUFT,trevol
-    
+
       TREVOL = 0.0
       grsbdt=0.0
       GCUFT=0.0
+      TCUFT=0.0
       ERRFLAG = 0
 !     Changed the FCLASS to be: 1 = single, others = multistem
 !     2018/09/12
@@ -475,7 +479,251 @@ C--       (ENDIF FOR VOLEQU EQUAL TO A VALID EQUATION)
       RETURN
       END
 C**************************************************************
+C Vol Equation 223DVEW122 for R2 Black Hills Ponderosa pine Non-saw prod
+      SUBROUTINE BH_NonSawPP(DBHOB,HTTOT,STUMP,MTOPP,MTOPS,
+     + HT1PRD,HT2PRD,VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,LOGST,
+     + NOLOGP,NOLOGS,SPFLG,PROD,ERRFLG)
+      IMPLICIT NONE
+      REAL DBHOB,HTTOT,STUMP,MTOPP,MTOPS,HT1PRD,HT2PRD
+      REAL VOL(15),LOGLEN(20),LOGVOL(7,20),LOGDIA(21,3),BOLHT(21)
+      REAL NOLOGP,NOLOGS,LOGLENT(20)
+      INTEGER LOGST,SPFLG,ERRFLG,I
+      CHARACTER*2 PROD
+      REAL TCUFT
+! MRULE VARIABLES
+      CHARACTER*10 VOLEQ
+      CHARACTER*1 COR 
+      CHARACTER*2 FORST                 
+      INTEGER EVOD,OPT,REGN,NUMSEG
+      REAL MAXLEN,MINLEN,MERCHL,TRIM
+      REAL MINLENT,MINBFD,BTR,DBTBH,LMERCH
+      REAL a,b,HTLOW,HT2,DIB,DIBL
+      
+      IF(DBHOB.LT.1.0)THEN
+          ERRFLG = 3
+          RETURN
+      ENDIF
+      IF(HTTOT.LT.4.5)THEN
+          ERRFLG = 4
+          RETURN
+      ENDIF
+      LOGST = 0
+      NOLOGP = 0
+      NOLOGS = 0
+      VOL = 0.0
+      LOGLEN = 0.0
+      LOGVOL = 0.0
+      LOGDIA = 0.0
+      BOLHT = 0.0
+      LOGLENT = 0.0
+      CALL BH_PPTCU(DBHOB,HTTOT,TCUFT)
+      VOL(1) = TCUFT
+      
+      IF(MTOPP.LT.0.1) MTOPP = 4.0
+      IF(MTOPS.LT.0.1) MTOPS = 2.0
+      REGN = 2
+      FORST = '03'
+      VOLEQ = '223DVEW122'
+      BTR = 0.0
+      DBTBH = 0.0
+      HT2 = STUMP
+      NUMSEG = 0
+      CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,
+     >    MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,
+     >    MINBFD,PROD)
+      CALL GetRatioCoef(a,b)
+      IF(HT1PRD.LT.0.1)THEN
+        HTLOW = 0.0
+        CALL GetHT2TOPD2(TCUFT,a,b,HTTOT,MTOPP,HT1PRD,HTLOW)
+      ENDIF
+      LMERCH = HT1PRD - STUMP
+      IF(LMERCH.GE.MERCHL)THEN
+        CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
+        CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,LOGLEN)
+        LOGST = 0
+        HT2 = 4.5
+        CALL GetHTDIB2(TCUFT,a,b,HTTOT,HT2,DIB)
+        LOGDIA(1,2)= DIB
+        LOGDIA(1,1)=NINT(DIB)
+        BOLHT(1) = HT2
+C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG              
+        DIBL = LOGDIA(1,1)
+        HT2 = STUMP
+        CALL CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,TCUFT,TRIM,HTTOT,
+     +  LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR)
+        LOGST = NUMSEG
+        NOLOGP = NUMSEG
+      ENDIF
+C     Calculate topwood volume
+      IF(SPFLG.EQ.1.AND.MTOPS.LT.MTOPP)THEN
+        IF(HT2PRD.LT.0.1)THEN
+            CALL GetHT2TOPD2(TCUFT,a,b,HTTOT,MTOPS,HT2PRD,HT2)
+        ENDIF
+        LMERCH = HT2PRD - HT2
+        IF(LMERCH.GE.MINLENT)THEN
+          NUMSEG = 0
+          CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
+          CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,LOGLENT)
+          NOLOGS = NUMSEG
+          !Add secondary log length to LOGLEN
+          DO 600 I = 1, NUMSEG
+            LOGLEN(I+LOGST) = LOGLENT(I)
+ 600      CONTINUE
+          CALL CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,TCUFT,TRIM,HTTOT,
+     +    LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR)
+          LOGST = LOGST + NUMSEG
+        ENDIF        
+      ENDIF
+      RETURN
+      END
+C**************************************************************      
+      SUBROUTINE BH_PPTCU(DBHOB,HTTOT,TCUFT)
+      IMPLICIT NONE
+      REAL DBHOB,HTTOT, TCUFT
+      REAL a0,b0,c0
+C         Total cubic volume equation vol=a*DBH^b*THT^c   
+C         The coefficients was developed from sample trees collected in 
+C         Black Hills volume and biomass study in 2022          
+          a0 = 0.003573
+          b0 = 1.89865505
+          c0 = 0.95409984
+          TCUFT = a0*DBHOB**b0*HTTOT**c0
+      RETURN    
+      END
+C**************************************************************
+      SUBROUTINE GetRatioCoef(a,b)
+      IMPLICIT NONE
+C     Coefficients for the ratio of volume to a given height to total vol  using the method
+C     developed by Phil Radtke from Virginia Tech for Black Hills
+      REAL a,b
+      a = 2.187093
+      b = 0.9399898
+      END
+C**************************************************************
+      SUBROUTINE BH_PPRATIO(HTTOT,HT2,R)
+      IMPLICIT NONE
+      REAL HTTOT, HT2, R, X
+      REAL a,b
+C     Calculate the ratio of volume to a given height to total vol  using the method
+C     developed by Phil Radtke from Virginia Tech for Black Hills
+      CALL GetRatioCoef(a,b)
+      X = HT2/HTTOT
+      R = (1.0-(1.0-X)**a)**b
+      RETURN
+      END
+C**************************************************************
+C Calculate height to a given TOPD      
+      SUBROUTINE GetHT2TOPD(DBHOB,HTTOT,TOPD,MHT,HTLOW)
+      IMPLICIT NONE
+      REAL DBHOB, HTTOT,TOPD,MHT,HTLOW
+      REAL R,low,hi,diff,X,a,b,TCUFT,mid
+      INTEGER loopcnt
 
+      ! Get total cuft vol
+      CALL BH_PPTCU(DBHOB,HTTOT,TCUFT)
+C     Ratio coefficients developed by Phil Radtke from Virginia Tech
+      CALL GetRatioCoef(a,b)
+      CALL GetHT2TOPD2(TCUFT,a,b,HTTOT,TOPD,MHT,HTLOW)
+      RETURN
+      END
+C**************************************************************
+C Calculate height to a given TOPD      
+      SUBROUTINE GetHT2TOPD2(TCUFT,a,b,HTTOT,TOPD,MHT,HTLOW)
+      IMPLICIT NONE
+      REAL HTTOT,TOPD,MHT,HTLOW
+      REAL low,hi,diff,X,a,b,TCUFT,mid
+      INTEGER loopcnt
+      
+      low = HTLOW
+      hi = HTTOT
+      diff = 1.0
+      loopcnt = 0
+      DO WHILE (ABS(diff).GT.0.01)
+          mid = (low+hi)/2  
+          X = mid/HTTOT  
+          diff = TOPD - ((TCUFT/0.005454154/HTTOT*a*b*
+     +    (1-X)**(a-1)*(1-(1-X)**a)**(b-1)))**0.5
+          IF(ABS(diff).LT.0.05) THEN
+              EXIT
+          ENDIF
+          IF(diff.LT.0.0)THEN
+              low = mid
+          ELSE
+              hi = mid
+          ENDIF
+          loopcnt = loopcnt +1
+          IF(loopcnt.GT.1000) EXIT
+      ENDDO
+      MHT = mid      
+      
+      RETURN
+      END
+
+C**************************************************************
+C Calculate DIB at a given height HT2      
+      SUBROUTINE GetHTDIB(DBHOB,THT,HT2,DIB)
+      IMPLICIT NONE
+      REAL DBHOB,HT2,DIB,a,b,TCUFT,THT
+      
+      CALL BH_PPTCU(DBHOB,THT,TCUFT)
+      CALL GetRatioCoef(a,b)
+      CALL GetHTDIB2(TCUFT,a,b,THT,HT2,DIB)
+      RETURN
+      END
+C**************************************************************
+C Calculate DIB at a given height HT2      
+      SUBROUTINE GetHTDIB2(TCUFT,a,b,THT,HT2,DIB)
+      IMPLICIT NONE
+      REAL HT2,DIB,a,b,TCUFT,THT
+      
+      DIB=SQRT((TCUFT/ 0.005454 / THT) * (a * b * 
+     >    (1-HT2/THT)**(a-1)*(1-(1 - HT2/THT)**a)**(b-1)))
+      RETURN
+      END      
+C**************************************************************
+C Calculate LOGDIA, LOGVOL, BOLHT and VOL      
+      SUBROUTINE CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,TCUFT,TRIM,THT,
+     + LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR)
+      IMPLICIT NONE
+      INTEGER LOGST,NUMSEG,I
+      REAL DIBL,HT2,TCUFT,TRIM,DIB,a,b,THT,DIBS,LOGCV,LENTH,LOGV,BFINT
+      REAL LOGLEN(20),LOGVOL(7,20),LOGDIA(21,3),BOLHT(21),VOL(15)
+      CHARACTER*1 COR
+      
+      CALL GetRatioCoef(a,b)
+      DO 500 I=1+LOGST,NUMSEG+LOGST
+          HT2=HT2+TRIM+LOGLEN(I)
+          CALL GetHTDIB2(TCUFT,a,b,THT,HT2,DIB)
+          LOGDIA(I+1,2)= DIB
+          LOGDIA(I+1,1)=NINT(DIB)
+          BOLHT(I+1) = HT2
+          DIBS = LOGDIA(I+1,1)
+          LOGCV = .00272708*(DIBL*DIBL+DIBS*DIBS)*LOGLEN(I)
+          LOGVOL(4,I) = ANINT(LOGCV*10)/10
+          DIBL = LOGDIA(I+1,1)
+          !Calculate boardfoot volume
+          DIB=LOGDIA(I+1,1)
+          LENTH=LOGLEN(I)
+          CALL SCRIB (DIB,LENTH,COR,LOGV)
+          if(cor.eq.'Y') then
+              LOGVOL(1,I) = LOGV * 10
+          else
+              LOGVOL(1,I) = ANINT(LOGV)
+          endif
+          CALL INTL14(DIB,LENTH,BFINT)
+          LOGVOL(7,I) = BFINT
+          IF(LOGST.GT.0) THEN
+              VOL(7)=VOL(7)+LOGVOL(4,I)
+              VOL(12) = VOL(12) + LOGVOL(1,I)
+          ELSE
+              VOL(4)=VOL(4)+LOGVOL(4,I)
+              VOL(2) = VOL(2) + LOGVOL(1,I)
+              VOL(10) = VOL(10) + BFINT
+          ENDIF          
+ 500  CONTINUE
+      
+      RETURN
+      END
 C********BOARD FOOT VOLUME EQUATION NUMBERS********
 
 C--    201 =  ASPEN RM-232 - 6" TOP - PAGE 6

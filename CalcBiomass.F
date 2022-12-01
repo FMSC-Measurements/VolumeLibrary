@@ -28,7 +28,7 @@ C HT2PRD -- height for secondary prod (pulp)
 C TOPD -- top diameter for merch part
 C STEMS -- number of stems for woodland species
 C VOL -- the volume calculated from volume library 
-C BIOMS -- the calculated dry biomass for the given BIOEQ.
+C BIOMS -- the calculated dry/green biomass for the given BIOEQ.
 C ERRFLG -- error code returnd from calculation:
 C        15 - invalid BIOEQ
 C        16 - primary prod height required
@@ -353,6 +353,7 @@ C           11 Sapling adjustment factor
 C **********************************************************************
       SUBROUTINE BIOEQDB(BIOEQ,DIA,HT,HT1PRD,HT2PRD,CR,TOPD,
      & BIOMS,ERRFLG)  
+C    The BIOMS returned from this subroutine is DRY or GREEN based the BIOEQ (2022/04/13)      
       INCLUDE 'bioeqinfo.inc'
       INCLUDE 'bioeqcoef.inc'
       CHARACTER*12 BIOEQ
@@ -467,11 +468,12 @@ C      4. return dry biomass in lb
        ENDIF
        READ(BIOEQ(4:6),'(I3)') SPEC
 C      Convert to dry biomass if the original equation is for green biomass
-       IF(BIOEQ(12:12).EQ.'G')THEN
-         CALL MILESDATA(SPEC, SG)
-         MC = (SG(9)-SG(10))/SG(10)
-         BIOMS = BIOMS/(1.0+MC)
-       ENDIF      
+       ! Chenged to no conversion from green to dry if the BIOEQ is green
+       !IF(BIOEQ(12:12).EQ.'G')THEN
+       !  CALL MILESDATA(SPEC, SG)
+       !  MC = (SG(9)-SG(10))/SG(10)
+       !  BIOMS = BIOMS/(1.0+MC)
+       !ENDIF      
        RETURN
       END  
 C ********************************************************************
@@ -492,7 +494,7 @@ C YW 05/09/2019
       CHARACTER*12 BIOEQ,GEOSUB,NVELBEQ
       INTEGER SPEC,STEMS,ERRFLAG,SPN 
       REAL DBHOB,HTTOT,HT1PRD,HT2PRD,CV4,VOL(15),TOPD,CL,CR
-      REAL DRYBIOMAS,GRNBIOMAS
+      REAL DRYBIOMAS,GRNBIOMAS,BIOMASS
       REAL SG(11), MC
       
       DBHOB = REAL(DBH_d)
@@ -508,7 +510,7 @@ C YW 05/09/2019
       GRNBIOMAS = 0.0
       IF(HTTOT.GT.1.0.AND.CL.GT.1.0) CR = CL/HTTOT
       CALL BiomassLibrary2(BIOEQ,DBHOB,HTTOT,CR,HT1PRD, 
-     + HT2PRD,TOPD,STEMS,VOL,DRYBIOMAS, ERRFLAG,SPN,GEOSUB)
+     + HT2PRD,TOPD,STEMS,VOL,BIOMASS, ERRFLAG,SPN,GEOSUB)
       IF(SPN.EQ.0)THEN
         READ(BIOEQ(4:6),'(I3)') SPEC
       ELSE
@@ -516,7 +518,13 @@ C YW 05/09/2019
       ENDIF
       CALL MILESDATA(SPEC, SG)
       MC = (SG(9)-SG(10))/SG(10)
-      GRNBIOMAS = DRYBIOMAS*(1.0+MC)
+      IF(BIOEQ(12:12).EQ.'G')THEN
+          GRNBIOMAS = BIOMASS
+          DRYBIOMAS = BIOMASS/(1.0+MC)
+      ELSE
+          DRYBIOMAS = BIOMASS
+          GRNBIOMAS = BIOMASS*(1.0+MC)
+      ENDIF
       DRYBIOMAS_d = DBLE(DRYBIOMAS)
       GRNBIOMAS_d = DBLE(GRNBIOMAS)
       RETURN

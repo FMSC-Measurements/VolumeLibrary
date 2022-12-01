@@ -1,13 +1,13 @@
 C WARNING! The codes were created by NBEL Tester program. Please do NOT modify
-C Last modified on 9/17/2019
-       INTEGER, PARAMETER :: EQNTOT = 6057
+C Last modified on 8/12/2022
+       INTEGER, PARAMETER :: EQNTOT = 6059
        TYPE EQINFO
          CHARACTER*12 BIOEQ
          CHARACTER*2 DiaUnit, HtUnit
          CHARACTER*3 DiaType, HtType
          CHARACTER*2 BioUnit
        END TYPE EQINFO
-       TYPE(EQINFO) BIOMSEQ(6057)
+       TYPE(EQINFO) BIOMSEQ(6059)
        INTEGER I5
 C      EQINFO(BEQ, DiaUnit, HtUnit, DiaType, HtType, BioUnit)
        DATA (BIOMSEQ(I5),I5=1,500) /
@@ -6022,7 +6022,7 @@ C      EQINFO(BEQ, DiaUnit, HtUnit, DiaType, HtType, BioUnit)
      + EQINFO('GHZ264BRL01D','CM','M','DBH','THT','KG'),
      + EQINFO('GHZ264BRD01D','CM','M','DBH','THT','KG'),
      + EQINFO('GHZ264STW01D','CM','M','DBH','THT','KG')/
-       DATA (BIOMSEQ(I5),I5=6001,6057) /
+       DATA (BIOMSEQ(I5),I5=6001,6059) /
      + EQINFO('GHZ264STB01D','CM','M','DBH','THT','KG'),
      + EQINFO('HAN017STB01D','CM','FT','DBH','THT','G'),
      + EQINFO('HAN020STB01D','CM','FT','DBH','THT','G'),
@@ -6079,4 +6079,6 @@ C      EQINFO(BEQ, DiaUnit, HtUnit, DiaType, HtType, BioUnit)
      + EQINFO('STA351B0Q01D','M','M','DBH','THT','KG'),
      + EQINFO('STA746B0Q01D','M','M','DBH','THT','KG'),
      + EQINFO('STA375B0Q01D','M','M','DBH','THT','KG'),
-     + EQINFO('STA100B0Q01D','M','M','DBH','THT','KG')/
+     + EQINFO('STA100B0Q01D','M','M','DBH','THT','KG'),
+     + EQINFO('WA2122AGT01G','IN','FT','DBH','THT','LB'),
+     + EQINFO('WA2122CRW01G','IN','FT','DBH','THT','LB')/

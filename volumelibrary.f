@@ -917,15 +917,15 @@ C        HT2PRD = 0
         GEOSUB2 = GEOSUB(1:2)
         CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
      +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB2)
-        IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
-        !The result returned from BiomassLibrary2 is dry biomass
-        !even though the equation is green. Here save the green and dry
+        IF(NVELBEQ(12:12).EQ.'D')THEN
+        !The result returned from BiomassLibrary2 is dry/green biomass
+        !Here save the green and dry
         !biomass into different variables.
           BIODRY(9) = BIOMASS
           BIOGRN(9) = BIOMASS*(1.0+MC)
-!        ELSEIF(NVELBEQ(12:12).EQ.'G')THEN
-!          BIOGRN(9) = BIOMASS
-!          BIODRY(9) = BIOMASS/(1.0+MC)
+        ELSEIF(NVELBEQ(12:12).EQ.'G')THEN
+          BIOGRN(9) = BIOMASS
+          BIODRY(9) = BIOMASS/(1.0+MC)
         ELSE
           BIODRY(9) = BIOMASS
           BIOGRN(9) = BIOMASS

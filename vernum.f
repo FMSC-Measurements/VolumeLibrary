@@ -66,7 +66,17 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20211108 Corrected str2int sunroutine. This affect FIA biomass calculation
 ! 20211117 Added BIOLIBCS in vollibcs.f for C# call wrapper
 ! 20211220 Set R6 default stump = 0 (it was changed to 1.0 when testing FSVeg)
-
+! 20220414 Modified CRZBIOMASS to return green biomass when select BIOEQ is green or dry 
+! 20220503 Modified VOLINIY to Set the total cubic vol to VOL(4) if MTOPP=0.1      
+! 20220819 Added new equation 223DVEW122 for R2 Black Hills non-saw product (DBH<9)
+!          modified subroutines include R2OLDV, DVEST, VOLINIT, VOLINIT2, GROSSVOL,
+!          also added biomass equation WA2122AGT01G and WA2122CRW01G      
+! 20220830 Added FVS changes (variable initialization) on some routines and changed the merch volume for R2 Black Hills 223DVEW122
+!          to be sum of individual log volumes, 
+! 20220929 Updated voleqdef for FVS AK variant 
+! 20221025 Fix the change made on 2022/05/03 to be for R2 only    
+! 20221129 (1)Created new subroutines for R2 Black Hills 223DVEW122 and also modified CalcDia2 for this equation  
+!          (2)Included changes from FVS on some files      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -96,7 +106,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20211220
+      VERSION = 20221129
       RETURN
       END SUBROUTINE VERNUM
       
@@ -129,7 +139,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20211220
+      VERSION = 20221129
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -152,7 +162,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20211220
+      VERSION = 20221129
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -168,6 +178,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20211220
+      version = 20221129
       return
       end subroutine vernum_r

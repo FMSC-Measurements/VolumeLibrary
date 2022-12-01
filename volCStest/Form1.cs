@@ -306,11 +306,11 @@ namespace volCStest
 
             //test call biomass calc for Cruise Processing
             //the following call does work!!!!
-           CRZSPDFTCS(ref REGN, FORST, ref SPCD, WF, AGTEQ, LBREQ, DBREQ, FOLEQ, TIPEQ,
-               WF1REF, WF2REF, MCREF, AGTREF, LBRREF, DBRREF, FOLREF, TIPREF,
-               strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
-           //the calculation works!!!
-           DRCOB = 0.0F;
+            CRZSPDFTCS(ref REGN, FORST, ref SPCD, WF, AGTEQ, LBREQ, DBREQ, FOLEQ, TIPEQ,
+                WF1REF, WF2REF, MCREF, AGTREF, LBRREF, DBRREF, FOLREF, TIPREF,
+                strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
+            //the calculation works!!!
+            DRCOB = 0.0F;
            CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
            //test Brown's function works!!!
            DBH = DBHOB;
@@ -1400,14 +1400,14 @@ namespace volCStest
 
         //for now this checks to see if you can calculate DIB only for the given voleq
         private bool checkVolEq(){
-            if (VOLEQ.ToString().Contains("FW") ||
+            if (VOLEQ.ToString().Contains("FW") || VOLEQ.ToString().Contains("223DVE")||
                 VOLEQ.ToString().Contains("F3") ||
-                   VOLEQ.ToString().Contains("CZ") ||
-                   VOLEQ.ToString().Contains("DEM") ||
-                   VOLEQ.ToString().Contains("CUR") ||
-                    VOLEQ.ToString().Contains("WO2") ||
-                   VOLEQ.ToString().Contains("MAT")||
-                   VOLEQ.ToString().Contains("CLK")||
+                VOLEQ.ToString().Contains("CZ") ||
+                VOLEQ.ToString().Contains("DEM") ||
+                VOLEQ.ToString().Contains("CUR") ||
+                VOLEQ.ToString().Contains("WO2") ||
+                VOLEQ.ToString().Contains("MAT")||
+                VOLEQ.ToString().Contains("CLK")||
                 VOLEQ.ToString().Contains("BEH"))
                 return true;
             else

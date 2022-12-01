@@ -1,6 +1,7 @@
 C YW 2016/03/08 Hard coded the weight factor for DF in Rogue Rive - Siskiyou NF
 C YW 07/05/2017 R6 requests to remove the hardcoded weight factor 
 C YW 2018/11/02 CHANGED TO NOT REMOVE TIP FROM BRANCHES TO AVOID NEGATIVE NUMBER FOR SMALL TREES
+C YW 2022/08/12 Check branches equation if using Crown (CRW) equation and reset foliage to 0.      
 C      THIS SUBROUTINE SEARCH THE REGIONAL SPECIES DEFAULT RECORDS TO FIND THE SPECIES
 C      DEFAULT WEIGHT FACTOR AND COMPONENT BIOMASS EQUATION FOR THE REGIONAL/FOREST
        SUBROUTINE CRZSPDFT(REGN, FORST, SPCD, WF, BMSEQ, REF)
@@ -238,9 +239,9 @@ C      Convert DRC to DBH (Chojnacky 1999)
        THT = HTTOT
        RATIO = 0
 C      IF WEIGHT FACTOR IS NOT PROVIDED, GET IT FROM REGIONAL OR NATIONAL DEFAULT
-       IF(WF(1).LT.0.1) THEN
+c       IF(WF(1).LT.0.1) THEN
          CALL CRZSPDFT(REGN,FORST,SPCD,WF,BMSEQ,REF)
-       ENDIF
+c       ENDIF
 C Reset weight factor for DF based on DBH (YW 2016/03/08)      
        IF(SPCD.EQ.204) SPCD = 202
 C R6 requests to remove the following lines (YW 07/05/2017)
@@ -320,8 +321,15 @@ C      IF BIOMASS EQUSTION IS SET IN REGIONAL DEFAULT, USE IT TO CALCULATE BIOMA
          BEQ = BMSEQ(I)
          IF(BEQ.NE.''.AND.(BEQ(12:12).EQ.'D'.OR.BEQ(12:12).EQ.'G'))THEN
            CALL CalcBiomass(BEQ, DBHOB, THT, P3, BIOMS)
+C      The BIOMS returned from CalcBiomass is green or dry based on BIOEQ 
+C      So convert to GREEN biomass for cruise processing
+           IF(BEQ(12:12).EQ.'D') BIOMS = BIOMS*DRY2GRN
            BMS(I) = BIOMS
-           IF(BEQ(12:12).EQ.'D') BMS(I) = BIOMS*DRY2GRN
+C           IF(BEQ(12:12).EQ.'D') BMS(I) = BIOMS*DRY2GRN  
+C      Check branches using crown equation which include foliage, then reset foliage to 0 (2022/08/12)
+           IF(J.EQ.2.AND.BEQ(7:9).EQ.'CRW') BMS(4)=0.0
+C      chek foliage equation and remove it from Crown
+           IF(J.EQ.4.AND.BMSEQ(2)(7:9).EQ.'CRW') BMS(2) = BMS(2)-BMS(4)
          ENDIF
 30     CONTINUE   
 40     RETURN    

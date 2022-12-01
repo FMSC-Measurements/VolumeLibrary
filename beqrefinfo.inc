@@ -1,12 +1,12 @@
 C WARNING! The codes were created by NBEL Tester program. Please do NOT modify
-C Last modified on 9/17/2019
+C Last modified on 8/12/2022
        TYPE REFINFO
          CHARACTER*3 ABRV
          CHARACTER*40 AUTH
        END TYPE REFINFO
-       TYPE(REFINFO) BEQREF(202)
-       INTEGER I6, REFCNT /202/
-       DATA (BEQREF(I6),I6=1,202) /
+       TYPE(REFINFO) BEQREF(203)
+       INTEGER I6, REFCNT /203/
+       DATA (BEQREF(I6),I6=1,203) /
 C      REFINFO(ABRV, AUTH)
      + REFINFO('BAL','Baldwin 1989'),
      + REFINFO('BAR','Barclay et al. 1986'),
@@ -209,4 +209,5 @@ C      REFINFO(ABRV, AUTH)
      + REFINFO('ASN','Asner, G.P. et al 2011'),
      + REFINFO('CAB','Chave J, Andalo C, Brown S, et al. 2005'),
      + REFINFO('CHV','Chave, J. et al. 2014'),
-     + REFINFO('FPI','NIMS_BIOMASS_PACIFIC_ISLANDS.PKB')/
+     + REFINFO('FPI','NIMS_BIOMASS_PACIFIC_ISLANDS.PKB'),
+     + REFINFO('WA2','Wang, Y. 2022')/

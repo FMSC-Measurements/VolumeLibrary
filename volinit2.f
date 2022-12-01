@@ -8,7 +8,7 @@ c  revised YW 05/16/2013 For BEH equation, if total height is entered, the HTTYP
 !REV  YW 02/27/2014 For region 6 Behre equation, if merch height is entered in feet, convert it to log ht
 !REV  YW 07/30/2014 For region 6 Behre equation, if merch height is entered in feet, use log rules to convert to log ht.
 C     YW 09/15/2016 Added output variable LOGDIA,LOGLEN,LOGVOL to R4vol subroutine
-
+C     YW 08/08/2022 Added STUMP to call DVEST subroutine
 C_______________________________________________________________________
 
       SUBROUTINE VOLINIT2(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
@@ -345,7 +345,7 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
          CALL DVEST (VOLEQ,DBHOB,DRCOB,HTTOT,MTOPP,FCLASS,HTLOG,
      +              HT1PRD,HT2PRD, FORST,BTR,VOL,CUTFLG,BFPFLG,CUPFLG,
      +              CDPFLG,SPFLG,PROD,HTTYPE,HTTFLL,NOLOGP,LIVE,BA,
-     +              SI,CTYPE,errflag,MTOPS)
+     +              SI,CTYPE,errflag,MTOPS,STUMP)
       
       ELSEIF (MDL.EQ.'HAN' .OR. MDL.EQ.'han')THEN
 !******************************
