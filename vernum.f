@@ -76,7 +76,8 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20220929 Updated voleqdef for FVS AK variant 
 ! 20221025 Fix the change made on 2022/05/03 to be for R2 only    
 ! 20221129 (1)Created new subroutines for R2 Black Hills 223DVEW122 and also modified CalcDia2 for this equation  
-!          (2)Included changes from FVS on some files      
+!          (2)Included changes from FVS on some files    
+! 20230104 Correted the errflag for checking DBHOB and HTTOT in caldid and profile and also Removed errflag from stump vol calc in volinit      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -106,7 +107,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20221129
+      VERSION = 20230104
       RETURN
       END SUBROUTINE VERNUM
       
@@ -139,7 +140,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20221129
+      VERSION = 20230104
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -162,7 +163,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20221129
+      VERSION = 20230104
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -178,6 +179,6 @@ c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20221129
+      version = 20230104
       return
       end subroutine vernum_r

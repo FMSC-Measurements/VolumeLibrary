@@ -553,7 +553,8 @@ c        UPSD2 = MTOPS
      &    DRCOB,HTTOT,UPSHT1,UPSHT2,UPSD1,UPSD2,HTREF,AVGZ1,
      &    AVGZ2,FCLASS,DBTBH,BTR,HTUP,DIB,DOB,ERRFLAG)   
       ENDIF
-     
+!     Not returning error code from stump DIB calc 12/28/2022 (YW)
+      IF(ERRFLAG.GT.0) ERRFLAG = 0
       IF(DIB.GT.0.0) VOL(14)=0.005454154*DIB**2*STUMP
       ENDIF  !end stump vol calc
 C  If stump DIB is not calculated, use the following to calculate stump VOL         

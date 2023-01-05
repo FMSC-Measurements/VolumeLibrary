@@ -115,8 +115,10 @@ C     YW 05/10/2016
       
 C--   IF DBHOB OR HTTOT EQUALS ZERO THEN DON'T CALCULATE THE VOLUME
       IF (DBHOB.LT.1.0 .OR. (HTTOT.LT.5 .AND. HT1PRD.LE.0)) THEN
-         ERRFLAG = 3
-         IF(HTTOT.GT.0)ERRFLAG = 0
+          !Return different error flag for DBHOB and HTTOT 12/28/2022 (YW)
+         IF(DBHOB.LT.1.0) ERRFLAG = 3
+         !IF(HTTOT.GT.0)ERRFLAG = 0
+         IF(HTTOT.LT.5 .AND. HT1PRD.LE.0) ERRFLAG = 4
          GO TO 1000
       ENDIF
       

@@ -76,8 +76,13 @@ C **************************************************************
 ! initialize profile model  
 !C  heck for a DBH of less than 1.  Drop out of volume if true.  10/97
 !   Added check for height 08/2022 DW       
+!   DBHOB and HTTOT use dofferent error code 12/28/2022      
       if(dbhob.lt.1 .or. HTTOT.lt.5) then
-        errflag = 3
+        IF(DOBOB.LT.1.0) THEN
+            errflag = 3
+            goto 1000
+        ENDIF
+        IF(HTTOT.LT.5.0) ERRFLAG = 4
         goto 1000
       endif
 

@@ -1251,7 +1251,7 @@ namespace volCStest
                 {
                     string volMDL = volEqTB.Text.ToString().ToUpper().Substring(3,2);
                     string volREGN = volEqTB.Text.ToString().ToUpper().Substring(0, 1);
-                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || (volMDL == "CL")) // && volREGN == "8"))
+                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || volMDL == "DV" || (volMDL == "CL")) // && volREGN == "8"))
                     //if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE")
                     {
                         panel2.Enabled = true;
@@ -1419,7 +1419,7 @@ namespace volCStest
         //displaying the profile model graphic
         private bool isProfileModel()
         {
-            if (MDL.Contains("FW") ||
+            if (MDL.Contains("FW") || VOLEQ.ToString().Contains("223DVE") ||
                 VOLEQ.ToString().Contains("F3") ||
                   MDL.Contains("CZ") ||
                   MDL.Contains("DEM") ||
