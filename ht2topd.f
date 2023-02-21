@@ -36,7 +36,10 @@ C     Variables for Clark profile
       REAL TOPDIB,SAWDIB,PULPDIB,SHRTHT,TOPHT,PLPDIB,DBHIB,DIB17,brokHt
       TYPE(CLKCOEF):: COEFFS,COEFFST
       TYPE(CLKCOEF):: COEFFSO
-      LOGICAL SHORT    
+      LOGICAL SHORT   
+      !Variables to call NSVB equation
+      CHARACTER*11 VOLEQ11
+      REAL Vib
       
       MDL = VOLEQ(4:6)
 c      TOPD = STEMDIB
@@ -253,7 +256,12 @@ C          region 10 call to determine total height or merch height
           CALL R10HTS(VOLEQ2,HTTOT,HT1PRD,DBHOB,HTTYPE,STUMP,STEMDIB,
      >          LMERCH)
            STEMHT = LMERCH + STUMP
-        ENDIF
+          ENDIF
+      ELSEIF(VOLEQ(1:3).EQ.'NVB')THEN
+        VOLEQ11 = VOLEQ
+        CALL NVB_Vib(VOLEQ11,DBHOB,HTTOT,Vib,ERRFLAG)
+        CALL NVB_HT2TOPDib(VOLEQ11,DBHOB,HTTOT,Vib,STEMDIB,STEMHT,
+     +   ERRFLAG)
       ENDIF
 1000  CONTINUE
       RETURN

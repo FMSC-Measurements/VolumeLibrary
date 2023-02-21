@@ -18,7 +18,7 @@
       
       USE CHARMOD 
 	USE DEBUG_MOD
-		  
+	USE MRULES_MOD	  
       IMPLICIT NONE
       
 !     Parameters
@@ -53,39 +53,127 @@
       INTEGER         BA, SI
       INTEGER         ERRFLAG
 !     Variable for biomass      
-      REAL    WF(3), BMS(8)
-      INTEGER SPCD, BMSFLG
-      CHARACTER*10 EQNUM
-        
-! 	    print *, '--> enter volume library'
-!	    print *, '    regn = ',regn, 'forst = ', forst
-!	    print *, '    dist = ', dist
-!	    print *, '*****************************'
-!	    print *, '   prod = ', prod, 'voleq = ', voleq 
-!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
- !      vol(2) = 17.3
- !      logvol(4,1) = 32.3
-c      IF(BMSFLG.EQ.1.AND.VOLEQ.EQ."")THEN
-c        VAR = '  '
-c        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPCD,PROD,EQNUM,ERRFLAG)
-c        VOLEQ = EQNUM
-c      ENDIF
-      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+      REAL    BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),CR,CULL
+      INTEGER FIASPCD, DECAYCD,MRULEFLG
+      TYPE(MERCHRULES)::MERRULES
+      BRKHT = 0
+      BRKHTD = 0
+      FIASPCD = 0
+      CR = 0
+      CULL = 0
+      DECAYCD = 0
+      MRULEFLG = 0
+      MERRULES%COR = 'Y'
+      MERRULES%EVOD = 0
+      MERRULES%OPT = 22
+      MERRULES%MAXLEN = 16.0
+      MERRULES%MINLEN = 2.0
+      MERRULES%MERCHL = 8.0
+      MERRULES%MINLENT = 2.0
+      MERRULES%MTOPP = 6.0
+      MERRULES%MTOPS = 4.0
+      MERRULES%STUMP = 1
+      MERRULES%TRIM = 0.3
+      MERRULES%BTR = 0
+      MERRULES%DBTBH = 0
+      MERRULES%MINBFD = 1
+      
+!      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+!     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+!     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+!     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+!     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+!     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      CALL VOLINITNEW(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
-     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-     +    BA,SI,CTYPE,ERRFLAG,IDIST)
- !      print *, 'vol(2) = ', vol(2)
- !      print *, 'logvol(4,1) = ', logvol(4,1)
- !    Added the following to calculat biomass (09/20/2016)
-c      IF (BMSFLG.EQ.1) THEN
-c        CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB, HTTOT,FCLASS,
-c     +  VOL,WF,BMS,ERRFLG)
-c      ENDIF
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES)
+      
  4000 RETURN
       
       END SUBROUTINE VOLUMELIBRARY
+!----------------------------------------------------------------------
+      SUBROUTINE VOLUMELIBRARY2(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,
+     +    DBHOB,
+     &    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     &    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,
+     &    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     &    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,GRNBIO,
+     &    CR,CULL,DECAYCD)
+! 02/10/2023  Created volumelibrary2 to enable use the new NSVB equations
+! Expose subroutine VOLUMELIBRARY to users of this DLL
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::VOLUMELIBRARY2
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: VOLUMELIBRARY2
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'VOLUMELIBRARY2'::VOLUMELIBRARY2
+      USE CHARMOD 
+	USE DEBUG_MOD
+      USE MRULES_MOD
+      IMPLICIT NONE
+!     Parameters
+      INTEGER         REGN
+      CHARACTER*(*)   FORST, VOLEQ
+      REAL            MTOPP, MTOPS, STUMP,DBHOB, DRCOB
+      CHARACTER*(*)   HTTYPE
+      REAL            HTTOT
+      INTEGER         HTLOG
+      REAL            HT1PRD, HT2PRD, UPSHT1, UPSHT2, UPSD1, UPSD2
+      INTEGER         HTREF
+      REAL            AVGZ1, AVGZ2
+      INTEGER         FCLASS
+      REAL            DBTBH, BTR
+!      INTEGER         I3, I7, I15, I20, I21
+      REAL            LOGVOL(7,20), LOGDIA(21,3), LOGLEN(20)
+      REAL            BOLHT(21)
+      INTEGER         TLOGS
+      REAL            NOLOGP,NOLOGS
+      INTEGER         CUTFLG, BFPFLG, CUPFLG, CDPFLG, CUSFLG, CDSFLG
+      CHARACTER*(*)   PROD
+      CHARACTER*(*)   CONSPEC
+      INTEGER         HTTFLL
+      CHARACTER*(*)   LIVE, CTYPE
+      INTEGER         ERRFLG
+      CHARACTER*2     DIST, VAR
+      INTEGER         IDIST
+!     Local variables      
+!     Variable required for call to VOLINIT      
+      INTEGER         SPFLG
+      REAL            VOL(15)
+      INTEGER         BA, SI
+      INTEGER         ERRFLAG
+!     Variable for biomass      
+      REAL    DRYBIO(15),GRNBIO(15),BRKHT,BRKHTD,CR,CULL
+      INTEGER FIASPCD, MRULEFLG,DECAYCD
+      TYPE(MERCHRULES)::MERRULES
+      MRULEFLG = 0
+      MERRULES%COR = 'Y'
+      MERRULES%EVOD = 0
+      MERRULES%OPT = 22
+      MERRULES%MAXLEN = 16.0
+      MERRULES%MINLEN = 2.0
+      MERRULES%MERCHL = 8.0
+      MERRULES%MINLENT = 2.0
+      MERRULES%MTOPP = 6.0
+      MERRULES%MTOPS = 4.0
+      MERRULES%STUMP = 1
+      MERRULES%TRIM = 0.3
+      MERRULES%BTR = 0
+      MERRULES%DBTBH = 0
+      MERRULES%MINBFD = 1
+
+      CALL VOLINITNEW(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES)
+        
+      RETURN
+      END
 C ---------------------------------------------------------------------
       SUBROUTINE FIAVOL(VOLEQ,SPN,DBHOB,HTTOT,HT1PRD,HT2PRD,MTOPP,
      & STUMP,DRCOB,UPSHT1,UPSD1,UPSHT2,UPSD2,VOL,BA,SI,GEOSUB,ERRFLG,
@@ -538,16 +626,7 @@ C     Set the default value for other variable
       I15 = 15
       I20 = 20
       I21 =21
-      
-C     Check if the VOLEQ is valid. If not valid, return error flag 1      
-c      NULEQ = INDEX(VOLEQ,' ')
-c      IF(LEN_TRIM(VOLEQ).EQ.0.OR.NULEQ.GT.0)THEN
-c        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG) 
-c      ENDIF
-c      TMPSPEC = 9999
-c      CALL VOLEQDEF(VAR,REGN,FORST,DIST,TMPSPEC,PROD,VOLEQ,ERRFLAG)
-c      IF(TMPSPEC.NE.8888) GOTO 999
-      
+            
       CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -667,16 +746,7 @@ C     Set the default value for other variable
       I15 = 15
       I20 = 20
       I21 =21
-      
-C     Check if the VOLEQ is valid. If not valid, return error flag 1      
-c      NULEQ = INDEX(VOLEQ,' ')
-c      IF(LEN_TRIM(VOLEQ).EQ.0.OR.NULEQ.GT.0)THEN
-c        CALL VOLEQDEF(VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG) 
-c      ENDIF
-c      TMPSPEC = 9999
-c      CALL VOLEQDEF(VAR,REGN,FORST,DIST,TMPSPEC,PROD,VOLEQ,ERRFLAG)
-c      IF(TMPSPEC.NE.8888) GOTO 999
-      
+            
       CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -705,6 +775,153 @@ c      IF(TMPSPEC.NE.8888) GOTO 999
       
       RETURN
       end subroutine vollib2_r   
+C *******************************************************************************
+      subroutine vollibnew_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,HTTOT_d,
+     + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
+     + FCLASS,DBTBH_d,BTR_d,VOL_d,LOGVOL_d,LOGDIA_d,LOGLEN_d,BOLHT_d,
+     + TLOGS,NOLOGP_d,NOLOGS_d,ERRFLAG,BRKHT_d,BRKHTD_d,
+     &    DRYBIO_d,GRNBIO_d,CR_d,CULL_d,DECAYCD)
+C This subroutine is for R user to calculate volume from vollib      !
+C with output variable for logs LOGDIA,LOGVOL,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS
+! and new NSVB equations for biomass DRYBIO, GRNBIO      
+C YW 02/10/2023
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollibnew_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibnew_r_'::vollibnew_r
+
+	USE CHARMOD
+	USE DEBUG_MOD
+      USE VOLINPUT_MOD
+      USE MRULES_MOD
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,MTOPP_d,MTOPS_d,STUMP_d
+      DOUBLE PRECISION HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d
+      DOUBLE PRECISION DBTBH_d,BTR_d,VOL_d(15)
+      DOUBLE PRECISION LOGVOL_d(7,20),LOGDIA_d(21,3),LOGLEN_d(20)
+      DOUBLE PRECISION BOLHT_d(21),NOLOGP_d,NOLOGS_d
+      DOUBLE PRECISION BRKHT_d,BRKHTD_d,CR_d,CULL_d
+      DOUBLE PRECISION DRYBIO_d(15),GRNBIO_d(15)
+      
+      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*2  FORST,PROD
+      character*4  CONSPEC
+      CHARACTER*10 VOLEQ
+      CHARACTER*3  MDL,SPECIES
+      CHARACTER*2  DIST,VAR
+   
+      INTEGER      SPEC,TMPSPEC,NULEQ
+
+!   MERCH VARIABLES 
+      INTEGER      REGN,HTTFLL,BA,SI,IFORST,IDIST
+      REAL         STUMP,MTOPP,MTOPS  
+      INTEGER      CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+      REAL         TIPDIB,TIPLEN
+      
+!   Tree variables
+      REAL 		HTTOT,HT1PRD,HT2PRD   
+      REAL 		DBHOB,DRCOB,DBTBH,BTR  
+      INTEGER   FCLASS,HTLOG  
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+    
+!   OUTPUTS
+      REAL      NOLOGP,NOLOGS
+      INTEGER   TLOGS  
+    
+!   ARRAYS
+!      INTEGER   I15,I21,I20,I7,I3,I,J
+      REAL 		VOL(15),LOGVOL(7,20)
+      REAL		LOGDIA(21,3),LOGLEN(20),BOLHT(21)
+      REAL    DRYBIO(15),GRNBIO(15),BRKHT,BRKHTD,CR,CULL
+      INTEGER FIASPCD, MRULEFLG,DECAYCD
+      TYPE(MERCHRULES)::MERRULES
+      CHARACTER*11 NVBEQ
+      
+      NVBEQ = VOLEQ
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      MTOPP = REAL(MTOPP_d)
+      MTOPS = REAL(MTOPS_d)
+      HT1PRD = REAL(HT1PRD_d)
+      HT2PRD = REAL(HT2PRD_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
+      STUMP = REAL(STUMP_d)
+      DBTBH = REAL(DBTBH_d)
+      BTR = REAL(BTR_d)
+      BRKHT = REAL(BRKHT_d)
+      BRKHTD = REAL(BRKHTD_d)
+      CR = REAL(CR_d)
+      CULL = REAL(CULL_d)
+      
+      READ (DIST, '(I2)') IDIST
+C     Set the default value for other variable
+      PROD='01'
+      HTTYPE='F'
+      HTLOG=0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      CONSPEC='    '
+      DRCOB=0.0
+      HTTFLL=0
+      BA=0
+      SI=0
+      CTYPE='F'
+      CUTFLG=1
+      CUPFLG=1
+      SPFLG=1
+      BFPFLG=1
+!      I3 = 3
+!      I7 = 7
+!      I15 = 15
+!      I20 = 20
+!      I21 =21
+      FIASPCD = SPEC
+      MRULEFLG = 0
+      CALL VOLINITNEW(REGN,FORST,NVBEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES)
+!      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+!     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+!     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+!     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+!     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+!     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      
+      VOL_d = DBLE(VOL)
+!      DBHOB_d = DBLE(DBHOB)
+!      HTTOT_d = DBLE(HTTOT)
+      MTOPP_d = DBLE(MTOPP)
+      MTOPS_d = DBLE(MTOPS)
+      HT1PRD_d = DBLE(HT1PRD)
+      HT2PRD_d = DBLE(HT2PRD)
+!      UPSHT1_d = DBLE(UPSHT1)
+!      UPSD1_d = DBLE(UPSD1)
+      STUMP_d = DBLE(STUMP)
+!      DBTBH_d = DBLE(DBTBH)
+!      BTR_d = DBLE(BTR)
+      LOGVOL_d = DBLE(LOGVOL)
+      LOGDIA_d = DBLE(LOGDIA)
+      LOGLEN_d = DBLE(LOGLEN)
+      BOLHT_d = DBLE(BOLHT)
+      NOLOGP_d = DBLE(NOLOGP)
+      NOLOGS_d = DBLE(NOLOGS)
+      DRYBIO_d = DBLE(DRYBIO)
+      GRNBIO_d = DBLE(GRNBIO)
+      
+      RETURN
+      end subroutine vollibnew_r   
 C ************************************************************************
 C YW 2019/05/07 ADDED INPUT VARIABLES HT1PRD,HT2PRD,HTTFLL
 ! YW 2019/08/05 Added input variable GROSUB. This is for pacific islands equation
@@ -743,92 +960,6 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
       CALL BIOLIB2(REGN,FORSTI,SPEC,BIOEQI,DBHOB,HTTOT,VOL,
      +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUBI)
      
-C The following code has been moved to BIOLIB2
-!      INTEGER STEMS, I, LEN,NOINT,FIAEQNUM,STAT
-      
-!      DO 100, I=1,9
-!        BIOGRN(I) = 0.0
-!        BIODRY(I) = 0.0
-!100   CONTINUE      
-!!     Call Jenkin's to calculate biomass
-!      CALL JENKINS(SPEC, DBHOB, BIOMS)
-!!     The elements in BIOMS are dry weight in pounds as below:
-!C     1 ABOVE GROUND TOTAL
-!C     2 MERCH STEM WOOD
-!C     3 MERCH STEM BARK
-!C     4 FOLIAGE
-!C     5 ROOTS
-!C     6 BRANCHES
-!C     7 CROWN
-!C     8 MERCH STEM WOOD AND BARK
-!      
-!C     GET REGIONAL OR NATIONAL DEFAULT weight factor
-!      CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
-!      
-!C     Get the moisture content from Miles $ Smith 2009
-!      IF(WF(3).EQ.0)THEN
-!        CALL MILESDATA(SPEC,SG)
-!        WF(3) = (SG(9)-SG(10))/SG(10)*100.0
-!      ENDIF
-!      MC = WF(3)/100.0
-!C     Calculate merch stem green weight using cubic feet volume and weight factor
-!      STMGRNWT = WF(1)*(VOL(4)+VOL(7))
-!      STMDRYWT = STMGRNWT/(1.0+MC)
-!C     GET the ratio for stem calculated from weight factor and Jenkins
-!      IF(BIOMS(8).GT.0)THEN
-!        RATIO = STMDRYWT/BIOMS(8)
-!      ELSE
-!        RATIO = 1.0
-!      ENDIF
-!      IF(RATIO.LE.0) RATIO = 1
-!C     Apply the ratio to biomass calculated from Jenkins and also add MC to get green weight
-!      DO 200, I=1,8
-!        BIODRY(I) = BIOMS(I)*RATIO
-!        BIOGRN(I) = BIODRY(I)*(1+MC)  
-!200   CONTINUE
-!C     If BIOEQ is provided, calculate biomass from it
-!      LEN = LEN_TRIM(BIOEQ)
-!      FIAEQNUM = -1
-!      IF(LEN.GT.0)THEN
-!        CALL str2int(BIOEQ, FIAEQNUM, STAT)
-!        IF(STAT.EQ.0)THEN
-!          GEOSUB2 = GEOSUB(1:1)
-!          ERRFLG = 0
-!          CALL FIABEQ2NVELBEQ(FIAEQNUM,SPEC,NVELBEQ,GEOSUB2,ERRFLG)
-!          IF(FIAEQNUM.EQ.109)THEN
-!            BIODRY(9) = 0.0
-!            BIOGRN(9) = 0.0
-!            RETURN
-!          ENDIF
-!        ELSE
-!          NVELBEQ = BIOEQ
-!        ENDIF
-!
-!C       Set default values
-!        CR = (HTTOT-HTTFLL)/HTTOT
-!        IF(CR.LE.0.0.OR.CR.GT.1.0) CR = 0.5
-!C        HT1PRD = 0
-!C        HT2PRD = 0
-!        TOPD = 0
-!        STEMS = 1
-!        ERRFLG = 0   
-!        VOLM = VOL   
-!        CALL BiomassLibrary2(NVELBEQ,DBHOB,HTTOT,CR,HT1PRD, 
-!     +       HT2PRD,TOPD,STEMS,VOLM,BIOMASS,ERRFLG,SPEC,GEOSUB)
-!        IF(NVELBEQ(12:12).EQ.'D'.OR.NVELBEQ(12:12).EQ.'G')THEN
-!        !The result returned from BiomassLibrary2 is dry biomass
-!        !even though the equation is green. Here save the green and dry
-!        !biomass into different variables.
-!          BIODRY(9) = BIOMASS
-!          BIOGRN(9) = BIOMASS*(1.0+MC)
-!!        ELSEIF(NVELBEQ(12:12).EQ.'G')THEN
-!!          BIOGRN(9) = BIOMASS
-!!          BIODRY(9) = BIOMASS/(1.0+MC)
-!        ELSE
-!          BIODRY(9) = BIOMASS
-!          BIOGRN(9) = BIOMASS
-!        ENDIF
-!      ENDIF
       RETURN
       END
 C ----------------------------------------------------------------------------------
@@ -995,13 +1126,6 @@ C ------------------------------------------------------------------------------
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG, MERRULES,IDIST)
-
-c           CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
-c     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
-c     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
-c     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
-c     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
-c     +    BA,SI,CTYPE,ERRFLAG,IDIST)
 
  1000 RETURN
       

@@ -77,6 +77,12 @@ C**********************************************************************
       INTEGER        SPEC
       REAL           LOGVOL(I7,I20),LOGDIA(I21,I3),DIBO, TCU
       INTEGER        IDIST
+      
+      !test voinitnew variable
+      REAL CR,CULL,BRKHT,BRKHTD
+      INTEGER DECAYCD,FIASPCD,MRULEFLG
+      REAL DRYBIO(15), GRNBIO(15)
+      CHARACTER*11 VOLEQ11
 !- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
       !Convert the CHAR*256 types to Char(*) so I don't have to rename 
@@ -123,6 +129,22 @@ c      CALL vollib_r(VOLEQ,REGN,DBHOB,HTTOT,TCU,ERRFLAG)
 !     >   CTYPE,FCLASS,PROD,DIBO,ERRFLAG)
      
 !         NOLOGP = DIBO
+          !test voinitnew
+          CR = 0
+          CULL=0
+          DECAYCD = 0
+          FIASPCD = 0
+          BRKHT = 0
+          BRKHTD = 0
+          MRULEFLG = 0
+          VOLEQ11   = VOLEQI(1:11)
+          CALL VOLINITNEW(REGN,FORST,VOLEQ11,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES)
      
       ELSE IF (PMTFLG .EQ. 2) THEN
     
@@ -683,3 +705,84 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
      +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUBI)
 
       END
+!----------------------------------------------------------------------
+! This new subroutine enable the use of new National-scal volume and biomass equation     
+      SUBROUTINE VOLLIBCSNEW(REGN,FORSTI,VOLEQI,MTOPP,MTOPS,STUMP,
+     +    DBHOB,DRCOB,HTTYPEI,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,
+     &    UPSD1,UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,
+     &    VOL,LOGVOLI,LOGDIAI,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     &    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPECI,PRODI,HTTFLL,LIVEI,
+     &    BA,SI,CTYPEI,ERRFLAG, PMTFLG, MERRULES,IDIST,
+     &    BRKHT,BRKHTD,FIASPCD,DRYBIO,GRNBIO,CR,CULL,DECAYCD)
+C_______________________________________________________________________
+! Expose subroutine VOLLIBCS to C# users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::VOLLIBCSNEW
+      USE MRULES_MOD
+      IMPLICIT NONE
+C**********************************************************************      
+!     Parameters
+      INTEGER         REGN,HTLOG,HTREF,FCLASS,TLOGS,HTTFLL
+      CHARACTER*(*)   FORSTI, VOLEQI,HTTYPEI,PRODI,CONSPECI
+      REAL            MTOPP, MTOPS, STUMP,DBHOB, DRCOB,HTTOT
+      REAL            HT1PRD, HT2PRD, UPSHT1, UPSHT2, UPSD1, UPSD2
+      REAL            AVGZ1, AVGZ2,DBTBH, BTR,NOLOGP,NOLOGS
+      REAL            LOGVOLI(7,20), LOGDIAI(21,3), LOGLEN(20),BOLHT(21)
+      INTEGER         CUTFLG, BFPFLG, CUPFLG, CDPFLG, CUSFLG, CDSFLG
+      CHARACTER*(*)   LIVEI, CTYPEI
+      INTEGER         ERRFLG, PMTFLG
+      TYPE(MERCHRULES):: MERRULES
+      REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),VOL(15)
+!     Local variables      
+!     Variable required for call to VOLINIT      
+      INTEGER         BA, SI,ERRFLAG
+      
+!     Local variables
+      CHARACTER(2)   FORST,PROD
+      CHARACTER(11)  VOLEQ11
+      CHARACTER(1)   HTTYPE,LIVE,CTYPE
+      CHARACTER(4)   CONSPEC
+      REAL           LOGVOL(7,20),LOGDIA(21,3),CR,CULL 
+      INTEGER        IDIST,MRULEFLG,DECAYCD,SPFLG,FIASPCD
+!- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+      !Convert the CHAR*256 types to Char(*) so I don't have to rename 
+      !all references below
+     
+!--------------------------------------------------------------------
+      FORST   = FORSTI(1:2)
+      VOLEQ11   = VOLEQI(1:11)
+      HTTYPE  = HTTYPEI(1:1)
+      CONSPEC = CONSPECI(1:4)
+      PROD    = PRODI(1:2)
+      LIVE    = LIVEI(1:1)
+      CTYPE   = CTYPEI(1:1)
+!---------------------------------------------------
+!Use array converter to reshape c arrays to fortran notation
+      LOGVOL = RESHAPE(LOGVOLI, SHAPE(LOGVOL))
+      LOGDIA = RESHAPE(LOGDIAI, SHAPE(LOGDIA))
+      ERRFLAG = 0
+      MRULEFLG = PMTFLG
+      CALL VOLINITNEW(REGN,FORST,VOLEQ11,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES)
+      
+      !add null terminator required by C# strings
+      !FORSTI = FORST // char(0)
+      !VOLEQI = VOLEQ11 // char(0)
+      !HTTYPEI = HTTYPE // char(0)
+      !CONSPECI = CONSPEC // char(0)
+      !PRODI = PROD // char(0)
+      !LIVEI = LIVE // char(0)
+      !CTYPEI = CTYPE // char(0)
+           
+      !copy the logvol and logdia data back into the subroutine 
+      !paramater for return to c#
+      LOGVOLI = RESHAPE(LOGVOL, SHAPE(LOGVOL))
+      LOGDIAI = RESHAPE(LOGDIA, SHAPE(LOGDIA))
+ 
+      RETURN
+      END SUBROUTINE VOLLIBCSNEW

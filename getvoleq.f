@@ -210,3 +210,48 @@ C YW 02/10/2017
 
       RETURN
       end subroutine getvoleq_r
+!----------------------------------------------------------------------
+      SUBROUTINE GETNVBEQ(REGN,FORSTI,DISTI,SPEC,VOLEQI,ERRFLAG)
+      ! Expose subroutine GETNVBEQ to users of this DLL
+      ! This is for C# application
+      !DEC$ ATTRIBUTES DLLEXPORT::GETNVBEQ
+       IMPLICIT NONE
+      CHARACTER*256,INTENT(INOUT):: FORSTI,DISTI, VOLEQI
+      CHARACTER*(2) :: FORST,DIST
+      CHARACTER*(10):: VOLEQ
+      INTEGER SPEC,ERRFLAG,REGN
+      FORST   = FORSTI(1:3)
+      DIST    = DISTI(1:3)
+      VOLEQ   = VOLEQI(1:11)
+      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ)
+         FORSTI = FORST // char(0)
+         DISTI = DIST // char(0)
+         VOLEQI = VOLEQ // char(0)
+      RETURN
+      END subroutine GETNVBEQ
+!*************************************************************************
+      subroutine GETNVBEQ2(REGN,FORST,DIST,SPEC,VOLEQ,ERRFLAG)
+      ! Expose subroutine GETNVBEQ2 to users of this DLL
+      ! This is for Excel VBA application
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::GETNVBEQ2
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG ::GETNVBEQ2
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'GETNVBEQ2'::GETNVBEQ2
+      CHARACTER*(*) :: FORST,DIST
+      CHARACTER*(*):: VOLEQ
+      INTEGER SPEC,ERRFLAG,REGN
+	    
+      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ)
+      RETURN
+      end subroutine GETNVBEQ2
+!----------------------------------------------------------------------
+      subroutine getnvbeq_r(REGN,FORST,DIST,SPEC,VOLEQ,ERRFLAG)
+C This subroutine is for R user to get default NSVB equation from vollib      !
+C YW 02/16/2023
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::getnvbeq_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'getnvbeq_r_'::getnvbeq_r
+      CHARACTER*(*) :: FORST,DIST
+      CHARACTER*(*):: VOLEQ
+	INTEGER SPEC,ERRFLAG,REGN
+      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ)
+      RETURN
+      end subroutine getnvbeq_r

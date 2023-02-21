@@ -77,7 +77,10 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20221025 Fix the change made on 2022/05/03 to be for R2 only    
 ! 20221129 (1)Created new subroutines for R2 Black Hills 223DVEW122 and also modified CalcDia2 for this equation  
 !          (2)Included changes from FVS on some files    
-! 20230104 Correted the errflag for checking DBHOB and HTTOT in caldid and profile and also Removed errflag from stump vol calc in volinit      
+! 20230104 Correted the errflag for checking DBHOB and HTTOT in caldib and profile and also Removed errflag from stump vol calc in volinit 
+! 20230118 Changed R1 Mrules min topwood length MINLENT to 16 
+! 20230124 Corrected changes in profile made on 20200219 for call SEGMNT in CUPFLG   
+! 20230221 Added NSVB volume and biomass equations and VOLLIBCSNEW, VOLUMELIBRARY2 and vollibnew_r for DLL       
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -107,7 +110,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230104
+      VERSION = 20230221
       RETURN
       END SUBROUTINE VERNUM
       
@@ -140,7 +143,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230104
+      VERSION = 20230221
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -163,7 +166,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20230104
+      VERSION = 20230221
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -172,13 +175,10 @@ C*********************************************************************
 
       subroutine vernum_r(version)
 C     R program need subroutine name to be all lower case
-c      !DEC$ ATTRIBUTES STDCALL,REFERENCE,DLLEXPORT::vernum_r
-c      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG ::vernum_r
-c      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vernum_r_'::vernum_r
       !DEC$ ATTRIBUTES DLLEXPORT::vernum_r
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20230104
+      version = 20230221
       return
       end subroutine vernum_r

@@ -37,7 +37,7 @@ using System.IO;
 
 namespace volCStest
 {
-    
+
 
     public partial class Form1 : Form
     {
@@ -49,6 +49,9 @@ namespace volCStest
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void GETVOLEQ3(ref int a, StringBuilder forstc, StringBuilder distc, ref int spec, StringBuilder prod, StringBuilder voleq, ref int err, int l1, int l2, int l3, int l4);
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
+        static extern void GETNVBEQ(ref int a, StringBuilder forstc, StringBuilder distc, ref int spec, StringBuilder voleq, ref int err, int l1, int l2, int l4);
+
+        [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void GETVARIANTCS(ref int a, StringBuilder forstc, StringBuilder distc, StringBuilder var, int l1, int l2, int l3);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
@@ -57,12 +60,12 @@ namespace volCStest
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void PMTPROFILE(StringBuilder forst, StringBuilder voleq, ref float mtopp, ref float mtops,
          ref float stump, ref float dbhob, ref float dib, StringBuilder httype, ref float httot, ref int htlog, ref float ht1prd, ref float ht2prd,
-         ref float upsht1, ref float upsht2, ref float upsd1, ref float upsd2, ref float avgz1, ref float avgz2,  ref int htref, ref float dbtbh,
+         ref float upsht1, ref float upsht2, ref float upsd1, ref float upsd2, ref float avgz1, ref float avgz2, ref int htref, ref float dbtbh,
          ref float btr, float[] vol,
          ref int cutflg, ref int bfpflg,
-         ref int cupflg,  ref int cdpflg, ref int spflg, ref float drcob,StringBuilder ctype,  ref int fclass, StringBuilder prod, 
-         ref int errflg, int ll1, int ll2, int ll3, int ll4, int ll5 );
-       
+         ref int cupflg, ref int cdpflg, ref int spflg, ref float drcob, StringBuilder ctype, ref int fclass, StringBuilder prod,
+         ref int errflg, int ll1, int ll2, int ll3, int ll4, int ll5);
+
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void VOLLIBCS(ref int regn, StringBuilder forst, StringBuilder voleq, ref float mtopp, ref float mtops,
          ref float stump, ref float dbhob, ref float drcob, StringBuilder httype, ref float httot, ref int htlog, ref float ht1prd, ref float ht2prd,
@@ -71,6 +74,17 @@ namespace volCStest
          float[,] logdia, float[] loglen, float[] bohlt, ref int tlogs, ref float nologp, ref float nologs, ref int cutflg, ref int bfpflg,
          ref int cupflg, ref int cdpflg, ref int spflg, StringBuilder conspec, StringBuilder prod, ref int httfll, StringBuilder live,
          ref int ba, ref int si, StringBuilder ctype, ref int errflg, ref int indeb, ref int pmtflg, ref MRules mRules, ref int dist, int ll1, int ll2, int ll3, int ll4, int ll5, int ll6, int ll7, int charLen);
+
+        [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
+        static extern void VOLLIBCSNEW(ref int regn, StringBuilder forst, StringBuilder voleq, ref float mtopp, ref float mtops,
+        ref float stump, ref float dbhob, ref float drcob, StringBuilder httype, ref float httot, ref int htlog, ref float ht1prd, ref float ht2prd,
+        ref float upsht1, ref float upsht2, ref float upsd1, ref float upsd2, ref int htref, ref float avgz1, ref float avgz2, ref int fclass, ref float dbtbh,
+        ref float btr, float[] vol, float[,] logvol,
+        float[,] logdia, float[] loglen, float[] bohlt, ref int tlogs, ref float nologp, ref float nologs, ref int cutflg, ref int bfpflg,
+        ref int cupflg, ref int cdpflg, ref int spflg, StringBuilder conspec, StringBuilder prod, ref int httfll, StringBuilder live,
+        ref int ba, ref int si, StringBuilder ctype, ref int errflg, ref int pmtflg, ref MRules mRules, ref int dist,
+        ref float brkht, ref float brkhtd, ref int fiaspcd, float[] drybio, float[] grnbio, ref float cr, ref float cull, ref int decaycd,
+        int ll1, int ll2, int ll3, int ll4, int ll5, int ll6, int ll7, int charLen);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void CALCDIACS(ref int regn, StringBuilder forst, StringBuilder voleq, ref float stump, ref float dbhob,
@@ -90,9 +104,9 @@ namespace volCStest
         static extern void CRZBIOMASSCS(ref int regn, StringBuilder forst, ref int spcd, ref float dbhob, ref float drcob, ref float httot, ref int fclass, float[] vol, float[] wf, float[] bms, ref int errflg, int i1);
         [DllImport("vollib.dll")]
         static extern void CRZSPDFTCS(ref int regn, StringBuilder forst, ref int spcd, float[] wf, StringBuilder agteq, StringBuilder lbreq, StringBuilder dbreq, StringBuilder foleq, StringBuilder tipeq,
-            StringBuilder wf1ref, StringBuilder wf2ref, StringBuilder mcref, StringBuilder agtref, StringBuilder lbrref, StringBuilder dbrref, StringBuilder folref, StringBuilder tipref, 
-            int i1, int i2, int i3,int i4, int i5, int i6,int i7, int i8, int i9,int i10, int i11, int i12,int i13,int i14);
-        
+            StringBuilder wf1ref, StringBuilder wf2ref, StringBuilder mcref, StringBuilder agtref, StringBuilder lbrref, StringBuilder dbrref, StringBuilder folref, StringBuilder tipref,
+            int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, int i12, int i13, int i14);
+
         [DllImport("vollib.dll")]
         static extern void BROWNCROWNFRACTION(ref int SPCD, ref float DBH, ref float THT, ref float CR, float[] CFWT);
         [DllImport("vollib.dll")]
@@ -103,14 +117,15 @@ namespace volCStest
         static extern void BROWNCULLCHUNK(ref int SPN, ref float GCUFT, ref float NCUFT, ref float FLIW, ref float WT);
 
         // standard variables
-        int REGN,HTLOG,HTREF,FCLASS,HTTFLL,ERRFLAG,TLOGS,BA,SI,SPCODE,INDEB, PMTFLG, IDIST;
-        int CUTFLG,BFPFLG,CUPFLG,CDPFLG,CUSFLG,CDSFLG,SPFLG,VERSION;
-        float DBHOB,DRCOB,HTTOT,HT1PRD,HT2PRD,STUMP;
-        float UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2;
-        float DBTBH,BTR,MTOPP,MTOPS,NOLOGP,NOLOGS, DIB,DIBHT, DOB;
-        float DBH,CR;
-        float STEMDIB, STEMHT;
+        int REGN, HTLOG, HTREF, FCLASS, HTTFLL, ERRFLAG, TLOGS, BA, SI, SPCODE, INDEB, PMTFLG, IDIST;
+        int CUTFLG, BFPFLG, CUPFLG, CDPFLG, CUSFLG, CDSFLG, SPFLG, VERSION;
+        float DBHOB, DRCOB, HTTOT, HT1PRD, HT2PRD, STUMP;
+        float UPSHT1, UPSHT2, UPSD1, UPSD2, AVGZ1, AVGZ2;
+        float DBTBH, BTR, MTOPP, MTOPS, NOLOGP, NOLOGS, DIB, DIBHT, DOB;
+        float DBH, CR, CULL;
+        float STEMDIB, STEMHT, BRKHT, BRKHTD;
         float pmtHt;
+        int FIASPCD, DECAYCD;
         // test MRULESCS variable
         int OPT;
         float TRIM, MINLEN, MAXLEN, MERCHL;
@@ -122,19 +137,21 @@ namespace volCStest
         int I21 = 21;
         //test EZVOLLIB
         float TCU, MCU, BDF, SCNCU;
-           
+
         float[] VOL;
         float[] LOGLEN;
         float[] BOLHT;
         // 2-dimentional array definitions
         float[,] LOGVOL;
-        float[,] LOGDIA ;
+        float[,] LOGDIA;
 
         //biomas variable
         int SPCD;
         float[] WF;
         float[] BMS;
         float[] CFWT;
+        float[] DRYBIO;
+        float[] GRNBIO;
         float VolS, VolN, TopWt, CullLogWt, CullChunkWt, fliw;
         StringBuilder AGTEQ = new StringBuilder(256);
         StringBuilder LBREQ = new StringBuilder(256);
@@ -178,6 +195,7 @@ namespace volCStest
         StringBuilder CONSPEC = new StringBuilder(256);
         StringBuilder CTYPE = new StringBuilder(256);
         StringBuilder VAR = new StringBuilder(256);
+        StringBuilder NVBEQ = new StringBuilder(256);
 
         String MDL;
            
@@ -294,35 +312,49 @@ namespace volCStest
            //if pmtflg == 2 call profile2 with user defined merch rules 
            //else just call the regular profile model...vollibcs.f handles this.
            IDIST = int.Parse(DIST.ToString());
-           VOLLIBCS(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
-             HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
-             ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, ref I3, ref I7, ref I15, ref I20, ref I21, VOL, LOGVOL,
-             LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
-             ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref INDEB, ref PMTFLG,
-             ref mRules, ref IDIST, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
-
+            //if (VOLEQ.ToString().Substring(0, 3) == "NVB") PMTFLG = 1;
+            //PMTFLG = 1;
+            //VOLLIBCS(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
+            //  HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
+            //  ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, ref I3, ref I7, ref I15, ref I20, ref I21, VOL, LOGVOL,
+            //  LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
+            //  ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref INDEB, ref PMTFLG,
+            //  ref mRules, ref IDIST, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
+            //MessageBox.Show("Ht to Brok=" + brkhtTB.Text+ " BRKHT = " + BRKHT);
+            //BRKHT = 0;
+            VOLLIBCSNEW(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
+              HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
+              ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, VOL, LOGVOL,
+              LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
+              ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref PMTFLG,
+              ref mRules, ref IDIST, ref BRKHT, ref BRKHTD, ref FIASPCD, DRYBIO, GRNBIO, ref CR, ref CULL, ref DECAYCD,
+              strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
+            //display the estimated total ht
+            if (HTTOT > 0 && float.Parse(totalHtTB.Text) == 0)
+                totalHtTB.Text = HTTOT.ToString();
+            
             //test call MRULESCS
-           MRULESCS(ref REGN, VOLEQ, PROD, ref TRIM, ref MINLEN, ref MAXLEN, ref OPT, ref MERCHL, strlen, strlen);
+            // MRULESCS(ref REGN, VOLEQ, PROD, ref TRIM, ref MINLEN, ref MAXLEN, ref OPT, ref MERCHL, strlen, strlen);
 
-            //test call biomass calc for Cruise Processing
-            //the following call does work!!!!
+                //test call biomass calc for Cruise Processing
+                //the following call does work!!!!
             CRZSPDFTCS(ref REGN, FORST, ref SPCD, WF, AGTEQ, LBREQ, DBREQ, FOLEQ, TIPEQ,
                 WF1REF, WF2REF, MCREF, AGTREF, LBRREF, DBRREF, FOLREF, TIPREF,
                 strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
             //the calculation works!!!
-            DRCOB = 0.0F;
-           CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
+           // DRCOB = 0.0F;
+           //CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
            //test Brown's function works!!!
-           DBH = DBHOB;
-           CR = 0.5F;
-           BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, ref CR, CFWT);
-           VolS = VOL[6];
-           VolN = VolS - 0.2F;
-           fliw = 0.5F;
-           BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
-           //BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
-           VolS = 302.7F;
-           VolN = 293.9F;
+           //DBH = DBHOB;
+           //CR = 0.5F;
+           //BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, ref CR, CFWT);
+           //VolS = VOL[6];
+           //VolN = VolS - 0.2F;
+           //fliw = 0.5F;
+           //BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
+           ////BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
+           //VolS = 302.7F;
+           //VolN = 293.9F;
            //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
 
             //test on EZVOLLIB
@@ -492,7 +524,8 @@ namespace volCStest
             VOLEQ.Append(volEqTB.Text);
             //CONSPEC.Append(m_sConSpec);
 
-            LIVE.Append("L");
+            //LIVE.Append("L");
+            LIVE.Append(liveCB.Text);
             if (string.IsNullOrEmpty(ctypeTB.Text)) ctypeTB.Text = "F";
             CTYPE.Append(ctypeTB.Text.Substring(0,1));
 
@@ -582,19 +615,25 @@ namespace volCStest
             NOLOGS = 0.0F;//# logs secondary product
             BA = int.Parse(baTB.Text);  //0; //basal area
             SI = int.Parse(siTB.Text);  //0; //site index
-
+            BRKHT = float.Parse(brkhtTB.Text);
+            BRKHTD = float.Parse(brkhtdTB.Text);
+            CULL = float.Parse(cullTB.Text);
+            DECAYCD = int.Parse(decaycdTB.Text);
+            CR = float.Parse(crTB.Text);
+            if (CR > 1) CR = CR / 100;
             if (speciesTB.TextLength > 0)
                 SPCODE = int.Parse(speciesTB.Text); //spcode
             else
                 SPCODE = 0;
             if (SPCODE > 999) SPCODE = 999;
+            FIASPCD = SPCODE;
             // output debug flag
             INDEB = 0;// debugCB.Checked ? 1 : 0;
             if (debugCB.Checked == true)
                 INDEB = 1;
 
             ERRFLAG = 0;//error flag
-            VERSION = 0;
+            //VERSION = 0;
             string EQTYPE = " ";
             if (VOLEQ.Length > 0) EQTYPE = VOLEQ.ToString().Substring(0, 2);
             //if volume equation not provided, then get it
@@ -622,6 +661,8 @@ namespace volCStest
             WF[2] = 0.0F;
             BMS = new float[8];
             CFWT = new float[7];
+            DRYBIO = new float[15];
+            GRNBIO = new float[15];
         }
 
         //prepare variables for calling the profile model just to get dibs for drawing the profile
@@ -674,7 +715,7 @@ namespace volCStest
                 //for now I am just using DRCOB to pass in the height
                 DRCOB += segLen;
 
-                if (REGN == 9)
+                if (REGN == 9 && VOLEQ.ToString().Contains("CLK"))
                 {
                     //R9CLARKDIB is a modified version of r9clark.f that only cals dib at a given height
                     R9CLARKDIB(VOLEQ, ref STUMP, ref MTOPP, ref MTOPS, ref DBHOB, ref HT1PRD, ref HT2PRD, ref HTTOT, ref DRCOB, ref NOLOGP, PROD, ref ERRFLAG, ref UPSHT1);
@@ -745,7 +786,8 @@ namespace volCStest
                                             "Illegal top diameter",
                                             "The VOLEQ does not have a bark thickness equation"};
             int i = 0;
-            versionTB.Text = VERSION.ToString();
+            //versionTB.Text = VERSION.ToString();
+            verNumTB.Text = VERSION.ToString();
             volEqTB.Text = VOLEQ.ToString();
             errrorFlagTB.Text = ERRFLAG.ToString();
             totCuVolTB.Text = Math.Round(VOL[0],1).ToString();
@@ -909,14 +951,16 @@ namespace volCStest
 
             if (REGN == 1)
             {
-                if (MDL == "FW2" || MDL == "fw2" || MDL == "FW3" || MDL == "fw3")
+                if (MDL == "FW2" || MDL == "fw2" || MDL == "FW3" || MDL == "fw3" || VOLEQ.ToString(0, 3) == "NVB")
                 {
                     mRules.cor = 'Y';
                     mRules.evod = 2;
 
                     mRules.maxlen = 16;
                     mRules.minlen = 2;
-                    mRules.minlent = 8;
+                    //mRules.minlent = 8;
+                    //changed to 16 for R1 (20230118)
+                    mRules.minlent = 16;
                     mRules.opt = 22;
 
                     //if (mRules.stump <= 0) 
@@ -1132,7 +1176,7 @@ namespace volCStest
             }
             else if (REGN == 8)
             {
-                if (MDL == "CLK" || MDL == "NEW")
+                if (MDL == "CLK" || MDL == "NEW" || VOLEQ.ToString(0, 3) == "NVB")
                 {
                     mRules.cor = 'Y';
                     mRules.evod = 2;
@@ -1164,7 +1208,7 @@ namespace volCStest
             }
             else if (REGN == 9)
             {
-                if (MDL == "CLK")
+                if (MDL == "CLK" || VOLEQ.ToString(0, 3) == "NVB")
                 {
                     mRules.cor = 'Y';
                     mRules.evod = 2;
@@ -1250,8 +1294,9 @@ namespace volCStest
                 else
                 {
                     string volMDL = volEqTB.Text.ToString().ToUpper().Substring(3,2);
+                    string volMDL2 = volEqTB.Text.ToString().ToUpper().Substring(0, 3);
                     string volREGN = volEqTB.Text.ToString().ToUpper().Substring(0, 1);
-                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || volMDL == "DV" || (volMDL == "CL")) // && volREGN == "8"))
+                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || volMDL == "DV" || volMDL == "CL" || volMDL2 == "NVB")
                     //if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE")
                     {
                         panel2.Enabled = true;
@@ -1401,6 +1446,7 @@ namespace volCStest
         //for now this checks to see if you can calculate DIB only for the given voleq
         private bool checkVolEq(){
             if (VOLEQ.ToString().Contains("FW") || VOLEQ.ToString().Contains("223DVE")||
+                VOLEQ.ToString().Contains("NVB") ||
                 VOLEQ.ToString().Contains("F3") ||
                 VOLEQ.ToString().Contains("CZ") ||
                 VOLEQ.ToString().Contains("DEM") ||
@@ -1419,7 +1465,7 @@ namespace volCStest
         //displaying the profile model graphic
         private bool isProfileModel()
         {
-            if (MDL.Contains("FW") || VOLEQ.ToString().Contains("223DVE") ||
+            if (MDL.Contains("FW") || VOLEQ.ToString().Contains("223DVE") || VOLEQ.ToString().Contains("NVB") ||
                 VOLEQ.ToString().Contains("F3") ||
                   MDL.Contains("CZ") ||
                   MDL.Contains("DEM") ||
@@ -1526,6 +1572,27 @@ namespace volCStest
             
         }
 
+        private void getNVBEqnBN_Click(object sender, EventArgs e)
+        {
+            if (checkVolEqnRequiredFields())
+            {
+                //getVolPrep();
+                REGN = int.Parse(regionTB.Text);
+                FORST.Length = 0;
+                FORST.Append(forestTB.Text);
+                DIST.Length = 0;
+                DIST.Append(districtTB.Text);
+                PROD.Length = 0;
+                PROD.Append(prodTB.Text);
+                SPCODE = int.Parse(speciesTB.Text);
+                if (SPCODE > 999) SPCODE = 999;
+                GETNVBEQ(ref REGN, FORST, DIST, ref SPCODE, VOLEQ, ref ERRFLAG, strlen, strlen, strlen);
+                volEqTB.Text = VOLEQ.ToString();
+            }
+            else
+                volEqTB.Text = "";
+
+        }
         private bool checkVolEqnRequiredFields()
         {
             bool allGood = true;
@@ -1597,6 +1664,12 @@ namespace volCStest
             htrefTB.Text = "0";
             avgz1TB.Text = "0";
             errmsgTB.Visible = false;
+            brkhtTB.Text = "0";
+            brkhtdTB.Text = "0";
+            cullTB.Text = "0";
+            decaycdTB.Text = "0";
+            crTB.Text = "0";
+            liveCB.Text = "L";
         }
 
         private void PrintGraphBtn_Click(object sender, EventArgs e)
@@ -2337,44 +2410,88 @@ namespace volCStest
         //button to view biomass species defaults and calculted biomass data
         private void button1_Click(object sender, EventArgs e)
         {
+            double[] DRYBIORND, GRNBIORND;
+            DRYBIORND = new double[15];
+            GRNBIORND = new double[15];
+            
+            for (int i = 0; i<15; i++)
+            {
+                DRYBIORND[i] = Math.Round(DRYBIO[i], 1);
+                GRNBIORND[i] = Math.Round(GRNBIO[i], 1);
+            }
+            //volEqTB.Text
+            string strVOLEQ = volEqTB.Text;
+            if (!strVOLEQ.Contains("NVB"))
+            { 
+                GETNVBEQ(ref REGN, FORST, DIST, ref FIASPCD, NVBEQ, ref ERRFLAG, strlen, strlen, strlen);
+                strVOLEQ = NVBEQ.ToString();
+            }
+            
+
             string biomassFile = "\\BiomassInfo.TXT";
             using (var writer = new StreamWriter(exePath + biomassFile))
             {
                 writer.WriteLine("Biomass Result".PadLeft(40, ' ') + "(VolLib Ver#:" + verNumTB.Text.ToString() + ")");
                 writer.WriteLine(" ");
                 writer.WriteLine("Species Regional/Forest Defaults: Region " + REGN.ToString() + " Forest " + FORST + " Species " + SPCD.ToString());
+                writer.WriteLine(" ");
                 writer.WriteLine("COMPONENT".PadRight(25, ' ') + "VALUE".PadRight(15, ' ') + "Reference");
+                writer.WriteLine("------------------------ -------------- ----------------------------------- ");
                 writer.WriteLine("Weightfactor (primary)".PadRight(25, ' ') + WF[0].ToString().PadRight(15, ' ') + WF1REF);
                 writer.WriteLine("Weightfactor (secondary)".PadRight(25, ' ') + WF[1].ToString().PadRight(15, ' ') + WF2REF);
-                writer.WriteLine("Moisture content (%)".PadRight(25, ' ') + WF[2].ToString().PadRight(15, ' ') + MCREF);
-                writer.WriteLine("Above ground total".PadRight(25, ' ') + AGTEQ.ToString().PadRight(15, ' ') + AGTREF);
-                writer.WriteLine("Live branches".PadRight(25, ' ') + LBREQ.ToString().PadRight(15, ' ') + LBRREF);
-                writer.WriteLine("Dead branches".PadRight(25, ' ') + DBREQ.ToString().PadRight(15, ' ') + DBRREF);
-                writer.WriteLine("Foliages".PadRight(25, ' ') + FOLEQ.ToString().PadRight(15, ' ') + FOLREF);
-                writer.WriteLine("Stem tip".PadRight(25, ' ') + TIPEQ.ToString().PadRight(15, ' ') + TIPREF);
+                writer.WriteLine("Moisture content (%)".PadRight(25, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
+                //writer.WriteLine("Biomass Equation".PadRight(25, ' ') + NVBEQ.ToString().PadRight(15, ' ') + "Westfall et al 2023" );
+                writer.WriteLine("Biomass Equation".PadRight(25, ' ') + strVOLEQ.PadRight(15, ' ') + "Westfall et al 2023");
+                //writer.WriteLine("Above ground total".PadRight(25, ' ') + AGTEQ.ToString().PadRight(15, ' ') + AGTREF);
+                //writer.WriteLine("Live branches".PadRight(25, ' ') + LBREQ.ToString().PadRight(15, ' ') + LBRREF);
+                //writer.WriteLine("Dead branches".PadRight(25, ' ') + DBREQ.ToString().PadRight(15, ' ') + DBRREF);
+                //writer.WriteLine("Foliages".PadRight(25, ' ') + FOLEQ.ToString().PadRight(15, ' ') + FOLREF);
+                //writer.WriteLine("Stem tip".PadRight(25, ' ') + TIPEQ.ToString().PadRight(15, ' ') + TIPREF);
                 writer.WriteLine(" ");
-                writer.WriteLine("Green biomass(lb) for tree DBH " + DBHOB.ToString() + " Total HT " + HTTOT.ToString());
-                writer.WriteLine("COMPONENT".PadRight(25, ' ') + "Biomass(lb)");
-                writer.WriteLine("Above ground total".PadRight(25, ' ') + BMS[0].ToString());
-                writer.WriteLine("Primary prod".PadRight(25, ' ') + BMS[4].ToString());
-                writer.WriteLine("Secondary prod".PadRight(25, ' ') + BMS[5].ToString());
-                writer.WriteLine("Live branches".PadRight(25, ' ') + BMS[1].ToString());
-                writer.WriteLine("Dead branches".PadRight(25, ' ') + BMS[2].ToString());
-                writer.WriteLine("Foliages".PadRight(25, ' ') + BMS[3].ToString());
-                writer.WriteLine("Stem tip".PadRight(25, ' ') + BMS[6].ToString());
+                writer.WriteLine("Biomass(lb) for tree DBH " + DBHOB.ToString() + " Total HT " + HTTOT.ToString());
                 writer.WriteLine(" ");
-                writer.WriteLine("Brown Crown Fraction:");
-                writer.WriteLine("Needles: " + CFWT[0].ToString());
-                writer.WriteLine("0 to 1/4: " + CFWT[1].ToString());
-                writer.WriteLine("1/4 to 1: " + CFWT[2].ToString());
-                writer.WriteLine("1 to 3: " + CFWT[3].ToString());
-                writer.WriteLine("3 and up: " + CFWT[4].ToString());
-                writer.WriteLine("Live crown: " + CFWT[5].ToString());
-                writer.WriteLine("Dead crown: " + CFWT[6].ToString());
+                writer.WriteLine("COMPONENT".PadRight(35, ' ') + "DryBiomass(lb)".PadRight(20, ' ') + "GreenBiomass(lb)".PadRight(20, ' '));
+                writer.WriteLine("---------------------------------- ------------------- -------------------- ");
+                writer.WriteLine("Above ground total (no foliage)".PadRight(35, ' ') + DRYBIORND[0].ToString().PadLeft(10, ' ') + GRNBIORND[0].ToString().PadLeft(20, ' '));
                 writer.WriteLine(" ");
-                writer.WriteLine("Brown Topwood: " + TopWt.ToString());
-                writer.WriteLine("Brown CullLog: " + CullLogWt.ToString());
-                writer.WriteLine("Brown CullChunk: " + CullChunkWt.ToString());
+                writer.WriteLine("Total stem wood".PadRight(35, ' ') + DRYBIORND[1].ToString().PadLeft(10, ' ') + GRNBIORND[1].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Total stem bark".PadRight(35, ' ') + DRYBIORND[2].ToString().PadLeft(10, ' ') + GRNBIORND[2].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Branches".PadRight(35, ' ') + DRYBIORND[11].ToString().PadLeft(10, ' ') + GRNBIORND[11].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Foliage".PadRight(35, ' ') + DRYBIORND[12].ToString().PadLeft(10, ' ') + GRNBIORND[12].ToString().PadLeft(20, ' '));
+                writer.WriteLine(" ");
+                writer.WriteLine("Stump wood".PadRight(35, ' ') + DRYBIORND[3].ToString().PadLeft(10, ' ') + GRNBIORND[3].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Stump bark".PadRight(35, ' ') + DRYBIORND[4].ToString().PadLeft(10, ' ') + GRNBIORND[4].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Primary prod wood".PadRight(35, ' ') + DRYBIORND[5].ToString().PadLeft(10, ' ') + GRNBIORND[5].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Primary prod bark".PadRight(35, ' ') + DRYBIORND[6].ToString().PadLeft(10, ' ') + GRNBIORND[6].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Secondary prod wood".PadRight(35, ' ') + DRYBIORND[7].ToString().PadLeft(10, ' ') + GRNBIORND[7].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Secondary prod bark".PadRight(35, ' ') + DRYBIORND[8].ToString().PadLeft(10, ' ') + GRNBIORND[8].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Tip wood".PadRight(35, ' ') + DRYBIORND[9].ToString().PadLeft(10, ' ') + GRNBIORND[9].ToString().PadLeft(20, ' '));
+                writer.WriteLine("Tip bark".PadRight(35, ' ') + DRYBIORND[10].ToString().PadLeft(10, ' ') + GRNBIORND[10].ToString().PadLeft(20, ' '));
+                //writer.WriteLine("Branches".PadRight(35, ' ') + DRYBIORND[11].ToString().PadLeft(10, ' ') + GRNBIORND[11].ToString().PadLeft(20, ' '));
+                //writer.WriteLine("Foliage".PadRight(35, ' ') + DRYBIORND[12].ToString().PadLeft(10, ' ') + GRNBIORND[12].ToString().PadLeft(20, ' '));
+                writer.WriteLine(" ");
+                writer.WriteLine("Top and limb".PadRight(35, ' ') + DRYBIORND[13].ToString().PadLeft(10, ' ') + GRNBIORND[13].ToString().PadLeft(20, ' '));
+                writer.WriteLine(" ");
+                writer.WriteLine("Carbon content".PadRight(35, ' ') + DRYBIORND[14].ToString().PadLeft(10, ' '));
+                //writer.WriteLine("Primary prod".PadRight(25, ' ') + BMS[4].ToString());
+                //writer.WriteLine("Secondary prod".PadRight(25, ' ') + BMS[5].ToString());
+                //writer.WriteLine("Live branches".PadRight(25, ' ') + BMS[1].ToString());
+                //writer.WriteLine("Dead branches".PadRight(25, ' ') + BMS[2].ToString());
+                //writer.WriteLine("Foliages".PadRight(25, ' ') + BMS[3].ToString());
+                //writer.WriteLine("Stem tip".PadRight(25, ' ') + BMS[6].ToString());
+                //writer.WriteLine(" ");
+                //writer.WriteLine("Brown Crown Fraction:");
+                //writer.WriteLine("Needles: " + CFWT[0].ToString());
+                //writer.WriteLine("0 to 1/4: " + CFWT[1].ToString());
+                //writer.WriteLine("1/4 to 1: " + CFWT[2].ToString());
+                //writer.WriteLine("1 to 3: " + CFWT[3].ToString());
+                //writer.WriteLine("3 and up: " + CFWT[4].ToString());
+                //writer.WriteLine("Live crown: " + CFWT[5].ToString());
+                //writer.WriteLine("Dead crown: " + CFWT[6].ToString());
+                //writer.WriteLine(" ");
+                //writer.WriteLine("Brown Topwood: " + TopWt.ToString());
+                //writer.WriteLine("Brown CullLog: " + CullLogWt.ToString());
+                //writer.WriteLine("Brown CullChunk: " + CullChunkWt.ToString());
             }
             System.Diagnostics.Process.Start(exePath + biomassFile);
         }

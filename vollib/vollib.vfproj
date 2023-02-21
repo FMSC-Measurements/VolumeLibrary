@@ -5,15 +5,14 @@
 		<Platform Name="x64"/></Platforms>
 	<Configurations>
 		<Configuration Name="Debug|Win32" ConfigurationType="typeDynamicLibrary">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Interfaces="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL" Interfaces="true"/>
 				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemWindows" LinkDLL="true"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true"/>
 				<Tool Name="VFCustomBuildTool"/>
 				<Tool Name="VFPreLinkEventTool"/>
 				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;
-copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;"/>
+				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;&#xA;copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Release|Win32" ConfigurationType="typeDynamicLibrary">
 				<Tool Name="VFFortranCompilerTool" AdditionalOptions="/libs:static" SuppressStartupBanner="true" RuntimeLibrary="rtMultiThreadedDLL"/>
@@ -23,12 +22,10 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDi
 				<Tool Name="VFCustomBuildTool"/>
 				<Tool Name="VFPreLinkEventTool"/>
 				<Tool Name="VFPreBuildEventTool"/>
-				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;
-copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;
-copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python27&quot;" Description="copy vollib.dll to volumetester"/>
+				<Tool Name="VFPostBuildEventTool" CommandLine="copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\$(ConfigurationName)&quot;&#xA;copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;$(SolutionDir)volCStest\bin\x86\$(ConfigurationName)&quot;&#xA;copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python27&quot;" Description="copy vollib.dll to volumetester"/>
 				<Tool Name="VFManifestTool" SuppressStartupBanner="true"/></Configuration>
 		<Configuration Name="Debug|x64" ConfigurationType="typeDynamicLibrary">
-				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" Interfaces="true" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL"/>
+				<Tool Name="VFFortranCompilerTool" SuppressStartupBanner="true" DebugInformationFormat="debugEnabled" Optimization="optimizeDisabled" WarnInterfaces="true" Traceback="true" BoundsCheck="true" RuntimeLibrary="rtMultiThreadedDebugDLL" Interfaces="true"/>
 				<Tool Name="VFLinkerTool" SuppressStartupBanner="true" GenerateDebugInformation="true" SubSystem="subSystemWindows" LinkDLL="true"/>
 				<Tool Name="VFResourceCompilerTool"/>
 				<Tool Name="VFMidlTool" SuppressStartupBanner="true" TargetEnvironment="midlTargetAMD64"/>
@@ -107,6 +104,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python27&
 		<File RelativePath="..\JENKINS.F"/>
 		<File RelativePath="..\Mrules.f"/>
 		<File RelativePath="..\mrules_mod.f"/>
+		<File RelativePath="..\nsvb.f"/>
 		<File RelativePath="..\numlog.f"/>
 		<File RelativePath="..\pmtProfile.f"/>
 		<File RelativePath="..\PNWTARIF.F"/>
@@ -200,6 +198,7 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python27&
 		<File RelativePath="..\beqrefinfo.inc"/>
 		<File RelativePath="..\bioeqcoef.inc"/>
 		<File RelativePath="..\bioeqinfo.inc"/>
+		<File RelativePath="..\dist_ecoprov.inc"/>
 		<File RelativePath="..\fiabioeq.inc"/>
 		<File RelativePath="..\r8cfo.inc"/>
 		<File RelativePath="..\R8clist.inc"/>
@@ -207,5 +206,16 @@ copy &quot;$(ProjectDir)$(ConfigurationName)\vollib.dll&quot; &quot;c:\Python27&
 		<File RelativePath="..\R8dib.inc"/>
 		<File RelativePath="..\r9coeff.inc"/>
 		<File RelativePath="..\REGNDFTDATA.INC"/>
+		<File RelativePath="..\tables1.inc"/>
+		<File RelativePath="..\tables10.inc"/>
+		<File RelativePath="..\tables11.inc"/>
+		<File RelativePath="..\tables2.inc"/>
+		<File RelativePath="..\tables3.inc"/>
+		<File RelativePath="..\tables4.inc"/>
+		<File RelativePath="..\tables5.inc"/>
+		<File RelativePath="..\tables6.inc"/>
+		<File RelativePath="..\tables7.inc"/>
+		<File RelativePath="..\tables8.inc"/>
+		<File RelativePath="..\tables9.inc"/>
 		<File RelativePath="..\WDBKWTDATA.INC"/></Files>
 	<Globals/></VisualStudioProject>

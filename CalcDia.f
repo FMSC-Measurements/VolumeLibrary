@@ -70,6 +70,8 @@ C **************************************************************
       REAL TLH
       ! Variable for R4 taper
       REAL STUMPD,BUTTCF,CF0,B
+      CHARACTER*11 VOLEQ11
+      REAL Vib
       
       TLH = 0.
 !     ARRAYS
@@ -181,6 +183,11 @@ C     Added the calculation for R4 taper equation (03/20/2017)
 C     Added the calc for R2 small trees equation for Black Hills         
       ELSEIF(VOLEQ.EQ.'223DVEW122')THEN
           CALL GetHTDIB(DBHOB,HTTOT,HTUP,DIB)
+C     Added DIB calc for the NSVB equations
+      ELSEIF(VOLEQ(1:3).EQ.'NVB')THEN
+          VOLEQ11=VOLEQ
+          CALL NVB_Vib(VOLEQ11,DBHOB,HTTOT,Vib,ERRFLAG)
+          CALL NVB_DibAtHT(VOLEQ11,DBHOB,HTTOT,Vib,HTUP,DIB,ERRFLAG)
 C calculation for diameter from ground to 4.5 ft heigh for non profile model
 C added on 7/22/2012 YW
 C using Raile 1982

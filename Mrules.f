@@ -9,6 +9,7 @@ C     YW 08/25/15 Added merch rule for Region 8 Clark equation
 C     YW 12/20/2019 merch rule changes for Region 3
 C     YW 08/11/2021 Set R6 stump default to 1.0
 C     YW 08/23/2021 Reset R3 MINBFD to 1.0
+C     YW 01/18/2023 Changed the min topwood length to 16 for R1      
       SUBROUTINE MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
@@ -45,7 +46,9 @@ C
             EVOD = 2
             MAXLEN = 16.0
             MINLEN = 2.0
-            MINLENT = 8.0
+C            MINLENT = 8.0
+C Changed the min topwood length to 16 (YW 2023/01/18)            
+            MINLENT = 16.0
             OPT = 22
             IF(STUMP.LE.0.0) STUMP = 1.0
             IF(MTOPP .LE. 0.0) MTOPP = 5.6
