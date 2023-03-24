@@ -116,6 +116,10 @@ namespace volCStest
         [DllImport("vollib.dll")]
         static extern void BROWNCULLCHUNK(ref int SPN, ref float GCUFT, ref float NCUFT, ref float FLIW, ref float WT);
 
+        [DllImport("vollib.dll")]
+        static extern void BIOLIBCS(ref int REGN, StringBuilder FORST, ref int SPEC, StringBuilder BIOEQ, ref float DBHOB, ref float HTTOT, float[] VOL,
+                float[] BIOGRN, float[] BIODRY, ref int ERRFLG, ref float HT1PRD, ref float HT2PRD, ref int HTTFLL, StringBuilder GEOSUB, int i1, int i2, int i3);
+
         // standard variables
         int REGN, HTLOG, HTREF, FCLASS, HTTFLL, ERRFLAG, TLOGS, BA, SI, SPCODE, INDEB, PMTFLG, IDIST;
         int CUTFLG, BFPFLG, CUPFLG, CDPFLG, CUSFLG, CDSFLG, SPFLG, VERSION;
@@ -168,6 +172,9 @@ namespace volCStest
         StringBuilder TIPREF = new StringBuilder(256);
         //string[] BMSEQ = new string[8];
         //string[] AUTHOR = new string[8];
+        StringBuilder BIOEQ = new StringBuilder(256);
+        StringBuilder GEOSUB = new StringBuilder(256);
+        float[] BIOGRN, BIODRY;
 
         const int strlen2 = 120;
         const int strlen3 = 400;
@@ -356,6 +363,14 @@ namespace volCStest
            //VolS = 302.7F;
            //VolN = 293.9F;
            //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
+
+            //Test on call BIOLIB 2021/11/10
+           BIOEQ.Append("FNC122AWB01D");
+           GEOSUB.Append("01");
+           BIOGRN = new float[9];
+           BIODRY = new float[9];
+           ERRFLAG = 0;
+            BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, BIOGRN, BIODRY, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
 
             //test on EZVOLLIB
            //EZVOLLIB(VOLEQ, ref DBHOB, ref HTTOT, ref VOL, strlen);
@@ -621,6 +636,7 @@ namespace volCStest
             DECAYCD = int.Parse(decaycdTB.Text);
             CR = float.Parse(crTB.Text);
             if (CR > 1) CR = CR / 100;
+
             if (speciesTB.TextLength > 0)
                 SPCODE = int.Parse(speciesTB.Text); //spcode
             else

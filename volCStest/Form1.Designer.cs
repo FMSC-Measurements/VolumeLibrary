@@ -160,6 +160,10 @@ namespace volCStest
             this.txStemHT = new System.Windows.Forms.TextBox();
             this.txStemDIB = new System.Windows.Forms.TextBox();
             this.label50 = new System.Windows.Forms.Label();
+            this.baTB = new System.Windows.Forms.TextBox();
+            this.label53 = new System.Windows.Forms.Label();
+            this.siTB = new System.Windows.Forms.TextBox();
+            this.label54 = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
@@ -1478,6 +1482,40 @@ namespace volCStest
             this.label50.TabIndex = 0;
             this.label50.Text = "Height to Top DIB";
             // 
+            // baTB
+            // 
+            this.baTB.Location = new System.Drawing.Point(380, 203);
+            this.baTB.Name = "baTB";
+            this.baTB.Size = new System.Drawing.Size(71, 20);
+            this.baTB.TabIndex = 73;
+            this.baTB.Text = "0";
+            // 
+            // label53
+            // 
+            this.label53.AutoSize = true;
+            this.label53.Location = new System.Drawing.Point(326, 206);
+            this.label53.Name = "label53";
+            this.label53.Size = new System.Drawing.Size(21, 13);
+            this.label53.TabIndex = 74;
+            this.label53.Text = "BA";
+            // 
+            // siTB
+            // 
+            this.siTB.Location = new System.Drawing.Point(380, 224);
+            this.siTB.Name = "siTB";
+            this.siTB.Size = new System.Drawing.Size(71, 20);
+            this.siTB.TabIndex = 75;
+            this.siTB.Text = "0";
+            // 
+            // label54
+            // 
+            this.label54.AutoSize = true;
+            this.label54.Location = new System.Drawing.Point(326, 227);
+            this.label54.Name = "label54";
+            this.label54.Size = new System.Drawing.Size(17, 13);
+            this.label54.TabIndex = 76;
+            this.label54.Text = "SI";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
@@ -1650,6 +1688,7 @@ namespace volCStest
         private System.Windows.Forms.Label label56;
         private System.Windows.Forms.TextBox brkhtTB;
         private System.Windows.Forms.Button button2;
+
     }
 }
 
