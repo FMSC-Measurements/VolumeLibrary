@@ -20,11 +20,12 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       SUBROUTINE NVBC(REGN,FORST,DIST,VOLEQ,DBHOB,HTTOT,MTOPP,MTOPS,
      + HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,LIVE,CR,CULL,DECAYCD,
      + LOGLEN,LOGDIA,LOGVOL,BOLHT,LOGST,NOLOGP,NOLOGS,VOL,DRYBIO,GRNBIO,
-     + ERRFLG,FIASPCD)
+     + ERRFLG,FIASPCD,CTYPE)
       IMPLICIT NONE
       CHARACTER*11 VOLEQ
       CHARACTER*2 FORST,DIST,PROD
-      CHARACTER*1 LIVE
+      CHARACTER*1 LIVE,CTYPE
+      !CTYPE as I = FIA, F = FVS, C = Cruise, B = when other VOLEQ was used in voinitnvb
       INTEGER REGN,ERRFLG,DECAYCD,FIASPCD
       REAL DBHOB,HTTOT,MTOPP,MTOPS,HT1PRD,HT2PRD,STUMP,BRKHT,BRKHTD
       REAL CR,CULL
@@ -54,7 +55,8 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       REAL VstumpibSound,VtipibSound,VtipbkSound,VtipobSound,AGBpredRed
       REAL CullDenProp,DenProp,RemBkProp,RemBrchProp,WfolRem
       REAL WtotibRed,WtotbkRed,WtotobRed,WbrchRed,AGBcompRed,BrchRem
-      
+      REAL Vtotob2,Vsawib2,Vsawob2,Vsawbk2,Vmrchib2,Vmrchob2,Vmrchbk2
+      REAL Vtwib2,Vtwob2,Vtwbk2,Vtipib2,Vtipbk2,Rsaw2,Rmrch2
       !Check VOLEQ is valid
       IF(VOLEQ(1:3).NE.'NVB')THEN
           ERRFLG = 1
@@ -107,6 +109,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       Vobmiss = 0
       RatioEQ = 6
       WfolRem = 0
+      Vtotob2 = 0
       
       IF(HTTOT.LE.0)THEN
           IF(BRKHT.LE.0.AND.BRKHTD.LE.0)THEN
@@ -181,12 +184,11 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
           ENDIF
       ENDIF
       !First call the mrules to get the region defaults
-      !Mrules VOLEQ to check profile model. So here using a fake EQN for R1,8,9
-      V_EQN = '100FW2W000'
-      IF(REGN.EQ.8.OR.REGN.EQ.9) V_EQN = '900CLKE000'
+      V_EQN = VOLEQ(1:10)
       CALL MRULES(REGN,FORST,V_EQN,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
+      
       ! (1) calculate total stem wood volume inside bark
       CALL NVB_Vib(VOLEQ,DBHOB,HTTOT,Vtotib,ERRFLG)
       IF(ERRFLG.GT.0) RETURN
@@ -214,13 +216,29 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       VstumpibSound = Vstumpib*(1-CULL/100)
       VOL(14) = VstumpibSound
       ! (5) calculate saw volume
+      !FIA calculate merch volume different than cruise and FVS
+      !FIA uses the very simple way, i.e. the volume from stump to merch top (DOB)
+      !Timber Cruise and FVS calculates it as sum of log volumes with trim removed between logs
       IF(HT1PRD.LE.0)THEN
-          CALL NVB_HT2TOPDib(VOLEQ,DBHOB,HTTOT,Vtotib,MTOPP,HT1PRD,
-     &     ERRFLG)
+          IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'i')THEN
+              CALL NVB_HT2TOPDob(VOLEQ,DBHOB,HTTOT,Vtotob2,MTOPP,HT1PRD,
+     &        ERRFLG)
+          ELSE    
+              CALL NVB_HT2TOPDib(VOLEQ,DBHOB,HTTOT,Vtotib,MTOPP,HT1PRD,
+     &        ERRFLG)
+          ENDIF
           !Check the broken height
           IF(BRKHT.GT.0.AND.BRKHT.LT.HT1PRD) HT1PRD=BRKHT
       ENDIF
       IF(HT1PRD.LT.STUMP) HT1PRD = STUMP
+      !Calculate sawtimber volume for FIA
+      !CTYPE = B is set in noinitnvb when VOLEQ is not NSVB EQ
+      IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'B')THEN
+          CALL CalcRatio(HTTOT,HT1PRD,RatioEQ,a,b,Rsaw2)
+          Vsawib2 = Vtotib*Rsaw2 - Vstumpib
+          Vsawob2 = Vtotob*Rsaw2 - Vstumpob
+          Vsawbk2 = Vsawob2 - Vsawib2
+      ENDIF
       LMERCH = HT1PRD - STUMP
       IF(LMERCH.LT.0) LMERCH = 0
       LOGST = 0
@@ -255,10 +273,25 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       ! (6) calculate merch, topwood(tw) and tip volumes
       NLOGS = 0
       IF(HT2PRD.LE.0)THEN
-          CALL NVB_HT2TOPDib(VOLEQ,DBHOB,HTTOT,Vtotib,MTOPS,HT2PRD,
-     &     ERRFLG)
+          IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'i')THEN
+              CALL NVB_HT2TOPDob(VOLEQ,DBHOB,HTTOT,Vtotob2,MTOPS,HT2PRD,
+     &        ERRFLG)
+          ELSE
+              CALL NVB_HT2TOPDib(VOLEQ,DBHOB,HTTOT,Vtotib,MTOPS,HT2PRD,
+     &        ERRFLG)
+          ENDIF
           !Check the broken height
           IF(BRKHT.GT.0.AND.BRKHT.LT.HT2PRD) HT2PRD=BRKHT
+      ENDIF
+      !Calculate topwood volume for FIA
+      IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'B')THEN
+          CALL CalcRatio(HTTOT,HT2PRD,RatioEQ,a,b,Rmrch2)
+          Vmrchib2 = Vtotib*Rmrch2 - Vstumpib
+          Vmrchob2 = Vtotob*Rmrch2 - Vstumpob
+          Vmrchbk2 = Vmrchob2 - Vmrchib2
+          Vtwib2 = Vmrchib2 - Vsawib2
+          Vtwob2 = Vmrchob2 - Vsawob2
+          Vtwbk2 = Vtwob2 - Vtwib2
       ENDIF
       IF(HT2PRD.LT.HTsaw) HT2PRD = HTsaw
       LMERCH = HT2PRD - HTsaw
@@ -289,7 +322,11 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       CALL CalcRatio(HTTOT,HTmrch,RatioEQ,a,b,Rmrch)
       ! tip volume
       !IF(NLOGS.GT.0) R = Rmrch
-      R = Rmrch
+      IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'i')THEN
+          R = Rmrch2
+      ELSE
+          R = Rmrch
+      ENDIF
       Vtipib = Vtotib * (1 - R)
       Vtipob = Vtotob * (1 - R)
       Vtipbk = Vtipob - Vtipib
@@ -299,10 +336,20 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       IF(VtipbkSound.LT.0) VtipbkSound = 0
       VtipobSound = VtipibSound+VtipbkSound
       VOL(15) = VtipibSound
+      !FIA is not using LOGVOL
+      IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'B')THEN
+          VOL(4) = Vsawib2*(1-CULL/100)
+          VOL(7) = Vtwib2*(1-CULL/100)
+          Vsawib = Vsawib2
+          Vsawbk = Vsawbk2
+          Vtwib = Vtwib2
+          Vtwbk = Vtwbk2
+      ELSE
+          VOL(4) = VOL(4)*(1-CULL/100)
+          VOL(7) = VOL(7)*(1-CULL/100)
+      ENDIF
       !Apply CULL to VOL(2),VOL(4),VOL(7),VOL(10) calculated in LOGVOL
       VOL(2) = VOL(2)*(1-CULL/100)
-      VOL(4) = VOL(4)*(1-CULL/100)
-      VOL(7) = VOL(7)*(1-CULL/100)
       VOL(10) = VOL(10)*(1-CULL/100)
       ! (7) calculate stem wood weight
       CALL JKSPGRP(SPCD, SPGRPCD, WDSG)

@@ -76,7 +76,7 @@ namespace volCStest
          ref int ba, ref int si, StringBuilder ctype, ref int errflg, ref int indeb, ref int pmtflg, ref MRules mRules, ref int dist, int ll1, int ll2, int ll3, int ll4, int ll5, int ll6, int ll7, int charLen);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
-        static extern void VOLLIBCSNEW(ref int regn, StringBuilder forst, StringBuilder voleq, ref float mtopp, ref float mtops,
+        static extern void VOLLIBCSNVB(ref int regn, StringBuilder forst, StringBuilder voleq, ref float mtopp, ref float mtops,
         ref float stump, ref float dbhob, ref float drcob, StringBuilder httype, ref float httot, ref int htlog, ref float ht1prd, ref float ht2prd,
         ref float upsht1, ref float upsht2, ref float upsd1, ref float upsd2, ref int htref, ref float avgz1, ref float avgz2, ref int fclass, ref float dbtbh,
         ref float btr, float[] vol, float[,] logvol,
@@ -99,6 +99,8 @@ namespace volCStest
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void MRULESCS(ref int regn, StringBuilder voleq, StringBuilder prod, ref float trim, ref float minlen, ref float maxlen, ref int opt, ref float merchl, int l1, int l2);
+        [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
+        static extern void MRULESCS2(ref int regn, StringBuilder voleq, StringBuilder prod, ref float trim, ref float minlen, ref float maxlen, ref int opt, ref float merchl, ref float mtopp, ref float mtops, ref float stump, ref float minlent, int l1, int l2);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
         static extern void CRZBIOMASSCS(ref int regn, StringBuilder forst, ref int spcd, ref float dbhob, ref float drcob, ref float httot, ref int fclass, float[] vol, float[] wf, float[] bms, ref int errflg, int i1);
@@ -106,6 +108,9 @@ namespace volCStest
         static extern void CRZSPDFTCS(ref int regn, StringBuilder forst, ref int spcd, float[] wf, StringBuilder agteq, StringBuilder lbreq, StringBuilder dbreq, StringBuilder foleq, StringBuilder tipeq,
             StringBuilder wf1ref, StringBuilder wf2ref, StringBuilder mcref, StringBuilder agtref, StringBuilder lbrref, StringBuilder dbrref, StringBuilder folref, StringBuilder tipref,
             int i1, int i2, int i3, int i4, int i5, int i6, int i7, int i8, int i9, int i10, int i11, int i12, int i13, int i14);
+        //[DllImport("vollib.dll")]
+        //static extern void BIOLIBCS(ref int regn, StringBuilder forst, ref int spcd, StringBuilder bioeq, ref float dbhob, ref float httot, float[] vol, float[] biogrn, float[] biodry, 
+        //    ref int errflg, ref float ht1prd, ref float ht2prd, ref int httfll, StringBuilder geosub, int i1, int i2, int i3);
 
         [DllImport("vollib.dll")]
         static extern void BROWNCROWNFRACTION(ref int SPCD, ref float DBH, ref float THT, ref float CR, float[] CFWT);
@@ -133,6 +138,7 @@ namespace volCStest
         // test MRULESCS variable
         int OPT;
         float TRIM, MINLEN, MAXLEN, MERCHL;
+        //float HTTFLL;
         // array defintions
         int I3 = 3;
         int I7 = 7;
@@ -156,6 +162,8 @@ namespace volCStest
         float[] CFWT;
         float[] DRYBIO;
         float[] GRNBIO;
+        float[] DRYBIO9;
+        float[] GRNBIO9;
         float VolS, VolN, TopWt, CullLogWt, CullChunkWt, fliw;
         StringBuilder AGTEQ = new StringBuilder(256);
         StringBuilder LBREQ = new StringBuilder(256);
@@ -203,7 +211,8 @@ namespace volCStest
         StringBuilder CTYPE = new StringBuilder(256);
         StringBuilder VAR = new StringBuilder(256);
         StringBuilder NVBEQ = new StringBuilder(256);
-
+        //StringBuilder BIOEQ = new StringBuilder(256);
+        //StringBuilder GEOSUB = new StringBuilder(256);
         String MDL;
            
         //inside bark diameters for pmt
@@ -329,7 +338,7 @@ namespace volCStest
             //  ref mRules, ref IDIST, strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
             //MessageBox.Show("Ht to Brok=" + brkhtTB.Text+ " BRKHT = " + BRKHT);
             //BRKHT = 0;
-            VOLLIBCSNEW(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
+            VOLLIBCSNVB(ref REGN, FORST, VOLEQ, ref MTOPP, ref MTOPS, ref STUMP, ref DBHOB, ref DRCOB,
               HTTYPE, ref HTTOT, ref HTLOG, ref HT1PRD, ref HT2PRD, ref UPSHT1, ref UPSHT2, ref UPSD1, ref UPSD2,
               ref HTREF, ref AVGZ1, ref AVGZ2, ref FCLASS, ref DBTBH, ref BTR, VOL, LOGVOL,
               LOGDIA, LOGLEN, BOLHT, ref TLOGS, ref NOLOGP, ref NOLOGS, ref CUTFLG, ref BFPFLG, ref CUPFLG,
@@ -349,20 +358,25 @@ namespace volCStest
                 WF1REF, WF2REF, MCREF, AGTREF, LBRREF, DBRREF, FOLREF, TIPREF,
                 strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
             //the calculation works!!!
-           // DRCOB = 0.0F;
-           //CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
-           //test Brown's function works!!!
-           //DBH = DBHOB;
-           //CR = 0.5F;
-           //BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, ref CR, CFWT);
-           //VolS = VOL[6];
-           //VolN = VolS - 0.2F;
-           //fliw = 0.5F;
-           //BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
-           ////BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
-           //VolS = 302.7F;
-           //VolN = 293.9F;
-           //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
+            DRCOB = 0.0F;
+            CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
+            //test call BIOLIBCS
+            //BIOEQ.Append("AFF019AST01D");
+            BIOEQ.Append("0");
+            GEOSUB.Append("00");
+            BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, GRNBIO9, DRYBIO9, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
+            //test Brown's function works!!!
+            //DBH = DBHOB;
+            //CR = 0.5F;
+            //BROWNCROWNFRACTION(ref SPCD, ref DBH, ref HTTOT, ref CR, CFWT);
+            //VolS = VOL[6];
+            //VolN = VolS - 0.2F;
+            //fliw = 0.5F;
+            //BROWNTOPWOOD(ref SPCD, ref VolS, ref TopWt);
+            ////BROWNCULLLOG(ref SPCD, ref VolS, ref CullLogWt);
+            //VolS = 302.7F;
+            //VolN = 293.9F;
+            //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
 
             //Test on call BIOLIB 2021/11/10
            BIOEQ.Append("FNC122AWB01D");
@@ -373,9 +387,9 @@ namespace volCStest
             BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, BIOGRN, BIODRY, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
 
             //test on EZVOLLIB
-           //EZVOLLIB(VOLEQ, ref DBHOB, ref HTTOT, ref VOL, strlen);
+            //EZVOLLIB(VOLEQ, ref DBHOB, ref HTTOT, ref VOL, strlen);
             //volumes have been calculated, display them in the form and display merch rules
-           panel2.Enabled = true;
+            panel2.Enabled = true;
            //MessageBox.Show("HTTYPE=" + HTTYPE);
            //we got the defaults now update merch rules
            updateMerRulesForm();
@@ -542,7 +556,8 @@ namespace volCStest
             //LIVE.Append("L");
             LIVE.Append(liveCB.Text);
             if (string.IsNullOrEmpty(ctypeTB.Text)) ctypeTB.Text = "F";
-            CTYPE.Append(ctypeTB.Text.Substring(0,1));
+            if (ctypeTB.Text.Substring(0, 3) == "FIA") CTYPE.Append("I");
+            else CTYPE.Append(ctypeTB.Text.Substring(0,1));
 
             VOL = new float[I15];
             LOGLEN = new float[I20];
@@ -679,6 +694,8 @@ namespace volCStest
             CFWT = new float[7];
             DRYBIO = new float[15];
             GRNBIO = new float[15];
+            DRYBIO9 = new float[9];
+            GRNBIO9 = new float[9];
         }
 
         //prepare variables for calling the profile model just to get dibs for drawing the profile
@@ -964,338 +981,360 @@ namespace volCStest
 
             if(BTR > 0.0 && DBTBH <= 0)
                 DBTBH = DBHOB - (DBHOB * BTR/100);
+            //Call MRULESCS2 to get the Regional defaults from vollib.dll
+            mRules.trim = 0;
+            mRules.minlen = 0;
+            mRules.maxlen = 0;
+            mRules.opt = 0;
+            mRules.merchl = 0;
+            mRules.mtopp = 0;
+            mRules.mtops = 0;
+            mRules.stump = 0;
+            mRules.minlent = 0;
+            MRULESCS2(ref REGN, VOLEQ, PROD, ref mRules.trim, ref mRules.minlen, ref mRules.maxlen, ref mRules.opt, ref mRules.merchl, ref mRules.mtopp, ref mRules.mtops, ref mRules.stump, ref mRules.minlent, strlen, strlen);
+            //if (REGN == 1)
+            //{
+            //    if (MDL == "FW2" || MDL == "fw2" || MDL == "FW3" || MDL == "fw3" || VOLEQ.ToString(0, 3) == "NVB")
+            //    {
+            //        mRules.cor = 'Y';
+            //        mRules.evod = 2;
 
-            if (REGN == 1)
-            {
-                if (MDL == "FW2" || MDL == "fw2" || MDL == "FW3" || MDL == "fw3" || VOLEQ.ToString(0, 3) == "NVB")
-                {
-                    mRules.cor = 'Y';
-                    mRules.evod = 2;
+            //        mRules.maxlen = 16;
+            //        mRules.minlen = 2;
+            //        //mRules.minlent = 8;
+            //        //changed to 16 for R1 (20230118)
+            //        mRules.minlent = 16;
+            //        mRules.opt = 22;
 
-                    mRules.maxlen = 16;
-                    mRules.minlen = 2;
-                    //mRules.minlent = 8;
-                    //changed to 16 for R1 (20230118)
-                    mRules.minlent = 16;
-                    mRules.opt = 22;
+            //        //if (mRules.stump <= 0) 
+            //            mRules.stump = 1;
 
-                    //if (mRules.stump <= 0) 
-                        mRules.stump = 1;
+            //        //if (mRules.mtopp <= 0) 
+            //            mRules.mtopp = 5.6F;
+            //        //if (mRules.mtops <= 0) 
+            //            mRules.mtops = 4;
+            //        mRules.trim = .5F;
+            //        //MIN SAWTIMBER LENGTH
+            //        mRules.merchl = 8;
+            //        if (mProd == "08")
+            //        { 
+            //            mRules.merchl = 16;
+            //            mRules.minlen = 16;
+            //        }
+            //        // min dbh tree for sawtimber
+            //        mRules.minbfd = 1;
+            //    }
+            //    else
+            //    {
+            //        mRules.cor = 'Y';
+            //        mRules.evod = 2;
+            //        mRules.maxlen = 20;
+            //        mRules.minlen = 10;
+            //        mRules.minlent = 2;
+            //        mRules.opt = 12;
+            //        //if (mRules.stump <= 0) 
+            //            mRules.stump = 1;
+            //        //if (mRules.mtopp <= 0) 
+            //            mRules.mtopp = 5.6F;
+            //        //if (mRules.mtops <= 0) 
+            //            mRules.mtops = 4;
+            //        mRules.trim = .5F;
+            //        // MIN SAWTIMBER LENGTH
+            //        mRules.merchl = 10;
+            //        //min dbh tree for sawtimber
+            //        mRules.minbfd = 1;
+            //    }
+            //}
+            //else if (REGN == 2)
+            //{
+            //    mRules.cor = 'Y';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 22;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = 6;
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 4;
+            //    mRules.trim = 0.5F;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    mRules.minbfd = 1;
+            //}
+            //else if (REGN == 3)
+            //{
+            //    mRules.cor = 'Y';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 22;
+            //    //changed min log length for region 3 (03/25/14)
+            //    if (mProd == "01" || mProd == "08") 
+            //    {
+            //        mRules.minlen = 10;
+            //        mRules.stump = 1;
+            //        mRules.mtopp = 6;
+            //        mRules.mtops = 4;
+            //        mRules.minlent = 10;
+            //        mRules.minbfd = 1;
+            //        if (mProd == "08")
+            //        {
+            //            mRules.mtopp = 4;
+            //            mRules.stump = 0.5F;
+            //        }
+            //    }
+            //    else if (mProd == "14")
+            //    {
+            //        mRules.minlen = 10;
+            //        mRules.stump = 0.5F;
+            //        mRules.mtopp = 4;
+            //        mRules.mtops = 1;
+            //        mRules.minlent = 10;
+            //        mRules.minbfd = 6;
+            //    }
+            //    else if (mProd == "20")
+            //    {
+            //        mRules.stump = 0.5F;
+            //        mRules.mtopp = 1;
+            //        mRules.mtops = 1;
+            //        mRules.opt = 22;
+            //        mRules.minbfd = 2;
+            //    }
+            //    else if (mProd == "07")
+            //    {
+            //        mRules.minlen = 4;
+            //        mRules.minlent = 4;
+            //        mRules.stump = 0.5F;
+            //        mRules.mtopp = 2;
+            //        mRules.mtops = 2;
+            //        mRules.opt = 22;
+            //        mRules.minbfd = 5;
+            //    }
+            //    else
+            //    {
+            //        mRules.minlen = 4;
+            //        mRules.stump = 0.5F;
+            //        mRules.mtopp = 6;
+            //        mRules.mtops = 4;
+            //        mRules.minlent = 10;
+            //        mRules.minbfd = 9;
+            //    }
+            //    //mRules.minlent = 10;
+            //    //mRules.opt = 22;
+            //    //changed to 23 for test only YW (7/11/12)
+            //    //mRules.opt = 23;
+            //    //if (mRules.stump <= 0) 
+            //    //    mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //    //    mRules.mtopp = 6;
+            //    //if (mRules.mtops <= 0) 
+            //     //   mRules.mtops = 4;
+            //    mRules.trim = 0.5F;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    //       mRules.minbfd = 7
+            //    //mRules.minbfd = 1;
+            //}
+            //else if (REGN == 4)
+            //{
 
-                    //if (mRules.mtopp <= 0) 
-                        mRules.mtopp = 5.6F;
-                    //if (mRules.mtops <= 0) 
-                        mRules.mtops = 4;
-                    mRules.trim = .5F;
-                    //MIN SAWTIMBER LENGTH
-                    mRules.merchl = 8;
-                    // min dbh tree for sawtimber
-                    mRules.minbfd = 1;
-                }
-                else
-                {
-                    mRules.cor = 'Y';
-                    mRules.evod = 2;
-                    mRules.maxlen = 20;
-                    mRules.minlen = 10;
-                    mRules.minlent = 2;
-                    mRules.opt = 12;
-                    //if (mRules.stump <= 0) 
-                        mRules.stump = 1;
-                    //if (mRules.mtopp <= 0) 
-                        mRules.mtopp = 5.6F;
-                    //if (mRules.mtops <= 0) 
-                        mRules.mtops = 4;
-                    mRules.trim = .5F;
-                    // MIN SAWTIMBER LENGTH
-                    mRules.merchl = 10;
-                    //min dbh tree for sawtimber
-                    mRules.minbfd = 1;
-                }
-            }
-            else if (REGN == 2)
-            {
-                mRules.cor = 'Y';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 22;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 6;
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 4;
-                mRules.trim = 0.5F;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                mRules.minbfd = 1;
-            }
-            else if (REGN == 3)
-            {
-                mRules.cor = 'Y';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 22;
-                //changed min log length for region 3 (03/25/14)
-                if (mProd == "01") 
-                {
-                    mRules.minlen = 4;
-                    mRules.stump = 1;
-                    mRules.mtopp = 6;
-                    mRules.mtops = 4;
-                    mRules.minlent = 10;
-                    mRules.minbfd = 14;
-                }
-                else if (mProd == "14")
-                {
-                    mRules.minlen = 4;
-                    mRules.stump = 0.5F;
-                    mRules.mtopp = 4;
-                    mRules.mtops = 1;
-                    mRules.minlent = 2;
-                    mRules.minbfd = 6;
-                }
-                else if (mProd == "20")
-                {
-                    mRules.stump = 0.5F;
-                    mRules.mtopp = 1;
-                    mRules.mtops = 1;
-                    mRules.opt = 23;
-                    mRules.minbfd = 2;
-                }
-                else if (mProd == "07")
-                {
-                    mRules.minlen = 4;
-                    mRules.stump = 0.5F;
-                    mRules.mtopp = 2;
-                    mRules.mtops = 2;
-                    mRules.opt = 23;
-                    mRules.minbfd = 5;
-                }
-                else
-                {
-                    mRules.minlen = 4;
-                    mRules.stump = 0.5F;
-                    mRules.mtopp = 6;
-                    mRules.mtops = 4;
-                    mRules.minlent = 10;
-                    mRules.minbfd = 9;
-                }
-                //mRules.minlent = 10;
-                //mRules.opt = 22;
-                //changed to 23 for test only YW (7/11/12)
-                //mRules.opt = 23;
-                //if (mRules.stump <= 0) 
-                //    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                //    mRules.mtopp = 6;
-                //if (mRules.mtops <= 0) 
-                 //   mRules.mtops = 4;
-                mRules.trim = 0.5F;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                //       mRules.minbfd = 7
-                //mRules.minbfd = 1;
-            }
-            else if (REGN == 4)
-            {
+            //    mRules.cor = 'Y';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 22;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = 6;
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 4;
+            //    mRules.trim = .5F;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    //        mRules.minbfd = 7
+            //    mRules.minbfd = 1;
+            //}
+            //else if (REGN == 5)
+            //{
+            //    mRules.cor = 'Y';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 22;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = 6;
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 4;
+            //    mRules.trim = .5f;
+            //    mRules.trim = 0;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    mRules.merchl = 4;
+            //    //min dbh tree for sawtimber
+            //    //        mRules.minbfd = 7
+            //    mRules.minbfd = 1;
+            //}
+            //else if (REGN == 6 || REGN == 11)
+            //{
+            //    mRules.cor = 'N';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 23;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = 2;
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 2;
+            //    mRules.trim = .5F;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    //          mRules.minbfd = 6
+            //    mRules.minbfd = 1;
+            //}
+            //else if (REGN == 7)
+            //{
+            //    mRules.cor = 'N';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 23;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = (float)(Math.Truncate((0.184F * DBHOB) + 2.24F));
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 2;
+            //    mRules.trim = .5f;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    //        mRules.minbfd = 6
+            //    mRules.minbfd = 1;
+            //}
+            //else if (REGN == 8)
+            //{
+            //    if (MDL == "CLK" || MDL == "NEW" || VOLEQ.ToString(0, 3) == "NVB")
+            //    {
+            //        mRules.cor = 'Y';
+            //        mRules.evod = 2;
 
-                mRules.cor = 'Y';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 22;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 6;
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 4;
-                mRules.trim = .5F;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                //        mRules.minbfd = 7
-                mRules.minbfd = 1;
-            }
-            else if (REGN == 5)
-            {
-                mRules.cor = 'Y';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 22;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 6;
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 4;
-                mRules.trim = .5f;
-                mRules.trim = 0;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                mRules.merchl = 4;
-                //min dbh tree for sawtimber
-                //        mRules.minbfd = 7
-                mRules.minbfd = 1;
-            }
-            else if (REGN == 6 || REGN == 11)
-            {
-                mRules.cor = 'N';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 23;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 2;
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 2;
-                mRules.trim = .5F;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                //          mRules.minbfd = 6
-                mRules.minbfd = 1;
-            }
-            else if (REGN == 7)
-            {
-                mRules.cor = 'N';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 23;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = (float)(Math.Truncate((0.184F * DBHOB) + 2.24F));
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 2;
-                mRules.trim = .5f;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                //        mRules.minbfd = 6
-                mRules.minbfd = 1;
-            }
-            else if (REGN == 8)
-            {
-                if (MDL == "CLK" || MDL == "NEW" || VOLEQ.ToString(0, 3) == "NVB")
-                {
-                    mRules.cor = 'Y';
-                    mRules.evod = 2;
+            //        mRules.maxlen = 8;  // 16; changed to 8 based on r9clark.f
+            //        mRules.minlen = 2; // 2; changed to 4 based on r9clark.f
+            //        mRules.minlent = 8;
+            //        mRules.opt = 22;
+            //        if (spp < 300)
+            //        {
+            //            mRules.mtopp = 7.0F;
+            //        }
+            //        else
+            //        {
+            //            mRules.mtopp = 9.0F;
+            //        }
+            //        mRules.mtops = 4.0F;
+            //        mRules.trim = .5F;
+            //        if (mProd == "01")
+            //        {
+            //            mRules.stump = 1.0F;
+            //        }
+            //        else
+            //        {
+            //            mRules.stump = .5F;
+            //        }
 
-                    mRules.maxlen = 8;  // 16; changed to 8 based on r9clark.f
-                    mRules.minlen = 2; // 2; changed to 4 based on r9clark.f
-                    mRules.minlent = 8;
-                    mRules.opt = 22;
-                    if (spp < 300)
-                    {
-                        mRules.mtopp = 7.0F;
-                    }
-                    else
-                    {
-                        mRules.mtopp = 9.0F;
-                    }
-                    mRules.mtops = 4.0F;
-                    mRules.trim = .5F;
-                    if (mProd == "01")
-                    {
-                        mRules.stump = 1.0F;
-                    }
-                    else
-                    {
-                        mRules.stump = .5F;
-                    }
+            //    }
+            //}
+            //else if (REGN == 9)
+            //{
+            //    if (MDL == "CLK" || VOLEQ.ToString(0, 3) == "NVB")
+            //    {
+            //        mRules.cor = 'Y';
+            //        mRules.evod = 2;
 
-                }
-            }
-            else if (REGN == 9)
-            {
-                if (MDL == "CLK" || VOLEQ.ToString(0, 3) == "NVB")
-                {
-                    mRules.cor = 'Y';
-                    mRules.evod = 2;
+            //        mRules.maxlen = 8;  // 16; changed to 8 based on r9clark.f
+            //        mRules.minlen = 4; // 2; changed to 4 based on r9clark.f
+            //        mRules.minlent = 8;
+            //        mRules.opt = 22;
+            //        if (spp < 300)
+            //        {
+            //            mRules.mtopp = 7.6F;
+            //        }
+            //        else
+            //        {
+            //            mRules.mtopp = 9.6F;
+            //        }
+            //        mRules.mtops = 4.0F;
+            //        mRules.trim = .3F;
+            //        if (mProd == "01")
+            //        {
+            //            mRules.stump = 1.0F;
+            //        }
+            //        else
+            //        {
+            //            mRules.stump = .5F;
+            //        }
 
-                    mRules.maxlen = 8;  // 16; changed to 8 based on r9clark.f
-                    mRules.minlen = 4; // 2; changed to 4 based on r9clark.f
-                    mRules.minlent = 8;
-                    mRules.opt = 22;
-                    if (spp < 300)
-                    {
-                        mRules.mtopp = 7.6F;
-                    }
-                    else
-                    {
-                        mRules.mtopp = 9.6F;
-                    }
-                    mRules.mtops = 4.0F;
-                    mRules.trim = .3F;
-                    if (mProd == "01")
-                    {
-                        mRules.stump = 1.0F;
-                    }
-                    else
-                    {
-                        mRules.stump = .5F;
-                    }
-
-                }
-            }
-            else if (REGN == 10)
-            {
-                mRules.cor = 'Y';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 8;
-                mRules.minlent = 8;
-                mRules.opt = 23;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 6;
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 4;
-                mRules.trim = .5F;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                //        mRules.minbfd = 6
-                mRules.minbfd = 1;
-            }
-            //default merch rules
-            else
-            {
-                mRules.cor = 'Y';
-                mRules.evod = 2;
-                mRules.maxlen = 16;
-                mRules.minlen = 2;
-                mRules.minlent = 2;
-                mRules.opt = 22;
-                //if (mRules.stump <= 0) 
-                    mRules.stump = 1;
-                //if (mRules.mtopp <= 0) 
-                    mRules.mtopp = 6;
-                //if (mRules.mtops <= 0) 
-                    mRules.mtops = 4;
-                mRules.trim = .5F;
-                // MIN SAWTIMBER LENGTH
-                mRules.merchl = 8;
-                //min dbh tree for sawtimber
-                mRules.minbfd = 1;
-            }
+            //    }
+            //}
+            //else if (REGN == 10)
+            //{
+            //    mRules.cor = 'Y';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 8;
+            //    mRules.minlent = 8;
+            //    mRules.opt = 23;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = 6;
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 4;
+            //    mRules.trim = .5F;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    //        mRules.minbfd = 6
+            //    mRules.minbfd = 1;
+            //}
+            ////default merch rules
+            //else
+            //{
+            //    mRules.cor = 'Y';
+            //    mRules.evod = 2;
+            //    mRules.maxlen = 16;
+            //    mRules.minlen = 2;
+            //    mRules.minlent = 2;
+            //    mRules.opt = 22;
+            //    //if (mRules.stump <= 0) 
+            //        mRules.stump = 1;
+            //    //if (mRules.mtopp <= 0) 
+            //        mRules.mtopp = 6;
+            //    //if (mRules.mtops <= 0) 
+            //        mRules.mtops = 4;
+            //    mRules.trim = .5F;
+            //    // MIN SAWTIMBER LENGTH
+            //    mRules.merchl = 8;
+            //    //min dbh tree for sawtimber
+            //    mRules.minbfd = 1;
+            //}
+            //end if REGN
         }
 
         private void mRulesCB_CheckedChanged(object sender, EventArgs e)
@@ -2437,10 +2476,12 @@ namespace volCStest
             }
             //volEqTB.Text
             string strVOLEQ = volEqTB.Text;
+            string strNote = "";
             if (!strVOLEQ.Contains("NVB"))
             { 
                 GETNVBEQ(ref REGN, FORST, DIST, ref FIASPCD, NVBEQ, ref ERRFLAG, strlen, strlen, strlen);
-                strVOLEQ = NVBEQ.ToString();
+                strVOLEQ = NVBEQ.ToString() + "*";
+                strNote = "*The merch volume from " + NVBEQ.ToString() + " was adjusted to match merch volume from " + volEqTB.Text + " for biomass calculation.";
             }
             
 
@@ -2458,6 +2499,7 @@ namespace volCStest
                 writer.WriteLine("Moisture content (%)".PadRight(25, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
                 //writer.WriteLine("Biomass Equation".PadRight(25, ' ') + NVBEQ.ToString().PadRight(15, ' ') + "Westfall et al 2023" );
                 writer.WriteLine("Biomass Equation".PadRight(25, ' ') + strVOLEQ.PadRight(15, ' ') + "Westfall et al 2023");
+                if (strNote.Length > 0) writer.WriteLine(strNote);
                 //writer.WriteLine("Above ground total".PadRight(25, ' ') + AGTEQ.ToString().PadRight(15, ' ') + AGTREF);
                 //writer.WriteLine("Live branches".PadRight(25, ' ') + LBREQ.ToString().PadRight(15, ' ') + LBRREF);
                 //writer.WriteLine("Dead branches".PadRight(25, ' ') + DBREQ.ToString().PadRight(15, ' ') + DBRREF);

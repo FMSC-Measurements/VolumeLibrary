@@ -138,7 +138,7 @@ c      CALL vollib_r(VOLEQ,REGN,DBHOB,HTTOT,TCU,ERRFLAG)
           BRKHTD = 0
           MRULEFLG = 0
           VOLEQ11   = VOLEQI(1:11)
-          CALL VOLINITNEW(REGN,FORST,VOLEQ11,MTOPP,MTOPS,STUMP,DBHOB,
+          CALL VOLINITNVB(REGN,FORST,VOLEQ11,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -695,8 +695,8 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
       CHARACTER*(*) FORST, BIOEQ,GEOSUB
       REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
       REAL HT1PRD, HT2PRD,HTTFLL 
-      CHARACTER(2) FORSTI,GEOSUBI
-      CHARACTER(12) BIOEQI
+      CHARACTER*2 FORSTI,GEOSUBI
+      CHARACTER*12 BIOEQI
 
       FORSTI = FORST(1:2)
       GEOSUBI = GEOSUB(1:2)
@@ -707,7 +707,7 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
       END
 !----------------------------------------------------------------------
 ! This new subroutine enable the use of new National-scal volume and biomass equation     
-      SUBROUTINE VOLLIBCSNEW(REGN,FORSTI,VOLEQI,MTOPP,MTOPS,STUMP,
+      SUBROUTINE VOLLIBCSNVB(REGN,FORSTI,VOLEQI,MTOPP,MTOPS,STUMP,
      +    DBHOB,DRCOB,HTTYPEI,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,
      &    UPSD1,UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,
      &    VOL,LOGVOLI,LOGDIAI,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -716,7 +716,7 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
      &    BRKHT,BRKHTD,FIASPCD,DRYBIO,GRNBIO,CR,CULL,DECAYCD)
 C_______________________________________________________________________
 ! Expose subroutine VOLLIBCS to C# users of this DLL
-      !DEC$ ATTRIBUTES DLLEXPORT::VOLLIBCSNEW
+      !DEC$ ATTRIBUTES DLLEXPORT::VOLLIBCSNVB
       USE MRULES_MOD
       IMPLICIT NONE
 C**********************************************************************      
@@ -762,7 +762,7 @@ C**********************************************************************
       LOGDIA = RESHAPE(LOGDIAI, SHAPE(LOGDIA))
       ERRFLAG = 0
       MRULEFLG = PMTFLG
-      CALL VOLINITNEW(REGN,FORST,VOLEQ11,MTOPP,MTOPS,STUMP,DBHOB,
+      CALL VOLINITNVB(REGN,FORST,VOLEQ11,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -785,4 +785,5 @@ C**********************************************************************
       LOGDIAI = RESHAPE(LOGDIA, SHAPE(LOGDIA))
  
       RETURN
-      END SUBROUTINE VOLLIBCSNEW
+      END SUBROUTINE VOLLIBCSNVB
+

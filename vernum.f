@@ -80,7 +80,13 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20230104 Correted the errflag for checking DBHOB and HTTOT in caldib and profile and also Removed errflag from stump vol calc in volinit 
 ! 20230118 Changed R1 Mrules min topwood length MINLENT to 16 
 ! 20230124 Corrected changes in profile made on 20200219 for call SEGMNT in CUPFLG   
-! 20230221 Added NSVB volume and biomass equations and VOLLIBCSNEW, VOLUMELIBRARY2 and vollibnew_r for DLL       
+! 20230221* Added NSVB volume and biomass equations and VOLLIBCSNEW, VOLUMELIBRARY2 and vollibnew_r for DLL   
+! 20230223 Updated R6 Wallowa-Whitman NF(16) Whitman Ranger District number to 31 and Changed R1 Prod 08 minimum merch length MERCHL to 16   
+! 20230310 Corrected R3 merch rules for MINLEN, MINLENT and OPT. It was not set correctly in the library based on R3 rules.  
+! 20230314 Modified NVBC to calculate sawtimber and merch volume to be as that in the paper not sum of logvol
+!          Also modified volinitnew for DRYBIO and GRNBIO based on the merch volume from non-NVB equation
+!20230315 Corrected error in BIOLIB and BIOLIB2 for the Excel function     
+!20230403* Added R1 wight factor and changed subroutine name with _NEW to _NVB     
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -110,7 +116,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230221
+      VERSION = 20230403
       RETURN
       END SUBROUTINE VERNUM
       
@@ -143,7 +149,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230221
+      VERSION = 20230403
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -166,7 +172,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20230221
+      VERSION = 20230403
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -179,6 +185,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20230221
+      version = 20230403
       return
       end subroutine vernum_r

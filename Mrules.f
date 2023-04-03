@@ -9,7 +9,10 @@ C     YW 08/25/15 Added merch rule for Region 8 Clark equation
 C     YW 12/20/2019 merch rule changes for Region 3
 C     YW 08/11/2021 Set R6 stump default to 1.0
 C     YW 08/23/2021 Reset R3 MINBFD to 1.0
-C     YW 01/18/2023 Changed the min topwood length to 16 for R1      
+C     YW 01/18/2023 Changed the min topwood length to 16 for R1   
+C     YW 02/23/2023 Changed R1 Prod 08 minimum merch length MERCHL to 16     
+C     YW 03/02/2023 Added NVB Eq to use profile merch rules for R1 and R8 and 9 
+C     YW 03/10/2023 Corrected the MINLEN, MINLENT and OPT for R3. The previoue was not correct based R3 merch rules      
       SUBROUTINE MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
@@ -40,7 +43,7 @@ C
       MDL = VOLEQ(4:6)
       IF(REGN.EQ.1) THEN
          IF(MDL.EQ.'FW2' .OR. MDL.EQ.'fw2' .OR.
-     >      MDL.EQ.'FW3' .OR. MDL.EQ.'fw3')THEN
+     >      MDL.EQ.'FW3' .OR. MDL.EQ.'fw3'.OR.VOLEQ(1:3).EQ.'NVB')THEN
 
             COR='Y'
             EVOD = 2
@@ -56,6 +59,11 @@ C Changed the min topwood length to 16 (YW 2023/01/18)
             TRIM = .5
 C  MIN SAWTIMBER LENGTH
             MERCHL = 8
+            !For prod 08 changed to 16 (20230223)
+            IF(PROD.EQ.'08')THEN
+                MERCHL = 16
+                MINLEN = 16.0
+            ENDIF
 c min dbh tree for sawtimber
             MINBFD = 1.0
          ELSE
@@ -107,43 +115,53 @@ C Karen requested to change back to 2' for minimum log length (02/13/2015)
 ! Karen asked to change min log length for 8 for prod 01 and 10 for prod 02 (2019/07/18)
 ! Mrules changed for Region 3 as Karen asked(12/20/2019)
 ! Prod 01 minimum log length 10 TopD 6.0 MinDBH 14.0 Stump 1.0
-! Prod 08 minimum log length 10 TopD 6.0 MinDBH 9.0 Stump 0.5
+! Prod 08 minimum log length 10 TopD 4.0 MinDBH 9.0 Stump 0.5
 ! prod 14 minimum log length 10 TopD 4.0 MinDBH 6.0 Stump 0.5
 ! prod 20 minimum log length 2 TopD 1.0 MinDBH 2.0 Stump 0.5
 ! prod 07 minimum log length 4 TopD 2.0 MinDBH 5.0 Stump 0.5
 ! Removed MinDBH as request by R3 (Karen 2021/08/21), so it back to MINBFD=1
-        IF(PROD.EQ.'01')THEN
-          MINLEN = 4.0
+        IF(PROD.EQ.'01'.OR.PROD.EQ.'08')THEN
+          !MINLEN = 4.0 !Corrected to 10 (2023/03/10)
+          MINLEN = 10
           minlent = 10.0
-          IF(STUMP.LE.0.0) STUMP = 1.0
-          IF(MTOPP .LE. 0.0) MTOPP = 6.0
+          IF(PROD.EQ.'01'.AND.STUMP.LE.0.0) STUMP = 1.0
+          IF(PROD.EQ.'01'.AND.MTOPP .LE. 0.0) MTOPP = 6.0
           IF(MTOPS .LE. 0.0) MTOPS = 4.0
 !          MINBFD = 14.0
           MERCHL = 10.0
+          IF(PROD.EQ.'08')THEN
+              IF(STUMP.LE.0.0) STUMP = 0.5
+              IF(MTOPP .LE. 0.0) MTOPP = 4.0
+          ENDIF
         ELSEIF(PROD.EQ.'14')THEN
-          MINLEN = 4.0
-          minlent = 2.0
+          !MINLEN = 4.0
+          !minlent = 2.0
+          !Corrected to 10 (2023/03/10)
+          MINLEN = 10.0
+          minlent = 10.0
           IF(STUMP.LE.0.0) STUMP = 0.5
           IF(MTOPP .LE. 0.0) MTOPP = 4.0
           IF(MTOPS .LE. 0.0) MTOPS = 1.0
 !          MINBFD = 6.0
           MERCHL = 10.0
         ELSEIF(PROD.EQ.'20')THEN
-          OPT = 23
+          !OPT = 23 !Corrected 2023/03/10
           IF(STUMP.LE.0.0) STUMP = 0.5
           IF(MTOPP .LE. 0.0) MTOPP = 1.0
           IF(MTOPS .LE. 0.0) MTOPS = 1.0
         ELSEIF(PROD.EQ.'07')THEN
-          OPT = 23
+          !OPT = 23 !Corrected 2023/03/10 also set MINLENT to 4.0
+          MINLENT = 4.0
           MINLEN = 4.0
           IF(STUMP.LE.0.0) STUMP = 0.5
           IF(MTOPP .LE. 0.0) MTOPP = 2.0
           IF(MTOPS .LE. 0.0) MTOPS = 2.0
         ELSE ! PROD 08 (NON-SAW)
-          MINLEN = 4.0
+         ! MINLEN = 4.0 Corrected to 10 (2023/03/10)
+          MINLEN = 10
           minlent = 10.0
           IF(STUMP.LE.0.0) STUMP = 0.5
-          IF(MTOPP .LE. 0.0) MTOPP = 6.0
+          IF(MTOPP .LE. 0.0) MTOPP = 4.0
           IF(MTOPS .LE. 0.0) MTOPS = 4.0
 !          MINBFD = 9.0
           MERCHL = 10.0
@@ -314,7 +332,7 @@ C  MIN SAWTIMBER LENGTH
 c min dbh tree for sawtimber
 c         MINBFD = 6.0
          MINBFD = 1.0
-      ELSEIF(REGN.EQ.8.AND.(MDL.EQ.'CLK'.OR.MDL.EQ.'NEW')) THEN
+      ELSEIF(REGN.EQ.8.AND.(MDL.EQ.'CLK'.OR.VOLEQ(1:3).EQ.'NVB')) THEN
          COR='Y'
          EVOD = 2
          MAXLEN = 8.0
@@ -346,7 +364,7 @@ C         Confirmed with Adam Moore for this default
              STUMP = 0.5
            ENDIF
          ENDIF
-      ELSEIF(REGN.EQ.9.AND.MDL.EQ.'CLK') THEN
+      ELSEIF(REGN.EQ.9.AND.(MDL.EQ.'CLK'.OR.VOLEQ(1:3).EQ.'NVB')) THEN
          COR='Y'
          EVOD = 2
          MAXLEN = 8.0

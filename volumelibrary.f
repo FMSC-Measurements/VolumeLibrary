@@ -84,7 +84,7 @@
 !     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
 !     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
 !     +    BA,SI,CTYPE,ERRFLAG,IDIST)
-      CALL VOLINITNEW(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+      CALL VOLINITNVB(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -164,7 +164,7 @@
       MERRULES%DBTBH = 0
       MERRULES%MINBFD = 1
 
-      CALL VOLINITNEW(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+      CALL VOLINITNVB(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -776,7 +776,7 @@ C     Set the default value for other variable
       RETURN
       end subroutine vollib2_r   
 C *******************************************************************************
-      subroutine vollibnew_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,HTTOT_d,
+      subroutine vollibnvb_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,HTTOT_d,
      + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
      + FCLASS,DBTBH_d,BTR_d,VOL_d,LOGVOL_d,LOGDIA_d,LOGLEN_d,BOLHT_d,
      + TLOGS,NOLOGP_d,NOLOGS_d,ERRFLAG,BRKHT_d,BRKHTD_d,
@@ -786,8 +786,8 @@ C with output variable for logs LOGDIA,LOGVOL,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS
 ! and new NSVB equations for biomass DRYBIO, GRNBIO      
 C YW 02/10/2023
 
-      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollibnew_r
-      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibnew_r_'::vollibnew_r
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollibnvb_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibnvb_r_'::vollibnvb_r
 
 	USE CHARMOD
 	USE DEBUG_MOD
@@ -885,7 +885,7 @@ C     Set the default value for other variable
 !      I21 =21
       FIASPCD = SPEC
       MRULEFLG = 0
-      CALL VOLINITNEW(REGN,FORST,NVBEQ,MTOPP,MTOPS,STUMP,DBHOB,
+      CALL VOLINITNVB(REGN,FORST,NVBEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -921,10 +921,11 @@ C     Set the default value for other variable
       GRNBIO_d = DBLE(GRNBIO)
       
       RETURN
-      end subroutine vollibnew_r   
+      end subroutine vollibnvb_r   
 C ************************************************************************
 C YW 2019/05/07 ADDED INPUT VARIABLES HT1PRD,HT2PRD,HTTFLL
 ! YW 2019/08/05 Added input variable GROSUB. This is for pacific islands equation
+! YW 2023/03/15 Corrected subroutine biolib and biolib2
       SUBROUTINE BIOLIB(REGN,FORST,SPEC,BIOEQ,DBHOB,HTTOT,VOL,
      +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUB)
       !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::BIOLIB
@@ -946,17 +947,15 @@ C     9 Biomass calculated from the biomass Equation BIOEQ
       INTEGER REGN,SPEC,ERRFLG
       CHARACTER*(*) FORST, BIOEQ,GEOSUB
       REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
-      
-      REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
-      CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
-      CHARACTER*40 REF(8)
-      REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
-      CHARACTER(2) FORSTI,GEOSUBI
-      CHARACTER(12) BIOEQI
+      REAL HT1PRD, HT2PRD,HTTFLL
+      CHARACTER*2 FORSTI,GEOSUBI
+      CHARACTER*12 BIOEQI
 
       FORSTI = FORST(1:2)
       GEOSUBI = GEOSUB(1:2)
       BIOEQI = BIOEQ(1:12)
+      BIOGRN = 0
+      BIODRY = 0
       CALL BIOLIB2(REGN,FORSTI,SPEC,BIOEQI,DBHOB,HTTOT,VOL,
      +           BIOGRN, BIODRY,ERRFLG,HT1PRD,HT2PRD,HTTFLL,GEOSUBI)
      
@@ -968,16 +967,16 @@ C ------------------------------------------------------------------------------
 C This is duplicated subroutine BIOLIB, but not using pointer for FORST, BIOEQ, GEOSUB
       IMPLICIT NONE
       INTEGER REGN,SPEC,ERRFLG
-      CHARACTER(2) FORST,GEOSUB
-      CHARACTER(12) BIOEQ
+      CHARACTER*2 FORST,GEOSUB
+      CHARACTER*12 BIOEQ
       REAL DBHOB, HTTOT, VOL(15),BIOGRN(9),BIODRY(9)
       
       REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
       CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
       CHARACTER*40 REF(8)
       REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
-      INTEGER STEMS, I, LEN,NOINT,FIAEQNUM,STAT
-      
+      INTEGER STEMS, I, EQLEN,NOINT,FIAEQNUM,STAT
+      ERRFLG = 0
       DO 100, I=1,9
         BIOGRN(I) = 0.0
         BIODRY(I) = 0.0
@@ -995,6 +994,7 @@ C     7 CROWN
 C     8 MERCH STEM WOOD AND BARK
       
 C     GET REGIONAL OR NATIONAL DEFAULT weight factor
+      WF = 0.0
       CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
       
 C     Get the moisture content from Miles $ Smith 2009
@@ -1018,10 +1018,11 @@ C     Apply the ratio to biomass calculated from Jenkins and also add MC to get 
         BIODRY(I) = BIOMS(I)*RATIO
         BIOGRN(I) = BIODRY(I)*(1+MC)  
 200   CONTINUE
+      !RETURN
 C     If BIOEQ is provided, calculate biomass from it
-      LEN = LEN_TRIM(BIOEQ)
+      EQLEN = LEN_TRIM(BIOEQ)
       FIAEQNUM = -1
-      IF(LEN.GT.0)THEN
+      IF(EQLEN.GT.0)THEN
         CALL str2int(BIOEQ, FIAEQNUM, STAT)
         IF(STAT.EQ.0)THEN
           GEOSUB2 = GEOSUB(1:1)
@@ -1035,7 +1036,7 @@ C     If BIOEQ is provided, calculate biomass from it
         ELSE
           NVELBEQ = BIOEQ
         ENDIF
-
+        IF(NVELBEQ(12:12).NE.'D'.OR.NVELBEQ(12:12).NE.'G') RETURN
 C       Set default values
         CR = (HTTOT-HTTFLL)/HTTOT
         IF(CR.LE.0.0.OR.CR.GT.1.0) CR = 0.5
@@ -1061,7 +1062,8 @@ C        HT2PRD = 0
           BIODRY(9) = BIOMASS
           BIOGRN(9) = BIOMASS
         ENDIF
-      ENDIF
+        ENDIF
+        ERRFLG = 0
       RETURN
       END      
 C ----------------------------------------------------------------------------------

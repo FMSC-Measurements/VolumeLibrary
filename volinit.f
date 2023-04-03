@@ -643,7 +643,8 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       END SUBROUTINE VOLINIT
 !----------------------------------------------------------------------
 ! This subroutine volinitnew enable the use of new National-scale volume and biomass equation
-      SUBROUTINE VOLINITNEW(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+      !2023/03/21 Changed the subroutine name to volinitnvb and reset CTYPE for non-NVB Eq
+      SUBROUTINE VOLINITNVB(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
@@ -667,7 +668,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       REAL NVBVOL(15),NVBLOGVOL(7,20),NVBLOGDIA(21,3),NVBLOGLEN(20)
       REAL NVBBOLHT(21),CR,CULL
       INTEGER FIASPCD,MRULEFLG,DECAYCD
-      REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15)
+      REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),Vfactor
       CHARACTER*3 SPCD
       TYPE(MERCHRULES)::MERRULES
       
@@ -687,6 +688,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       TLOGS = 0
       NOLOGP = 0
       NOLOGS = 0
+      Vfactor = 1
       IF(IDIST.EQ.0) IDIST = 1
       WRITE (DIST, '(I2)') IDIST
       IF(FORST(2:2).LT.'0'.OR.FORST(2:2).GT.'9') THEN
@@ -716,9 +718,11 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           CALL NVBC(REGN,FORST,DIST,VOLEQ,DBHOB,HTTOT,MTOPP,MTOPS,
      + HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,LIVE,CR,CULL,DECAYCD,
      + LOGLEN,LOGDIA,LOGVOL,BOLHT,
-     + TLOGS,NOLOGP,NOLOGS,VOL,DRYBIO,GRNBIO,ERRFLAG,FIASPCD)
+     + TLOGS,NOLOGP,NOLOGS,VOL,DRYBIO,GRNBIO,ERRFLAG,FIASPCD,CTYPE)
       ELSE
           V_EQN = VOLEQ(1:10)
+          !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
+          IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL VOLINIT(REGN,FORST,V_EQN,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -736,7 +740,13 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      +    HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,
      +     LIVE,CR,CULL,DECAYCD,NVBLOGLEN,NVBLOGDIA,
      +    NVBLOGVOL,NVBBOLHT,TLOGS,NOLOGP,NOLOGS,NVBVOL,DRYBIO,GRNBIO,
-     +    ERRFLAG,FIASPCD)
+     +    ERRFLAG,FIASPCD,CTYPE)
+          !Adjust the biomass result based on the merch volume from Cruise VOLEQ
+          IF(NVBVOL(4).GT.0.AND.VOL(4).GT.0)THEN
+              Vfactor = VOL(4)/NVBVOL(4)
+              DRYBIO = DRYBIO*Vfactor
+              GRNBIO = GRNBIO*Vfactor
+          ENDIF
       ENDIF
       RETURN
       END
