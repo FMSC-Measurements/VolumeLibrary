@@ -46,6 +46,7 @@ c YW 07/13/2018 Modified R9cor to remove the adjustment factor for yellow-poplar
 C YW 02/14/2019 Check height greater than merchL (it was checking minLen before) for volume calculation
 C YW 09/24/2019 R08 prod 08 uses MTOPP (DIB), so changed to use COEFFS to get sawHt (same as PROD8 subroutine)
 ! YW 2021/06/21 Comment out the subroutine iisnan(x,res). It is not used and cause compile error on some system (Mac).
+! YW 2023/06/12 Modified r9cuft to avoid the number is off the limit
 C-------------------------------------------------------------------------
 C  This subroutine is designed for use with the VOLLIB routines in 
 C  the National Volume Estimator Library.  It returns arrays filled 
@@ -669,6 +670,10 @@ c      maxLen=8.0
 c      minLen=4.0
 c      trim=0.3
 c      merchL=8.0
+       CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
+     >           MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
+     >           PROD)
+
       if(mTopP.ne.0) then
         sawDib=mTopP
       else
@@ -783,9 +788,9 @@ C     total height, except a17 and b17, which correspond to the top DIB.
         return
       endif
       
-       CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
-     >           MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
-     >           PROD)
+!       CALL MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,MINLEN,
+!     >           MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
+!     >           PROD)
       
 
 
@@ -975,11 +980,14 @@ C  for inside-bark calculations.
       real      G,W,X,Y,Z,T,L1,L2,L3,U1,U2,U3
       real      I1,I2,I3,I4,I5,I6
       real      vol(15)
-
+      
 !...  Local variables     
       real      r,c,e,p,b,a,totHt,dbhIb,dib17
+      REAL V1,V2,V3
 !======================================================================
-
+      V1 = 0.0
+      V2 = 0.0
+      V3 = 0.0
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, 10) ' -->Enter R9CUFT'
    10    FORMAT (A)   
@@ -1003,7 +1011,12 @@ c-----Set combined variables
       G=(1.0-4.5/totht)**r
       W=(c+e/dbhib**3)/(1-G)
       X=(1.0-4.5/totht)**p
-      Y=(1.0-17.3/totht)**p
+      !To avoid the Y is less and 2^-126 (YW 2023/06/12)
+      IF((1.0-17.3/totht).LT.0.005748.AND.p.GT.14)THEN
+          Y = 0
+      ELSE
+          Y=(1.0-17.3/totht)**p
+      ENDIF
       Z=(dbhib**2-dib17**2)/(X-Y)
       T= dbhib**2 - Z * X
       L1=max(lowrHt,0.0)
@@ -1046,18 +1059,43 @@ c-----Set indicator variables
       endif
 
 C-----Calculate cubic volume between specified heights
-      cfVol=0.005454154*(I1 * dbhib**2 *((1-G*W)*(U1-L1)
+C      cfVol=0.005454154*(I1 * dbhib**2 *((1-G*W)*(U1-L1)
+C     &        +W*((1-L1/totht)**r * (totht - L1)
+C     &        -(1-U1/totht)**r * (totht - U1))/(r+1))
+C     &      +I2*I3*(T*(U2-L2)+Z*((1-L2/totHt)**p*(totHt-L2)
+C     &        -(1-U2/totHt)**p*(totHt-U2))/(p+1))
+C     &      +I4*dib17**2*(b*(U3-L3)-b*((U3-17.3)**2-(L3-17.3)**2)
+C     &        /(totHt-17.3)+(b/3)*((U3-17.3)**3-(L3-17.3)**3)
+C     &        /(totHt-17.3)**2
+C     &      +I5*(1.0/3.0)*((1-b)/a**2)*(a*(totHt-17.3)-(L3-17.3))**3
+C     &        /(totHt-17.3)**2
+C     &      -I6*(1.0/3.0)*((1-b)/a**2)*(a*(totHt-17.3)-(U3-17.3))**3
+C     &        /(totHt-17.3)**2))
+      !The above calculation is seperated into three parts
+      IF(I1.GT.0)THEN
+        V1 = I1 * dbhib**2 *((1-G*W)*(U1-L1)
      &        +W*((1-L1/totht)**r * (totht - L1)
      &        -(1-U1/totht)**r * (totht - U1))/(r+1))
-     &      +I2*I3*(T*(U2-L2)+Z*((1-L2/totHt)**p*(totHt-L2)
-     &        -(1-U2/totHt)**p*(totHt-U2))/(p+1))
-     &      +I4*dib17**2*(b*(U3-L3)-b*((U3-17.3)**2-(L3-17.3)**2)
+      ENDIF
+      IF(I2.GT.0.AND.I3.GT.0) THEN
+          !to avoid number (1-U2/totHt)**p off limit (YW 2023/06/12)
+          IF((1-U2/totHt).LT.0.005748.AND.p.GT.14)THEN
+              V2 = T*(U2-L2)+Z*((1-L2/totHt)**p*(totHt-L2))/(p+1)
+          ELSE
+              V2 = T*(U2-L2)+Z*((1-L2/totHt)**p*(totHt-L2)
+     &        -(1-U2/totHt)**p*(totHt-U2))/(p+1)
+          ENDIF
+      ENDIF
+      IF(I4.GT.0)THEN
+          V3 = dib17**2*(b*(U3-L3)-b*((U3-17.3)**2-(L3-17.3)**2)
      &        /(totHt-17.3)+(b/3)*((U3-17.3)**3-(L3-17.3)**3)
      &        /(totHt-17.3)**2
      &      +I5*(1.0/3.0)*((1-b)/a**2)*(a*(totHt-17.3)-(L3-17.3))**3
      &        /(totHt-17.3)**2
      &      -I6*(1.0/3.0)*((1-b)/a**2)*(a*(totHt-17.3)-(U3-17.3))**3
-     &        /(totHt-17.3)**2))
+     &        /(totHt-17.3)**2)   
+      ENDIF    
+      cfVol = 0.005454154*(V1+V2+V3)
       if(cfVol.lt.0.0) cfVol=0.0
       
       

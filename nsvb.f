@@ -110,6 +110,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       RatioEQ = 6
       WfolRem = 0
       Vtotob2 = 0
+      IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
       
       IF(HTTOT.LE.0)THEN
           IF(BRKHT.LE.0.AND.BRKHTD.LE.0)THEN

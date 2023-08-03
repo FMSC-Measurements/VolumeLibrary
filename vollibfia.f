@@ -402,6 +402,7 @@ c    This subroutine is created for FSVeg to call the library
 !  YW 20210719 Set FCLASS initial to 0 in order to pick the species default form class
 !  YW 20210727 Added DBTBH as an input variable to the subroutine
 !  YW 20200811 Added stump, ba and si as input variables
+!  YW 20230605  Set the default region and forest for R1 BEH equation and default stump to 1.0      
       IMPLICIT NONE
       character*(*) voleqi
       real tcu,mcu,bdf
@@ -457,6 +458,11 @@ c      INTEGER SPCD, FOREST
       ELSE 
         WRITE (FORST, '(I2)') IFORST
       ENDIF
+!     Set the default region and forest for R1 BEH equation (2023/06/05)
+      IF(REGN.EQ.1.AND.VOLEQ(4:6).EQ.'BEH')THEN
+          REGN = 6
+          FORST = '05'
+      ENDIF
       IF(FORST(2:2) .LT. '0') THEN 
         FORST(2:2) = FORST(1:1)
         FORST(1:1) = '0'
@@ -478,6 +484,7 @@ C      DBTBH=0.0
       HTTYPE='F'
       HTLOG=0
 c      STUMP=0.0
+      IF(STUMP.LE.0.AND.REGN.EQ.6) STUMP = 1
       UPSHT1=0.0
       UPSD1=0.0
       AVGZ1=0.0

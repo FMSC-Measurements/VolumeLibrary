@@ -13,6 +13,7 @@ C     YW 01/18/2023 Changed the min topwood length to 16 for R1
 C     YW 02/23/2023 Changed R1 Prod 08 minimum merch length MERCHL to 16     
 C     YW 03/02/2023 Added NVB Eq to use profile merch rules for R1 and R8 and 9 
 C     YW 03/10/2023 Corrected the MINLEN, MINLENT and OPT for R3. The previoue was not correct based R3 merch rules      
+! YW 06/22/2023 Added chacking MTOPS <= MTOPP      
       SUBROUTINE MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
@@ -446,7 +447,7 @@ c        IF(NEWCOR.NE.COR) COR = NEWCOR
         MRULEMOD='N'          
       ENDIF
 
-      
+      IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
       RETURN
       END                      
 c--  MERCHANDIZING VARIABLES

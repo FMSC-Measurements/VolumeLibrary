@@ -86,7 +86,12 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 ! 20230314 Modified NVBC to calculate sawtimber and merch volume to be as that in the paper not sum of logvol
 !          Also modified volinitnew for DRYBIO and GRNBIO based on the merch volume from non-NVB equation
 !20230315 Corrected error in BIOLIB and BIOLIB2 for the Excel function     
-!20230403* Added R1 wight factor and changed subroutine name with _NEW to _NVB     
+!20230403* Added R1 wight factor and changed subroutine name with _NEW to _NVB    
+!20230526 Added GETWTFAC subroutine to volumelibrary.f to get default weight factor for Excel function    
+!20230605 Modified vollibfsveg to reset the REGN and FORST for R1 BEH equation to get the default form class   
+!20230609 Modified r8prep to set DIB17 = 0.1 to avoid divided by 0 error when DIB17 <= 0      
+!20230622 Modified r9cuft calculation to handle very small number 2^-126 and r9prep call mrules and also check mtops and mtopp in mrules
+!20230802 Combined BTR for DF(202) to make 300FW2W202      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -116,7 +121,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230403
+      VERSION = 20230802
       RETURN
       END SUBROUTINE VERNUM
       
@@ -149,7 +154,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230403
+      VERSION = 20230802
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -172,7 +177,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20230403
+      VERSION = 20230802
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -185,6 +190,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20230403
+      version = 20230802
       return
       end subroutine vernum_r

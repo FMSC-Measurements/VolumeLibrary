@@ -922,6 +922,25 @@ C     Set the default value for other variable
       
       RETURN
       end subroutine vollibnvb_r   
+!**********************************************************************
+! Get regional default weight factor
+      SUBROUTINE GETWTFAC(REGN,FORST,SPCD,WTFAC)
+      !DEC$ ATTRIBUTES STDCALL,REFERENCE, DLLEXPORT::GETWTFAC
+      !DEC$ ATTRIBUTES MIXED_STR_LEN_ARG :: GETWTFAC
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'GETWTFAC'::GETWTFAC
+      IMPLICIT NONE
+      INTEGER REGN,SPCD
+      CHARACTER*(*) FORST
+      CHARACTER*2 FORSTI
+      REAL WTFAC, WF(3)
+      CHARACTER*12 BMSEQ(8)
+      CHARACTER*40 REF(8)
+      FORSTI = FORST(1:2)
+      WF = 0
+      CALL CRZSPDFT(REGN,FORSTI,SPCD,WF,BMSEQ,REF)
+      WTFAC = WF(1)
+      RETURN
+      END
 C ************************************************************************
 C YW 2019/05/07 ADDED INPUT VARIABLES HT1PRD,HT2PRD,HTTFLL
 ! YW 2019/08/05 Added input variable GROSUB. This is for pacific islands equation

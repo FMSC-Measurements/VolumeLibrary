@@ -37,6 +37,7 @@ C YW 2022/05/03 Set the total cubic vol to VOL(4) if MTOPP=0.1
 C YW 2022/08/08 added variable STUMP to the call DVEST
 C YW 2022/10/25 Fix the change made on 2022/05/03 to check VOL(1) before reset VOL(4)
 C YW 2022/11/23 Added the call TOP6LEN R2 Black Hills equation 223DVEW122
+C YW 2023/06/05 Modified VOLINITNVB for resetting CTYPE
 !**********************************************************************
       CHARACTER*1  HTTYPE,LIVE,CTYPE,VOLEQREGN
       CHARACTER*2  FORST,PROD
@@ -722,7 +723,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       ELSE
           V_EQN = VOLEQ(1:10)
           !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
-          IF(CTYPE.NE.'I') CTYPE = 'B'
+          !IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL VOLINIT(REGN,FORST,V_EQN,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -736,6 +737,8 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           NVBLOGLEN = 0
           NVBLOGDIA = 0
           NVBBOLHT = 0
+          !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
+          IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL NVBC(REGN,FORST,DIST,NVBEQN,DBHOB,HTTOT,MTOPP,MTOPS,
      +    HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,
      +     LIVE,CR,CULL,DECAYCD,NVBLOGLEN,NVBLOGDIA,
@@ -744,8 +747,21 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           !Adjust the biomass result based on the merch volume from Cruise VOLEQ
           IF(NVBVOL(4).GT.0.AND.VOL(4).GT.0)THEN
               Vfactor = VOL(4)/NVBVOL(4)
-              DRYBIO = DRYBIO*Vfactor
-              GRNBIO = GRNBIO*Vfactor
+          ELSEIF(NVBVOL(1).GT.0.AND.VOL(1).GT.0)THEN
+              Vfactor = VOL(1)/NVBVOL(1)
+          ENDIF
+          DRYBIO = DRYBIO*Vfactor
+          GRNBIO = GRNBIO*Vfactor
+          !Set topwood biomass to 0 when VOL(7) = 0
+          IF(VOL(7).EQ.0)THEN
+              DRYBIO(10) = DRYBIO(10)+DRYBIO(8)
+              DRYBIO(8) = 0
+              DRYBIO(11) = DRYBIO(11)+DRYBIO(9)
+              DRYBIO(9) = 0
+              GRNBIO(10) = GRNBIO(10)+GRNBIO(8)
+              GRNBIO(8) = 0
+              GRNBIO(11) = GRNBIO(11)+GRNBIO(9)
+              GRNBIO(9) = 0
           ENDIF
       ENDIF
       RETURN

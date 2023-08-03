@@ -10,6 +10,7 @@ c                  J. Flewelling  July, 1996
 c                  Modified by K. Cormier Sept, 1996
 C  04/02/2014 YW Changed UPSHT1 to 33.6 for 32 foot log when using FCLASS
 C  07/12/2016 YW ADDED BTR VALUE FOR REGION 3 SANTA FE NF SPECIES 122,202,015,108
+!  07/13/2023 YW Changed BTR for 301FW2W equatin for species 122,202,015,108 with R3 combined validation data      
 C     TREE VARIABLES
       REAL DBHOB,HTTOT,DBTBH,MHT,MTOPP,btr
 
@@ -202,6 +203,9 @@ C     REGION 3
          IF(GEOSUB.EQ.'00')THEN
            IF(SPEC.EQ.'122')THEN
              JSP = 29
+           ELSEIF(SPEC.EQ.'202')THEN
+              JSP = 26
+              IF(BTR.LE.0) BTR = 88.85  !the BTR for combined R3 DF data
            ELSE
              ERRFLAG = 1
              RETURN
