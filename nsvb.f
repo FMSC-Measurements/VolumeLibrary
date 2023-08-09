@@ -42,7 +42,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       REAL Vsawib,Vsawbk,Vsawob,Vmrchib,Vmrchbk,Vmrchob
       REAL Vtwib,Vtwob,Vtwbk,Vstumpib,Vstumpob,Vstumpbk
       REAL Vtipib,Vtipob,Vtipbk,LMERCH,HTsaw,HTmrch
-      REAL LOGLEN(20),LOGVOL(7,20),LOGDIA(21,3),BOLHT(21)
+      REAL LOGLEN(20),LOGVOL(7,20),LOGDIA(21,3),BOLHT(21),SG(11)
       INTEGER RatioEQ,LOGST,NUMSEG,I,SPCD,SPGRPCD,DIVISION,EcoProv 
       REAL NOLOGP,NOLOGS,LOGLENT(20),NLOGP,NLOGS,WDSG
       REAL Wtotib,Wtotbk,Wbrch,AGBpred,AGBcomp,AGBred,AGBdiff
@@ -247,17 +247,18 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       NUMSEG = 0
       R = 0
       HTsaw = STUMP
+      !Moved the DIBL (DBHIN) calculation here avoid DIBL=0 for trees with no saw prod 
+      HT2 = 4.5
+      CALL NVB_CalcDiaAtHT(Vtotib,a,b,HTTOT,HT2,DIB)
+      LOGDIA(1,2)= DIB
+      LOGDIA(1,1)=NINT(DIB)
+      BOLHT(1) = HT2
+C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG              
+      DIBL = LOGDIA(1,1)
+      HT2 = STUMP
       IF(LMERCH.GE.MERCHL)THEN
           CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,LOGLEN)
-          HT2 = 4.5
-          CALL NVB_CalcDiaAtHT(Vtotib,a,b,HTTOT,HT2,DIB)
-          LOGDIA(1,2)= DIB
-          LOGDIA(1,1)=NINT(DIB)
-          BOLHT(1) = HT2
-C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG              
-          DIBL = LOGDIA(1,1)
-          HT2 = STUMP
           CALL NVB_CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,Vtotib,TRIM,HTTOT,
      +  LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR,a,b)
           LOGST = NUMSEG
@@ -419,6 +420,10 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       CALL CRZSPDFT(REGN, FORST, SPCD, WF, BMSEQ, REF)
       GRNWF = WF(1)
       DRYWF = (WoodHarm+BarkHarm)/Vtotib
+      IF(DRYWF.EQ.0) THEN
+          CALL MILESDATA(SPCD,SG)
+          DRYWF = SG(10)
+      ENDIF
       MC = (GRNWF-DRYWF)/DRYWF
       GRNBIO = DRYBIO*(1+MC)
       
@@ -646,7 +651,7 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
           WDSG = WDBKWT(DONE,4)
       ELSE
           SPGRPCD = WDBKWT(LAST,3)
-          SPGRPCD = WDBKWT(LAST,3)
+          WDSG = WDBKWT(LAST,4)
       ENDIF
       RETURN
       END

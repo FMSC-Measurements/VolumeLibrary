@@ -1221,7 +1221,7 @@ C-----Get DIB at specified height
      &   +Im*((1-B)/A**2)*(A-(stemHt-17.3)/
      &   (TOTHT-17.3))**2))
       ENDIF
-      StmDib = (Ds+Db+Dt)**0.5
+      IF((Ds+Db+Dt).GT.0) StmDib = (Ds+Db+Dt)**0.5
       
       if(stmDib.lt.0.0) stmDib=0.0
       

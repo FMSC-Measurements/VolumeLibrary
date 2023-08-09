@@ -292,6 +292,7 @@ C     56 = MISCELLANEOUS SPECIES
         A=0.62
         IF(HTTOT.GT.0.0) THEN
           H1=HTTOT-XLEN-1.0
+          IF(H1.LE.0) RETURN
           HX=HTTOT-HTUP
           HR=HX/H1
           DR=HR/(0.62*HR+0.38)
