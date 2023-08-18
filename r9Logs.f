@@ -23,6 +23,7 @@ c  YW 01/18/2018 Removed the changes made on 4/13/2017.
 C  YW 05/30/2019 R9 do want logs calculation for the topwood of the sawtimber. 
 C                So I put the change back again.
 !  YW 03/11/2021 When topwood not long for a min log, set NOLOGS to 0 and continue
+!  YW 2023/08/18 Corrected topwood log calculation for only LEFTOV > MINLEN      
 C_______________________________________________________________________
 C
       SUBROUTINE R9LOGS(SAWHT, PLPHT, STUMP, MINLEN, MAXLEN, TRIM,
@@ -121,7 +122,8 @@ C         The LEFTOVER need to be calculate here (5/22/2017)
           !RETURN
           NOLOGS = 0
          ENDIF   
-         IF(NOLOGS.GT.0)THEN  
+         !Also check LEFTOV with MINLEN 2023/08/16
+         IF(NOLOGS.GT.0.OR.LEFTOV.GT.(MINLEN+TRIM))THEN  
           ILOG = NOLOGP + 1
           JLOG = ILOG + NOLOGS - 1
           IF (JLOG .GT. 20) THEN

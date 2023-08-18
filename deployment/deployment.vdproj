@@ -134,7 +134,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:3.5.30729  "
+                "FrameworkVersion" = "8:3.5.30729   "
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
                 }
@@ -261,15 +261,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:NVEL Tester"
-        "ProductCode" = "8:{AB09EBC1-7A78-47A9-96AF-BC47BD833DCB}"
-        "PackageCode" = "8:{7FC28C90-C11E-4F80-B8D2-1FB94A5F408C}"
-        "UpgradeCode" = "8:{D53FBC09-FE3B-441F-BE89-230853558FC8}"
+        "ProductCode" = "8:{572ADF0A-101C-4A52-BCC6-B15A9B2A2BA8}"
+        "PackageCode" = "8:{897ACABB-BF81-4208-A6C2-52B7065B630D}"
+        "UpgradeCode" = "8:{01E6F0AD-4DD1-4D33-9ADF-2211124A1340}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:08.03.2023"
+        "ProductVersion" = "8:08.18.2023"
         "Manufacturer" = "8:USDA Forest Service"
         "ARPHELPTELEPHONE" = "8:970-295-5771"
         "ARPHELPLINK" = "8:"

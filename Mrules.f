@@ -14,6 +14,7 @@ C     YW 02/23/2023 Changed R1 Prod 08 minimum merch length MERCHL to 16
 C     YW 03/02/2023 Added NVB Eq to use profile merch rules for R1 and R8 and 9 
 C     YW 03/10/2023 Corrected the MINLEN, MINLENT and OPT for R3. The previoue was not correct based R3 merch rules      
 ! YW 06/22/2023 Added chacking MTOPS <= MTOPP      
+! YW 2023/08/16 Added initial value for MINLENT for R8 and R9 CLK      
       SUBROUTINE MRULES(REGN,FORST,VOLEQ,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
@@ -339,6 +340,7 @@ c         MINBFD = 6.0
          MAXLEN = 8.0
 c         MINLEN = 8.0 
          MINLEN = 2.0
+         minlent = 2.0
          MERCHL = 8.0
          IF(PROD.EQ.'08') MERCHL = 12.0
          OPT = 22
@@ -370,6 +372,7 @@ C         Confirmed with Adam Moore for this default
          EVOD = 2
          MAXLEN = 8.0
          MINLEN = 4.0
+         minlent = 4.0
          MERCHL = 8.0
          OPT = 22
          read(volEq(8:10),'(i3)') spp

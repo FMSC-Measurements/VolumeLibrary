@@ -345,6 +345,8 @@ namespace volCStest
               ref CDPFLG, ref SPFLG, CONSPEC, PROD, ref HTTFLL, LIVE, ref BA, ref SI, CTYPE, ref ERRFLAG, ref PMTFLG,
               ref mRules, ref IDIST, ref BRKHT, ref BRKHTD, ref FIASPCD, DRYBIO, GRNBIO, ref CR, ref CULL, ref DECAYCD,
               strlen, strlen, strlen, strlen, strlen, strlen, strlen, charLen);
+            displayVolumes();
+            if (ERRFLAG != 0) return;
             //display the estimated total ht
             if (HTTOT > 0 && float.Parse(totalHtTB.Text) == 0)
                 totalHtTB.Text = HTTOT.ToString();

@@ -110,7 +110,10 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       RatioEQ = 6
       WfolRem = 0
       Vtotob2 = 0
-      IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
+      BTR = 0
+      DBTBH = 0
+      !Move the MTOPS check to after call MRULES 2023/08/16
+      !IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
       
       IF(HTTOT.LE.0)THEN
           IF(BRKHT.LE.0.AND.BRKHTD.LE.0)THEN
@@ -189,7 +192,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       CALL MRULES(REGN,FORST,V_EQN,DBHOB,COR,EVOD,OPT,MAXLEN,
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
-      
+      IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
       ! (1) calculate total stem wood volume inside bark
       CALL NVB_Vib(VOLEQ,DBHOB,HTTOT,Vtotib,ERRFLG)
       IF(ERRFLG.GT.0) RETURN
