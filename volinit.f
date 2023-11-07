@@ -671,7 +671,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       REAL VOL(15),LOGVOL(7,20),LOGDIA(21,3),LOGLEN(20),BOLHT(21)
       REAL NVBVOL(15),NVBLOGVOL(7,20),NVBLOGDIA(21,3),NVBLOGLEN(20)
       REAL NVBBOLHT(21),CR,CULL
-      INTEGER FIASPCD,MRULEFLG,DECAYCD,ERRFLAG2
+      INTEGER FIASPCD,MRULEFLG,DECAYCD,ERRFLAG2,I,J
       REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),Vfactor
       CHARACTER*3 SPCD
       TYPE(MERCHRULES)::MERRULES
@@ -726,6 +726,16 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      + TLOGS,NOLOGP,NOLOGS,VOL,DRYBIO,GRNBIO,ERRFLAG,FIASPCD,CTYPE)
       ELSE
           V_EQN = VOLEQ(1:10)
+          !When using FIA equation number like CU000001 or BD000001, the FIASPCD is passed in from CONSPEC variable
+          IF(VOLEQ(1:2).EQ.'CU'.OR.VOLEQ(1:2).EQ.'BD') THEN
+              IF(FIASPCD.GT.999)THEN
+                  WRITE(CONSPEC, '(I4)') FIASPCD
+              ELSEIF(FIASPCD.GT.99)THEN
+                  WRITE(CONSPEC, '(I3)') FIASPCD
+              ELSEIF(FIASPCD.GT.9)THEN
+                  WRITE(CONSPEC, '(I2)') FIASPCD
+              ENDIF
+          ENDIF
           !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
           !IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL VOLINIT(REGN,FORST,V_EQN,MTOPP,MTOPS,STUMP,DBHOB,
@@ -735,12 +745,29 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
           IF(FIASPCD.EQ.0) READ (V_EQN(8:10),'(I3)') FIASPCD
-          CALL NVB_DefaultEq(REGN,FORST,DIST,FIASPCD,NVBEQN)
-          NVBVOL = 0
-          NVBLOGVOL = 0
-          NVBLOGLEN = 0
-          NVBLOGDIA = 0
-          NVBBOLHT = 0
+          CALL NVB_DefaultEq(REGN,FORST,DIST,FIASPCD,NVBEQN,ERRFLAG)
+          IF(ERRFLAG.GT.0) RETURN
+          !NVBVOL = 0
+          !NVBLOGVOL = 0
+          !NVBLOGLEN = 0
+          !NVBLOGDIA = 0
+          !NVBBOLHT = 0
+          
+          DO 102,I=1,20
+             DO 103, J=1,7
+               NVBLOGVOL(J,I) = 0.0
+  103        CONTINUE        
+             NVBLOGDIA(I,1) = 0.0
+             NVBLOGDIA(I,2) = 0.0
+             NVBLOGDIA(I,3) = 0.0
+             NVBLOGLEN(I) = 0.0
+             NVBBOLHT(I) = 0.0
+  102     CONTINUE        
+       
+          DO 104, I=1,15
+             NVBVOL(I) = 0.0
+  104     CONTINUE
+          
           !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
           IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL NVBC(REGN,FORST,DIST,NVBEQN,DBHOB,HTTOT,MTOPP,MTOPS,

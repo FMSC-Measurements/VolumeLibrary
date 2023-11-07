@@ -658,7 +658,7 @@ namespace volCStest
                 SPCODE = int.Parse(speciesTB.Text); //spcode
             else
                 SPCODE = 0;
-            if (SPCODE > 999) SPCODE = 999;
+            //if (SPCODE > 999) SPCODE = 999;
             FIASPCD = SPCODE;
             // output debug flag
             INDEB = 0;// debugCB.Checked ? 1 : 0;
@@ -964,6 +964,7 @@ namespace volCStest
 
         private void setMerchDefaults()
         {
+            StringBuilder VOLEQ2 = new StringBuilder(256);
             string EQTYPE = VOLEQ.ToString(0, 2);
             if (EQTYPE == "CU" || EQTYPE == "BD") return;
             string MDL = VOLEQ.ToString(3,3);
@@ -993,7 +994,8 @@ namespace volCStest
             mRules.mtops = 0;
             mRules.stump = 0;
             mRules.minlent = 0;
-            MRULESCS2(ref REGN, VOLEQ, PROD, ref mRules.trim, ref mRules.minlen, ref mRules.maxlen, ref mRules.opt, ref mRules.merchl, ref mRules.mtopp, ref mRules.mtops, ref mRules.stump, ref mRules.minlent, strlen, strlen);
+            VOLEQ2 = VOLEQ;
+            MRULESCS2(ref REGN, VOLEQ2, PROD, ref mRules.trim, ref mRules.minlen, ref mRules.maxlen, ref mRules.opt, ref mRules.merchl, ref mRules.mtopp, ref mRules.mtops, ref mRules.stump, ref mRules.minlent, strlen, strlen);
             //if (REGN == 1)
             //{
             //    if (MDL == "FW2" || MDL == "fw2" || MDL == "FW3" || MDL == "fw3" || VOLEQ.ToString(0, 3) == "NVB")
@@ -1642,8 +1644,15 @@ namespace volCStest
                 PROD.Length = 0;
                 PROD.Append(prodTB.Text);
                 SPCODE = int.Parse(speciesTB.Text);
-                if (SPCODE > 999) SPCODE = 999;
+                //if (SPCODE > 999) SPCODE = 999;
                 GETNVBEQ(ref REGN, FORST, DIST, ref SPCODE, VOLEQ, ref ERRFLAG, strlen, strlen, strlen);
+                VOL = new float[I15];
+                if (ERRFLAG > 0)
+                {
+                    VOLEQ.Length = 0;
+                    //VOL = new float[I15];
+                }
+                displayVolumes();
                 volEqTB.Text = VOLEQ.ToString();
             }
             else

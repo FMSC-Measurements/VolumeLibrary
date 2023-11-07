@@ -423,7 +423,7 @@ C**********************************************************************
      >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
      >   PROD)
      
-      VOLEQI = VOLEQ // char(0)
+      !VOLEQI = VOLEQ // char(0)
       PRODI = PROD // char(0)
      
       END SUBROUTINE MRULESCS2      
@@ -772,7 +772,7 @@ C**********************************************************************
       
       !add null terminator required by C# strings
       !FORSTI = FORST // char(0)
-      !VOLEQI = VOLEQ11 // char(0)
+      VOLEQI = VOLEQ11 // char(0)
       !HTTYPEI = HTTYPE // char(0)
       !CONSPECI = CONSPEC // char(0)
       !PRODI = PROD // char(0)

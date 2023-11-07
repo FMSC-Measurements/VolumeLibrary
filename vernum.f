@@ -94,6 +94,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !20230802* Combined BTR for DF(202) to make 300FW2W202  
 !20230809 Fixed bugs found by FVS testing.  
 !20230818 Added MINLENT initial values in MRULES for R8 and R9 and topwood log calc for LEFTOV > MINLEN   
+!20231106 Modified nsvb.f bole biomass calc with CULL and other minor changes with test for FIADB vol and biomass      
 !         Check STUMP>0 before stump vol calc
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
@@ -124,7 +125,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230818
+      VERSION = 20231106
       RETURN
       END SUBROUTINE VERNUM
       
@@ -157,7 +158,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20230818
+      VERSION = 20231106
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -180,7 +181,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20230818
+      VERSION = 20231106
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -193,6 +194,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20230818
+      version = 20231106
       return
       end subroutine vernum_r

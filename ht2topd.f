@@ -39,7 +39,8 @@ C     Variables for Clark profile
       LOGICAL SHORT   
       !Variables to call NSVB equation
       CHARACTER*11 VOLEQ11
-      REAL Vib
+      REAL Vib,WDSG,CF,SPGRNWF,SPDRYWF
+      INTEGER SPCD,SPGRPCD,SFTHRD
       
       MDL = VOLEQ(4:6)
 c      TOPD = STEMDIB
@@ -259,9 +260,12 @@ C          region 10 call to determine total height or merch height
           ENDIF
       ELSEIF(VOLEQ(1:3).EQ.'NVB')THEN
         VOLEQ11 = VOLEQ
-        CALL NVB_Vib(VOLEQ11,DBHOB,HTTOT,Vib,ERRFLAG)
+        READ (VOLEQ11(8:10),'(i3)') SPCD
+        CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLAG,
+     +   SPGRNWF,SPDRYWF)
+        CALL NVB_Vib(VOLEQ11,DBHOB,HTTOT,Vib,ERRFLAG,SPGRPCD,WDSG)
         CALL NVB_HT2TOPDib(VOLEQ11,DBHOB,HTTOT,Vib,STEMDIB,STEMHT,
-     +   ERRFLAG)
+     +   ERRFLAG,SPGRPCD,WDSG)
       ENDIF
 1000  CONTINUE
       RETURN

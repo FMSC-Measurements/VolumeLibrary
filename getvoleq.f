@@ -223,7 +223,7 @@ C YW 02/10/2017
       FORST   = FORSTI(1:3)
       DIST    = DISTI(1:3)
       VOLEQ   = VOLEQI(1:11)
-      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ)
+      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ,ERRFLAG)
          FORSTI = FORST // char(0)
          DISTI = DIST // char(0)
          VOLEQI = VOLEQ // char(0)
@@ -240,7 +240,7 @@ C YW 02/10/2017
       CHARACTER*(*):: VOLEQ
       INTEGER SPEC,ERRFLAG,REGN
 	    
-      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ)
+      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ,ERRFLAG)
       RETURN
       end subroutine GETNVBEQ2
 !----------------------------------------------------------------------
@@ -252,6 +252,6 @@ C YW 02/16/2023
       CHARACTER*(*) :: FORST,DIST
       CHARACTER*(*):: VOLEQ
 	INTEGER SPEC,ERRFLAG,REGN
-      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ)
+      CALL NVB_DefaultEq(REGN,FORST,DIST,SPEC,VOLEQ,ERRFLAG)
       RETURN
       end subroutine getnvbeq_r
