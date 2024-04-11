@@ -363,7 +363,7 @@ namespace volCStest
             DRCOB = 0.0F;
             CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
             //test call BIOLIBCS
-            //BIOEQ.Append("AFF019AST01D");
+            //BIOEQ.Append("JEN002AGT01D");
             BIOEQ.Append("0");
             GEOSUB.Append("00");
             BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, GRNBIO9, DRYBIO9, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
@@ -381,7 +381,7 @@ namespace volCStest
             //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
 
             //Test on call BIOLIB 2021/11/10
-           BIOEQ.Append("FNC122AWB01D");
+           BIOEQ.Append("JEN002AGT01D");
            GEOSUB.Append("01");
            BIOGRN = new float[9];
            BIODRY = new float[9];
@@ -587,7 +587,8 @@ namespace volCStest
             MTOPS = float.Parse(topDibSPTB.Text);
             STUMP = 0.0F;
             DBHOB = float.Parse(dbhTB.Text);
-            DRCOB = 0.0F;
+            //DRCOB = 0.0F;
+            DRCOB = DBHOB;
             //merch rules
             HTTOT = float.Parse(totalHtTB.Text);
             HT1PRD = float.Parse(mrchHtPPTB.Text);
@@ -619,7 +620,7 @@ namespace volCStest
             if (upstht2TB.TextLength > 0)
                 DIBHT = float.Parse(upstht2TB.Text); //spcode
             //else
-            DRCOB = 0;//upper stem height 2
+            //DRCOB = 0;//upper stem height 2
             //*****************************************************************
 
             UPSD1 = float.Parse(upsd1TB.Text);//upper stem diameter 1
@@ -1355,7 +1356,7 @@ namespace volCStest
                     string volMDL = volEqTB.Text.ToString().ToUpper().Substring(3,2);
                     string volMDL2 = volEqTB.Text.ToString().ToUpper().Substring(0, 3);
                     string volREGN = volEqTB.Text.ToString().ToUpper().Substring(0, 1);
-                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || volMDL == "DV" || volMDL == "CL" || volMDL2 == "NVB")
+                    if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE" || volMDL == "DV" || volMDL == "CL" || volMDL2 == "NVB" || volMDL == "CU" || volMDL == "DE")
                     //if (volMDL == "FW" || volMDL == "WO" || volMDL == "CZ" || volMDL == "JB" || volMDL == "BE")
                     {
                         panel2.Enabled = true;
@@ -2488,11 +2489,21 @@ namespace volCStest
             //volEqTB.Text
             string strVOLEQ = volEqTB.Text;
             string strNote = "";
+            string strBioRef = "Westfall et al 2023";
             if (!strVOLEQ.Contains("NVB"))
             { 
                 GETNVBEQ(ref REGN, FORST, DIST, ref FIASPCD, NVBEQ, ref ERRFLAG, strlen, strlen, strlen);
-                strVOLEQ = NVBEQ.ToString() + "*";
-                strNote = "*The merch volume from " + NVBEQ.ToString() + " was adjusted to match merch volume from " + volEqTB.Text + " for biomass calculation.";
+                if (ERRFLAG == 0)
+                {
+                    strVOLEQ = NVBEQ.ToString() + "*";
+                    strNote = "*The merch volume from " + NVBEQ.ToString() + " was adjusted to match merch volume from " + volEqTB.Text + " for biomass calculation.";
+                }
+                else
+                {
+                    strVOLEQ = strVOLEQ + "*";
+                    strNote = "*Biomass was calculated using " + strVOLEQ.Replace("*","") + " with Woodland species biomass equation.";
+                    strBioRef = "FIA Woodland species biomass equation";
+                }
             }
             
 
@@ -2509,7 +2520,7 @@ namespace volCStest
                 writer.WriteLine("Weightfactor (secondary)".PadRight(25, ' ') + WF[1].ToString().PadRight(15, ' ') + WF2REF);
                 writer.WriteLine("Moisture content (%)".PadRight(25, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
                 //writer.WriteLine("Biomass Equation".PadRight(25, ' ') + NVBEQ.ToString().PadRight(15, ' ') + "Westfall et al 2023" );
-                writer.WriteLine("Biomass Equation".PadRight(25, ' ') + strVOLEQ.PadRight(15, ' ') + "Westfall et al 2023");
+                writer.WriteLine("Biomass Equation".PadRight(25, ' ') + strVOLEQ.PadRight(15, ' ') + strBioRef);
                 if (strNote.Length > 0) writer.WriteLine(strNote);
                 //writer.WriteLine("Above ground total".PadRight(25, ' ') + AGTEQ.ToString().PadRight(15, ' ') + AGTREF);
                 //writer.WriteLine("Live branches".PadRight(25, ' ') + LBREQ.ToString().PadRight(15, ' ') + LBRREF);

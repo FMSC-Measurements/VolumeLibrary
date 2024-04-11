@@ -503,6 +503,7 @@ C YW 05/09/2019
       HT2PRD = REAL(HT2_d)
       CV4 = REAL(CV4_d)
       TOPD = REAL(TOPD_d)
+      VOL = 0.0
       VOL(4) = CV4
       CL = REAL(CL_d)
       ERRFLAG = 0

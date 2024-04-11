@@ -7,7 +7,8 @@
 ! Added DIB calculation for Behr equation (1/28/2014)
 ! Added stump diameter (from ground to 4.5 ft) calculation for non profile model using Raile 1983 (YW)
 ! YW 2016/01/13 Added BTR default value for Region 3 Santa Fe forest DF and PP
-! YW 2023/08/08 Corrected variable name error for DBHOB in CALCDIA2      
+! YW 2023/08/08 Corrected variable name error for DBHOB in CALCDIA2 
+! YW 2024/03/26 Added initial value 0 to DIB and DOB in CALCDIA2      
 !  CalcDia.f90 
 !  FUNCTIONS/SUBROUTINES exported from VOLLIB.dll:
 !	CALCDIA      - subroutine 
@@ -76,6 +77,9 @@ C **************************************************************
       REAL WDSG
       INTEGER SPGRPCD
       
+      !Added initial value 0 to DIB and DOB (2024/03/26)
+      DIB=0.0
+      DOB=0.0
       TLH = 0.
 !     ARRAYS
 ! initialize profile model  

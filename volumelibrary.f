@@ -58,7 +58,11 @@
       TYPE(MERCHRULES)::MERRULES
       BRKHT = 0
       BRKHTD = 0
-      FIASPCD = 0
+      IF(LEN_TRIM(CONSPEC).GT.0)THEN
+          READ (CONSPEC,'(I3)') FIASPCD
+      ELSE
+          FIASPCD = 0
+      ENDIF
       CR = 0
       CULL = 0
       DECAYCD = 0
@@ -1055,7 +1059,7 @@ C     If BIOEQ is provided, calculate biomass from it
         ELSE
           NVELBEQ = BIOEQ
         ENDIF
-        IF(NVELBEQ(12:12).NE.'D'.OR.NVELBEQ(12:12).NE.'G') RETURN
+        !IF(NVELBEQ(12:12).NE.'D'.OR.NVELBEQ(12:12).NE.'G') RETURN
 C       Set default values
         CR = (HTTOT-HTTFLL)/HTTOT
         IF(CR.LE.0.0.OR.CR.GT.1.0) CR = 0.5

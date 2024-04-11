@@ -1,5 +1,6 @@
 !== last modified  1-6-2014
 ! 1/6/2014 YW corrected coefficient for hemlock(48) B3=0.00000546
+! 3/26/2024 YW Added initial value 0 to D2 in BLMTAP and BEHTAP      
       SUBROUTINE BLMTAP(DBHOB,HTTOT,TLH,HTUP,D17,TOP,XLEN,D2,Profile)
 C###########################################################
       USE DEBUG_MOD
@@ -64,7 +65,7 @@ C
       IF (DEBUG%MODEL) THEN
          WRITE  (LUDBG, '(A)') ' -->Enter BLMTAP'
    		ENDIF
-     
+      D2 = 0.0
      
 C   DETERMINE IF HEIGHT IS IN LOGS OR FEET
       IF (TLH.EQ.0.0) THEN
@@ -74,6 +75,7 @@ C--     FOR TOTAL HEIGHT IN FEET FROM STUMP TO TIP *********************
 C-- BEHRE'S HYPERBOLA PORTION TO Calculate DIB *************************
 
         HBUTT = HTTOT - (XLEN + 1.5)
+        IF(HBUTT.LE.0) RETURN
         HTDIB = HTTOT - HTUP
  
         A = BLMTHT(1,Profile) +
@@ -276,7 +278,8 @@ C     56 = MISCELLANEOUS SPECIES
       INTEGER PROFILE,FCLASS,TAPEQU
       REAL H1,HX,HR,DR,AT,BT,T,A
 
-      XLEN=16.3  
+      XLEN=16.3
+      D2=0.0
       D17=(DBHOB*FCLASS) / 100.0
       
       IF(VOLEQ(1:1).EQ.'B'.OR.VOLEQ(1:1).EQ.'b')THEN

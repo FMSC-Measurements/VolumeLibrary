@@ -76,12 +76,12 @@ C YW 2023/06/05 Modified VOLINITNVB for resetting CTYPE
 C  variables for stump dia and vol
       INTEGER SPN
       REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
-      REAL DIB,DOB,HTUP,MHT,FIAVOL,BFMIND
+      REAL DIB,DOB,HTUP,MHT,FIAVOL,BFMIND,LMERCH
       
 c  test biomass calc variable
       REAL WF(3), BMS(8)
       INTEGER SPCD, FOREST 
-      
+
 C Test fiaeq2nveleq 2019/08/21
 !      CHARACTER*12 FIABEQ,NVELBEQ,GEOSUB2
 !      INTEGER BEQNUM,STEMS
@@ -440,6 +440,10 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
 !***********************
 !    REGION 10 MODEL  * 
 !***********************
+         IF(HTTOT.LE.0.AND.HT1PRD.GT.0)THEN
+             CALL R10HTS(VOLEQ,HTTOT,HT1PRD,DBHOB,HTTYPE,STUMP,MTOPP,
+     >          LMERCH)
+         ENDIF
          IF ((VOLEQ(1:3).EQ.'A01'.OR.VOLEQ(1:3).EQ.'A02' .or.
      &        VOLEQ(1:3).EQ.'a01'.OR.VOLEQ(1:3).EQ.'a02' ) .or.
      &     ((HTTYPE.EQ.'F'.AND.HTTOT.LE.40) .OR. DBHOB.LT.9.0)) THEN
@@ -534,6 +538,7 @@ C AND ALL OTHER RD (EXCEPT ANDREW PICKENS(02)) OF FRANCIS MARION & SUTTER(12)
             LOGLEN(I) = 0.0
  19      CONTINUE 
       ENDIF
+      IF(VOL(7).LT.0.0) VOL(7) = 0.0
 C  calc Tip volume and save to VOL(15)
       IF(ERRFLAG.GT.0) RETURN
       IF(VOL(14).LE.0.0.AND.STUMP.GT.0) THEN  !start stump vol calc
@@ -675,6 +680,8 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),Vfactor
       CHARACTER*3 SPCD
       TYPE(MERCHRULES)::MERRULES
+      INTEGER SPGRPCD,SFTHRD,STEMS
+      REAL WDSG, CF, SPGRNWF, SPDRYWF, MC,SPREGNWF,DeadWF,BIOMS(8)
       
       I3 = 3
       I7 = 7
@@ -719,6 +726,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           NEWDBTBH = MERRULES%DBTBH
           NEWMINBFD = MERRULES%MINBFD 
       ENDIF
+      IF(FIASPCD.EQ.204) FIASPCD = 202
       IF(VOLEQ(1:3).EQ.'NVB')THEN
           CALL NVBC(REGN,FORST,DIST,VOLEQ,DBHOB,HTTOT,MTOPP,MTOPS,
      + HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,LIVE,CR,CULL,DECAYCD,
@@ -736,8 +744,6 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                   WRITE(CONSPEC, '(I2)') FIASPCD
               ENDIF
           ENDIF
-          !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
-          !IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL VOLINIT(REGN,FORST,V_EQN,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
@@ -745,8 +751,43 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
           IF(FIASPCD.EQ.0) READ (V_EQN(8:10),'(I3)') FIASPCD
+          IF(FIASPCD.EQ.204) FIASPCD = 202
           CALL NVB_DefaultEq(REGN,FORST,DIST,FIASPCD,NVBEQN,ERRFLAG)
-          IF(ERRFLAG.GT.0) RETURN
+          IF(ERRFLAG.GT.0) THEN
+              !Check if woodland species and calculate biomass based FIA equation
+              CALL NVB_RefSpcData(FIASPCD,SPGRPCD,WDSG,SFTHRD,CF,
+     &            ERRFLAG,SPGRNWF,SPDRYWF)
+              IF(SPGRPCD.EQ.10)THEN
+                  ERRFLAG = 0
+                  STEMS = FCLASS
+                  IF(DRCOB.LT.1.AND.DBHOB.GE.1) DRCOB=DBHOB
+                  IF(REGN.EQ.5.OR.REGN.EQ.6)THEN
+                      !For woodland species in pacific NW calculated as CVT*WDDEN
+                      DRYBIO(1) = VOL(1)*WDSG
+                  ELSE
+                      !For woodland species in  RockyMountain region   
+                    CALL WOODLAND_BIO(FIASPCD, DRCOB,HTTOT,STEMS,VOL,
+     &              DRYBIO,ERRFLAG)
+                  ENDIF
+                  !Calculate foliage using Jenkins equation. This is to match FIA foliage calculation
+                  !Calculate foliage for LIVE tree only    
+                  BIOMS = 0
+                  IF(LIVE.EQ.'L') CALL JENKINS(FIASPCD,DRCOB,BIOMS)
+                  !Reset the foliage result
+                  DRYBIO(13) = BIOMS(4)
+                  !calc carbon
+                  DRYBIO(15) = DRYBIO(1)*CF
+                  !calc green weight
+                  CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF)
+                  IF(LIVE.EQ.'L')THEN
+                      MC = (SPGRNWF-SPDRYWF)/SPDRYWF
+                  ELSE
+                      MC = (DeadWF-SPDRYWF)/SPDRYWF
+                  ENDIF
+                  GRNBIO = DRYBIO*(1+MC)
+              ENDIF
+              RETURN
+          ENDIF
           !NVBVOL = 0
           !NVBLOGVOL = 0
           !NVBLOGLEN = 0

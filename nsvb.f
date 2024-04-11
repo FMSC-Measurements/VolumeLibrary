@@ -58,7 +58,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       REAL WtotibRed,WtotbkRed,WtotobRed,WbrchRed,AGBcompRed,BrchRem
       REAL Vtotob2,Vsawib2,Vsawob2,Vsawbk2,Vmrchib2,Vmrchob2,Vmrchbk2
       REAL Vtwib2,Vtwob2,Vtwbk2,Vtipib2,Vtipbk2,Rsaw2,Rmrch2
-      REAL DeadCF,SPGRNWF,SPDRYWF, SPREGNWF
+      REAL DeadCF,SPGRNWF,SPDRYWF, SPREGNWF,DeadWF
       CHARACTER*3 SPC
       !Check VOLEQ is valid
       IF(VOLEQ(1:3).NE.'NVB')THEN
@@ -150,7 +150,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       IF(SPCD.EQ.204) SPCD = 202
       IF(SPCD.LT.10)THEN
           !FIASPCD is required for Jenkins SPGRP equation
-          ERRFLG = 4
+          ERRFLG = 6
           RETURN
       ENDIF
       
@@ -333,6 +333,10 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       HT2 = STUMP
       IF(LMERCH.GE.MERCHL)THEN
           CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
+          IF(NUMSEG.GT.21)THEN
+              ERRFLG=12
+              RETURN
+          ENDIF
           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,LOGLEN)
           CALL NVB_CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,Vtotib,TRIM,HTTOT,
      +  LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR,a,b)
@@ -378,6 +382,10 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG,
      &     LOGLENT)
           NOLOGS = NUMSEG
+          IF((LOGST+NUMSEG).GT.21) THEN
+              ERRFLG = 12
+              RETURN
+          ENDIF
           !Add secondary log length to LOGLEN
           DO 600 I = 1, NUMSEG
             LOGLEN(I+LOGST) = LOGLENT(I)
@@ -499,18 +507,25 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       CF = ANINT(CF*1000)/1000
       DRYBIO(15) = DRYBIO(1)*CF
       ! (15) get the regional green weight factor to calculate green biomass (GRNBIO)
-      SPREGNWF = 0
-      CALL GetRegnWF(REGN,FORST,SPCD,SPREGNWF)
-      IF(SPREGNWF.GT.0) THEN
-          GRNWF = SPREGNWF
-      ELSE
-          GRNWF = SPGRNWF
-      ENDIF
+      !SPREGNWF = 0
+      !CALL GetRegnWF(REGN,FORST,SPCD,SPREGNWF)
+      !IF(SPREGNWF.GT.0) THEN
+      !    GRNWF = SPREGNWF
+      !ELSE
+      !    GRNWF = SPGRNWF
+      !ENDIF
+      GRNWF = SPGRNWF
+      CALL GetRegnWF(REGN,FORST,SPCD,GRNWF,DeadWF)
       DRYWF = (WoodHarm+BarkHarm)/Vtotib
-      IF(DRYWF.EQ.0) THEN
+      IF(DRYWF.LT.10) THEN
           DRYWF = SPDRYWF
       ENDIF
-      MC = (GRNWF-DRYWF)/DRYWF
+      !MC = (GRNWF-DRYWF)/DRYWF
+      IF(LIVE.EQ.'L')THEN
+          MC = (GRNWF-DRYWF)/DRYWF
+      ELSE
+          MC = (DeadWF-DRYWF)/DRYWF
+      ENDIF
       GRNBIO = DRYBIO*(1+MC)
       
       RETURN
@@ -1313,15 +1328,17 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
       END
 !----------------------------------------------------------------------
       !get species regional weight factor
-      SUBROUTINE GetRegnWF(REGN,FORST,SPCD,WtFac)
+      SUBROUTINE GetRegnWF(REGN,FORST,SPCD,WtFac,DeadWF)
       IMPLICIT NONE
       INTEGER REGN, SPCD,DONE,I,IFORST
       CHARACTER*2 FORST
-      REAL WtFac
+      REAL WtFac,DeadWF
       INCLUDE 'regndftdata.inc'
-      
+      INTEGER SPGRPCD,ERRFLG,SFTHRD
+      REAL WDSG, CF, SPGRNWF, SPDRYWF
       DONE = 0
       I = 0
+      DeadWF = 0
       READ(FORST,'(i2)') IFORST
       IF(REGN.EQ.0) DONE = -1  
       DO WHILE (DONE.EQ.0)
@@ -1333,10 +1350,33 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
      &      SPREGNDFTWF(I,3).EQ.SPCD)) THEN
              DONE = I
              WtFac = SPREGNDFTWF(I,4)
+             DeadWF = SPREGNDFTWF(I,7)
            ENDIF
          ENDIF 
          IF(I.GE.TOTDFT.AND.DONE.EQ.0) DONE = -1
       END DO
+      !Species does not have a regional default, get green weight from ref_species
+      IF(DONE.EQ.-1.AND.WtFac.LT.1)THEN
+          CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,
+     & SPGRNWF,SPDRYWF)
+          WtFac = SPGRNWF
+      ENDIF
+      !Dead weight factor is not defined by region, using regional average
+      IF(DeadWF.LT.1)THEN
+          IF(REGN.EQ.1)THEN
+              DeadWF = WtFac*0.6749
+          ELSEIF(REGN.EQ.2)THEN
+              DeadWF = WtFac*0.6381
+          ELSEIF(REGN.EQ.4)THEN
+              DeadWF = WtFac*0.9494
+          ELSEIF(REGN.EQ.5)THEN
+              DeadWF = WtFac*0.8254
+          ELSEIF(REGN.EQ.7)THEN
+              DeadWF = WtFac*0.7951
+          ELSE
+              DeadWF = WtFac*0.7766
+          ENDIF
+      ENDIF
       RETURN
       END
       

@@ -105,6 +105,7 @@ C       CHANGED TO USE EQUATION NUMBER 02 FOR USING CV FOR 1.5" TOP.(YW 2019/05/
           IF(BEQ(10:11).EQ.'01') THEN
             BIO3 = VOL(4)*SPSG*62.4
           ELSEIF(BEQ(10:11).EQ.'02') THEN
+            IF(VOL(1).EQ.0) VOL(1) = VOL(4)
             CALL CHO_WDBK_1530(SPN,DBH,HTTOT,VOL(1),STEMS,SPSG,BIO3)
           ENDIF
           BIO3_M = BIO3/2.2046
@@ -134,10 +135,10 @@ C       CHANGED TO USE EQUATION NUMBER 02 FOR USING CV FOR 1.5" TOP.(YW 2019/05/
           ENDIF
 
 C         Return component biomass
-C         Above stump wood and bark (stem plus branches)
+C         Above ground wood and bark (stem plus branches)
           IF(BEQ(7:9).EQ.'WB1')THEN
             BMS = BIO3 + WT_BRA
-C         Above stump total (stem, branches and foliages)
+C         Above ground total (stem, branches and foliages)
           ELSEIF(BEQ(7:9).EQ.'AST')THEN
             BMS = BIO3 + WT_BRA + WT_FOL
 C         merch stem total TO 1.5"/3.0* TOP DIB
@@ -193,4 +194,77 @@ C     Compute small tree volume if none provided
       ENDIF
       BIO3 = SG*CV3*62.4
 
+      END
+! ---------------------------------------------------------------------
+      !This subroutine calculate biomass for woodland species
+      SUBROUTINE WOODLAND_BIO(SPCD, DRC,THT,STEMS,VOL,DRYBIO,ERRFLG)
+      IMPLICIT NONE
+      INTEGER SPCD, SPN,ERRFLG,DONE,LAST,STEMS,I
+      INTEGER SPLIST(13)
+      REAL DRC,THT,SPSG,CV15,BIO3,BIO3_M,WT_FOL,WT_BRA,WT_FOL_M,WT_BRA_M
+      REAL VOL(15),DRYBIO(15),SG(13)
+      DATA (SPLIST(I),I=1,13)/57,63,65,69,106,
+     + 310,475,755,756,757,758,810,814/
+      DATA (SG(I),I=1,13)/0.533,0.517,0.523,0.558,0.496,
+     + 0.65,0.7,0.69,0.69,0.69,0.69,0.567,0.634/
+
+      SPN = SPCD
+      DONE = 0
+      LAST = 13
+      CV15 = VOL(1)
+      !First check if the SPCD is in the woodland species list
+      CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+      IF(DONE.EQ.0)THEN
+          IF(SPN.LT.70)THEN
+              SPN = 57
+          ELSEIF(SPN.LT.200)THEN
+              SPN = 106
+          ELSEIF(SPN.LT.330)THEN
+              SPN = 310
+          ELSE
+              SPN = 814
+          ENDIF
+          ERRFLG = 0
+          CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+      ENDIF
+      SPSG = SG(DONE)
+      ! For woodland species, the VOL(1) from woodland volume equation is the outside bark volume from ground to 1.5" top
+      ! For the DRYBIO, the wood and bark are not seperated and saved in the wood element 
+      DRYBIO(2) = CV15*SPSG*62.4
+      ! Stump wood and bark
+      !DRYBIO(4) = 3.14*(DRC/2/12)**2*SPSG*62.4
+      ! Get the BIO to 3" top
+      CALL CHO_WDBK_1530(SPN,DRC,THT,CV15,STEMS,SPSG,BIO3)
+      DRYBIO(6) = BIO3
+      ! Get the tip from 3" to 1.5"
+      !DRYBIO(10) = DRYBIO(2) - BIO3
+      ! Branches and foliage
+      BIO3_M = BIO3/2.2046
+      IF(SPN.GE.300)THEN
+          WT_FOL = 10**(-.5655+(.8382*(LOG10(BIO3)))+(-.0094*THT))
+          WT_BRA = 10**(.3036+(.7752*(LOG10(BIO3)))+(-.0049*THT))
+      ELSE
+          IF(SPN.EQ.106)THEN
+              IF(BIO3_M.LE.468.028)THEN
+               WT_FOL_M = EXP(1.0254+.559*LOG(BIO3_M))
+              ELSE
+               WT_FOL_M=EXP(1.0254+.559*(1.0+LOG(468.028)
+     &         -468.028/BIO3_M))
+              ENDIF
+          ELSE
+              IF(BIO3_M.LE.150.0)THEN
+               WT_FOL_M = EXP(1.2867+.649*LOG(BIO3_M))
+              ELSE
+               WT_FOL_M = EXP(1.2867+.649*(1.0+LOG(150.0)-150.0/BIO3_M))
+              ENDIF
+          ENDIF
+          WT_FOL = WT_FOL_M*2.2046
+          WT_BRA = WT_FOL*0.75
+          WT_FOL = WT_FOL*0.25
+      ENDIF
+      DRYBIO(12) = WT_BRA
+      DRYBIO(13) = WT_FOL
+      DRYBIO(1) = DRYBIO(6)+DRYBIO(12)
+      
+      RETURN
       END
