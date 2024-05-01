@@ -610,6 +610,8 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           VOL(4) = VOL(1)
         ENDIF
       ENDIF
+      !Added VOL(1) > 0 check (20240426)
+      IF(VOL(1).LT.0) VOL(1) = 0
       IF (DEBUG%MODEL) THEN
         WRITE  (LUDBG, 100)'FORST VOLEQ     MTOPP HTTOT HT1PRD DBHOB 
      &   HTTYPE FCLASS'
@@ -659,7 +661,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
-     +    GRNBIO,MRULEFLG,MERRULES)
+     +    GRNBIO,MRULEFLG,MERRULES,CULLMSTOP)
       USE CHARMOD
       USE MRULES_MOD
       USE VOLINPUT_MOD
@@ -675,13 +677,14 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       REAL UPSHT1,UPSHT2,UPSD1,UPSD2,AVGZ1,AVGZ2,DBTBH,BTR,NOLOGP,NOLOGS
       REAL VOL(15),LOGVOL(7,20),LOGDIA(21,3),LOGLEN(20),BOLHT(21)
       REAL NVBVOL(15),NVBLOGVOL(7,20),NVBLOGDIA(21,3),NVBLOGLEN(20)
-      REAL NVBBOLHT(21),CR,CULL
-      INTEGER FIASPCD,MRULEFLG,DECAYCD,ERRFLAG2,I,J
+      REAL NVBBOLHT(21),CR,CULL,NVBNOLOGP,NVBNOLOGS
+      INTEGER FIASPCD,MRULEFLG,DECAYCD,ERRFLAG2,I,J,NVBTLOGS
       REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),Vfactor
       CHARACTER*3 SPCD
       TYPE(MERCHRULES)::MERRULES
-      INTEGER SPGRPCD,SFTHRD,STEMS
+      INTEGER SPGRPCD,SFTHRD,STEMS,EcoProv
       REAL WDSG, CF, SPGRNWF, SPDRYWF, MC,SPREGNWF,DeadWF,BIOMS(8)
+      REAL NVBHT1PRD,NVBHT2PRD, DecayProp,CV15,CULLMSTOP,FOLIAGE,BrchRem
       
       I3 = 3
       I7 = 7
@@ -699,6 +702,11 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       TLOGS = 0
       NOLOGP = 0
       NOLOGS = 0
+      NVBTLOGS = 0
+      NVBNOLOGP = 0
+      NVBNOLOGS = 0
+      NVBHT1PRD = HT1PRD
+      NVBHT2PRD = HT2PRD
       Vfactor = 1
       ERRFLAG2 = 0
       IF(IDIST.EQ.0) IDIST = 1
@@ -761,22 +769,41 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                   ERRFLAG = 0
                   STEMS = FCLASS
                   IF(DRCOB.LT.1.AND.DBHOB.GE.1) DRCOB=DBHOB
+                  !FIA adjust missing top VOL using CULLMSTOP (20240426)
+                  CV15 = VOL(1)
+                  IF(CULLMSTOP.GT.0) CV15 = CV15*(1-CULLMSTOP/100)
                   IF(REGN.EQ.5.OR.REGN.EQ.6)THEN
                       !For woodland species in pacific NW calculated as CVT*WDDEN
-                      DRYBIO(1) = VOL(1)*WDSG
+                      DRYBIO(1) = CV15*WDSG
                   ELSE
                       !For woodland species in  RockyMountain region   
-                    CALL WOODLAND_BIO(FIASPCD, DRCOB,HTTOT,STEMS,VOL,
+                    CALL WOODLAND_BIO(FIASPCD, DRCOB,HTTOT,STEMS,CV15,
      &              DRYBIO,ERRFLAG)
                   ENDIF
                   !Calculate foliage using Jenkins equation. This is to match FIA foliage calculation
                   !Calculate foliage for LIVE tree only    
                   BIOMS = 0
                   IF(LIVE.EQ.'L') CALL JENKINS(FIASPCD,DRCOB,BIOMS)
+                  FOLIAGE = BIOMS(4)
+                  !Adjust foliage for missing top tree
+                  IF(BRKHT.GT.0.AND.BRKHT.LT.HTTOT)THEN
+                      CALL NVB_EcoProv(REGN,FORST,DIST,EcoProv)
+                      IF(LIVE.EQ.'L'.AND.CR.EQ.0) CR = 1
+                      CALL NVB_BrchRem(EcoProv,FIASPCD,BRKHT,HTTOT,CR,
+     &                  BrchRem)
+                      FOLIAGE = FOLIAGE*BrchRem
+                  ENDIF
                   !Reset the foliage result
-                  DRYBIO(13) = BIOMS(4)
+                  DRYBIO(13) = FOLIAGE
                   !calc carbon
                   DRYBIO(15) = DRYBIO(1)*CF
+                  !Adhust CULL for VOL and DRYBIO (20240428)
+                  VOL(1) = VOL(1)*(1-(CULL + CULLMSTOP)/100)
+                  IF(CULL.GT.0)THEN
+                    DecayProp = 0.92
+                    IF(FIASPCD.GE.300) DecayProp = 0.54
+                    DRYBIO = DRYBIO*(1.0 - CULL/100 * (1.0 - DecayProp))   
+                  ENDIF
                   !calc green weight
                   CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF)
                   IF(LIVE.EQ.'L')THEN
@@ -812,10 +839,10 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           !Set CTYPE to B to make the calc same as FIA except the MTOPP and MTOPS
           IF(CTYPE.NE.'I') CTYPE = 'B'
           CALL NVBC(REGN,FORST,DIST,NVBEQN,DBHOB,HTTOT,MTOPP,MTOPS,
-     +    HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,
+     +    NVBHT1PRD,NVBHT2PRD,STUMP,PROD,BRKHT,BRKHTD,
      +     LIVE,CR,CULL,DECAYCD,NVBLOGLEN,NVBLOGDIA,
-     +    NVBLOGVOL,NVBBOLHT,TLOGS,NOLOGP,NOLOGS,NVBVOL,DRYBIO,GRNBIO,
-     +    ERRFLAG2,FIASPCD,CTYPE)
+     +    NVBLOGVOL,NVBBOLHT,NVBTLOGS,NVBNOLOGP,NVBNOLOGS,NVBVOL,
+     +    DRYBIO,GRNBIO,ERRFLAG2,FIASPCD,CTYPE)
           !Adjust the biomass result based on the merch volume from Cruise VOLEQ
           IF(NVBVOL(4).GT.0.AND.VOL(4).GT.0)THEN
               Vfactor = VOL(4)/NVBVOL(4)

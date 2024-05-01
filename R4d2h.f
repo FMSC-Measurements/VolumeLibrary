@@ -88,10 +88,14 @@ C         --Winnemucca and Susanville BLM Districts in Nevada
 C         --S. Idaho, Parts of Nevada, W. Utah
             VOL(1) = (-0.13386+0.133726*D2H**(1./3.)+0.036329*MSTEM)**3.
          ENDIF
+         !Set to 0.1 for tree DIA < 3 (20240426)
+         IF(DBHOB.LT.3.AND.DRC.LT.3) VOL(1) = 0.1
          VOL(4) = VOL(1)
 c     Single Leaf Pinyon Pine
       ELSEIF (VOLEQ(8:10).EQ.'133')THEN
         VOL(1) = (-0.14240 + 0.148190*D2H**(1./3.)-0.016712*MSTEM)**3.
+        !Set to 0.1 for tree DIA < 3 (20240426)
+        IF(DBHOB.LT.3.AND.DRC.LT.3) VOL(1) = 0.1
         VOL(4) = VOL(1)
 c     Pinyon Pine
       ELSEIF (VOLEQ(8:10).EQ.'106')THEN

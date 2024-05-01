@@ -35,10 +35,11 @@ C== PREDICTED TOTAL HEIGHT, BASED ON REGRESSION OF HEIGHT TO 4-INCH TOP
 C==
       IF(HTTOT.LE.0.0 .AND. HT1PRD.GT.0.0) HTTOT = 12.211+1.1342*HT1PRD
 C==
-      IF (HTTOT.LT.4.5) THEN
-        ERRFLAG = 4
-         GOTO 1000
-      ENDIF
+      !Comment out the HTTOT check to match FIA (20240426)
+      !IF (HTTOT.LT.4.5) THEN
+      !  ERRFLAG = 4
+      !   GOTO 1000
+      !ENDIF
 
 C**************************************************************
 C BASIC VOLUME CALCULATIONS FOR ALL TREES, ALL UNTS OF MEASURE*
@@ -434,8 +435,9 @@ C--Juniper, Pinyon, Oak and Mesquite Volume Equations for Arizona
                ENDIF
             ENDIF 
            ENDIF
-         ELSE
-            GCUFT4 = 0.0
+          ELSE
+            !Set to 0.1 to match FIA (20240426)
+            GCUFT4 = 0.1
          ENDIF
          ENTIRE = GCUFT4
          IF(UNT.EQ.1) GCUFT6 = GCUFT4

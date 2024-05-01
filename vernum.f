@@ -100,6 +100,8 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !         (2)Added variable initial value 0 to D2 and DIB in CALCDIA2 and BLMTAP and BEHTAP to avoid error. 
 !         (3)Added weight factor for R06F16(Wallowa Whitman) and DeadWeightFactor to RegDftData.inc
 !         (4)Updated R03 weight factor and set R4 regional wide weight factor
+!20240423 Modified VOLINITNVB to add variable NVBNOLOGP, NVBNOLOGS and NVBTLOGS     
+!20240429 Modified VOLINITNVB and vollibnvb_r to add new variable CULLMSTOP for missing top CULL      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -129,7 +131,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240410
+      VERSION = 20240429
       RETURN
       END SUBROUTINE VERNUM
       
@@ -162,7 +164,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240410
+      VERSION = 20240429
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -185,7 +187,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20240410
+      VERSION = 20240429
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -198,6 +200,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20240410
+      version = 20240429
       return
       end subroutine vernum_r

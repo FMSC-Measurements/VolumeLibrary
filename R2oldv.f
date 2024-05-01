@@ -443,6 +443,8 @@ c     look for drc, if not use dbhob
         IF(DRC .GT. 0) D2H = DRC*DRC*HTTOT
 
         TCUFT = (-0.13363 + 0.128222*D2H**(1./3.)+0.080208*MSTEM)**3.
+        !Set to 0.1 for tree with DIA < 3 to match FIA (20240426)
+        IF(DRC.LT.3.AND.DBHOB.LT.3) TCUFT = 0.1
         GCUFT = TCUFT
 
 C******************************************************************

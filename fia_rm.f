@@ -197,12 +197,12 @@ C     Compute small tree volume if none provided
       END
 ! ---------------------------------------------------------------------
       !This subroutine calculate biomass for woodland species
-      SUBROUTINE WOODLAND_BIO(SPCD, DRC,THT,STEMS,VOL,DRYBIO,ERRFLG)
+      SUBROUTINE WOODLAND_BIO(SPCD, DRC,THT,STEMS,CV15,DRYBIO,ERRFLG)
       IMPLICIT NONE
       INTEGER SPCD, SPN,ERRFLG,DONE,LAST,STEMS,I
       INTEGER SPLIST(13)
       REAL DRC,THT,SPSG,CV15,BIO3,BIO3_M,WT_FOL,WT_BRA,WT_FOL_M,WT_BRA_M
-      REAL VOL(15),DRYBIO(15),SG(13)
+      REAL DRYBIO(15),SG(13)
       DATA (SPLIST(I),I=1,13)/57,63,65,69,106,
      + 310,475,755,756,757,758,810,814/
       DATA (SG(I),I=1,13)/0.533,0.517,0.523,0.558,0.496,
@@ -211,21 +211,41 @@ C     Compute small tree volume if none provided
       SPN = SPCD
       DONE = 0
       LAST = 13
-      CV15 = VOL(1)
+      !CV15 = VOL(1)
       !First check if the SPCD is in the woodland species list
+      !This is to match FIA BIOMASS_SP configuration
+      IF(SPN.EQ.62.OR.SPN.EQ.66)THEN
+          SPN = 57
+      ELSEIF(SPN.GE.133.AND.SPN.LE.143)THEN
+          SPN = 106
+      ELSEIF(SPN.EQ.303.OR.SPN.EQ.304.OR.SPN.EQ.363)THEN
+          SPN = 757
+      ELSEIF(SPN.EQ.321.OR.SPN.EQ.322)THEN
+          SPN = 310
+      ELSEIF(SPN.EQ.522.OR.SPN.EQ.7532)THEN
+          SPN = 475
+      ELSEIF(SPN.GE.523.AND.SPN.LE.758)THEN
+          SPN = 757
+      ELSEIF(SPN.EQ.803)THEN
+          SPN = 810
+      ELSEIF(SPN.GE.829.AND.SPN.LE.867)THEN
+          SPN = 810
+      ENDIF
       CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
       IF(DONE.EQ.0)THEN
-          IF(SPN.LT.70)THEN
-              SPN = 57
-          ELSEIF(SPN.LT.200)THEN
-              SPN = 106
-          ELSEIF(SPN.LT.330)THEN
-              SPN = 310
-          ELSE
-              SPN = 814
-          ENDIF
-          ERRFLG = 0
-          CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
+          ERRFLG = 6
+          RETURN
+      !    IF(SPN.LT.70)THEN
+      !        SPN = 57
+      !    ELSEIF(SPN.LT.200)THEN
+      !        SPN = 106
+      !    ELSEIF(SPN.LT.330)THEN
+      !        SPN = 310
+      !    ELSE
+      !        SPN = 814
+      !    ENDIF
+      !    ERRFLG = 0
+      !    CALL SEARCH(LAST,SPLIST,SPN,DONE,ERRFLG)
       ENDIF
       SPSG = SG(DONE)
       ! For woodland species, the VOL(1) from woodland volume equation is the outside bark volume from ground to 1.5" top
