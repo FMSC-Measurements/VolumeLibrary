@@ -615,7 +615,7 @@ C________________________________________________________________________
       
       CHARACTER(2)   FORST
       CHARACTER(12)  BMSEQ(8), BEQ 
-      CHARACTER(40) REF(8)
+      CHARACTER(50) REF(8)
       
       FORST   = FORSTI(1:2)
       
@@ -651,19 +651,20 @@ C     !add null terminator required by C# strings
       END
 C ----------------------------------------------------------------------------------------
       SUBROUTINE CRZBIOMASSCS(REGN,FORSTI,SPCD,DBHOB,DRCOB,HTTOT,FCLASS,
-     +   VOL,WF,BMS,ERRFLG)
+     +   VOL,WF,BMS,ERRFLG,PRODI)
 ! Expose subroutine CRZBIOMASSCS to C# users of this DLL
       !DEC$ ATTRIBUTES DLLEXPORT::CRZBIOMASSCS
 
       IMPLICIT NONE
       INTEGER REGN, SPCD, ERRFLG, FCLASS
       REAL DBHOB, HTTOT, VOL(15), WF(3), BMS(8), WFI(3), DRCOB
-      CHARACTER*(*) FORSTI
-      CHARACTER(2) FORST
+      CHARACTER*(*) FORSTI,PRODI
+      CHARACTER(2) FORST,PROD
       
       FORST   = FORSTI(1:2)
+      PROD = PRODI(1:2)
       CALL CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB,HTTOT,FCLASS,
-     &      VOL,WF,BMS,ERRFLG)
+     &      VOL,WF,BMS,ERRFLG,PROD)
 C     !add null terminator required by C# strings
       FORSTI = FORST // char(0)
       END

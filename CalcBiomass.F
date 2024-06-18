@@ -336,7 +336,8 @@ C           11 Sapling adjustment factor
                LAST = HALF - 1
              ENDIF
 50         CONTINUE
-         IF(DONE.LT.0) DONE = TOTSPC
+         !IF(DONE.LT.0) DONE = TOTSPC
+         IF(DONE.LT.0) DONE = CNT999
          SG(1) = WDBKWT(DONE,1)
          SG(2) = WDBKWT(DONE,2)
          SG(3) = WDBKWT(DONE,3)
@@ -543,7 +544,7 @@ C This subroutine return the species default weight factor for R
       INTEGER REGN,SPEC
       CHARACTER*2 FORST
       CHARACTER*12 BMSEQ(8), BIOEQ
-      CHARACTER*40 REF(8)
+      CHARACTER*50 REF(8)
       WF = 0.0
       CALL CRZSPDFT(REGN,FORST,SPEC,WF,BMSEQ,REF)
       

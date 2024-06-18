@@ -716,6 +716,8 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
 	    FORST(1:1) = '0'
         IF(FORST(2:2) .LT. '0') FORST(2:2) = '0'
       ENDIF
+      !Check LIVE input to be L or D
+      IF(LIVE.NE.'D') LIVE = 'L'
       !MRULEFLG = 1 indicates using modified merch rules for log segmentation
       IF(MRULEFLG.GT.0)THEN
          MRULEMOD = 'Y'
@@ -758,6 +760,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
+          IF(ERRFLAG.GT.0) RETURN
           IF(FIASPCD.EQ.0) READ (V_EQN(8:10),'(I3)') FIASPCD
           IF(FIASPCD.EQ.204) FIASPCD = 202
           CALL NVB_DefaultEq(REGN,FORST,DIST,FIASPCD,NVBEQN,ERRFLAG)
@@ -783,8 +786,9 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                   !Calculate foliage using Jenkins equation. This is to match FIA foliage calculation
                   !Calculate foliage for LIVE tree only    
                   BIOMS = 0
-                  IF(LIVE.EQ.'L') CALL JENKINS(FIASPCD,DRCOB,BIOMS)
+                  CALL JENKINS(FIASPCD,DRCOB,BIOMS)
                   FOLIAGE = BIOMS(4)
+                  IF(LIVE.EQ.'D') FOLIAGE = 0
                   !Adjust foliage for missing top tree
                   IF(BRKHT.GT.0.AND.BRKHT.LT.HTTOT)THEN
                       CALL NVB_EcoProv(REGN,FORST,DIST,EcoProv)
@@ -805,7 +809,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                     DRYBIO = DRYBIO*(1.0 - CULL/100 * (1.0 - DecayProp))   
                   ENDIF
                   !calc green weight
-                  CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF)
+                  CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF,PROD)
                   IF(LIVE.EQ.'L')THEN
                       MC = (SPGRNWF-SPDRYWF)/SPDRYWF
                   ELSE

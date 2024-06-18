@@ -102,6 +102,10 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !         (4)Updated R03 weight factor and set R4 regional wide weight factor
 !20240423 Modified VOLINITNVB to add variable NVBNOLOGP, NVBNOLOGS and NVBTLOGS     
 !20240429 Modified VOLINITNVB and vollibnvb_r to add new variable CULLMSTOP for missing top CULL      
+!20240513 Checked LIVE variable in VOINITNVB and NSVB subroutine   
+!20240605 Added input variable PROD to CRZBIOMASS and CRZBIOMASSCS subroutines for non-saw product biomass calculation using non-saw weight factor.    
+      !   Changed the default species in searching wdbkdada.inc to species 999 for invalid species instead of the TOPSPC
+      !   Also changed CRZBIOMASS to check WF input before call REGNSPDFT for regional default
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -131,7 +135,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240429
+      VERSION = 20240605
       RETURN
       END SUBROUTINE VERNUM
       
@@ -164,7 +168,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240429
+      VERSION = 20240605
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -187,7 +191,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20240429
+      VERSION = 20240605
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -200,6 +204,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20240429
+      version = 20240605
       return
       end subroutine vernum_r

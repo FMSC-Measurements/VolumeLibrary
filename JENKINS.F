@@ -78,7 +78,8 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
              LAST = HALF - 1
           ENDIF
   5     CONTINUE 
-        IF(DONE.LT.0) DONE = TOTSPC  !455
+        !IF(DONE.LT.0) DONE = TOTSPC  !455
+        IF(DONE.LT.0) DONE = CNT999
         SPCLS = WDBKWT(DONE,2)
         SPGRPCD = WDBKWT(DONE,3) 
       ENDIF

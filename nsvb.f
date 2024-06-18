@@ -467,10 +467,11 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       BrchHarm = WbrchRed + BrchAdd
       
       ! (11) calculate foliage weight for LIVE only
-      IF(LIVE.EQ.'L')THEN
-          CALL NVB_Wfo(VOLEQ,DBHOB,HTTOT,Wfol,ERRFLG,SPGRPCD,WDSG)
-          WfolRem = Wfol*BrchRem
-      ENDIF
+      !IF(LIVE.EQ.'L')THEN
+      CALL NVB_Wfo(VOLEQ,DBHOB,HTTOT,Wfol,ERRFLG,SPGRPCD,WDSG)
+      WfolRem = Wfol*BrchRem
+      !ENDIF
+      IF(LIVE.EQ.'D') WfolRem = 0
       ! (12) Adjust wood and bark density
       WDSGadj = WoodHarm/VtotibSound
       BKSGadj = BarkHarm/VtotbkSound
@@ -515,7 +516,7 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       !    GRNWF = SPGRNWF
       !ENDIF
       GRNWF = SPGRNWF
-      CALL GetRegnWF(REGN,FORST,SPCD,GRNWF,DeadWF)
+      CALL GetRegnWF(REGN,FORST,SPCD,GRNWF,DeadWF,PROD)
       DRYWF = (WoodHarm+BarkHarm)/Vtotib
       IF(DRYWF.LT.10) THEN
           DRYWF = SPDRYWF
@@ -1328,16 +1329,18 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
       END
 !----------------------------------------------------------------------
       !get species regional weight factor
-      SUBROUTINE GetRegnWF(REGN,FORST,SPCD,WtFac,DeadWF)
+      SUBROUTINE GetRegnWF(REGN,FORST,SPCD,WtFac,DeadWF,PROD)
       IMPLICIT NONE
       INTEGER REGN, SPCD,DONE,I,IFORST
-      CHARACTER*2 FORST
-      REAL WtFac,DeadWF
+      CHARACTER*2 FORST,PROD
+      REAL WtFac,DeadWF,WtFac2
       INCLUDE 'regndftdata.inc'
       INTEGER SPGRPCD,ERRFLG,SFTHRD
       REAL WDSG, CF, SPGRNWF, SPDRYWF
       DONE = 0
       I = 0
+      WtFac = 0
+      WtFac2 = 0
       DeadWF = 0
       READ(FORST,'(i2)') IFORST
       IF(REGN.EQ.0) DONE = -1  
@@ -1350,11 +1353,16 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
      &      SPREGNDFTWF(I,3).EQ.SPCD)) THEN
              DONE = I
              WtFac = SPREGNDFTWF(I,4)
+             WtFac2 = SPREGNDFTWF(I,5)
              DeadWF = SPREGNDFTWF(I,7)
            ENDIF
          ENDIF 
          IF(I.GE.TOTDFT.AND.DONE.EQ.0) DONE = -1
       END DO
+      IF(WtFac2.EQ.0) WtFac2 = WtFac
+      !For Non-saw product using the non-saw/secondary weightfactor
+      IF(REGN.EQ.1.AND.PROD.NE.'01') WtFac = WtFac2
+      IF(REGN.EQ.5.AND.PROD.EQ.'20') WtFac = WtFac2
       !Species does not have a regional default, get green weight from ref_species
       IF(DONE.EQ.-1.AND.WtFac.LT.1)THEN
           CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,

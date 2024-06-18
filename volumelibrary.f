@@ -785,7 +785,7 @@ C ******************************************************************************
      + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
      + FCLASS,DBTBH_d,BTR_d,VOL_d,LOGVOL_d,LOGDIA_d,LOGLEN_d,BOLHT_d,
      + TLOGS,NOLOGP_d,NOLOGS_d,ERRFLAG,BRKHT_d,BRKHTD_d,
-     &    DRYBIO_d,GRNBIO_d,CR_d,CULL_d,DECAYCD,CULLMSTOP_d)
+     & DRYBIO_d,GRNBIO_d,CR_d,CULL_d,DECAYCD,CULLMSTOP_d,CTYPE,LIVE)
 C This subroutine is for R user to calculate volume from vollib      !
 C with output variable for logs LOGDIA,LOGVOL,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS
 ! and new NSVB equations for biomass DRYBIO, GRNBIO      
@@ -812,7 +812,7 @@ C YW 02/10/2023
       CHARACTER*1  HTTYPE,LIVE,CTYPE
       CHARACTER*2  FORST,PROD
       character*4  CONSPEC
-      CHARACTER*10 VOLEQ
+      CHARACTER*11 VOLEQ
       CHARACTER*3  MDL,SPECIES
       CHARACTER*2  DIST,VAR
    
@@ -879,7 +879,7 @@ C     Set the default value for other variable
       HTTFLL=0
       BA=0
       SI=0
-      CTYPE='F'
+      !CTYPE='F'
       CUTFLG=1
       CUPFLG=1
       SPFLG=1
@@ -940,7 +940,7 @@ C     Set the default value for other variable
       CHARACTER*2 FORSTI
       REAL WTFAC, WF(3)
       CHARACTER*12 BMSEQ(8)
-      CHARACTER*40 REF(8)
+      CHARACTER*50 REF(8)
       FORSTI = FORST(1:2)
       WF = 0
       CALL CRZSPDFT(REGN,FORSTI,SPCD,WF,BMSEQ,REF)
@@ -998,7 +998,7 @@ C This is duplicated subroutine BIOLIB, but not using pointer for FORST, BIOEQ, 
       
       REAL BIOMS(8),SG(11),WF(3),MC,RATIO,STMGRNWT,STMDRYWT
       CHARACTER*12 BMSEQ(8),NVELBEQ,FIAEQ,GEOSUB2
-      CHARACTER*40 REF(8)
+      CHARACTER*50 REF(8)
       REAL HT1PRD, HT2PRD,TOPD,CR,BIOMASS,VOLM(15),HTTFLL
       INTEGER STEMS, I, EQLEN,NOINT,FIAEQNUM,STAT
       ERRFLG = 0

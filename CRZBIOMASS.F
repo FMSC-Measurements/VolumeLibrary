@@ -14,7 +14,7 @@ C      DEFAULT WEIGHT FACTOR AND COMPONENT BIOMASS EQUATION FOR THE REGIONAL/FOR
        REAL WF(3), DWF, REGNWF(3), NATLWF
        CHARACTER*2 FORST
        CHARACTER*12 BMSEQ(8), BIOEQ
-       CHARACTER*40 REF(8)
+       CHARACTER*50 REF(8)
        CHARACTER*3 REFABRV
        INTEGER FIRST, LAST, HALF, DONE
        
@@ -52,25 +52,25 @@ C      Skip search regional default if REGN = 0 (YW 20190918)
        !Found regional species default, then get the default equation and reference   
          !SECONDARY WEIGHT FACTOR
          IF(WF(2).GT.0) THEN
-            REF(6) = 'USER PROVIDED WEIGHT FACTOR (SECOND)'
+            REF(6) = 'USER PROVIDED WEIGHT FACTOR (Non-Saw)'
          ELSEIF(REGNWF(2).GT.0.1)THEN
             WF(2) = REGNWF(2)
-            REF(6) = 'USE REGIONAL DEFAULT WEIGHT FACTOR (SECOND)'
+            REF(6) = 'USE REGIONAL DEFAULT WEIGHT FACTOR (Non-Saw)'
          ELSE
            IF(WF(1).GT.0) THEN
              WF(2) = WF(1)
-             REF(6) = 'USER PROVIDED WEIGHT FACTOR(PRIM)'
+             REF(6) = 'USER PROVIDED WEIGHT FACTOR(Sawtimber)'
            ELSE
              WF(2) = REGNWF(1)
-             REF(6) = 'USE REGIONAL DEFAULT WEIGHT FACTOR (PRIM)'
+             REF(6) = 'USE REGIONAL DEFAULT WEIGHT FACTOR (Sawtimber)'
            ENDIF
          ENDIF
          !PRIMARY WEIGHT FACTOR
          IF(WF(1).GT.0.1)THEN
-           REF(5) = 'USER PROVIDED WEIGHT FACTOR(PRIM)'
+           REF(5) = 'USER PROVIDED WEIGHT FACTOR(Sawtimber)'
          ELSEIF(REGNWF(1).GT.0.1)THEN
             WF(1) = REGNWF(1)
-            REF(5) = 'USE REGIONAL DEFAULT WEIGHT FACTOR (PRIM)'
+            REF(5) = 'USE REGIONAL DEFAULT WEIGHT FACTOR (Sawtimber)'
          ENDIF
          !MOISTURE CONTENT
          IF(WF(3).GT.0) THEN
@@ -130,7 +130,9 @@ C      IF THE SPECIES DOES NOT HAVE REGION DEFAULT, SEARCH NATIONAL DEFAULT
                LAST = HALF - 1
              ENDIF
 10         CONTINUE
-             IF(DONE.LT.0) DONE = TOTSPC
+             !IF(DONE.LT.0) DONE = TOTSPC
+           ! Use species 999 for invalid species (2024/05/30)
+           IF(DONE.LT.0) DONE = CNT999
              IF(WF(1).LT.0.1) THEN
                WF(1) = WDBKWT(DONE,9)
                REF(5) = 'WEIGHT FACTOR FROM MILES & SMITH 2009'
@@ -176,7 +178,8 @@ C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO
                LAST = HALF - 1
              ENDIF
 50         CONTINUE
-         IF(DONE.LT.0) DONE = TOTSPC
+         !IF(DONE.LT.0) DONE = TOTSPC
+         IF(DONE.LT.0) DONE = CNT999
          WDEN = WDBKWT(DONE,4)
          BDEN = WDBKWT(DONE,5)
        END       
@@ -202,18 +205,19 @@ C THIS SUNROUTINE IS SEARCHING THE SPECIES DEFAULT DATA(SMITH AND MILES 2009) TO
                LAST = HALF - 1
              ENDIF
 55         CONTINUE
-         IF(DONE.LT.0) DONE = TOTSPC
+         !IF(DONE.LT.0) DONE = TOTSPC
+         IF(DONE.LT.0) DONE = CNT999
          ADJ = WDBKWT(DONE,11)
        END       
 C--------------------------------------------------------------------------------------------
        SUBROUTINE CRZBIOMASS(REGN,FORST,SPCD,DBHOB,DRCOB, HTTOT,FCLASS,
-     +  VOL,WF,BMS,ERRFLG)
+     +  VOL,WF,BMS,ERRFLG,PROD)
        IMPLICIT NONE
        INTEGER REGN, IFORST, SPCD, ERRFLG, I,J, LENGTH, FCLASS
        REAL DBHOB, HTTOT, DBH, THT, VOL(15), WF(3), BMS(8),DRCOB
-       CHARACTER*2 FORST
+       CHARACTER*2 FORST,PROD
        CHARACTER*12 BMSEQ(8), BEQ
-       CHARACTER*40 REF(8)
+       CHARACTER*50 REF(8)
        REAL MERCHSTEM, P3, BIOMS, DRY2GRN, STEMGWT
        REAL JNKBMS(8), RATIO, DEN, STUMPDRY, STUMPGRN
        INTEGER stm, Pied, Quga
@@ -239,9 +243,15 @@ C      Convert DRC to DBH (Chojnacky 1999)
        THT = HTTOT
        RATIO = 0
 C      IF WEIGHT FACTOR IS NOT PROVIDED, GET IT FROM REGIONAL OR NATIONAL DEFAULT
-c       IF(WF(1).LT.0.1) THEN
+       IF(WF(1).LT.0.1) THEN
          CALL CRZSPDFT(REGN,FORST,SPCD,WF,BMSEQ,REF)
-c       ENDIF
+       !For Non-saw product, use WF(2) from the default (2024/05/30)
+         IF(REGN.EQ.1)THEN
+           IF(PROD.NE.'01') WF(1) = WF(2)
+         ELSEIF(REGN.EQ.5.AND.PROD.EQ.'20')THEN
+           WF(1) = WF(2)
+         ENDIF         
+       ENDIF
 C Reset weight factor for DF based on DBH (YW 2016/03/08)      
        IF(SPCD.EQ.204) SPCD = 202
 C R6 requests to remove the following lines (YW 07/05/2017)

@@ -103,7 +103,7 @@ namespace volCStest
         static extern void MRULESCS2(ref int regn, StringBuilder voleq, StringBuilder prod, ref float trim, ref float minlen, ref float maxlen, ref int opt, ref float merchl, ref float mtopp, ref float mtops, ref float stump, ref float minlent, int l1, int l2);
 
         [DllImport("vollib.dll")]//, CallingConvention = CallingConvention.StdCall)]
-        static extern void CRZBIOMASSCS(ref int regn, StringBuilder forst, ref int spcd, ref float dbhob, ref float drcob, ref float httot, ref int fclass, float[] vol, float[] wf, float[] bms, ref int errflg, int i1);
+        static extern void CRZBIOMASSCS(ref int regn, StringBuilder forst, ref int spcd, ref float dbhob, ref float drcob, ref float httot, ref int fclass, float[] vol, float[] wf, float[] bms, ref int errflg, StringBuilder prod, int i1, int i2);
         [DllImport("vollib.dll")]
         static extern void CRZSPDFTCS(ref int regn, StringBuilder forst, ref int spcd, float[] wf, StringBuilder agteq, StringBuilder lbreq, StringBuilder dbreq, StringBuilder foleq, StringBuilder tipeq,
             StringBuilder wf1ref, StringBuilder wf2ref, StringBuilder mcref, StringBuilder agtref, StringBuilder lbrref, StringBuilder dbrref, StringBuilder folref, StringBuilder tipref,
@@ -305,7 +305,7 @@ namespace volCStest
                 {
                     if (VOLEQ.ToString().Substring(0, 1) == "8" && VOLEQ.ToString().Substring(3, 3) == "CLK")
                     {
-                        if (VOLEQ.ToString().Substring(2, 1) != "0" && VOLEQ.ToString().Substring(2, 1) != "8")
+                        if (VOLEQ.ToString().Substring(2, 1) != "0" && VOLEQ.ToString().Substring(2, 1) != "8" && VOLEQ.ToString().Substring(2, 1) != "1")
                         {
                             MessageBox.Show("Upper stem height is required for the equation: " + volEqTB.Text);
                             upsht1TB.Focus();
@@ -361,7 +361,7 @@ namespace volCStest
                 strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
             //the calculation works!!!
             DRCOB = 0.0F;
-            CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, strlen);
+            CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, PROD, strlen, strlen);
             //test call BIOLIBCS
             //BIOEQ.Append("JEN002AGT01D");
             BIOEQ.Append("0");
@@ -2514,13 +2514,13 @@ namespace volCStest
                 writer.WriteLine(" ");
                 writer.WriteLine("Species Regional/Forest Defaults: Region " + REGN.ToString() + " Forest " + FORST + " Species " + SPCD.ToString());
                 writer.WriteLine(" ");
-                writer.WriteLine("COMPONENT".PadRight(25, ' ') + "VALUE".PadRight(15, ' ') + "Reference");
-                writer.WriteLine("------------------------ -------------- ----------------------------------- ");
-                writer.WriteLine("Weightfactor (primary)".PadRight(25, ' ') + WF[0].ToString().PadRight(15, ' ') + WF1REF);
-                writer.WriteLine("Weightfactor (secondary)".PadRight(25, ' ') + WF[1].ToString().PadRight(15, ' ') + WF2REF);
-                writer.WriteLine("Moisture content (%)".PadRight(25, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
+                writer.WriteLine("COMPONENT".PadRight(33, ' ') + "VALUE".PadRight(15, ' ') + "Reference");
+                writer.WriteLine("-------------------------------- -------------- ----------------------------------- ");
+                writer.WriteLine("Weightfactor (Sawtimber)".PadRight(33, ' ') + WF[0].ToString().PadRight(15, ' ') + WF1REF);
+                writer.WriteLine("Weightfactor (Non-saw/secondary)".PadRight(33, ' ') + WF[1].ToString().PadRight(15, ' ') + WF2REF);
+                writer.WriteLine("Moisture content (%)".PadRight(33, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
                 //writer.WriteLine("Biomass Equation".PadRight(25, ' ') + NVBEQ.ToString().PadRight(15, ' ') + "Westfall et al 2023" );
-                writer.WriteLine("Biomass Equation".PadRight(25, ' ') + strVOLEQ.PadRight(15, ' ') + strBioRef);
+                writer.WriteLine("Biomass Equation".PadRight(33, ' ') + strVOLEQ.PadRight(15, ' ') + strBioRef);
                 if (strNote.Length > 0) writer.WriteLine(strNote);
                 //writer.WriteLine("Above ground total".PadRight(25, ' ') + AGTEQ.ToString().PadRight(15, ' ') + AGTREF);
                 //writer.WriteLine("Live branches".PadRight(25, ' ') + LBREQ.ToString().PadRight(15, ' ') + LBRREF);
