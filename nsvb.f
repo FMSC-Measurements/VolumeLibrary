@@ -528,6 +528,10 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
           MC = (DeadWF-DRYWF)/DRYWF
       ENDIF
       GRNBIO = DRYBIO*(1+MC)
+      !20240626 Add calculate cord volume
+      VOL(6) = VOL(4)/90
+      IF(REGN.EQ.3.OR.REGN.EQ.8.OR.REGN.EQ.9) VOL(6)=VOL(4)/79
+      VOL(6) = ANINT(VOL(6)*1000)/1000
       
       RETURN
       END

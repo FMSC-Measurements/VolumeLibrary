@@ -768,36 +768,6 @@ C
 C
       READ(FORST,'(I2)')FORNUM
       DONE = 0
-C     white fir
-c      IF(SPEC.EQ.15)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-C                 VOLEQ=EQNUM(72)
-c              DONE=72
-c              ENDIF
-c          ENDIF
-C     California red fir
-c      ELSEIF(SPEC.EQ.20)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-C                 VOLEQ=EQNUM(73)
-c              DONE=73
-c              ENDIF
-c          ENDIF
-C     incense cedar
-c      ELSEIF(SPEC.EQ.81)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-C                 VOLEQ=EQNUM(74)
-c                  DONE=74
-c              ENDIF
-c          ENDIF
 C     Whitebark pine
       IF(SPEC.EQ.101) THEN
           IF(VAR.EQ.'SO' .OR. VAR.EQ.'so') THEN
@@ -805,42 +775,6 @@ C     Whitebark pine
           ELSE
                DONE=40   
           ENDIF
-C     lodgepole pine
-c      ELSEIF(SPEC.EQ.108)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-c              DONE=75
-c              ENDIF
-c          ENDIF
-C     sugar pine
-c      ELSEIF(SPEC.EQ.117)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-c                 DONE=76
-c              ENDIF
-c          ENDIF
-C     ponderosa pine
-c      ELSEIF(SPEC.EQ.122)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-c                 DONE=77
-c              ENDIF
-c          ENDIF
-C     Douglas fir
-c      ELSEIF(SPEC.EQ.202)THEN
-c          IF((VAR.EQ.'CA').OR.(VAR.EQ.'ca').OR.
-c     &       (VAR.EQ.'OC').OR.(VAR.EQ.'oc'))THEN
-c              IF((FORNUM.EQ.5).OR.(FORNUM.EQ.6).OR.
-c     >           (FORNUM.EQ.8).OR.(FORNUM.EQ.14))THEN
-c                 DONE=78
-c              ENDIF
-c          ENDIF
 C     other softwoods
       ELSEIF(SPEC.EQ.299 .OR. SPEC.EQ.290) THEN
           IF(VAR.EQ.'SO' .OR. VAR.EQ.'so') THEN
@@ -1070,8 +1004,6 @@ C
       DONEI = 0
       DONEF = 0
 
-c      WRITE(ASPEC,'(I3)')SPEC
-c      IF(ASPEC(1:1).EQ.' ')ASPEC(1:1) = '0'
 c     Westside Variants
       IF(VAR.EQ.'PN' .OR. VAR.EQ.'WC' .OR. VAR.EQ.'NC' .OR.
      >   VAR.EQ.'CA' .OR. VAR.EQ.'OC' .OR. VAR.EQ.'OP')THEN
@@ -2035,22 +1967,6 @@ C                     // Francis Marion/Sumpter
 C     CREATE THE VOLUME EQUATION NUMBER
       VOLEQ(1:1) = '8'
       VOLEQ(2:2) = GEOAREA
-C     Changed to use New Clark equation 8*1CLKE*** (YW 20210719)      
-!      IF(PROD.EQ.'01')THEN
-!         IF(SPEC.LT.300) THEN
-C           7 INCH TOP
-!            VOLEQ(3:3) = '7'
-!          ELSE
-C           9 INCH TOP
-!            VOLEQ(3:3) = '9'
-!          ENDIF
-!       ELSEIF (PROD.EQ.'08') THEN
-C           USE PRODUCT 08 LOGIC
-!          VOLEQ(3:3) = '8'
-!       ELSE
-C           4 INCH TOP
-!         VOLEQ(3:3) = '4'
-!       ENDIF
        IF (PROD.EQ.'08') THEN
 C           USE PRODUCT 08 LOGIC
           VOLEQ(3:3) = '8'
@@ -2197,7 +2113,7 @@ C  SEARCH FOR VALID EQUATION NUMBER
 C  FIRST, SEARCH FOR CLKE OR DVEE
 C
       IF(SPEC.EQ.9999)THEN
-        IF((VOLEQ(1:7).EQ.'900CLKE').OR.(VOLEQ(1:7).EQ.'900DVEE'))THEN
+        IF((VOLEQ(1:7).EQ.'900CLKE').OR.(VOLEQ(4:7).EQ.'DVEE'))THEN
 C  LS
           DO J=1,69
           IF(VOLEQ(8:10).EQ.LSSP(J))THEN
@@ -2248,7 +2164,7 @@ C
         VOLEQ(8:10) = ASPEC
 
         RETURN
-      ELSEIF(VOLEQ(1:7).EQ.'900DVEE')THEN
+      ELSEIF(VOLEQ(4:7).EQ.'DVEE')THEN
 C
 C     DIRECT VOLUME ESTIMATORS
 C     FIND CORRECT SPECIES

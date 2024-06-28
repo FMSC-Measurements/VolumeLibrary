@@ -362,6 +362,7 @@ namespace volCStest
             //the calculation works!!!
             DRCOB = 0.0F;
             CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, PROD, strlen, strlen);
+            //MessageBox.Show("After call CRZBIOMASSCS BMS(1)= " + BMS[1]);
             //test call BIOLIBCS
             //BIOEQ.Append("JEN002AGT01D");
             BIOEQ.Append("0");

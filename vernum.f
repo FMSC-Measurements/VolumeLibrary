@@ -106,6 +106,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !20240605 Added input variable PROD to CRZBIOMASS and CRZBIOMASSCS subroutines for non-saw product biomass calculation using non-saw weight factor.    
       !   Changed the default species in searching wdbkdada.inc to species 999 for invalid species instead of the TOPSPC
       !   Also changed CRZBIOMASS to check WF input before call REGNSPDFT for regional default
+!20240626 Added cord volume calculation for NSVB equation.      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -135,7 +136,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240605
+      VERSION = 20240626
       RETURN
       END SUBROUTINE VERNUM
       
@@ -168,7 +169,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240605
+      VERSION = 20240626
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -191,7 +192,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20240605
+      VERSION = 20240626
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -204,6 +205,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20240605
+      version = 20240626
       return
       end subroutine vernum_r
