@@ -1226,32 +1226,44 @@ C Calculate LOGDIA, LOGVOL, BOLHT and VOL
       V_SPCD = SPCD
       CALL NVB_EcoProv(REGN,FORST,DIST,iPROV)
       iPROV = (iPROV/10)*10
+      CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,
+     &      SPGRNWF,SPDRYWF)
+      IF(ERRFLG.GT.0) THEN
+          ERRFLG = 6
+          RETURN
+      ENDIF
+      IF(SPGRPCD.EQ.0.OR.SPGRPCD.EQ.10)THEN
+          ERRFLG = 1
+          RETURN
+      ENDIF
+
       !Check if the SPCD has a equation for the DIVISION
       !IF(SPCD.GT.999) SPCD = 999
-      DONE = 0
-      SPCDFIND = 0
-      DO I = 1, Tbl1Cnt
-          IF(SPCOEF(I,1).EQ.SPCD)THEN
-              SPCDFIND = 1
-              IF(SPCOEF(I,2).EQ.iPROV.OR.SPCOEF(I,2).EQ.0)THEN
-                  DONE = I
-                  IF(SPCOEF(I,2).EQ.0) iPROV = 0
-                  EXIT
-              ENDIF
-          ENDIF
-      END DO
+      !DONE = 0
+      !SPCDFIND = 0
+      !DO I = 1, Tbl1Cnt
+      !    IF(SPCOEF(I,1).EQ.SPCD)THEN
+      !        SPCDFIND = 1
+      !        IF(SPCOEF(I,2).EQ.iPROV.OR.SPCOEF(I,2).EQ.0)THEN
+      !            DONE = I
+      !            IF(SPCOEF(I,2).EQ.0) iPROV = 0
+      !            EXIT
+      !        ENDIF
+      !    ENDIF
+      !END DO
       !When no equation for the SPCD, set iPROV to 0 and check Jenkin's species group 
-      IF(DONE.EQ.0)THEN
-          iPROV = 0
-          CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,
-     &      SPGRNWF,SPDRYWF)
-          IF(ERRFLG.GT.0) RETURN
-          IF(SPGRPCD.EQ.0.OR.SPGRPCD.EQ.10)THEN
-              ERRFLG = 1
-              RETURN
-          ENDIF
-          V_SPCD = SPGRPCD
-      ENDIF
+      !Not set default equation for Jenkins coef. It causes error for biomass calc for some species.
+!      IF(DONE.EQ.0)THEN
+!          iPROV = 0
+!          CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,
+!     &      SPGRNWF,SPDRYWF)
+!          IF(ERRFLG.GT.0) RETURN
+!          IF(SPGRPCD.EQ.0.OR.SPGRPCD.EQ.10)THEN
+!              ERRFLG = 1
+!              RETURN
+!          ENDIF
+!          V_SPCD = SPGRPCD
+!      ENDIF
       WRITE (PROV, '(I4)') iPROV
       IF(iPROV.EQ.0) PROV = '0000'
       IF(iPROV.GT.999)THEN

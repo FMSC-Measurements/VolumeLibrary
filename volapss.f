@@ -170,3 +170,107 @@
       END SUBROUTINE VOLAPSS
       
 !********************************************************************
+      !vollib subroutine for c++ user
+      SUBROUTINE VOLLIBCPP(REGN, FORSTC, VOLEQC,I3, I7, I15, I20, I21,
+     +    DBHOB, DRCOB, HTTYPEC, HTTOT, HTLOG, HT1PRD, HT2PRD, 
+     &    HTREF, FCLASS, VOL, LOGVOLC, LOGDIAC, LOGLEN, BOLHT, TLOGS,
+     &    NOLOGP, NOLOGS, CUTFLG, BFPFLG, CUPFLG, CDPFLG, SPFLG, PRODC,
+     &    LIVEC, CTYPEC, ERRFLAG,IDIST,
+     &    BRKHT,BRKHTD,FIASPCD,DRYBIO,GRNBIO,CR,CULL,DECAYCD)
+      USE CHARMOD
+      USE MRULES_MOD
+      USE DEBUG_MOD
+      IMPLICIT NONE
+!... Expose subroutine VOLLIB09 to users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::VOLLIBCPP
+      
+      !     Parameters
+      INTEGER         REGN
+      TYPE(CHAR256):: FORSTC, VOLEQC
+      REAL            MTOPP, MTOPS, STUMP, DBHOB, DRCOB
+      TYPE(CHAR256):: HTTYPEC
+      REAL            HTTOT
+      INTEGER         HTLOG
+      REAL            HT1PRD, HT2PRD, UPSHT1, UPSHT2, UPSD1, UPSD2
+      INTEGER         HTREF
+      REAL            AVGZ1, AVGZ2
+      INTEGER         FCLASS
+      REAL            DBTBH, BTR
+      INTEGER         I3, I7, I15, I20, I21
+      REAL            VOL(15), LOGVOLC(20, 7)
+      REAL            LOGDIAC(I3,I21), LOGLEN(I20), BOLHT(I21)
+      INTEGER         TLOGS
+      REAL            NOLOGP,NOLOGS
+      INTEGER         CUTFLG, BFPFLG, CUPFLG, CDPFLG, SPFLG
+      TYPE(CHAR256):: CONSPECC, PRODC
+      INTEGER         HTTFLL
+      TYPE(CHAR256):: LIVEC
+      INTEGER         BA, SI
+      TYPE(CHAR256):: CTYPEC
+      INTEGER         ERRFLAG
+
+      !     Local variables
+      CHARACTER(FORSTC%LENGTH)  FORST
+      CHARACTER(VOLEQC%LENGTH)  VOLEQ
+      CHARACTER(HTTYPEC%LENGTH) HTTYPE
+      CHARACTER*5 CONSPEC
+      CHARACTER(PRODC%LENGTH)   PROD
+      CHARACTER(LIVEC%LENGTH)   LIVE
+      CHARACTER(CTYPEC%LENGTH)  CTYPE
+      CHARACTER*3     MDL,SPECIES
+      CHARACTER*2     DIST,VAR   
+      CHARACTER*10    EQNUM
+      INTEGER         SPEC
+      REAL            LOGVOL(I7,I20),LOGDIA(I21,I3) 
+      INTEGER         IDIST
+      TYPE(MERCHRULES):: MERRULES
+      REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15)
+      REAL CR,CULL,CULLMSTOP
+      INTEGER DECAYCD,FIASPCD,MRULEFLG
+
+
+      !Convert the CHAR256 types to Char(*) so I don't have to rename 
+      !all references below
+      !CHAR256 is a user defined type used for passing C strings back/
+      !forth to Fortran
+      !CHAR256 is equivalent to a C struct with an integer LENGTH,and
+      !char[] STR
+!--------------------------------------------------------------------
+      FORST   = FORSTC%STR(1:FORSTC%LENGTH)
+      VOLEQ   = VOLEQC%STR(1:VOLEQC%LENGTH)
+      HTTYPE  = HTTYPEC%STR(1:HTTYPEC%LENGTH)
+      CONSPEC(1:5) ="" !CONSPECC%STR(1:CONSPECC%LENGTH)
+      PROD    = PRODC%STR(1:PRODC%LENGTH)
+      LIVE    = LIVEC%STR(1:LIVEC%LENGTH)
+      CTYPE   = CTYPEC%STR(1:CTYPEC%LENGTH)
+!---------------------------------------------------
+!Use array converter to reshape c arrays to fortran notation
+      LOGVOL = RESHAPE(LOGVOLC, SHAPE(LOGVOL))
+      LOGDIA = RESHAPE(LOGDIAC, SHAPE(LOGDIA))
+      ERRFLAG = 0
+      MRULEFLG = 0
+      
+      CALL VOLINITNVB(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES,CULLMSTOP)
+
+      !conVert Char(*) back to CHAR256 for return to C++ wrapper including
+      !a null terminator required by C strings.  Tack on the null terminator
+      CALL CREATE_C_STRING(FORSTC, FORST)
+      CALL CREATE_C_STRING(VOLEQC, VOLEQ)
+      CALL CREATE_C_STRING(HTTYPEC, HTTYPE)
+      CALL CREATE_C_STRING(CONSPECC, CONSPEC)
+      CALL CREATE_C_STRING(PRODC, PROD)
+      CALL CREATE_C_STRING(LIVEC, LIVE)
+      CALL CREATE_C_STRING(CTYPEC, CTYPE)
+           
+      !copy the logvol and logdia data back into the subroutine paramater for
+      !return to c++
+      LOGVOLC = RESHAPE(LOGVOL, SHAPE(LOGVOL))
+      LOGDIAC = RESHAPE(LOGDIA, SHAPE(LOGDIA))
+      
+      END
