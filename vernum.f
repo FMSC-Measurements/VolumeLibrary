@@ -107,8 +107,9 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
       !   Changed the default species in searching wdbkdada.inc to species 999 for invalid species instead of the TOPSPC
       !   Also changed CRZBIOMASS to check WF input before call REGNSPDFT for regional default
 !20240626 Added cord volume calculation for NSVB equation.  
-!20240711 Added VOLLIBCPP to volapss.f for C++ interface subroutine      
-      
+!20240711 Added VOLLIBCPP to volapss.f for C++ interface subroutine   
+!20240805 Added vollibnvb2_2 to volumelibrary.f to allow input variable max log lenth MAXLOGLEN      
+!20241007 Added GETREGNWFCS for C# to get regional default live and dead weight factor and modified voleqdef.f.      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -138,7 +139,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240711
+      VERSION = 20241007
       RETURN
       END SUBROUTINE VERNUM
       
@@ -171,7 +172,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20240711
+      VERSION = 20241007
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -194,7 +195,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20240711
+      VERSION = 20241007
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -207,6 +208,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20240711
+      version = 20241007
       return
       end subroutine vernum_r

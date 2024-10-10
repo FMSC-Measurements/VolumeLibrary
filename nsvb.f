@@ -80,6 +80,11 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
               RETURN
           ENDIF
       END DO
+      !Reset the species code for R10 second grow species(2024/10/07)
+      IF(FIASPCD.EQ.2042) FIASPCD = 42
+      IF(FIASPCD.EQ.2098) FIASPCD = 98
+      IF(FIASPCD.EQ.2242) FIASPCD = 242
+      IF(FIASPCD.EQ.2263) FIASPCD = 263
       VOL = 0.0
       DRYBIO = 0.0
       GRNBIO = 0.0

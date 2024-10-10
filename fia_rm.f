@@ -214,7 +214,8 @@ C     Compute small tree volume if none provided
       !CV15 = VOL(1)
       !First check if the SPCD is in the woodland species list
       !This is to match FIA BIOMASS_SP configuration
-      IF(SPN.EQ.62.OR.SPN.EQ.66)THEN
+      !IF(SPN.EQ.62.OR.SPN.EQ.66)THEN
+      IF(SPN.GE.57.AND.SPN.LE.66)THEN
           SPN = 57
       ELSEIF(SPN.GE.133.AND.SPN.LE.143)THEN
           SPN = 106

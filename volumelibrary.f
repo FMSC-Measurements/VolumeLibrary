@@ -928,6 +928,174 @@ C     Set the default value for other variable
       
       RETURN
       end subroutine vollibnvb_r   
+
+C *******************************************************************************
+      subroutine vollibnvb2_r(VOLEQ,REGN,FORST,DIST,SPEC,DBHOB_d,
+     + HTTOT_d,
+     + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
+     + FCLASS,DBTBH_d,BTR_d,VOL_d,LOGVOL_d,LOGDIA_d,LOGLEN_d,BOLHT_d,
+     + TLOGS,NOLOGP_d,NOLOGS_d,ERRFLAG,BRKHT_d,BRKHTD_d,
+     & DRYBIO_d,GRNBIO_d,CR_d,CULL_d,DECAYCD,CULLMSTOP_d,CTYPE,LIVE,
+     & MAXLOGLEN_d)
+C This subroutine is for R user to calculate volume from vollib      !
+C with output variable for logs LOGDIA,LOGVOL,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS
+! and new NSVB equations for biomass DRYBIO, GRNBIO  
+! and also having MAXLOGLEN to allow change log length      
+C YW 08/05/2023
+
+      !DEC$ ATTRIBUTES C,REFERENCE, DLLEXPORT::vollibnvb2_r
+      !DEC$ ATTRIBUTES DECORATE, ALIAS:'vollibnvb2_r_'::vollibnvb2_r
+
+	USE CHARMOD
+	USE DEBUG_MOD
+      USE VOLINPUT_MOD
+      USE MRULES_MOD
+
+      IMPLICIT NONE
+      
+      DOUBLE PRECISION DBHOB_d,HTTOT_d,MTOPP_d,MTOPS_d,STUMP_d
+      DOUBLE PRECISION HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d
+      DOUBLE PRECISION DBTBH_d,BTR_d,VOL_d(15),MAXLOGLEN_d
+      DOUBLE PRECISION LOGVOL_d(7,20),LOGDIA_d(21,3),LOGLEN_d(20)
+      DOUBLE PRECISION BOLHT_d(21),NOLOGP_d,NOLOGS_d
+      DOUBLE PRECISION BRKHT_d,BRKHTD_d,CR_d,CULL_d,CULLMSTOP_d
+      DOUBLE PRECISION DRYBIO_d(15),GRNBIO_d(15)
+      
+      CHARACTER*1  HTTYPE,LIVE,CTYPE
+      CHARACTER*2  FORST,PROD
+      character*4  CONSPEC
+      CHARACTER*11 VOLEQ
+      CHARACTER*3  MDL,SPECIES
+      CHARACTER*2  DIST,VAR
+   
+      INTEGER      SPEC,TMPSPEC,NULEQ
+
+!   MERCH VARIABLES 
+      INTEGER      REGN,HTTFLL,BA,SI,IFORST,IDIST
+      REAL         STUMP,MTOPP,MTOPS,MAXLOGLEN  
+      INTEGER      CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+      REAL         TIPDIB,TIPLEN
+      
+!   Tree variables
+      REAL 		HTTOT,HT1PRD,HT2PRD   
+      REAL 		DBHOB,DRCOB,DBTBH,BTR  
+      INTEGER   FCLASS,HTLOG  
+    
+!	3RD POINT VARIABLES
+      REAL      UPSD1,UPSD2,UPSHT1,UPSHT2,AVGZ1,AVGZ2    
+      INTEGER 	HTREF
+    
+!   OUTPUTS
+      REAL      NOLOGP,NOLOGS
+      INTEGER   TLOGS  
+    
+!   ARRAYS
+!      INTEGER   I15,I21,I20,I7,I3,I,J
+      REAL 		VOL(15),LOGVOL(7,20)
+      REAL		LOGDIA(21,3),LOGLEN(20),BOLHT(21)
+      REAL    DRYBIO(15),GRNBIO(15),BRKHT,BRKHTD,CR,CULL,CULLMSTOP
+      INTEGER FIASPCD, MRULEFLG,DECAYCD
+      TYPE(MERCHRULES)::MERRULES
+      CHARACTER*11 NVBEQ
+      
+      NVBEQ = VOLEQ
+      DBHOB = REAL(DBHOB_d)
+      HTTOT = REAL(HTTOT_d)
+      MTOPP = REAL(MTOPP_d)
+      MTOPS = REAL(MTOPS_d)
+      HT1PRD = REAL(HT1PRD_d)
+      HT2PRD = REAL(HT2PRD_d)
+      UPSHT1 = REAL(UPSHT1_d)
+      UPSD1 = REAL(UPSD1_d)
+      STUMP = REAL(STUMP_d)
+      DBTBH = REAL(DBTBH_d)
+      BTR = REAL(BTR_d)
+      BRKHT = REAL(BRKHT_d)
+      BRKHTD = REAL(BRKHTD_d)
+      CR = REAL(CR_d)
+      CULL = REAL(CULL_d)
+      CULLMSTOP = REAL(CULLMSTOP_d)
+      MAXLOGLEN = REAL(MAXLOGLEN_d)
+      
+      READ (DIST, '(I2)') IDIST
+C     Set the default value for other variable
+      PROD='01'
+      HTTYPE='F'
+      HTLOG=0
+      AVGZ1=0.0
+      HTREF=0
+      UPSHT2=0.0
+      UPSD2=0.0
+      AVGZ2=0.0
+      CONSPEC='    '
+      DRCOB=0.0
+      HTTFLL=0
+      BA=0
+      SI=0
+      !CTYPE='F'
+      CUTFLG=1
+      CUPFLG=1
+      SPFLG=1
+      BFPFLG=1
+!      I3 = 3
+!      I7 = 7
+!      I15 = 15
+!      I20 = 20
+!      I21 =21
+      FIASPCD = SPEC
+      MRULEFLG = 1
+      !only set the max log length. all others using default
+      MERRULES%EVOD = 0
+      MERRULES%OPT = 0
+      MERRULES%MAXLEN = MAXLOGLEN
+      MERRULES%MINLEN = 0
+      MERRULES%MERCHL = 0
+      MERRULES%MINLENT = 0
+      MERRULES%MTOPP = 0
+      MERRULES%MTOPS = 0
+      MERRULES%STUMP = 0
+      MERRULES%TRIM = 0
+      MERRULES%BTR = 0
+      MERRULES%DBTBH = 0
+      MERRULES%MINBFD = 0
+      CALL VOLINITNVB(REGN,FORST,NVBEQ,MTOPP,MTOPS,STUMP,DBHOB,
+     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,CR,CULL,DECAYCD,
+     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+     +    BA,SI,CTYPE,ERRFLAG,IDIST,BRKHT,BRKHTD,FIASPCD,DRYBIO,
+     +    GRNBIO,MRULEFLG,MERRULES,CULLMSTOP)
+!      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+!     +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
+!     +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
+!     +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
+!     +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
+!     +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      
+      VOL_d = DBLE(VOL)
+!      DBHOB_d = DBLE(DBHOB)
+!      HTTOT_d = DBLE(HTTOT)
+      MTOPP_d = DBLE(MTOPP)
+      MTOPS_d = DBLE(MTOPS)
+      HT1PRD_d = DBLE(HT1PRD)
+      HT2PRD_d = DBLE(HT2PRD)
+!      UPSHT1_d = DBLE(UPSHT1)
+!      UPSD1_d = DBLE(UPSD1)
+      STUMP_d = DBLE(STUMP)
+!      DBTBH_d = DBLE(DBTBH)
+!      BTR_d = DBLE(BTR)
+      LOGVOL_d = DBLE(LOGVOL)
+      LOGDIA_d = DBLE(LOGDIA)
+      LOGLEN_d = DBLE(LOGLEN)
+      BOLHT_d = DBLE(BOLHT)
+      NOLOGP_d = DBLE(NOLOGP)
+      NOLOGS_d = DBLE(NOLOGS)
+      DRYBIO_d = DBLE(DRYBIO)
+      GRNBIO_d = DBLE(GRNBIO)
+      
+      RETURN
+      end subroutine vollibnvb2_r   
+
 !**********************************************************************
 ! Get regional default weight factor
       SUBROUTINE GETWTFAC(REGN,FORST,SPCD,WTFAC)

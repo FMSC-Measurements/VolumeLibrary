@@ -789,4 +789,21 @@ C**********************************************************************
  
       RETURN
       END SUBROUTINE VOLLIBCSNVB
+! ---------------------------------------------------------------------
+      SUBROUTINE GETREGNWFCS(REGN,FORSTI,SPCD,PRODI,GRNWF,DEADWF)
+! Expose subroutine GETREGNWFCS to C# users of this DLL
+      !DEC$ ATTRIBUTES DLLEXPORT::GETREGNWFCS
 
+      IMPLICIT NONE
+      INTEGER REGN, SPCD
+      CHARACTER*(*) FORSTI,PRODI      
+      CHARACTER(2)   FORST,PROD
+      REAL GRNWF,DEADWF
+      
+      FORST = FORSTI(1:2)
+      PROD = PRODI(1:2)
+      CALL GetRegnWF(REGN,FORST,SPCD,GRNWF,DEADWF,PROD)
+      
+      RETURN
+      END
+      

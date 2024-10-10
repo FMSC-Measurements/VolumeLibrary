@@ -125,6 +125,9 @@ namespace volCStest
         static extern void BIOLIBCS(ref int REGN, StringBuilder FORST, ref int SPEC, StringBuilder BIOEQ, ref float DBHOB, ref float HTTOT, float[] VOL,
                 float[] BIOGRN, float[] BIODRY, ref int ERRFLG, ref float HT1PRD, ref float HT2PRD, ref int HTTFLL, StringBuilder GEOSUB, int i1, int i2, int i3);
 
+        [DllImport("vollib.dll")]
+        static extern void GETREGNWFCS(ref int REGN, StringBuilder FORST, ref int SPCD, StringBuilder PROD, ref float GRNWF, ref float DEADWF, int i1, int i2);
+
         // standard variables
         int REGN, HTLOG, HTREF, FCLASS, HTTFLL, ERRFLAG, TLOGS, BA, SI, SPCODE, INDEB, PMTFLG, IDIST;
         int CUTFLG, BFPFLG, CUPFLG, CDPFLG, CUSFLG, CDSFLG, SPFLG, VERSION;
@@ -183,6 +186,7 @@ namespace volCStest
         StringBuilder BIOEQ = new StringBuilder(256);
         StringBuilder GEOSUB = new StringBuilder(256);
         float[] BIOGRN, BIODRY;
+        float LiveWF, DeadWF;
 
         const int strlen2 = 120;
         const int strlen3 = 400;
@@ -359,6 +363,9 @@ namespace volCStest
             CRZSPDFTCS(ref REGN, FORST, ref SPCD, WF, AGTEQ, LBREQ, DBREQ, FOLEQ, TIPEQ,
                 WF1REF, WF2REF, MCREF, AGTREF, LBRREF, DBRREF, FOLREF, TIPREF,
                 strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen, strlen);
+            //test call GETREGNWFCS for live and dead weight factor
+            GETREGNWFCS(ref REGN, FORST, ref SPCD, PROD, ref LiveWF, ref DeadWF, strlen, strlen);
+            //MessageBox.Show("LiveWF = " + LiveWF + "DeadWF = " + DeadWF);
             //the calculation works!!!
             DRCOB = 0.0F;
             CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, PROD, strlen, strlen);
@@ -1624,7 +1631,11 @@ namespace volCStest
                 PROD.Length = 0;
                 PROD.Append(prodTB.Text);
                 SPCODE = int.Parse(speciesTB.Text);
-                if (SPCODE > 999) SPCODE = 999;
+                if (SPCODE > 999)
+                {
+                    if (SPCODE != 2042 & SPCODE != 2098 & SPCODE != 2242 & SPCODE != 2263) SPCODE = 999;
+                    
+                }
                 GETVOLEQ3(ref REGN, FORST, DIST, ref SPCODE, PROD, VOLEQ, ref ERRFLAG, strlen, strlen, strlen, strlen);
                 volEqTB.Text = VOLEQ.ToString();
             }
