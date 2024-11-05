@@ -742,6 +742,36 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       IF(FIASPCD.EQ.2242) FIASPCD = 242
       IF(FIASPCD.EQ.2263) FIASPCD = 263
       IF(FIASPCD.EQ.204) FIASPCD = 202
+      !Calculate biomass for trees with only DBH (no HT) using Jenkins (2021/11/01)
+      IF((DBHOB.GE.1.OR.DRCOB.GE.1).AND.
+     + (HTTOT.LT.1.AND.HT1PRD.LT.1.AND.HT2PRD.LT.1.AND.
+     + UPSHT1.LT.1.AND.UPSHT2.LT.1.))THEN
+          IF(DRCOB.GE.1.AND.DBHOB.LT.1) DBHOB = DRCOB
+          BIOMS = 0
+          CALL JENKINS(FIASPCD,DBHOB,BIOMS)
+          !Set the BIOMS component to variable DRYBIO
+          DRYBIO(1) = BIOMS(1) - BIOMS(4)
+          DRYBIO(6) = BIOMS(2)
+          DRYBIO(7) = BIOMS(3)
+          DRYBIO(12) = BIOMS(6)
+          DRYBIO(13) = BIOMS(4)
+          DRYBIO(14) = BIOMS(7)
+          IF(LIVE.EQ.'D') DRYBIO(13) = 0
+          !Get weight factor to calculate green weight, also the carbon fraction
+          CALL NVB_RefSpcData(FIASPCD,SPGRPCD,WDSG,SFTHRD,CF,
+     &        ERRFLAG,SPGRNWF,SPDRYWF)
+          DRYBIO(15) = DRYBIO(1)*CF
+          CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF,PROD)
+          IF(LIVE.EQ.'L')THEN
+              MC = (SPGRNWF-SPDRYWF)/SPDRYWF
+          ELSE
+              MC = (DeadWF-SPDRYWF)/SPDRYWF
+          ENDIF
+          GRNBIO = DRYBIO*(1+MC)
+          RETURN
+      ENDIF    
+      !End Jenkins biomass calculation for trees with DBH only
+      
       IF(VOLEQ(1:3).EQ.'NVB')THEN
           CALL NVBC(REGN,FORST,DIST,VOLEQ,DBHOB,HTTOT,MTOPP,MTOPS,
      + HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,LIVE,CR,CULL,DECAYCD,
