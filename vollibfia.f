@@ -402,7 +402,8 @@ c    This subroutine is created for FSVeg to call the library
 !  YW 20210719 Set FCLASS initial to 0 in order to pick the species default form class
 !  YW 20210727 Added DBTBH as an input variable to the subroutine
 !  YW 20200811 Added stump, ba and si as input variables
-!  YW 20230605  Set the default region and forest for R1 BEH equation and default stump to 1.0      
+!  YW 20230605  Set the default region and forest for R1 BEH equation and default stump to 1.0   
+!  YW 20241127 Added call NVBC for NVB equation.      
       IMPLICIT NONE
       character*(*) voleqi
       real tcu,mcu,bdf
@@ -413,17 +414,12 @@ c     variables from VOLINIT
       CHARACTER*2  FORST,PROD
       character*4  CONSPEC
       CHARACTER*10 VOLEQ
-c      CHARACTER*3  MDL,SPECIES
       CHARACTER*2  DIST,VAR
    
-c      CHARACTER*10 EQNUM
-c      INTEGER      SPEC
-
 !   MERCH VARIABLES 
       INTEGER        REGN,HTTFLL,BA,SI
       REAL           STUMP,MTOPP,MTOPS,THT1,MAXLEN
       INTEGER        CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
-c      REAL         TIPDIB,TIPLEN
       
 !   Tree variables
       REAL 	HTTOT,HT1PRD,HT2PRD,LEFTOV 
@@ -442,15 +438,18 @@ c      REAL         TIPDIB,TIPLEN
       INTEGER   I15,I21,I20,I7,I3,I,J
       REAL 	VOL(15),LOGVOL(7,20)
       REAL	LOGDIA(21,3),LOGLEN(20),BOLHT(21)
-C  variables for stump dia and vol
-c      INTEGER SPN
-c      REAL STUMPDIB, STUMPDOB, VOLIB, VOLOB    
-c      REAL DIB,DOB,HTUP,MHT  
+C  variables for call NVB
+      REAL CULL,BRKHT,BRKHTD,CULLMSTOP,DRYBIO(15),GRNBIO(15)
+      INTEGER DECAYCD,FIASPCD
       
-c  test biomass calc variable
-c      REAL WF(3), BMS(8)
-c      INTEGER SPCD, FOREST   
- !********************************************************************
+      CR = 0
+      CULL = 0
+      BRKHT = 0
+      BRKHTD = 0
+      CULLMSTOP = 0
+      DRYBIO = 0
+      GRNBIO = 0
+!********************************************************************
       VOLEQ   = VOLEQI(1:10)
 !     Set default value for unused variables
       IF(IFORST.GT.99) THEN
@@ -510,13 +509,21 @@ c      MTOPP=0.0
       I15 = 15
       I20 = 20
       I21 =21
-
-      CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
+      READ (VOLEQ(8:10), '(I3)') FIASPCD
+      
+      IF(VOLEQ(1:3).EQ.'NVB')THEN
+        CALL NVBC(REGN,FORST,DIST,VOLEQ,DBHOB,HTTOT,MTOPP,MTOPS,
+     + HT1PRD,HT2PRD,STUMP,PROD,BRKHT,BRKHTD,LIVE,CR,CULL,DECAYCD,
+     + LOGLEN,LOGDIA,LOGVOL,BOLHT,
+     + TLOGS,NOLOGP,NOLOGS,VOL,DRYBIO,GRNBIO,ERRFLAG,FIASPCD,CTYPE)
+      ELSE
+        CALL VOLINIT(REGN,FORST,VOLEQ,MTOPP,MTOPS,STUMP,DBHOB,
      +    DRCOB,HTTYPE,HTTOT,HTLOG,HT1PRD,HT2PRD,UPSHT1,UPSHT2,UPSD1,
      +    UPSD2,HTREF,AVGZ1,AVGZ2,FCLASS,DBTBH,BTR,I3,I7,I15,I20,I21,
      +    VOL,LOGVOL,LOGDIA,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS,CUTFLG,
      +    BFPFLG,CUPFLG,CDPFLG,SPFLG,CONSPEC,PROD,HTTFLL,LIVE,
      +    BA,SI,CTYPE,ERRFLAG,IDIST)
+      ENDIF
       IF(ERRFLAG.EQ.0)THEN
         tcu = VOL(1)
 C R8 old clark equation does not have tatal cubic volume.

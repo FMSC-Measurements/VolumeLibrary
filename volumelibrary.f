@@ -785,7 +785,8 @@ C ******************************************************************************
      + MTOPP_d,MTOPS_d,HT1PRD_d,HT2PRD_d,UPSHT1_d,UPSD1_d,STUMP_d,
      + FCLASS,DBTBH_d,BTR_d,VOL_d,LOGVOL_d,LOGDIA_d,LOGLEN_d,BOLHT_d,
      + TLOGS,NOLOGP_d,NOLOGS_d,ERRFLAG,BRKHT_d,BRKHTD_d,
-     & DRYBIO_d,GRNBIO_d,CR_d,CULL_d,DECAYCD,CULLMSTOP_d,CTYPE,LIVE)
+     & DRYBIO_d,GRNBIO_d,CR_d,CULL_d,DECAYCD,CULLMSTOP_d,CTYPE,LIVE,
+     & PROD)
 C This subroutine is for R user to calculate volume from vollib      !
 C with output variable for logs LOGDIA,LOGVOL,LOGLEN,BOLHT,TLOGS,NOLOGP,NOLOGS
 ! and new NSVB equations for biomass DRYBIO, GRNBIO      
@@ -866,7 +867,7 @@ C YW 02/10/2023
       
       READ (DIST, '(I2)') IDIST
 C     Set the default value for other variable
-      PROD='01'
+      !PROD='01'
       HTTYPE='F'
       HTLOG=0
       AVGZ1=0.0

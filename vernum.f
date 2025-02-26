@@ -110,7 +110,9 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !20240711 Added VOLLIBCPP to volapss.f for C++ interface subroutine   
 !20240805 Added vollibnvb2_2 to volumelibrary.f to allow input variable max log lenth MAXLOGLEN      
 !20241007 Added GETREGNWFCS for C# to get regional default live and dead weight factor and modified voleqdef.f.    
-!20241101 Modified VOLINITNVB to calculate biomass for DBH only trees using Jenkins method      
+!20241101 Modified VOLINITNVB to calculate biomass for DBH only trees using Jenkins method 
+!20241118 Modified VOLINITNVB to calculate GRNBIO using VOL and weight factor for cruise VOLEQ (not NVB equation)   
+!20250224 Modified nsvb.f and voiinit.f to set log weight to LOGVOL for CTYPE=Cruise     
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -140,7 +142,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20241101
+      VERSION = 20250224
       RETURN
       END SUBROUTINE VERNUM
       
@@ -173,7 +175,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20241101
+      VERSION = 20250224
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -196,7 +198,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20241101
+      VERSION = 20250224
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -209,6 +211,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20241101
+      version = 20250224
       return
       end subroutine vernum_r

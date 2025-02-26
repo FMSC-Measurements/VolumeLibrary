@@ -23,7 +23,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
      + ERRFLG,FIASPCD,CTYPE)
       IMPLICIT NONE
       CHARACTER*11 VOLEQ
-      CHARACTER*2 FORST,DIST,PROD
+      CHARACTER*2 FORST,DIST,PROD,PROD2
       CHARACTER*1 LIVE,CTYPE
       !CTYPE as I = FIA, F = FVS, C = Cruise, B = when other VOLEQ was used in voinitnvb
       INTEGER REGN,ERRFLG,DECAYCD,FIASPCD,SFTHRD
@@ -58,7 +58,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       REAL WtotibRed,WtotbkRed,WtotobRed,WbrchRed,AGBcompRed,BrchRem
       REAL Vtotob2,Vsawib2,Vsawob2,Vsawbk2,Vmrchib2,Vmrchob2,Vmrchbk2
       REAL Vtwib2,Vtwob2,Vtwbk2,Vtipib2,Vtipbk2,Rsaw2,Rmrch2
-      REAL DeadCF,SPGRNWF,SPDRYWF, SPREGNWF,DeadWF
+      REAL DeadCF,SPGRNWF,SPDRYWF, SPREGNWF,DeadWF,WtFac2
       CHARACTER*3 SPC
       !Check VOLEQ is valid
       IF(VOLEQ(1:3).NE.'NVB')THEN
@@ -300,7 +300,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       !FIA calculate merch volume different than cruise and FVS
       !FIA uses the very simple way, i.e. the volume from stump to merch top (DOB)
       !Timber Cruise and FVS calculates it as sum of log volumes with trim removed between logs
-      IF(HT1PRD.LE.0)THEN
+      IF(HT1PRD.LE.0.AND.MTOPP.LT.DBHOB)THEN
           IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'i')THEN
               CALL NVB_HT2TOPDob(VOLEQ,DBHOB,HTTOT,Vtotob2,MTOPP,HT1PRD,
      &        ERRFLG,SPGRPCD,WDSG)
@@ -537,7 +537,19 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       VOL(6) = VOL(4)/90
       IF(REGN.EQ.3.OR.REGN.EQ.8.OR.REGN.EQ.9) VOL(6)=VOL(4)/79
       VOL(6) = ANINT(VOL(6)*1000)/1000
-      
+      !Set the log weight to LOGVOL for CTYPE ='C' (Cruise only)
+      IF(CTYPE.EQ.'C')THEN
+          WtFac2 = GRNWF
+          IF(NOLOGS.GT.0)THEN
+              PROD2 = '20'
+              CALL GetRegnWF(REGN,FORST,SPCD,WtFac2,DeadWF,PROD2)
+          ENDIF
+          IF(LIVE.EQ.'L')THEN
+              CALL CruiseLogWt(LOGVOL,NOLOGP,NOLOGS,GRNWF,WtFac2)
+          ELSE
+              CALL CruiseLogWt(LOGVOL,NOLOGP,NOLOGS,DeadWF,DeadWF)
+          ENDIF
+      ENDIF
       RETURN
       END
 C----------------------------------------------------------------------
@@ -1382,8 +1394,10 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
       END DO
       IF(WtFac2.EQ.0) WtFac2 = WtFac
       !For Non-saw product using the non-saw/secondary weightfactor
-      IF(REGN.EQ.1.AND.PROD.NE.'01') WtFac = WtFac2
-      IF(REGN.EQ.5.AND.PROD.EQ.'20') WtFac = WtFac2
+      !IF(REGN.EQ.1.AND.PROD.NE.'01') WtFac = WtFac2
+      !IF(REGN.EQ.5.AND.PROD.EQ.'20') WtFac = WtFac2
+      !YW 2025/02/19
+      IF(PROD.NE.'01') WtFac = WtFac2
       !Species does not have a regional default, get green weight from ref_species
       IF(DONE.EQ.-1.AND.WtFac.LT.1)THEN
           CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,

@@ -1895,13 +1895,16 @@ namespace volCStest
                 if (this.LOGLEN[i] > 0)
                 {
                     lognum1 = i + 1;
-                    tree1.Add("Log # ".PadLeft(11, ' ') + lognum1.ToString());
+                    tree1.Add("Log # ".PadLeft(8, ' ') + lognum1.ToString());
                     tree1.Add("Length".PadRight(25, ' ').PadLeft(30, ' ') + this.LOGLEN[i].ToString().PadLeft(10, ' '));
                     tree1.Add("Small End Dia".PadRight(25, ' ').PadLeft(30, ' ') + Math.Round(this.LOGDIA[1,i+1],1).ToString().PadLeft(10, ' '));
                     tree1.Add("Large End Dia".PadRight(25, ' ').PadLeft(30, ' ') + Math.Round(this.LOGDIA[1,i],1).ToString().PadLeft(10, ' '));
                     tree1.Add("Cubic Vol".PadRight(25, ' ').PadLeft(30, ' ') + Math.Round(this.LOGVOL[i,3],1).ToString().PadLeft(10, ' '));
                     tree1.Add("Boardfoot".PadRight(25, ' ').PadLeft(30, ' ') + Math.Round(this.LOGVOL[i,0]).ToString().PadLeft(10, ' '));
-                    
+                    if (ctypeTB.Text.Substring(0, 1) == "C")
+                    {
+                        tree1.Add("Log Weight".PadRight(25, ' ').PadLeft(30, ' ') + Math.Round(this.LOGVOL[i, 6], 1).ToString().PadLeft(10, ' '));
+                    }
                 }
                 else break;
             }
@@ -1998,15 +2001,23 @@ namespace volCStest
                     tree2.Add(Math.Round(this.LOGDIA[1, i], 1).ToString().PadLeft(k, ' '));
                     tree2.Add(Math.Round(this.LOGVOL[i, 3], 1).ToString().PadLeft(k, ' '));
                     tree2.Add(Math.Round(this.LOGVOL[i, 0]).ToString().PadLeft(k, ' '));
+                    if (ctypeTB.Text.Substring(0, 1) == "C")
+                    {
+                        tree2.Add(Math.Round(this.LOGVOL[i, 6], 1).ToString().PadLeft(k, ' '));
+                    }
                     //if tree #2 has more logs, add empty record to tree #1
                     if (lognum2 > lognum1)
                     {
-                        tree1.Add("Log # ".PadLeft(11, ' ') + lognum2.ToString());
+                        tree1.Add("Log # ".PadLeft(8, ' ') + lognum2.ToString());
                         tree1.Add("Length".PadRight(35, ' ').PadLeft(40, ' '));
                         tree1.Add("Small End Dia".PadRight(35, ' ').PadLeft(40, ' '));
                         tree1.Add("Large End Dia".PadRight(35, ' ').PadLeft(40, ' '));
                         tree1.Add("Cubic Vol".PadRight(35, ' ').PadLeft(40, ' '));
                         tree1.Add("Boardfoot".PadRight(35, ' ').PadLeft(40, ' '));
+                        if (ctypeTB.Text.Substring(0, 1) == "C")
+                        {
+                            tree1.Add("Log Weight".PadRight(35, ' ').PadLeft(40, ' '));
+                        }
                     }
                 }
                 else break;
