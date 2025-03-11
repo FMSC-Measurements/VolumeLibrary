@@ -371,7 +371,8 @@ C         Confirmed with Adam Moore for this default
          COR='Y'
          EVOD = 2
          MAXLEN = 8.0
-         MINLEN = 4.0
+         !MINLEN = 4.0
+         MINLEN = 2.0
          minlent = 4.0
          MERCHL = 8.0
          OPT = 22

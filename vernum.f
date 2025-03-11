@@ -112,7 +112,9 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !20241007 Added GETREGNWFCS for C# to get regional default live and dead weight factor and modified voleqdef.f.    
 !20241101 Modified VOLINITNVB to calculate biomass for DBH only trees using Jenkins method 
 !20241118 Modified VOLINITNVB to calculate GRNBIO using VOL and weight factor for cruise VOLEQ (not NVB equation)   
-!20250224 Modified nsvb.f and voiinit.f to set log weight to LOGVOL for CTYPE=Cruise     
+!20250227 Modified nsvb.f and voiinit.f to set log weight to LOGVOL for CTYPE=Cruise and
+!         Updated R6_EQN for species Incense cedar(81) to use I00FW2W073 and Grand fir(17) to use I00FW2W017 in Willamette NF      
+!20250310 Fixed r9logs to make sure even logs and modified R9 MINLEN = 2
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -142,7 +144,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250224
+      VERSION = 20250310
       RETURN
       END SUBROUTINE VERNUM
       
@@ -175,7 +177,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250224
+      VERSION = 20250310
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -198,7 +200,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20250224
+      VERSION = 20250310
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -211,6 +213,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20250224
+      version = 20250310
       return
       end subroutine vernum_r

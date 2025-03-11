@@ -5,6 +5,7 @@ C 09/09/2016 Modified R3_EQN default equation for PP, DF, WF, and WP in Sante Fe
 C 09/15/2016 Corrected R4 default equation for other species to DVE equation
 C 04/12/2017 removed 532WO2W*** equation from R5_EQN per the email from Craig Bodenhausen (4/12/2017)
 C 07/19/2021 Changed R8_CEQN to use the R8 new Clark equation 8*1CLKE***. Added 1 to TOPCODE array.
+C 02/27/2025 Updated R6_EQN for species 81 Incense cedar to use I00FW2W073 in Willamette NF      
       SUBROUTINE VOLEQDEF (VAR,REGN,FORST,DIST,SPEC,PROD,VOLEQ,ERRFLAG)
 C
 C    SUBROUTINE WILL RETURN THE DEFAULT VOLUME EQUATION NUMBER
@@ -1133,6 +1134,11 @@ c         Willamette
                 DONEF = 16
              ELSE IF(SPEC.EQ.263)THEN
                 DONEF = 12
+            !Added Incense Cedar (81) to use I00FW2W073 and Grand fir (17) to use I00FW2W017 (20250227)    
+             ELSE IF(SPEC.EQ.17)THEN
+                DONEI = 64
+             ELSE IF(SPEC.EQ.81)THEN
+                DONEI = 68
              ENDIF
          ENDIF
 

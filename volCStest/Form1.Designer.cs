@@ -1387,7 +1387,7 @@ namespace volCStest
             // 
             this.PrintReportBtn.Location = new System.Drawing.Point(123, 659);
             this.PrintReportBtn.Name = "PrintReportBtn";
-            this.PrintReportBtn.Size = new System.Drawing.Size(94, 34);
+            this.PrintReportBtn.Size = new System.Drawing.Size(111, 34);
             this.PrintReportBtn.TabIndex = 66;
             this.PrintReportBtn.Text = "Print Report";
             this.PrintReportBtn.UseVisualStyleBackColor = true;
@@ -1395,9 +1395,9 @@ namespace volCStest
             // 
             // PrintGraphBtn
             // 
-            this.PrintGraphBtn.Location = new System.Drawing.Point(223, 659);
+            this.PrintGraphBtn.Location = new System.Drawing.Point(242, 659);
             this.PrintGraphBtn.Name = "PrintGraphBtn";
-            this.PrintGraphBtn.Size = new System.Drawing.Size(88, 32);
+            this.PrintGraphBtn.Size = new System.Drawing.Size(154, 32);
             this.PrintGraphBtn.TabIndex = 67;
             this.PrintGraphBtn.Text = "Print Graph";
             this.PrintGraphBtn.UseVisualStyleBackColor = true;
@@ -1405,7 +1405,7 @@ namespace volCStest
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(329, 659);
+            this.button1.Location = new System.Drawing.Point(411, 659);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(117, 32);
             this.button1.TabIndex = 68;
