@@ -1411,13 +1411,13 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
           ELSEIF(REGN.EQ.2)THEN
               DeadWF = WtFac*0.6381
           ELSEIF(REGN.EQ.4)THEN
-              DeadWF = WtFac*0.9494
+              DeadWF = WtFac*0.6113
           ELSEIF(REGN.EQ.5)THEN
               DeadWF = WtFac*0.8254
           ELSEIF(REGN.EQ.7)THEN
               DeadWF = WtFac*0.7951
           ELSE
-              DeadWF = WtFac*0.7766
+              DeadWF = WtFac*0.7036
           ENDIF
       ENDIF
       RETURN

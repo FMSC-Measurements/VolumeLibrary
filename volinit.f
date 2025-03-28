@@ -699,14 +699,15 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       REAL NVBVOL(15),NVBLOGVOL(7,20),NVBLOGDIA(21,3),NVBLOGLEN(20)
       REAL NVBBOLHT(21),CR,CULL,NVBNOLOGP,NVBNOLOGS
       INTEGER FIASPCD,MRULEFLG,DECAYCD,ERRFLAG2,I,J,NVBTLOGS
-      REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),Vfactor
+      REAL BRKHT,BRKHTD,DRYBIO(15),GRNBIO(15),Vfactor,Rwood
       CHARACTER*3 SPCD
       TYPE(MERCHRULES)::MERRULES
       INTEGER SPGRPCD,SFTHRD,STEMS,EcoProv
       REAL WDSG, CF, SPGRNWF, SPDRYWF, MC,SPREGNWF,DeadWF,BIOMS(8)
       REAL NVBHT1PRD,NVBHT2PRD, DecayProp,CV15,CULLMSTOP,FOLIAGE,BrchRem
-      REAL WtPrim,WtPrimWd,WtPrimBk,WtTW,WtTWwd,WtTWbk,WtTip
-      REAL WtTipWd,WtTipBk,WTStem,WtStemWd,WtStemBk,WF,WF2
+      REAL WtPrim,WtPrimWd,WtPrimBk,WtTW,WtTWwd,WtTWbk,WtTip,WtMstemNVB
+      REAL WtTipWd,WtTipBk,WTStem,WtStemWd,WtStemBk,WF,WF2,WtMerchStem
+      REAL Rprim,WtMstmNVBdry,WtTipDiff,WtTipDiffDry
 
       I3 = 3
       I7 = 7
@@ -906,25 +907,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
      +     LIVE,CR,CULL,DECAYCD,NVBLOGLEN,NVBLOGDIA,
      +    NVBLOGVOL,NVBBOLHT,NVBTLOGS,NVBNOLOGP,NVBNOLOGS,NVBVOL,
      +    DRYBIO,GRNBIO,ERRFLAG2,FIASPCD,CTYPE)
-          !!Adjust the biomass result based on the merch volume from Cruise VOLEQ
-          !IF(NVBVOL(4).GT.0.AND.VOL(4).GT.0)THEN
-          !    Vfactor = VOL(4)/NVBVOL(4)
-          !ELSEIF(NVBVOL(1).GT.0.AND.VOL(1).GT.0)THEN
-          !    Vfactor = VOL(1)/NVBVOL(1)
-          !ENDIF
-          !DRYBIO = DRYBIO*Vfactor
-          !GRNBIO = GRNBIO*Vfactor
-          !!Set topwood biomass to 0 when VOL(7) = 0
-          !IF(VOL(7).EQ.0)THEN
-          !    DRYBIO(10) = DRYBIO(10)+DRYBIO(8)
-          !    DRYBIO(8) = 0
-          !    DRYBIO(11) = DRYBIO(11)+DRYBIO(9)
-          !    DRYBIO(9) = 0
-          !    GRNBIO(10) = GRNBIO(10)+GRNBIO(8)
-          !    GRNBIO(8) = 0
-          !    GRNBIO(11) = GRNBIO(11)+GRNBIO(9)
-          !    GRNBIO(9) = 0
-          !ENDIF
+          
           !Recalculate GRNBIO using freen weight factor and VOL from cruise VOLEQ(20241114)
           CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF,PROD)
           !get the secondary weight factor
@@ -937,6 +920,8 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
               WF = DeadWF
               WF2 = WF
           ENDIF
+          !calculate moisture content
+          MC = GRNBIO(1)/DRYBIO(1) - 1.0
           WtPrim = 0
           WtPrimWd = 0
           WtPrimBk = 0
@@ -950,105 +935,62 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           WtStemWd = 0
           WtStemBk = 0
           IF(WF2.LT.1) WF2 = WF
-          IF(VOL(4).GT.0.05)THEN
-              !Green weight of primary prod
-              WtPrim = VOL(4)*WF
-              IF(GRNBIO(6).GT.0)THEN
-                  Vfactor = WtPrim/(GRNBIO(6)+GRNBIO(7))
-                  WtPrimWd = WtPrim*GRNBIO(6)/(GRNBIO(6)+GRNBIO(7))
-                  WtPrimBk = WtPrim*GRNBIO(7)/(GRNBIO(6)+GRNBIO(7))
-              ENDIF
-              !Green weight topwood
-              IF(VOL(7).GT.0.05)THEN
-                  WtTW = VOL(7)*WF2
-                  Vfactor = (WtPrim+WtTW)/(GRNBIO(6)+GRNBIO(7)+
-     &           GRNBIO(8)+GRNBIO(9))
-                  IF(GRNBIO(8).GT.0)THEN
-                      WtTWwd = WtTW*GRNBIO(8)/(GRNBIO(8)+GRNBIO(9))
-                      WtTWbk = WtTW*GRNBIO(9)/(GRNBIO(8)+GRNBIO(9))
-                  ENDIF
-                  !Green weight tip
-                  IF(VOL(15).GT.0)THEN
-                    WtTip = VOL(15)*WF2
-                    Vfactor = (WtPrim+WtTW+WtTip)/(GRNBIO(6)+GRNBIO(7)
-     &           +GRNBIO(8)+GRNBIO(9)+GRNBIO(10)+GRNBIO(11))
-                    IF(GRNBIO(10).GT.0)THEN
-                      WtTipWd = WtTip*GRNBIO(10)/(GRNBIO(10)+GRNBIO(11))
-                      WtTipBk = WtTip*GRNBIO(11)/(GRNBIO(10)+GRNBIO(11))
-                    ENDIF
-                  ENDIF
-              ELSE !No topwood
-                DRYBIO(10) = DRYBIO(10)+DRYBIO(8)
-                DRYBIO(8) = 0
-                DRYBIO(11) = DRYBIO(11)+DRYBIO(9)
-                DRYBIO(9) = 0
-                GRNBIO(10) = GRNBIO(10)+GRNBIO(8)
-                GRNBIO(8) = 0
-                GRNBIO(11) = GRNBIO(11)+GRNBIO(9)
-                GRNBIO(9) = 0
-                IF(VOL(15).GT.0.05)THEN
-                  WtTip = VOL(15)*WF
-                  Vfactor = (WtPrim+WtTip)/(GRNBIO(6)+GRNBIO(7)
-     &           +GRNBIO(10)+GRNBIO(11))
-                  IF(GRNBIO(10).GT.0)THEN
-                    WtTipWd = WtTip*GRNBIO(10)/(GRNBIO(10)+GRNBIO(11))
-                    WtTipBk = WtTip*GRNBIO(11)/(GRNBIO(10)+GRNBIO(11))
-                  ENDIF
-                ENDIF
-
-              ENDIF
-          ELSEIF(VOL(1).GT.0)THEN
+          WtPrim = VOL(4)*WF
+          WtTW = VOL(7)*WF2
+          WtMerchStem = WtPrim + WtTW
+          Rprim = WtPrim/WtMerchStem
+          WtMstemNVB = GRNBIO(6)+GRNBIO(7)+GRNBIO(8)+GRNBIO(9)
+          Vfactor = 1
+          IF(WtMstemNVB.GT.0) THEN
+              Vfactor=WtMerchStem/WtMstemNVB
+              Rwood = (GRNBIO(6)+GRNBIO(8))/WtMstemNVB
+          ELSE
               WtStem = VOL(1)*WF
-              IF(GRNBIO(2).GT.0)THEN
-                  WtStemWd = WtStem*GRNBIO(2)/(GRNBIO(2)+GRNBIO(3))
-                  WtStemBk = WtStem*GRNBIO(3)/(GRNBIO(2)+GRNBIO(3))
-                  Vfactor = WtStem/(GRNBIO(2)+GRNBIO(3))
-              ENDIF
-              GRNBIO(10) = GRNBIO(10)+GRNBIO(8)+GRNBIO(6)
-              GRNBIO(11) = GRNBIO(11)+GRNBIO(9)+GRNBIO(7)
-              GRNBIO(8) = 0
-              GRNBIO(6) = 0
-              GRNBIO(9) = 0
-              GRNBIO(7) = 0
-              DRYBIO(10) = DRYBIO(10)+DRYBIO(8)+DRYBIO(6)
-              DRYBIO(11) = DRYBIO(11)+DRYBIO(9)+DRYBIO(7)
-              DRYBIO(8) = 0
-              DRYBIO(6) = 0
-              DRYBIO(9) = 0
-              DRYBIO(7) = 0
+              Vfactor = WtStem/(GRNBIO(2)+GRNBIO(3))
+              Rwood = GRNBIO(2)/(GRNBIO(2)+GRNBIO(3))
           ENDIF
           DRYBIO = DRYBIO*Vfactor
           GRNBIO = GRNBIO*Vfactor
           !Reset GRNBIO stem component
-          IF(WtPrimWd.GT.0)THEN
-              GRNBIO(6) = WtPrimWd
-              GRNBIO(7) = WtPrimBk
-          ELSEIF(WtPrim.GT.0)THEN
-              GRNBIO(6) = WtPrim
+          WtMstmNVBdry = DRYBIO(6)+DRYBIO(7)+DRYBIO(8)+DRYBIO(9)
+          IF(VOL(4).GT.0) THEN
+              GRNBIO(6) = WtPrim*Rwood
+              GRNBIO(7) = WtPrim*(1.0-Rwood)
+              DRYBIO(6) = Rprim*WtMstmNVBdry*Rwood
+              DRYBIO(7) = Rprim*WtMstmNVBdry*(1.0-Rwood)
+          ELSE
+              GRNBIO(6) = 0
               GRNBIO(7) = 0
+              DRYBIO(6) = 0
+              DRYBIO(7) = 0
           ENDIF
-          IF(WtTWwd.GT.0)THEN
-              GRNBIO(8) = WtTWwd
-              GRNBIO(9) = WtTWbk
-          ELSEIF(WtTW.GT.0)THEN
-              GRNBIO(8) = WtTW
+          IF(VOL(7).GT.0) THEN
+              GRNBIO(8) = WtTW*Rwood
+              GRNBIO(9) = WtTW*(1.0-Rwood)
+              DRYBIO(8) = (1.0-Rprim)*WtMstmNVBdry*Rwood
+              DRYBIO(9) = (1.0-Rprim)*WtMstmNVBdry*(1.0-Rwood)
+          ELSE
+              GRNBIO(8) = 0
               GRNBIO(9) = 0
+              DRYBIO(8) = 0
+              DRYBIO(9) = 0
           ENDIF
-          IF(WtTipWd.GT.0)THEN
-              GRNBIO(10) = WtTipWd
-              GRNBIO(11) = WtTipBk
-          ELSEIF(WtTip.GT.0)THEN
-              GRNBIO(10) = WtTip
-              GRNBIO(11) = 0
+          IF(VOL(15).GT.0) THEN
+              WtTip = VOL(15)*WF2
+              WtTipDiff = WtTip-GRNBIO(10)-GRNBIO(11)
+              WtTipDiffDry = WtTipDiff/(1.0+MC)
+              GRNBIO(10) = WtTip*Rwood
+              GRNBIO(11) = WtTip*(1.0-Rwood)
+              DRYBIO(10) = GRNBIO(10)/(1.0+MC)
+              DRYBIO(11) = GRNBIO(11)/(1.0+MC)
           ENDIF
-          IF(WtStemWd.GT.0)THEN
-              GRNBIO(2) = WtStemWd
-              GRNBIO(3) = WtStemBk
-          ELSEIF(WtStem.GT.0)THEN
-              GRNBIO(2) = WtStem
-              GRNBIO(3) = 0
-          ENDIF
-      
+          !Adjust AGB and main stem total
+          GRNBIO(2) = GRNBIO(4)+GRNBIO(6)+GRNBIO(8)+GRNBIO(10)
+          GRNBIO(3) = GRNBIO(5)+GRNBIO(7)+GRNBIO(9)+GRNBIO(11)
+          DRYBIO(2) = DRYBIO(4)+DRYBIO(6)+DRYBIO(8)+DRYBIO(10)
+          DRYBIO(3) = DRYBIO(5)+DRYBIO(7)+DRYBIO(9)+DRYBIO(11)
+          GRNBIO(1) = GRNBIO(2)+GRNBIO(3)+GRNBIO(12)
+          DRYBIO(1) = DRYBIO(2)+DRYBIO(3)+DRYBIO(12)
       ENDIF
       RETURN
       END
