@@ -137,11 +137,12 @@ C******************************
       ENDIF
       
 C     ROUND ALL VOLUMES 10TH CUBIC AND CORD, NEAREST BDFT
-      VOL(1) =  ANINT(VOL(1)*10.0)/10.0
+      !Changed to not rounding VOL(1) and VOL(4). They will be used for biomass calculation (2025/05/07)
+      !VOL(1) =  ANINT(VOL(1)*10.0)/10.0
 	VOL(2) = ANINT(VOL(2))
-	VOL(4) = ANINT(VOL(4)*10.0)/10.0
+	!VOL(4) = ANINT(VOL(4)*10.0)/10.0
       VOL(6) = ANINT(VOL(6)*1000.0)/1000.0
-	VOL(7) = ANINT(VOL(7)*10.0)/10.0
+	!VOL(7) = ANINT(VOL(7)*10.0)/10.0
 	VOL(9) = ANINT(VOL(9)*1000.0)/1000.0
 	VOL(10) = ANINT(VOL(10))
 

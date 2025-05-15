@@ -245,7 +245,8 @@ namespace volCStest
             this.ctypeTB.Items.AddRange(new object[] {
             "FVS Vol",
             "Cruise Vol",
-            "FIA Vol"});
+            "FIA Vol",
+            "DBH only Biomass"});
             this.ctypeTB.Location = new System.Drawing.Point(90, 135);
             this.ctypeTB.Name = "ctypeTB";
             this.ctypeTB.Size = new System.Drawing.Size(87, 25);

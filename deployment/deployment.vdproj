@@ -134,7 +134,7 @@
                 {
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
-                "FrameworkVersion" = "8:3.5.30729      "
+                "FrameworkVersion" = "8:.NETFramework,Version=v3.5"
                 "AllowLaterVersions" = "11:FALSE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=76617"
                 }
@@ -262,7 +262,7 @@
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:NVEL Tester"
         "ProductCode" = "8:{359448E4-CB0E-493E-B782-BE292E7AC0AD}"
-        "PackageCode" = "8:{B4F18088-B769-4AA7-9114-B28A08DECF35}"
+        "PackageCode" = "8:{0DFCC2A7-7549-4B7B-9D71-FAD97B99F73C}"
         "UpgradeCode" = "8:{84FB9C77-82C4-444C-BE89-C8A6280AA94B}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"

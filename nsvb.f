@@ -179,19 +179,37 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
               ENDIF
           ENDIF
       ENDIF
+      !First call the mrules to get the region defaults
+      V_EQN = VOLEQ(1:10)
+      CALL MRULES(REGN,FORST,V_EQN,DBHOB,COR,EVOD,OPT,MAXLEN,
+     >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
+     >   PROD)
+      IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
+      !If HTTOT is not provided, try to get an estimate from HT1PRD/MTOPP, HT2PRD/MTOPS
+      IF(HTTOT.LE.0)THEN
+          IF(HT2PRD.GT.0.AND.MTOPS.GT.0)THEN
+              CALL NVB_ESTTHT(VOLEQ,DBHOB,HT2PRD,MTOPS,HTTOT,ERRFLG,
+     &         SPGRPCD,WDSG)
+          ELSEIF(HT1PRD.GT.0.AND.MTOPP.GT.0)THEN
+              CALL NVB_ESTTHT(VOLEQ,DBHOB,HT1PRD,MTOPP,HTTOT,ERRFLG,
+     &         SPGRPCD,WDSG)
+          ENDIF
+      ENDIF
+      !If HTTOT still 0, check broken height
       IF(HTTOT.LE.0)THEN
           IF(BRKHT.LE.0.AND.BRKHTD.LE.0)THEN
               ERRFLG = 4
-              RETURN
+              !RETURN
           ELSEIF(BRKHT.LE.0.OR.BRKHTD.LE.0)THEN
               ERRFLG = 9
-              RETURN
+              !RETURN
           ELSEIF(BRKHT.GT.0.AND.BRKHTD.GT.0)THEN
               CALL NVB_ESTTHT(VOLEQ,DBHOB,BRKHT,BRKHTD,HTTOT,ERRFLG,
      &         SPGRPCD,WDSG)
           ENDIF
       ENDIF
-      
+      IF(HTTOT.LE.0) ERRFLG = 4
+      IF(ERRFLG.GT.0) RETURN
       IF(BRKHT.LT.4.5) BRKHT = 0
       IF(BRKHT.GT.0)THEN
           CALL NVB_GetRatioCOEF(VOLEQ,Tbl5Cnt,SPCOEF,JKCOEF,a,b,SPGRPCD)
@@ -228,48 +246,44 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
               RemBrchProp = 0     
           ENDIF
           !IF(SPCD.LT.300)THEN
-          IF(SFTHRD.EQ.0)THEN
-              IF(DECAYCD.eq.1)THEN
-                  DenProp = 0.97
-                  DeadCF = 0.501
-              ELSEIF(DECAYCD.EQ.2)THEN
-                  DenProp = 1
-                  DeadCF = 0.504
-             ELSEIF(DECAYCD.EQ.3)THEN
-                  DenProp = 0.92
-                  DeadCF = 0.506
-             ELSEIF(DECAYCD.EQ.4)THEN
-                  DenProp = 0.55
-                  DeadCF = 0.52
-             ELSEIF(DECAYCD.EQ.5)THEN
-                  DenProp = 0.55
-                  DeadCF = 0.527
-             ENDIF
-          ELSE
-              IF(DECAYCD.eq.1)THEN
-                  DenProp = 0.99
-                  DeadCF = 0.47
-              ELSEIF(DECAYCD.EQ.2)THEN
-                  DenProp = 0.8
-                  DeadCF = 0.473
-             ELSEIF(DECAYCD.EQ.3)THEN
-                  DenProp = 0.54
-                  DeadCF = 0.481
-             ELSEIF(DECAYCD.EQ.4)THEN
-                  DenProp = 0.43
-                  DeadCF = 0.48
-             ELSEIF(DECAYCD.EQ.5)THEN
-                  DenProp = 0.43
-                  DeadCF = 0.472     
-             ENDIF
-          ENDIF
+          !Move the following code to DecayDenProp subroutine (2025/05/08)
+          !IF(SFTHRD.EQ.0)THEN
+          !    IF(DECAYCD.eq.1)THEN
+          !        DenProp = 0.97
+          !        DeadCF = 0.501
+          !    ELSEIF(DECAYCD.EQ.2)THEN
+          !        DenProp = 1
+          !        DeadCF = 0.504
+          !   ELSEIF(DECAYCD.EQ.3)THEN
+          !        DenProp = 0.92
+          !        DeadCF = 0.506
+          !   ELSEIF(DECAYCD.EQ.4)THEN
+          !        DenProp = 0.55
+          !        DeadCF = 0.52
+          !   ELSEIF(DECAYCD.EQ.5)THEN
+          !        DenProp = 0.55
+          !        DeadCF = 0.527
+          !   ENDIF
+          !ELSE
+          !    IF(DECAYCD.eq.1)THEN
+          !        DenProp = 0.99
+          !        DeadCF = 0.47
+          !    ELSEIF(DECAYCD.EQ.2)THEN
+          !        DenProp = 0.8
+          !        DeadCF = 0.473
+          !   ELSEIF(DECAYCD.EQ.3)THEN
+          !        DenProp = 0.54
+          !        DeadCF = 0.481
+          !   ELSEIF(DECAYCD.EQ.4)THEN
+          !        DenProp = 0.43
+          !        DeadCF = 0.48
+          !   ELSEIF(DECAYCD.EQ.5)THEN
+          !        DenProp = 0.43
+          !        DeadCF = 0.472     
+          !   ENDIF
+          !ENDIF
+          CALL DecayDenProp(SFTHRD,DECAYCD,DenProp,DeadCF)
       ENDIF
-      !First call the mrules to get the region defaults
-      V_EQN = VOLEQ(1:10)
-      CALL MRULES(REGN,FORST,V_EQN,DBHOB,COR,EVOD,OPT,MAXLEN,
-     >   MINLEN,MERCHL,MINLENT,MTOPP,MTOPS,STUMP,TRIM,BTR,DBTBH,MINBFD,
-     >   PROD)
-      IF(MTOPS.GT.MTOPP) MTOPS = MTOPP
       ! (1) calculate total stem wood volume inside bark
       CALL NVB_Vib(VOLEQ,DBHOB,HTTOT,Vtotib,ERRFLG,SPGRPCD,WDSG)
       IF(ERRFLG.GT.0) RETURN
@@ -313,7 +327,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       ENDIF
       IF(HT1PRD.LT.STUMP) HT1PRD = STUMP
       !Calculate sawtimber volume for FIA
-      !CTYPE = B is set in noinitnvb when VOLEQ is not NSVB EQ
+      !CTYPE = B is set in volinitnvb when VOLEQ is not NSVB EQ
       IF(CTYPE.EQ.'I'.OR.CTYPE.EQ.'B')THEN
           CALL CalcRatio(HTTOT,HT1PRD,RatioEQ,a,b,Rsaw2)
           Vsawib2 = Vtotib*Rsaw2 - Vstumpib
@@ -606,6 +620,8 @@ C Stem height to a top diameter outside bark
           CALL NVB_Vob(VOLEQ,DBHOB,HTTOT,Vob,ERRFLG,SPGRPCD,WDSG)
       ENDIF
       CALL NVB_CalcHT2TOPD(Vob,a,b,HTTOT,TOPD,HT2)
+      !Added HT2 floor to 4.5 for merch height (2025/05/02)
+      IF(HT2.LT.5.AND.TOPD.LT.DBHOB) HT2 = 5
       RETURN
       END
 !----------------------------------------------------------------------
@@ -856,7 +872,7 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
       INTEGER equation
       REAL H,h1,a,b,R
       R=0
-      IF(equation.EQ.6.AND.(h1.GT.0.AND.h1.LT.H))THEN
+      IF(equation.EQ.6.AND.(h1.GT.0.AND.h1.LE.H))THEN
           R = (1-(1-h1/H)**a)**b
       ENDIF
       RETURN
@@ -942,12 +958,12 @@ C For TOPD inside bark, input TCUFT inside bark and inside bark coef (a,b)
       hi = HTTOT
       diff = 1.0
       loopcnt = 0
-      DO WHILE (ABS(diff).GT.0.01)
+      DO WHILE (ABS(diff).GT.0.001)
           mid = (low+hi)/2  
           X = mid/HTTOT  
           diff = TOPD - ((TCUFT/0.005454154/HTTOT*a*b*
      +    (1-X)**(a-1)*(1-(1-X)**a)**(b-1)))**0.5
-          IF(ABS(diff).LT.0.05) THEN
+          IF(ABS(diff).LT.0.001) THEN
               EXIT
           ENDIF
           IF(diff.LT.0.0)THEN
@@ -958,7 +974,7 @@ C For TOPD inside bark, input TCUFT inside bark and inside bark coef (a,b)
           loopcnt = loopcnt +1
           IF(loopcnt.GT.1000) EXIT
       ENDDO
-      HT2 = mid      
+      HT2 = mid
       RETURN
       END  
 C----------------------------------------------------------------------
@@ -1422,4 +1438,46 @@ C     FIND THE SPECIES GROUP CODE FROM THE ARRAY
       ENDIF
       RETURN
       END
+!----------------------------------------------------------------------
+      SUBROUTINE DecayDenProp(SFTHRD,DECAYCD,DenProp,DeadCF)
+      IMPLICIT NONE
+      INTEGER SFTHRD,DECAYCD
+      REAL DenProp,DeadCF
       
+          IF(SFTHRD.EQ.0)THEN
+              IF(DECAYCD.eq.1)THEN
+                  DenProp = 0.97
+                  DeadCF = 0.501
+              ELSEIF(DECAYCD.EQ.2)THEN
+                  DenProp = 1
+                  DeadCF = 0.504
+             ELSEIF(DECAYCD.EQ.3)THEN
+                  DenProp = 0.92
+                  DeadCF = 0.506
+             ELSEIF(DECAYCD.EQ.4)THEN
+                  DenProp = 0.55
+                  DeadCF = 0.52
+             ELSEIF(DECAYCD.EQ.5)THEN
+                  DenProp = 0.55
+                  DeadCF = 0.527
+             ENDIF
+          ELSE
+              IF(DECAYCD.eq.1)THEN
+                  DenProp = 0.99
+                  DeadCF = 0.47
+              ELSEIF(DECAYCD.EQ.2)THEN
+                  DenProp = 0.8
+                  DeadCF = 0.473
+             ELSEIF(DECAYCD.EQ.3)THEN
+                  DenProp = 0.54
+                  DeadCF = 0.481
+             ELSEIF(DECAYCD.EQ.4)THEN
+                  DenProp = 0.43
+                  DeadCF = 0.48
+             ELSEIF(DECAYCD.EQ.5)THEN
+                  DenProp = 0.43
+                  DeadCF = 0.472     
+             ENDIF
+          ENDIF
+      RETURN
+      END

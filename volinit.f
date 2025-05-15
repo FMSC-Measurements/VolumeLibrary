@@ -324,7 +324,10 @@ C ADDED ON 07/30/2014 ROUND LOGS BASED ON JEFF PENMAN LOG RULES
 
             ENDIF
             HTTYPE = 'L'
-            IF(THT1.EQ.0) RETURN
+            IF(THT1.EQ.0) THEN
+                ERRFLAG = 4
+                RETURN
+            ENDIF    
           ENDIF
 
           NOLOGP=0.0
@@ -707,7 +710,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       REAL NVBHT1PRD,NVBHT2PRD, DecayProp,CV15,CULLMSTOP,FOLIAGE,BrchRem
       REAL WtPrim,WtPrimWd,WtPrimBk,WtTW,WtTWwd,WtTWbk,WtTip,WtMstemNVB
       REAL WtTipWd,WtTipBk,WTStem,WtStemWd,WtStemBk,WF,WF2,WtMerchStem
-      REAL Rprim,WtMstmNVBdry,WtTipDiff,WtTipDiffDry
+      REAL Rprim,WtMstmNVBdry,WtTipDiff,WtTipDiffDry,DenProp,DeadCF
 
       I3 = 3
       I7 = 7
@@ -766,9 +769,9 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
       IF(FIASPCD.EQ.2263) FIASPCD = 263
       IF(FIASPCD.EQ.204) FIASPCD = 202
       !Calculate biomass for trees with only DBH (no HT) using Jenkins (2021/11/01)
-      IF((DBHOB.GE.1.OR.DRCOB.GE.1).AND.
+      IF((DBHOB.GE.0.1.OR.DRCOB.GE.0.1).AND.
      + (HTTOT.LT.1.AND.HT1PRD.LT.1.AND.HT2PRD.LT.1.AND.
-     + UPSHT1.LT.1.AND.UPSHT2.LT.1.))THEN
+     + UPSHT1.LT.1.AND.UPSHT2.LT.1.).AND.CTYPE.EQ.'B')THEN
           IF(DRCOB.GE.1.AND.DBHOB.LT.1) DBHOB = DRCOB
           BIOMS = 0
           CALL JENKINS(FIASPCD,DBHOB,BIOMS)
@@ -830,7 +833,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
               IF(SPGRPCD.EQ.10)THEN
                   ERRFLAG = 0
                   STEMS = FCLASS
-                  IF(DRCOB.LT.1.AND.DBHOB.GE.1) DRCOB=DBHOB
+                  IF(DRCOB.LT.0.1.AND.DBHOB.GE.0.1) DRCOB=DBHOB
                   !FIA adjust missing top VOL using CULLMSTOP (20240426)
                   CV15 = VOL(1)
                   IF(CULLMSTOP.GT.0) CV15 = CV15*(1-CULLMSTOP/100)
@@ -842,6 +845,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                     CALL WOODLAND_BIO(FIASPCD, DRCOB,HTTOT,STEMS,CV15,
      &              DRYBIO,ERRFLAG)
                   ENDIF
+                      
                   !Calculate foliage using Jenkins equation. This is to match FIA foliage calculation
                   !Calculate foliage for LIVE tree only    
                   BIOMS = 0
@@ -857,16 +861,27 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                       FOLIAGE = FOLIAGE*BrchRem
                   ENDIF
                   !Reset the foliage result
-                  DRYBIO(13) = FOLIAGE
+                  !DRYBIO(13) = FOLIAGE
                   !calc carbon
                   DRYBIO(15) = DRYBIO(1)*CF
                   !Adhust CULL for VOL and DRYBIO (20240428)
                   VOL(1) = VOL(1)*(1-(CULL + CULLMSTOP)/100)
-                  IF(CULL.GT.0)THEN
+                  VOL(4) = VOL(4)*(1-(CULL + CULLMSTOP)/100)
+                  IF(LIVE.EQ.'L'.AND.CULL.GT.0)THEN
                     DecayProp = 0.92
                     IF(FIASPCD.GE.300) DecayProp = 0.54
-                    DRYBIO = DRYBIO*(1.0 - CULL/100 * (1.0 - DecayProp))   
+                    DRYBIO = DRYBIO*(1.0 - CULL/100 * (1.0 - DecayProp))  
+                  !ENDIF
+                  !Adjust wood denProp besed on DECAYCD (2025/05/08)
+                  !IF(DECAYCD.GT.0)THEN
+                  ELSEIF(LIVE.EQ.'D')THEN
+                      IF(DECAYCD.EQ.0) DECAYCD = 3
+                      CALL DecayDenProp(SFTHRD,DECAYCD,DenProp,DeadCF)
+                      DRYBIO = DRYBIO*DenProp
+                      DRYBIO(15) = DRYBIO(1)*DeadCF
                   ENDIF
+                  !Reset the foliage result
+                  DRYBIO(13) = FOLIAGE
                   !calc green weight
                   CALL GetRegnWF(REGN,FORST,FIASPCD,SPGRNWF,DeadWF,PROD)
                   IF(LIVE.EQ.'L')THEN
@@ -921,7 +936,13 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
               WF2 = WF
           ENDIF
           !calculate moisture content
-          MC = GRNBIO(1)/DRYBIO(1) - 1.0
+          IF(DRYBIO(1).GT.0) THEN
+              MC = GRNBIO(1)/DRYBIO(1) - 1.0
+          ELSE
+              CALL NVB_RefSpcData(FIASPCD,SPGRPCD,WDSG,SFTHRD,CF,
+     &        ERRFLAG,SPGRNWF,SPDRYWF)
+              MC = (WF - SPDRYWF)/SPDRYWF
+          ENDIF
           WtPrim = 0
           WtPrimWd = 0
           WtPrimBk = 0
@@ -946,8 +967,13 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
               Rwood = (GRNBIO(6)+GRNBIO(8))/WtMstemNVB
           ELSE
               WtStem = VOL(1)*WF
-              Vfactor = WtStem/(GRNBIO(2)+GRNBIO(3))
-              Rwood = GRNBIO(2)/(GRNBIO(2)+GRNBIO(3))
+              IF((GRNBIO(2)+GRNBIO(3)).GT.0) THEN
+                  Vfactor = WtStem/(GRNBIO(2)+GRNBIO(3))
+                  Rwood = GRNBIO(2)/(GRNBIO(2)+GRNBIO(3))
+              ELSE
+                  Vfactor = 1
+                  Rwood = 1
+              ENDIF
           ENDIF
           DRYBIO = DRYBIO*Vfactor
           GRNBIO = GRNBIO*Vfactor

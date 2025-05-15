@@ -368,13 +368,13 @@ namespace volCStest
             //MessageBox.Show("LiveWF = " + LiveWF + "DeadWF = " + DeadWF);
             //the calculation works!!!
             DRCOB = 0.0F;
-            CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, PROD, strlen, strlen);
+            //CRZBIOMASSCS(ref REGN, FORST, ref SPCD, ref DBHOB, ref DRCOB, ref HTTOT, ref FCLASS, VOL, WF, BMS, ref ERRFLAG, PROD, strlen, strlen);
             //MessageBox.Show("After call CRZBIOMASSCS BMS(1)= " + BMS[1]);
             //test call BIOLIBCS
             //BIOEQ.Append("JEN002AGT01D");
             BIOEQ.Append("0");
             GEOSUB.Append("00");
-            BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, GRNBIO9, DRYBIO9, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
+            //BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, GRNBIO9, DRYBIO9, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
             //test Brown's function works!!!
             //DBH = DBHOB;
             //CR = 0.5F;
@@ -389,12 +389,12 @@ namespace volCStest
             //BROWNCULLCHUNK(ref SPCD, ref VolS, ref VolN, ref fliw, ref CullChunkWt);
 
             //Test on call BIOLIB 2021/11/10
-           BIOEQ.Append("JEN002AGT01D");
+           BIOEQ.Append("FRM065WB102D");
            GEOSUB.Append("01");
            BIOGRN = new float[9];
            BIODRY = new float[9];
            ERRFLAG = 0;
-            BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, BIOGRN, BIODRY, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
+           //BIOLIBCS(ref REGN, FORST, ref SPCD, BIOEQ, ref DBHOB, ref HTTOT, VOL, BIOGRN, BIODRY, ref ERRFLAG, ref HT1PRD, ref HT2PRD, ref HTTFLL, GEOSUB, strlen, strlen, strlen);
 
             //test on EZVOLLIB
             //EZVOLLIB(VOLEQ, ref DBHOB, ref HTTOT, ref VOL, strlen);
@@ -555,6 +555,7 @@ namespace volCStest
             clearStrings();            
             m_sConSpec = "     ";
             if (string.IsNullOrEmpty(districtTB.Text)) districtTB.Text = "01";
+            if (forestTB.Text.Length == 1) forestTB.Text = "0" + forestTB.Text;
             FORST.Append(forestTB.Text);
             DIST.Append(districtTB.Text);  // ("01 ");
             PROD.Append(prodTB.Text);
@@ -566,7 +567,8 @@ namespace volCStest
             //LIVE.Append("L");
             LIVE.Append(liveCB.Text);
             if (string.IsNullOrEmpty(ctypeTB.Text)) ctypeTB.Text = "F";
-            if (ctypeTB.Text.Substring(0, 3) == "FIA") CTYPE.Append("I");
+            if (ctypeTB.Text.Substring(0, 3) == "DBH") CTYPE.Append("B");
+            else if (ctypeTB.Text.Substring(0, 3) == "FIA") CTYPE.Append("I");
             else CTYPE.Append(ctypeTB.Text.Substring(0,1));
 
             VOL = new float[I15];
@@ -835,6 +837,7 @@ namespace volCStest
             volEqTB.Text = VOLEQ.ToString();
             errrorFlagTB.Text = ERRFLAG.ToString();
             totCuVolTB.Text = Math.Round(VOL[0],1).ToString();
+            //totCuVolTB.Text = VOL[0].ToString();
             grossCuVolTB.Text = Math.Round(VOL[3],1).ToString();
             boardFtVolTB.Text = Math.Round(VOL[1]).ToString();
             topwoodCuTB.Text = Math.Round(VOL[6],1).ToString();
@@ -1878,6 +1881,7 @@ namespace volCStest
             //volumes
             tree1.Add(" ");
             tree1.Add("Tree Volumes:");
+            //tree1.Add("==Total Cubic".PadRight(25, ' ').PadLeft(30, ' ') + VOL[1].ToString().PadLeft(10, ' '));
             tree1.Add("Total Cubic".PadRight(25, ' ').PadLeft(30, ' ') + totCuVolTB.Text.ToString().PadLeft(10, ' '));
             tree1.Add("Gross Merch Cubic".PadRight(25, ' ').PadLeft(30, ' ') + grossCuVolTB.Text.ToString().PadLeft(10, ' '));
             //tree1.Add("Net Merch Cubic".PadRight(25, ' ').PadLeft(30, ' ') + netCuVolTB.Text.ToString().PadLeft(10, ' '));
@@ -2512,7 +2516,7 @@ namespace volCStest
             //volEqTB.Text
             string strVOLEQ = volEqTB.Text;
             string strNote = "";
-            string strBioRef = "Westfall et al 2023";
+            string strBioRef = "Westfall et al 2024";
             if (!strVOLEQ.Contains("NVB"))
             { 
                 GETNVBEQ(ref REGN, FORST, DIST, ref FIASPCD, NVBEQ, ref ERRFLAG, strlen, strlen, strlen);
@@ -2543,7 +2547,15 @@ namespace volCStest
                 writer.WriteLine("Weightfactor (Non-saw/secondary)".PadRight(33, ' ') + WF[1].ToString().PadRight(15, ' ') + WF2REF);
                 writer.WriteLine("Moisture content (%)".PadRight(33, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
                 //writer.WriteLine("Biomass Equation".PadRight(25, ' ') + NVBEQ.ToString().PadRight(15, ' ') + "Westfall et al 2023" );
-                writer.WriteLine("Biomass Equation".PadRight(33, ' ') + strVOLEQ.PadRight(15, ' ') + strBioRef);
+                if (DBHOB>0 && HTTOT==0 && HT1PRD==0 && HT2PRD==0 && UPSHT1 == 0 && UPSHT2 ==0 && CTYPE.ToString() == "B") //DBH only tree biomass with Jenkins method
+                {
+                    writer.WriteLine("Biomass Equation".PadRight(48, ' ') + "Jenkins (2003)");
+                    strNote = "";
+                }
+                else
+                { 
+                    writer.WriteLine("Biomass Equation".PadRight(33, ' ') + strVOLEQ.PadRight(15, ' ') + strBioRef);
+                }
                 if (strNote.Length > 0) writer.WriteLine(strNote);
                 //writer.WriteLine("Above ground total".PadRight(25, ' ') + AGTEQ.ToString().PadRight(15, ' ') + AGTREF);
                 //writer.WriteLine("Live branches".PadRight(25, ' ') + LBREQ.ToString().PadRight(15, ' ') + LBRREF);

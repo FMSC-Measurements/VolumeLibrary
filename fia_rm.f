@@ -215,7 +215,8 @@ C     Compute small tree volume if none provided
       !First check if the SPCD is in the woodland species list
       !This is to match FIA BIOMASS_SP configuration
       !IF(SPN.EQ.62.OR.SPN.EQ.66)THEN
-      IF(SPN.GE.57.AND.SPN.LE.66)THEN
+      !Added check for species 63 and 65 (2025/05/08)
+      IF((SPN.GE.57.AND.SPN.LE.66).AND.(SPN.NE.63.AND.SPN.NE.65))THEN
           SPN = 57
       ELSEIF(SPN.GE.133.AND.SPN.LE.143)THEN
           SPN = 106
@@ -256,6 +257,8 @@ C     Compute small tree volume if none provided
       !DRYBIO(4) = 3.14*(DRC/2/12)**2*SPSG*62.4
       ! Get the BIO to 3" top
       CALL CHO_WDBK_1530(SPN,DRC,THT,CV15,STEMS,SPSG,BIO3)
+      !Changed SPN to SPCD (2025/05/08)
+      !CALL CHO_WDBK_1530(SPCD,DRC,THT,CV15,STEMS,SPSG,BIO3)
       DRYBIO(6) = BIO3
       ! Get the tip from 3" to 1.5"
       !DRYBIO(10) = DRYBIO(2) - BIO3

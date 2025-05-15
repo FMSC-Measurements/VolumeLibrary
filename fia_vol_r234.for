@@ -30,7 +30,8 @@
       D2H = DRCOB*DRCOB*HTTOT
       X = D2H/1000.0
       READ(VOLEQ(8:10),'(I3)')SPN
-      IF(MTOPP.LT.0.1) MTOPP = 3.0
+      IF(MTOPP.LT.1.5) MTOPP = 1.5
+      IF(MTOPP.GT.1.5) MTOPP = 3.0
       IF(SPN.EQ.63.OR.SPN.EQ.66)THEN
         B0 = 0.0255
         B1 = 1.7479

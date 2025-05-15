@@ -114,9 +114,12 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !20241118 Modified VOLINITNVB to calculate GRNBIO using VOL and weight factor for cruise VOLEQ (not NVB equation)   
 !20250227 Modified nsvb.f and voiinit.f to set log weight to LOGVOL for CTYPE=Cruise and
 !         Updated R6_EQN for species Incense cedar(81) to use I00FW2W073 and Grand fir(17) to use I00FW2W017 in Willamette NF    
+!20250310 Fixed r9logs to make sure even logs and modified R9 MINLEN = 2
 !20250325 Updated volinit.f for biomass adjustment for cruise VOLEQ (non-NSVB equation) and
 !         updated R4 dead weight factor based on study data at Deer Hollow, Mt. Dutton, Navajo Basin      
-!20250310 Fixed r9logs to make sure even logs and modified R9 MINLEN = 2
+!20250401 Fixed nsvb.f to make sure HTTOT>0 for calculation and added CTYPE='B' chek for DBH only tree.
+!20250512 Fixed nsvb.f to calculate merch height for FIA (CTYPE='I') to be minimum 5, 
+!         applied denProp based on DECAYCD to woodland species biomass, and added species checck for 63 and 65 in woodland_bio     
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -146,7 +149,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250325
+      VERSION = 20250512
       RETURN
       END SUBROUTINE VERNUM
       
@@ -179,7 +182,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250325
+      VERSION = 20250512
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -202,7 +205,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20250325
+      VERSION = 20250512
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -215,6 +218,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20250325
+      version = 20250512
       return
       end subroutine vernum_r
