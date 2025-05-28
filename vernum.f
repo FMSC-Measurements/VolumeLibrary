@@ -119,7 +119,8 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !         updated R4 dead weight factor based on study data at Deer Hollow, Mt. Dutton, Navajo Basin      
 !20250401 Fixed nsvb.f to make sure HTTOT>0 for calculation and added CTYPE='B' chek for DBH only tree.
 !20250512 Fixed nsvb.f to calculate merch height for FIA (CTYPE='I') to be minimum 5, 
-!         applied denProp based on DECAYCD to woodland species biomass, and added species checck for 63 and 65 in woodland_bio     
+!         applied denProp based on DECAYCD to woodland species biomass, and added species checck for 63 and 65 in woodland_bio   
+!20250527 Fixed volinit.f for potential divided by zero problem and modified voleqdef.f (R8_CEQN) species list to include all timber cruise species.      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -149,7 +150,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250512
+      VERSION = 20250527
       RETURN
       END SUBROUTINE VERNUM
       
@@ -182,7 +183,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250512
+      VERSION = 20250527
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -205,7 +206,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20250512
+      VERSION = 20250527
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -218,6 +219,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20250512
+      version = 20250527
       return
       end subroutine vernum_r

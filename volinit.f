@@ -959,10 +959,11 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
           WtPrim = VOL(4)*WF
           WtTW = VOL(7)*WF2
           WtMerchStem = WtPrim + WtTW
-          Rprim = WtPrim/WtMerchStem
+          Rprim = 1
+          IF(WtMerchStem.GT.0) Rprim = WtPrim/WtMerchStem
           WtMstemNVB = GRNBIO(6)+GRNBIO(7)+GRNBIO(8)+GRNBIO(9)
           Vfactor = 1
-          IF(WtMstemNVB.GT.0) THEN
+          IF(WtMstemNVB.GT.0.AND.WtMerchStem.GT.0) THEN
               Vfactor=WtMerchStem/WtMstemNVB
               Rwood = (GRNBIO(6)+GRNBIO(8))/WtMstemNVB
           ELSE
@@ -975,6 +976,7 @@ C YW Set the total cubic vol to VOL(4) for R2 if MTOPP=0.1 (2022/05/03)
                   Rwood = 1
               ENDIF
           ENDIF
+          IF(Vfactor.LE.0) Vfactor = 1
           DRYBIO = DRYBIO*Vfactor
           GRNBIO = GRNBIO*Vfactor
           !Reset GRNBIO stem component
