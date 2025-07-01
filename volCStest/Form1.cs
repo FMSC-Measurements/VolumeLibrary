@@ -1894,7 +1894,7 @@ namespace volCStest
             //Logs
             tree1.Add(" ");
             tree1.Add("Logs:");
-            for (int i = 0; 1 < 20; i++)
+            for (int i = 0; i < 20; i++)
             {
                 if (this.LOGLEN[i] > 0)
                 {
@@ -1994,7 +1994,7 @@ namespace volCStest
             //Logs
             tree2.Add(" ");
             tree2.Add(" ");
-            for (int i = 0; 1 < 20; i++)
+            for (int i = 0; i < 20; i++)
             {
                 if (this.LOGLEN[i] > 0)
                 {
@@ -2546,6 +2546,7 @@ namespace volCStest
                 writer.WriteLine("Weightfactor (Sawtimber)".PadRight(33, ' ') + WF[0].ToString().PadRight(15, ' ') + WF1REF);
                 writer.WriteLine("Weightfactor (Non-saw/secondary)".PadRight(33, ' ') + WF[1].ToString().PadRight(15, ' ') + WF2REF);
                 writer.WriteLine("Moisture content (%)".PadRight(33, ' ') + Math.Round(WF[2],1).ToString().PadRight(15, ' ') + MCREF);
+                writer.WriteLine("Dead Weightfactor".PadRight(33, ' ') + DeadWF.ToString().PadRight(15, ' '));
                 //writer.WriteLine("Biomass Equation".PadRight(25, ' ') + NVBEQ.ToString().PadRight(15, ' ') + "Westfall et al 2023" );
                 if (DBHOB>0 && HTTOT==0 && HT1PRD==0 && HT2PRD==0 && UPSHT1 == 0 && UPSHT2 ==0 && CTYPE.ToString() == "B") //DBH only tree biomass with Jenkins method
                 {

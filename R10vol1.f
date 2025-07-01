@@ -118,6 +118,10 @@ C--  RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
             IF (HTTYPE.EQ.'L' .OR. HTTYPE.EQ.'l') THEN
                NUMSEG = HT1PRD
                NOLOGP=HT1PRD
+               IF(NUMSEG.GT.20)THEN
+                   ERRFLAG = 12
+                   RETURN
+               ENDIF
                DO 35 I = 1, NUMSEG
                    LOGLEN(I) = MAXLEN
  35            CONTINUE
@@ -132,6 +136,11 @@ C--  RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
                      LOGLEN(NUMSEG)=MAXLEN/2.0
                ENDIF
             ELSE
+               !Added max number of logs (20) check (20250626)
+               IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+                 ERRFLAG = 12
+                 RETURN
+               ENDIF 
                CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,
      >                    TRIM,NUMSEG)
                HMERCH=LMERCH

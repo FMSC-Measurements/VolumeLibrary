@@ -540,6 +540,11 @@ C Vol Equation 223DVEW122 for R2 Black Hills Ponderosa pine Non-saw prod
       ENDIF
       LMERCH = HT1PRD - STUMP
       IF(LMERCH.GE.MERCHL)THEN
+        !Added max number of logs (20) check (20250626)
+        IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+          ERRFLG = 12
+          RETURN
+        ENDIF
         CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
         CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,LOGLEN)
         LOGST = 0
@@ -564,6 +569,11 @@ C     Calculate topwood volume
         LMERCH = HT2PRD - HT2
         IF(LMERCH.GE.MINLENT)THEN
           NUMSEG = 0
+          !Added max number of logs (20) check (20250626)
+          IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+            ERRFLG = 12
+            RETURN
+          ENDIF
           CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG,LOGLENT)
           NOLOGS = NUMSEG

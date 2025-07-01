@@ -26,7 +26,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       CHARACTER*2 FORST,DIST,PROD,PROD2
       CHARACTER*1 LIVE,CTYPE
       !CTYPE as I = FIA, F = FVS, C = Cruise, B = when other VOLEQ was used in voinitnvb
-      INTEGER REGN,ERRFLG,DECAYCD,FIASPCD,SFTHRD
+      INTEGER REGN,ERRFLG,DECAYCD,FIASPCD,SFTHRD,ERRFLG2
       REAL DBHOB,HTTOT,MTOPP,MTOPS,HT1PRD,HT2PRD,STUMP,BRKHT,BRKHTD
       REAL CR,CULL
       REAL VOL(15),DRYBIO(15),GRNBIO(15)
@@ -93,6 +93,7 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
       LOGDIA = 0.0
       BOLHT = 0.0
       ERRFLG = 0
+      ERRFLG2 = 0
       AGBpred = 0
       WoodHarm = 0
       BARKHarm = 0
@@ -158,7 +159,11 @@ C The elements in the variable DRYBIO and GRNBIO are weight of following:
           ERRFLG = 6
           RETURN
       ENDIF
-      
+      !Added default DECAYCD for Dead tree (2025/06/04)
+      IF(LIVE.EQ.'D'.AND.DECAYCD.EQ.0) DECAYCD = 3
+      !FIA is not using the CR input value for biomass calculation, but NVEL still keep it
+      !IF(LIVE.EQ.'D'.AND.CR.GT.0) CR = 0
+
       CALL NVB_RefSpcData(SPCD,SPGRPCD,WDSG,SFTHRD,CF,ERRFLG,
      & SPGRNWF, SPDRYWF)
       IF(ERRFLG.GT.0.AND.ERRFLG.NE.6) RETURN
@@ -351,8 +356,13 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       DIBL = LOGDIA(1,1)
       HT2 = STUMP
       IF(LMERCH.GE.MERCHL)THEN
+          !Added max number of logs (20) check (20250626)
+          IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+             ERRFLG2 = 12
+             !RETURN
+          ENDIF
           CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
-          IF(NUMSEG.GT.21)THEN
+          IF(NUMSEG.GT.20)THEN
               ERRFLG=12
               RETURN
           ENDIF
@@ -397,21 +407,29 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
       LMERCH = HT2PRD - HTsaw
       IF(LMERCH.GE.MINLENT)THEN
           NUMSEG = 0
+          !Added max number of logs (20) check (20250626)
+          IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+             ERRFLG2 = 12
+             !RETURN
+          ENDIF
           CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)  
           CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG,
      &     LOGLENT)
           NOLOGS = NUMSEG
-          IF((LOGST+NUMSEG).GT.21) THEN
-              ERRFLG = 12
-              RETURN
+          IF((LOGST+NUMSEG).GT.20) THEN
+              ERRFLG2 = 12
+              !RETURN
           ENDIF
+          IF((LOGST+NUMSEG).LE.20) THEN
           !Add secondary log length to LOGLEN
-          DO 600 I = 1, NUMSEG
-            LOGLEN(I+LOGST) = LOGLENT(I)
- 600      CONTINUE
-          CALL NVB_CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,Vtotib,TRIM,HTTOT,
-     +    LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR,a,b)
-          LOGST = LOGST + NUMSEG
+            DO 600 I = 1, NUMSEG
+              LOGLEN(I+LOGST) = LOGLENT(I)
+ 600        CONTINUE
+          
+            CALL NVB_CalcLOGVOL(LOGST,NUMSEG,DIBL,HT2,Vtotib,TRIM,HTTOT,
+     +      LOGLEN,LOGDIA,LOGVOL,BOLHT,VOL,COR,a,b)
+            LOGST = LOGST + NUMSEG
+          ENDIF
           HTmrch = HT2
           CALL CalcRatio(HTTOT,HTmrch,RatioEQ,a,b,Rmrch)
           Vmrchib = Vtotib * Rmrch - Vstumpib
@@ -564,6 +582,8 @@ C--   USE DIB AT DBHOB FOR LARGE END BUTT LOG
               CALL CruiseLogWt(LOGVOL,NOLOGP,NOLOGS,DeadWF,DeadWF)
           ENDIF
       ENDIF
+      !Set errflag for tree with more than 20 logs (2025/06/27)
+      IF(ERRFLG2.GT.0.AND.ERRFLG.EQ.0) ERRFLG = ERRFLG2
       RETURN
       END
 C----------------------------------------------------------------------
@@ -1155,8 +1175,10 @@ C Calculate LOGDIA, LOGVOL, BOLHT and VOL
       BrchRem = 1
       IF(CR.GT.0) THEN 
           IF(CR.GE.1) CR = CR/100
-          CrownLen = BRKHT*CR
-          BrchRem = CrownLen/(CrownLen+HTTOT-BRKHT)
+          !CrownLen = BRKHT*CR
+          !BrchRem = CrownLen/(CrownLen+HTTOT-BRKHT)
+          CRh = (HTTOT-BRKHT*(1-CR))/HTTOT
+          BrchRem = (BRKHT-HTTOT*(1-CRh))/(HTTOT*CRh)
       ELSE
           CALL NVB_AvgCR(DIVISION,SPCD,CRh)
           IF(CRh.GE.1) CRh = CRh/100

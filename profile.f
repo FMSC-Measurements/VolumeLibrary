@@ -375,7 +375,11 @@ C--         SUBROUTINE "NUMLOG" WILL DETERMINE THE NUMBER OF
 C--         MERCHANTABLE SEGMENTS IN A GIVEN MERCHANTABLE LENGTH
 C--         OF TREE STEM, ACCORDING TO ONE OF THE DEFINED SEGMENTATION
 C--         RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
-           
+           !Added max number of logs (20) check (20250626)
+           IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+             ERRFLAG = 12
+             RETURN
+           ENDIF
            CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
            
            if(NUMSEG .GT. 20) THEN
@@ -747,6 +751,11 @@ c       check for mainstem piece, if not, topwood must meet minimum merch length
 
 !        CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG)
 !  2020/02/19 changed to use the variable MINLEN instead of MINLENT
+        !Added max number of logs (20) check (20250626)
+        IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+          ERRFLAG = 12
+          RETURN
+        ENDIF
         CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
 
         if((NUMSEG + LOGST) .GT. 20) THEN
@@ -1511,6 +1520,11 @@ C         IF MULTIPLE LOGS, LOOP THROUGH, FIND DIAMETERS AND LENGTHS
       ELSE
          LMERCH = MHT - STUMP
          IF (CTYPE.NE.'V') THEN
+            !Added max number of logs (20) check (20250626)
+            IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+              ERRFLAG = 12
+              RETURN
+            ENDIF
             CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,LOGST)
             CALL SEGMNT(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,LOGST,LOGLEN)
 C--     SET NOLOGP TO THE NUMBER OF 16 FOOT SEGMENTS

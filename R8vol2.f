@@ -1703,6 +1703,11 @@ C        First do the sawlog
          LMERCH = STUMP
          IF(HT1PRD.GT.0.0)THEN  
            LMERCH = HT1PRD - STUMP
+           !Added max number of logs (20) check (20250626)
+           IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+             ERRFLG = 12
+             RETURN
+           ENDIF
            CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
            IF(NUMSEG.GT.20)THEN
              ERRFLG = 12
@@ -1757,6 +1762,11 @@ C        Then do the topwood/pulp
            IF(HT2PRD.GT.HT1PRD)THEN
              NUMSEG = 0
              LMERCH = HT2PRD - LMERCH
+             !Added max number of logs (20) check (20250626)
+             IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+               ERRFLG = 12
+               RETURN
+             ENDIF
              CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
              IF(NUMSEG.GT.20)THEN
                ERRFLG = 12
@@ -1818,6 +1828,11 @@ C If pult height is not provided, calculate it
            IF((HT2PRD-STUMP).GT.MERCHL)THEN
              NUMSEG = 0
              LMERCH = HT2PRD - STUMP
+             !Added max number of logs (20) check (20250626)
+             IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+               ERRFLG = 12
+               RETURN
+             ENDIF
              CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
              IF(NUMSEG.GT.20)THEN
                ERRFLG = 12

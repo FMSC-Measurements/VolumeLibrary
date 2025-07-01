@@ -59,7 +59,8 @@ C--   THERE IS NO MERCHANTABLE MATERIAL
       ELSE
           NUMSEG = 0
       ENDIF
-
+! Added max number of logs to 20 to avoid exception (20250613)
+      IF(NUMSEG.GT.20) NUMSEG = 20
       RETURN
       END
 

@@ -412,7 +412,11 @@ C--         SUBROUTINE "NUMLOG" WILL DETERMINE THE NUMBER OF
 C--         MERCHANTABLE SEGMENTS IN A GIVEN MERCHANTABLE LENGTH
 C--         OF TREE STEM, ACCORDING TO ONE OF THE DEFINED SEGMENTATION
 C--         RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
-
+           !Added max number of logs (20) check (20250626)
+           IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+             ERRFLAG = 12
+             RETURN
+           ENDIF
            CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLEN,TRIM,NUMSEG)
 
 C--         SUBROUTINE "SEGMNT" WILL DETERMINE THE LENGTH OF EACH
@@ -763,7 +767,11 @@ c       check for mainstem piece, if not, topwood must meet minimum merch length
               GO TO 1000
            ENDIF
 	  ENDIF
-
+        !Added max number of logs (20) check (20250626)
+        IF((LMERCH/(MAXLEN+TRIM)).GT.20)THEN
+          ERRFLAG = 12
+          RETURN
+        ENDIF
         CALL NUMLOG(OPT,EVOD,LMERCH,MAXLEN,MINLENT,TRIM,NUMSEG)
 
 C--  SEE DEFINITION OF SUBROUTINE "SEGMNT" UNDER BDFT CACULATIONS
