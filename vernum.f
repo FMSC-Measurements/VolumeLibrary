@@ -123,6 +123,8 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !20250527 Fixed volinit.f for potential divided by zero problem and modified voleqdef.f (R8_CEQN) species list to include all timber cruise species.      
 !20250701 Modified nsvb.f to add default DECAYCD (3), made correction in NVB_BrchRem subroutine and 
 !      checked max number logs (20) before call numlogs.f to catch error code for more than 20 logs
+!20250805 Added weight factor for Juniper (60 and 64) for region 6 forest 01 and 07.
+!20250822 Added check for REGN=10 in nolinit.f for CUR and DEM equation.
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -152,7 +154,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250701
+      VERSION = 20250822
       RETURN
       END SUBROUTINE VERNUM
       
@@ -185,7 +187,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20250701
+      VERSION = 20250822
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -208,7 +210,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20250701
+      VERSION = 20250822
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -221,6 +223,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20250701
+      version = 20250822
       return
       end subroutine vernum_r
