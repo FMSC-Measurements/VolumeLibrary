@@ -1,3 +1,11 @@
+---
+project: Volume Library
+author: Yingfang
+exclude_dir: ./*
+src_dir: ./
+output_dir: ./docs/fordOut
+---
+
 This directory has two ways to compile the volume library, but only one works at a time.
 
 1) as a standalone program, useful for debugging and testing.

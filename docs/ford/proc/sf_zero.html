@@ -1,0 +1,898 @@
+<!-- -*- mode: jinja2 -*- -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="description" content="Documentation for Volume Library">
+    <meta name="author" content="Yingfang" >
+    <link rel="icon" href="../favicon.png">
+
+    <title>SF_ZERO &ndash; Volume Library</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <!-- Font Awesome -->
+    <link href="../css/fontawesome.min.css" rel="stylesheet">
+    <link href="../css/brands.min.css" rel="stylesheet">
+    <link href="../css/regular.min.css" rel="stylesheet">
+    <link href="../css/solid.min.css" rel="stylesheet">
+    <link href="../css/v4-font-face.min.css" rel="stylesheet">
+    <link href="../css/v4-shims.min.css" rel="stylesheet">
+    <!-- MathJax -->
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        TeX: { equationNumbers: { autoNumber: "AMS" } }
+      });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML" async
+            integrity="sha256-DViIOMYdwlM/axqoGDPeUyf0urLoHMN4QACBKyB58Uw=" crossorigin="anonymous"></script>
+    <!-- Other scripts and stylesheets -->
+    <link href="../css/local.css" rel="stylesheet">
+    <link href="../css/pygments.css" rel="stylesheet">
+    <script src="../js/svg-pan-zoom.min.js"></script>
+  </head>
+
+  <body>
+
+    <!-- Fixed navbar -->
+    <div class="container-fluid mb-sm-4 mb-xl-2">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+        <div class="container">
+          <a class="navbar-brand" href="../index.html">Volume Library </a>
+          <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar"
+                  aria-expanded="false" aria-controls="navbar" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon">
+          </button>
+
+          <div id="navbar" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../lists/files.html">Source Files</a>
+                  </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/modules.html">Modules</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/procedures.html">Procedures</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link" href="../lists/types.html">Derived Types</a>
+                </li>
+            </ul>
+              <div class="d-flex align-items-end flex-grow-1">
+                <form action="../search.html" role="search" class="ms-auto">
+                  <input type="text" class="form-control" aria-label="Search" placeholder="Search" name="q" id="tipue_search_input" autocomplete="off" required>
+                </form>
+              </div>
+          </div><!--/.nav-collapse -->
+        </div>
+      </nav>
+    </div>
+
+    <div class="container">
+  <div class="row">
+    <h1>SF_ZERO
+      <small>Subroutine</small>
+      
+    </h1>
+      <div class="container p-2 mb-4 bg-light border rounded-3">
+    <div class="row align-items-center justify-content-between" id="info-bar">
+      <div class="col">
+        <ul class="list-inline" style="margin-bottom:0px;display:inline">
+
+            <li class="list-inline-item" id="statements"><i class="fa fa-list-ol"></i>
+              <a data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                 title=" 0.9% of total for procedures.">249 statements</a>
+            </li>
+
+            <li class="list-inline-item" id="source-file">
+              <i class="fa fa-code"></i>
+              <a href="../src/sf_zero.f"> Source File</a>
+            </li>
+        </ul>
+      </div>
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb justify-content-end mb-0">
+                <li class="breadcrumb-item"><a href='..\sourcefile\sf_zero.f.html'>sf_zero.f</a></li>
+            <li class="breadcrumb-item active" aria-current="page">SF_ZERO</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+  </div>
+  <script>
+    // Enable Bootstrap tooltips
+    (function () {
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+      const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+    })();
+  </script>
+
+  </div>
+  
+  <div class="row">
+    <div class="col-md-3 hidden-xs hidden-sm visible-md visible-lg">
+      <div id="sidebar">
+      <h3>Contents</h3>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+
+  </div>
+
+    </div>
+    
+    <div class="col-md-9" id='text'>
+    <h2> subroutine SF_ZERO(X1, F1, X2, F2, MODE, TOL)  
+</h2>
+    
+
+
+
+    <h3>Arguments</h3>
+        <table class="table table-striped varlist">
+    <thead>
+      <tr>
+        <th scope="col">Type</th>
+<th scope="col">Intent</th><th scope="col">Optional</th>        <th scope="col">Attributes</th>
+        <th scope="col"></th>
+        <th scope="col">Name</th>
+        <th scope="col"></th>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x1~3"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>X1</strong></td>
+            <td>
+                <p>**  In the statement below, $ is replaced by an 'S' for single
+**  precision and a 'D' for double.
+ XXX call $ZERO(X1,F1,X2,F2,MODE,TOL)
+     go to  (N1,N2,N3,N4,N5,N6), MODE
+  N1 COMPUTE  F1=F(X1)
+     go to XXX</p>
+<p>N4 continue
+  N5 continue
+  N6 stop
+  N3 If you want to -- print results to note that error
+                       is too big.
+  N2 zero is found, do whatever you want to with it.</p>
+<p>End of comments explaining usage.</p>
+<p><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>* Usage of internal variables </em></strong><strong><em>*</em></strong><strong>*</strong>*</p>
+<p>C0     Parameter = 0.
+ C1     Parameter = 1.
+ C1P01  Parameter = 1.01
+ C1P25  Parameter = 1.25
+ C2     Parameter = 2.
+ C4     Parameter = 4.
+ CP01   Parameter = 0.01
+ CP125  Parameter = 1.25
+ CP25   Parameter = 0.25
+ CP5    Parameter = 0.5
+ CP75   Parameter = 0.75
+ CP99   Parameter = 0.99
+ R1MACH Gets constants associated with floating point arithmetic.
+ DFDXXX = (XXMXL/FFMFL) * (est. deriv. of f w.r.t. x at x = XX).  All
+   derivatives are base on a second degree polynonial that interpolates
+   the last three points generated.
+ DFDXXX = (XXMXO/FFMFL) * (est. deriv. of f w.r.t. x at x = X0).
+ DIV    If artificial subdivision of the interval is used, determines
+   the amount of the sudivision.  (-XXMXOO * DIV / (1. + DIV))
+ SMESS  Prints error messages.
+ DXDFFF = (FFMFL/XXMXL) * (est. deriv. of x w.r.t. f at f = FF).
+ DXDFFO = (FFMFO/XXMXL) * (est. deriv. of x w.r.t. f at f = FO).
+ F1     (formal arg.) The last value of F computed, on return the value
+   of F(X1).
+ F2     (formal arg.) The other initial value provided for F.  Set to
+   the value of F(X2) on returns.
+ FDAT   Temporary storage for floating point values for messages.
+ FF     Value of F1 after F is computed.
+ FFDFO  FF / FO
+ FFMFB  FFMFL + FLMFB = FF - value of FF 2 iterations back.
+ FFMFL  FF - FL
+ FL     Value of FF from the previous iteration. <br>
+ FLMFB  Value of FFMFL from the previous iteration
+ FO     F(XO)
+ I      Comments for LCHNG define how I is set.
+ IDAT   Temporary storage for integer values for messages.
+ INDIC  Internal value to be assigned to MODE on exit.  Equivalenced to
+   MACT(3) and set to 0 initially.
+ J      This is 1 if FF .le. 0., and is 2 if FF &gt; 0.
+ KNKP   KNKP(J) (see J above) is set to 0 whenever there are signs of
+   decent convergence.  It is counted up when convergence is slow.
+ KS     =-1  initially,
+        = 0  whenever F changes sign, otherwise
+        = number of times the sign of F has remained the same
+ KTYP   = 1 if interpolation was used to get the last iterate, = 0 if
+   an artificial subdivision was used.
+ LCHG  the J-th continuation in the data statement for LCHG below gives
+ new states for the case when the state number is J-1.  State 0 is the
+ initial state.  The I-th entry on a row gives the state for case on I
+ as follows:  (TP is the ratio (new f) / (last f of same sign)
+    I = 1   TP &lt; 0.01
+    I = 2   .01 &lt;= TP &lt; 1
+    I = 3   TP = 1
+    I = 4   1 &lt; TP &lt;= 4
+    I = 5   TP &gt; 4.
+ States are as follows:
+    0   initial state, or big increase, or small increase in state 0
+    1   after big decrease, perhaps followed by small decreases
+    2   after one or more small decreases from state 0
+    3   one or more small increases from state 2
+    4   one or more small decreases from state 3
+    5   decision made that noise is a problem on this side of zero.
+ LINIT  - the maximum number of iterations that can be taken with out
+   getting a sign change in F.
+ LMODE  The value of MODE the last time in this routine.
+ LNLP<br>
+ LTXTxx Names of this form are used in setting up data statements for
+   error messages.  These names are generated automatically by PMESS,
+   the program that makes up these messages.
+ MACT   This array difines the actions to be taken by the error message
+   program.  See comments in MESS for details.
+ MACT1  As for MACT except used for the diagnostic print.
+ MExxxx Parameters defining constants used for interaction with the
+   error message program MESS.  See comments there for definitions.
+ MLOC   Contains locations in MTXTAA for error messages.
+ MODE   (formal) See comments above.
+ MTXTAA Text for error messages.
+ MTXTAB Text for diagnostic message.
+ MTXTAC Text for diagnostic message.
+ NP     If &gt; 0, gives number of iterations till diagnostic print stops.
+ QFM <br>
+ QXM <br>
+ RND    Largest relative difference between succesive floating point
+   numbers.
+ SMALL  .5 / (RND * largest floating point number)
+ TOL    (Formal) See description above.
+ TOLX   Actually tolerance required for accuracy in X.  Usually =
+   max(TOL, XRND).  It can be cut by a factor of 2 for use in setting
+   bounds on an acceptable interval.
+ TP     Ordinarily the ratio (FF / prev. FF of the same sign.
+ TP1    Used for temporary storage.
+ X1     (Formal) Value of x where F is to be computed, and value
+   returned for the zero after convergence.
+ X2     (Formal) Initially other value of x where F is given.  After
+   convergence gives the other closest x which gives an F of opposite
+   sign from that given by x1.
+ XL     Value of XX from the previous iteration.
+ XLMXB  Value of XXMXL from the previous iteration.
+ XO     Value of x on opposite side of the zero from the current x.
+ XRND   Best accuracy that one could hope for based on the finite
+   precision of floating point numbers.
+ XX     Current x, the last value of X1 where F was computed.
+ XXMXL  XX - XL
+ XXMXO  XX - XO = length of interval in which 0 lies.
+ XXMXOL Value of XXMXO from a previous iteration.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f1~2"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>F1</strong></td>
+            <td>
+                <p>**  In the statement below, $ is replaced by an 'S' for single
+**  precision and a 'D' for double.
+ XXX call $ZERO(X1,F1,X2,F2,MODE,TOL)
+     go to  (N1,N2,N3,N4,N5,N6), MODE
+  N1 COMPUTE  F1=F(X1)
+     go to XXX</p>
+<p>N4 continue
+  N5 continue
+  N6 stop
+  N3 If you want to -- print results to note that error
+                       is too big.
+  N2 zero is found, do whatever you want to with it.</p>
+<p>End of comments explaining usage.</p>
+<p><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>* Usage of internal variables </em></strong><strong><em>*</em></strong><strong>*</strong>*</p>
+<p>C0     Parameter = 0.
+ C1     Parameter = 1.
+ C1P01  Parameter = 1.01
+ C1P25  Parameter = 1.25
+ C2     Parameter = 2.
+ C4     Parameter = 4.
+ CP01   Parameter = 0.01
+ CP125  Parameter = 1.25
+ CP25   Parameter = 0.25
+ CP5    Parameter = 0.5
+ CP75   Parameter = 0.75
+ CP99   Parameter = 0.99
+ R1MACH Gets constants associated with floating point arithmetic.
+ DFDXXX = (XXMXL/FFMFL) * (est. deriv. of f w.r.t. x at x = XX).  All
+   derivatives are base on a second degree polynonial that interpolates
+   the last three points generated.
+ DFDXXX = (XXMXO/FFMFL) * (est. deriv. of f w.r.t. x at x = X0).
+ DIV    If artificial subdivision of the interval is used, determines
+   the amount of the sudivision.  (-XXMXOO * DIV / (1. + DIV))
+ SMESS  Prints error messages.
+ DXDFFF = (FFMFL/XXMXL) * (est. deriv. of x w.r.t. f at f = FF).
+ DXDFFO = (FFMFO/XXMXL) * (est. deriv. of x w.r.t. f at f = FO).
+ F1     (formal arg.) The last value of F computed, on return the value
+   of F(X1).
+ F2     (formal arg.) The other initial value provided for F.  Set to
+   the value of F(X2) on returns.
+ FDAT   Temporary storage for floating point values for messages.
+ FF     Value of F1 after F is computed.
+ FFDFO  FF / FO
+ FFMFB  FFMFL + FLMFB = FF - value of FF 2 iterations back.
+ FFMFL  FF - FL
+ FL     Value of FF from the previous iteration. <br>
+ FLMFB  Value of FFMFL from the previous iteration
+ FO     F(XO)
+ I      Comments for LCHNG define how I is set.
+ IDAT   Temporary storage for integer values for messages.
+ INDIC  Internal value to be assigned to MODE on exit.  Equivalenced to
+   MACT(3) and set to 0 initially.
+ J      This is 1 if FF .le. 0., and is 2 if FF &gt; 0.
+ KNKP   KNKP(J) (see J above) is set to 0 whenever there are signs of
+   decent convergence.  It is counted up when convergence is slow.
+ KS     =-1  initially,
+        = 0  whenever F changes sign, otherwise
+        = number of times the sign of F has remained the same
+ KTYP   = 1 if interpolation was used to get the last iterate, = 0 if
+   an artificial subdivision was used.
+ LCHG  the J-th continuation in the data statement for LCHG below gives
+ new states for the case when the state number is J-1.  State 0 is the
+ initial state.  The I-th entry on a row gives the state for case on I
+ as follows:  (TP is the ratio (new f) / (last f of same sign)
+    I = 1   TP &lt; 0.01
+    I = 2   .01 &lt;= TP &lt; 1
+    I = 3   TP = 1
+    I = 4   1 &lt; TP &lt;= 4
+    I = 5   TP &gt; 4.
+ States are as follows:
+    0   initial state, or big increase, or small increase in state 0
+    1   after big decrease, perhaps followed by small decreases
+    2   after one or more small decreases from state 0
+    3   one or more small increases from state 2
+    4   one or more small decreases from state 3
+    5   decision made that noise is a problem on this side of zero.
+ LINIT  - the maximum number of iterations that can be taken with out
+   getting a sign change in F.
+ LMODE  The value of MODE the last time in this routine.
+ LNLP<br>
+ LTXTxx Names of this form are used in setting up data statements for
+   error messages.  These names are generated automatically by PMESS,
+   the program that makes up these messages.
+ MACT   This array difines the actions to be taken by the error message
+   program.  See comments in MESS for details.
+ MACT1  As for MACT except used for the diagnostic print.
+ MExxxx Parameters defining constants used for interaction with the
+   error message program MESS.  See comments there for definitions.
+ MLOC   Contains locations in MTXTAA for error messages.
+ MODE   (formal) See comments above.
+ MTXTAA Text for error messages.
+ MTXTAB Text for diagnostic message.
+ MTXTAC Text for diagnostic message.
+ NP     If &gt; 0, gives number of iterations till diagnostic print stops.
+ QFM <br>
+ QXM <br>
+ RND    Largest relative difference between succesive floating point
+   numbers.
+ SMALL  .5 / (RND * largest floating point number)
+ TOL    (Formal) See description above.
+ TOLX   Actually tolerance required for accuracy in X.  Usually =
+   max(TOL, XRND).  It can be cut by a factor of 2 for use in setting
+   bounds on an acceptable interval.
+ TP     Ordinarily the ratio (FF / prev. FF of the same sign.
+ TP1    Used for temporary storage.
+ X1     (Formal) Value of x where F is to be computed, and value
+   returned for the zero after convergence.
+ X2     (Formal) Initially other value of x where F is given.  After
+   convergence gives the other closest x which gives an F of opposite
+   sign from that given by x1.
+ XL     Value of XX from the previous iteration.
+ XLMXB  Value of XXMXL from the previous iteration.
+ XO     Value of x on opposite side of the zero from the current x.
+ XRND   Best accuracy that one could hope for based on the finite
+   precision of floating point numbers.
+ XX     Current x, the last value of X1 where F was computed.
+ XXMXL  XX - XL
+ XXMXO  XX - XO = length of interval in which 0 lies.
+ XXMXOL Value of XXMXO from a previous iteration.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-x2~2"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>X2</strong></td>
+            <td>
+                <p>**  In the statement below, $ is replaced by an 'S' for single
+**  precision and a 'D' for double.
+ XXX call $ZERO(X1,F1,X2,F2,MODE,TOL)
+     go to  (N1,N2,N3,N4,N5,N6), MODE
+  N1 COMPUTE  F1=F(X1)
+     go to XXX</p>
+<p>N4 continue
+  N5 continue
+  N6 stop
+  N3 If you want to -- print results to note that error
+                       is too big.
+  N2 zero is found, do whatever you want to with it.</p>
+<p>End of comments explaining usage.</p>
+<p><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>* Usage of internal variables </em></strong><strong><em>*</em></strong><strong>*</strong>*</p>
+<p>C0     Parameter = 0.
+ C1     Parameter = 1.
+ C1P01  Parameter = 1.01
+ C1P25  Parameter = 1.25
+ C2     Parameter = 2.
+ C4     Parameter = 4.
+ CP01   Parameter = 0.01
+ CP125  Parameter = 1.25
+ CP25   Parameter = 0.25
+ CP5    Parameter = 0.5
+ CP75   Parameter = 0.75
+ CP99   Parameter = 0.99
+ R1MACH Gets constants associated with floating point arithmetic.
+ DFDXXX = (XXMXL/FFMFL) * (est. deriv. of f w.r.t. x at x = XX).  All
+   derivatives are base on a second degree polynonial that interpolates
+   the last three points generated.
+ DFDXXX = (XXMXO/FFMFL) * (est. deriv. of f w.r.t. x at x = X0).
+ DIV    If artificial subdivision of the interval is used, determines
+   the amount of the sudivision.  (-XXMXOO * DIV / (1. + DIV))
+ SMESS  Prints error messages.
+ DXDFFF = (FFMFL/XXMXL) * (est. deriv. of x w.r.t. f at f = FF).
+ DXDFFO = (FFMFO/XXMXL) * (est. deriv. of x w.r.t. f at f = FO).
+ F1     (formal arg.) The last value of F computed, on return the value
+   of F(X1).
+ F2     (formal arg.) The other initial value provided for F.  Set to
+   the value of F(X2) on returns.
+ FDAT   Temporary storage for floating point values for messages.
+ FF     Value of F1 after F is computed.
+ FFDFO  FF / FO
+ FFMFB  FFMFL + FLMFB = FF - value of FF 2 iterations back.
+ FFMFL  FF - FL
+ FL     Value of FF from the previous iteration. <br>
+ FLMFB  Value of FFMFL from the previous iteration
+ FO     F(XO)
+ I      Comments for LCHNG define how I is set.
+ IDAT   Temporary storage for integer values for messages.
+ INDIC  Internal value to be assigned to MODE on exit.  Equivalenced to
+   MACT(3) and set to 0 initially.
+ J      This is 1 if FF .le. 0., and is 2 if FF &gt; 0.
+ KNKP   KNKP(J) (see J above) is set to 0 whenever there are signs of
+   decent convergence.  It is counted up when convergence is slow.
+ KS     =-1  initially,
+        = 0  whenever F changes sign, otherwise
+        = number of times the sign of F has remained the same
+ KTYP   = 1 if interpolation was used to get the last iterate, = 0 if
+   an artificial subdivision was used.
+ LCHG  the J-th continuation in the data statement for LCHG below gives
+ new states for the case when the state number is J-1.  State 0 is the
+ initial state.  The I-th entry on a row gives the state for case on I
+ as follows:  (TP is the ratio (new f) / (last f of same sign)
+    I = 1   TP &lt; 0.01
+    I = 2   .01 &lt;= TP &lt; 1
+    I = 3   TP = 1
+    I = 4   1 &lt; TP &lt;= 4
+    I = 5   TP &gt; 4.
+ States are as follows:
+    0   initial state, or big increase, or small increase in state 0
+    1   after big decrease, perhaps followed by small decreases
+    2   after one or more small decreases from state 0
+    3   one or more small increases from state 2
+    4   one or more small decreases from state 3
+    5   decision made that noise is a problem on this side of zero.
+ LINIT  - the maximum number of iterations that can be taken with out
+   getting a sign change in F.
+ LMODE  The value of MODE the last time in this routine.
+ LNLP<br>
+ LTXTxx Names of this form are used in setting up data statements for
+   error messages.  These names are generated automatically by PMESS,
+   the program that makes up these messages.
+ MACT   This array difines the actions to be taken by the error message
+   program.  See comments in MESS for details.
+ MACT1  As for MACT except used for the diagnostic print.
+ MExxxx Parameters defining constants used for interaction with the
+   error message program MESS.  See comments there for definitions.
+ MLOC   Contains locations in MTXTAA for error messages.
+ MODE   (formal) See comments above.
+ MTXTAA Text for error messages.
+ MTXTAB Text for diagnostic message.
+ MTXTAC Text for diagnostic message.
+ NP     If &gt; 0, gives number of iterations till diagnostic print stops.
+ QFM <br>
+ QXM <br>
+ RND    Largest relative difference between succesive floating point
+   numbers.
+ SMALL  .5 / (RND * largest floating point number)
+ TOL    (Formal) See description above.
+ TOLX   Actually tolerance required for accuracy in X.  Usually =
+   max(TOL, XRND).  It can be cut by a factor of 2 for use in setting
+   bounds on an acceptable interval.
+ TP     Ordinarily the ratio (FF / prev. FF of the same sign.
+ TP1    Used for temporary storage.
+ X1     (Formal) Value of x where F is to be computed, and value
+   returned for the zero after convergence.
+ X2     (Formal) Initially other value of x where F is given.  After
+   convergence gives the other closest x which gives an F of opposite
+   sign from that given by x1.
+ XL     Value of XX from the previous iteration.
+ XLMXB  Value of XXMXL from the previous iteration.
+ XO     Value of x on opposite side of the zero from the current x.
+ XRND   Best accuracy that one could hope for based on the finite
+   precision of floating point numbers.
+ XX     Current x, the last value of X1 where F was computed.
+ XXMXL  XX - XL
+ XXMXO  XX - XO = length of interval in which 0 lies.
+ XXMXOL Value of XXMXO from a previous iteration.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-f2~3"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>F2</strong></td>
+            <td>
+                <p>**  In the statement below, $ is replaced by an 'S' for single
+**  precision and a 'D' for double.
+ XXX call $ZERO(X1,F1,X2,F2,MODE,TOL)
+     go to  (N1,N2,N3,N4,N5,N6), MODE
+  N1 COMPUTE  F1=F(X1)
+     go to XXX</p>
+<p>N4 continue
+  N5 continue
+  N6 stop
+  N3 If you want to -- print results to note that error
+                       is too big.
+  N2 zero is found, do whatever you want to with it.</p>
+<p>End of comments explaining usage.</p>
+<p><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>* Usage of internal variables </em></strong><strong><em>*</em></strong><strong>*</strong>*</p>
+<p>C0     Parameter = 0.
+ C1     Parameter = 1.
+ C1P01  Parameter = 1.01
+ C1P25  Parameter = 1.25
+ C2     Parameter = 2.
+ C4     Parameter = 4.
+ CP01   Parameter = 0.01
+ CP125  Parameter = 1.25
+ CP25   Parameter = 0.25
+ CP5    Parameter = 0.5
+ CP75   Parameter = 0.75
+ CP99   Parameter = 0.99
+ R1MACH Gets constants associated with floating point arithmetic.
+ DFDXXX = (XXMXL/FFMFL) * (est. deriv. of f w.r.t. x at x = XX).  All
+   derivatives are base on a second degree polynonial that interpolates
+   the last three points generated.
+ DFDXXX = (XXMXO/FFMFL) * (est. deriv. of f w.r.t. x at x = X0).
+ DIV    If artificial subdivision of the interval is used, determines
+   the amount of the sudivision.  (-XXMXOO * DIV / (1. + DIV))
+ SMESS  Prints error messages.
+ DXDFFF = (FFMFL/XXMXL) * (est. deriv. of x w.r.t. f at f = FF).
+ DXDFFO = (FFMFO/XXMXL) * (est. deriv. of x w.r.t. f at f = FO).
+ F1     (formal arg.) The last value of F computed, on return the value
+   of F(X1).
+ F2     (formal arg.) The other initial value provided for F.  Set to
+   the value of F(X2) on returns.
+ FDAT   Temporary storage for floating point values for messages.
+ FF     Value of F1 after F is computed.
+ FFDFO  FF / FO
+ FFMFB  FFMFL + FLMFB = FF - value of FF 2 iterations back.
+ FFMFL  FF - FL
+ FL     Value of FF from the previous iteration. <br>
+ FLMFB  Value of FFMFL from the previous iteration
+ FO     F(XO)
+ I      Comments for LCHNG define how I is set.
+ IDAT   Temporary storage for integer values for messages.
+ INDIC  Internal value to be assigned to MODE on exit.  Equivalenced to
+   MACT(3) and set to 0 initially.
+ J      This is 1 if FF .le. 0., and is 2 if FF &gt; 0.
+ KNKP   KNKP(J) (see J above) is set to 0 whenever there are signs of
+   decent convergence.  It is counted up when convergence is slow.
+ KS     =-1  initially,
+        = 0  whenever F changes sign, otherwise
+        = number of times the sign of F has remained the same
+ KTYP   = 1 if interpolation was used to get the last iterate, = 0 if
+   an artificial subdivision was used.
+ LCHG  the J-th continuation in the data statement for LCHG below gives
+ new states for the case when the state number is J-1.  State 0 is the
+ initial state.  The I-th entry on a row gives the state for case on I
+ as follows:  (TP is the ratio (new f) / (last f of same sign)
+    I = 1   TP &lt; 0.01
+    I = 2   .01 &lt;= TP &lt; 1
+    I = 3   TP = 1
+    I = 4   1 &lt; TP &lt;= 4
+    I = 5   TP &gt; 4.
+ States are as follows:
+    0   initial state, or big increase, or small increase in state 0
+    1   after big decrease, perhaps followed by small decreases
+    2   after one or more small decreases from state 0
+    3   one or more small increases from state 2
+    4   one or more small decreases from state 3
+    5   decision made that noise is a problem on this side of zero.
+ LINIT  - the maximum number of iterations that can be taken with out
+   getting a sign change in F.
+ LMODE  The value of MODE the last time in this routine.
+ LNLP<br>
+ LTXTxx Names of this form are used in setting up data statements for
+   error messages.  These names are generated automatically by PMESS,
+   the program that makes up these messages.
+ MACT   This array difines the actions to be taken by the error message
+   program.  See comments in MESS for details.
+ MACT1  As for MACT except used for the diagnostic print.
+ MExxxx Parameters defining constants used for interaction with the
+   error message program MESS.  See comments there for definitions.
+ MLOC   Contains locations in MTXTAA for error messages.
+ MODE   (formal) See comments above.
+ MTXTAA Text for error messages.
+ MTXTAB Text for diagnostic message.
+ MTXTAC Text for diagnostic message.
+ NP     If &gt; 0, gives number of iterations till diagnostic print stops.
+ QFM <br>
+ QXM <br>
+ RND    Largest relative difference between succesive floating point
+   numbers.
+ SMALL  .5 / (RND * largest floating point number)
+ TOL    (Formal) See description above.
+ TOLX   Actually tolerance required for accuracy in X.  Usually =
+   max(TOL, XRND).  It can be cut by a factor of 2 for use in setting
+   bounds on an acceptable interval.
+ TP     Ordinarily the ratio (FF / prev. FF of the same sign.
+ TP1    Used for temporary storage.
+ X1     (Formal) Value of x where F is to be computed, and value
+   returned for the zero after convergence.
+ X2     (Formal) Initially other value of x where F is given.  After
+   convergence gives the other closest x which gives an F of opposite
+   sign from that given by x1.
+ XL     Value of XX from the previous iteration.
+ XLMXB  Value of XXMXL from the previous iteration.
+ XO     Value of x on opposite side of the zero from the current x.
+ XRND   Best accuracy that one could hope for based on the finite
+   precision of floating point numbers.
+ XX     Current x, the last value of X1 where F was computed.
+ XXMXL  XX - XL
+ XXMXO  XX - XO = length of interval in which 0 lies.
+ XXMXOL Value of XXMXO from a previous iteration.</p>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-mode~2"></span>
+              integer
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>MODE</strong></td>
+            <td>
+                <blockquote>
+<p>1996       SZERO  JWF     Removed calls AMACH , MESS, SMESS and UMESS<br>
+1993-04-27 SZERO  Krogh   Additions for Conversion to C.
+1993-04-13 SZERO  Krogh   Minor change for new MESS.
+1992-04-08 SZERO  Krogh   Unused label 400 removed.
+1992-01-09 SZERO  Krogh   Moved calc. of XXMXO up (for error msg.)
+1991-11-26 SZERO  Krogh   Converted to new error processor.
+1988-08-14 SZERO  Krogh   Labels runumbered.
+1988-03-07 SZERO  Krogh   Initial code.</p>
+</blockquote>
+            </td>
+        </tr>
+        <tr>
+            <td>
+              <span class="anchor" id="variable-tol~3"></span>
+              real
+            </td>
+<td></td>
+              <td></td>            <td>
+              
+            </td>
+            <td>::</td>
+            <td><strong>TOL</strong></td>
+            <td>
+                <p>**  In the statement below, $ is replaced by an 'S' for single
+**  precision and a 'D' for double.
+ XXX call $ZERO(X1,F1,X2,F2,MODE,TOL)
+     go to  (N1,N2,N3,N4,N5,N6), MODE
+  N1 COMPUTE  F1=F(X1)
+     go to XXX</p>
+<p>N4 continue
+  N5 continue
+  N6 stop
+  N3 If you want to -- print results to note that error
+                       is too big.
+  N2 zero is found, do whatever you want to with it.</p>
+<p>End of comments explaining usage.</p>
+<p><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>*</em></strong><strong><em>* Usage of internal variables </em></strong><strong><em>*</em></strong><strong>*</strong>*</p>
+<p>C0     Parameter = 0.
+ C1     Parameter = 1.
+ C1P01  Parameter = 1.01
+ C1P25  Parameter = 1.25
+ C2     Parameter = 2.
+ C4     Parameter = 4.
+ CP01   Parameter = 0.01
+ CP125  Parameter = 1.25
+ CP25   Parameter = 0.25
+ CP5    Parameter = 0.5
+ CP75   Parameter = 0.75
+ CP99   Parameter = 0.99
+ R1MACH Gets constants associated with floating point arithmetic.
+ DFDXXX = (XXMXL/FFMFL) * (est. deriv. of f w.r.t. x at x = XX).  All
+   derivatives are base on a second degree polynonial that interpolates
+   the last three points generated.
+ DFDXXX = (XXMXO/FFMFL) * (est. deriv. of f w.r.t. x at x = X0).
+ DIV    If artificial subdivision of the interval is used, determines
+   the amount of the sudivision.  (-XXMXOO * DIV / (1. + DIV))
+ SMESS  Prints error messages.
+ DXDFFF = (FFMFL/XXMXL) * (est. deriv. of x w.r.t. f at f = FF).
+ DXDFFO = (FFMFO/XXMXL) * (est. deriv. of x w.r.t. f at f = FO).
+ F1     (formal arg.) The last value of F computed, on return the value
+   of F(X1).
+ F2     (formal arg.) The other initial value provided for F.  Set to
+   the value of F(X2) on returns.
+ FDAT   Temporary storage for floating point values for messages.
+ FF     Value of F1 after F is computed.
+ FFDFO  FF / FO
+ FFMFB  FFMFL + FLMFB = FF - value of FF 2 iterations back.
+ FFMFL  FF - FL
+ FL     Value of FF from the previous iteration. <br>
+ FLMFB  Value of FFMFL from the previous iteration
+ FO     F(XO)
+ I      Comments for LCHNG define how I is set.
+ IDAT   Temporary storage for integer values for messages.
+ INDIC  Internal value to be assigned to MODE on exit.  Equivalenced to
+   MACT(3) and set to 0 initially.
+ J      This is 1 if FF .le. 0., and is 2 if FF &gt; 0.
+ KNKP   KNKP(J) (see J above) is set to 0 whenever there are signs of
+   decent convergence.  It is counted up when convergence is slow.
+ KS     =-1  initially,
+        = 0  whenever F changes sign, otherwise
+        = number of times the sign of F has remained the same
+ KTYP   = 1 if interpolation was used to get the last iterate, = 0 if
+   an artificial subdivision was used.
+ LCHG  the J-th continuation in the data statement for LCHG below gives
+ new states for the case when the state number is J-1.  State 0 is the
+ initial state.  The I-th entry on a row gives the state for case on I
+ as follows:  (TP is the ratio (new f) / (last f of same sign)
+    I = 1   TP &lt; 0.01
+    I = 2   .01 &lt;= TP &lt; 1
+    I = 3   TP = 1
+    I = 4   1 &lt; TP &lt;= 4
+    I = 5   TP &gt; 4.
+ States are as follows:
+    0   initial state, or big increase, or small increase in state 0
+    1   after big decrease, perhaps followed by small decreases
+    2   after one or more small decreases from state 0
+    3   one or more small increases from state 2
+    4   one or more small decreases from state 3
+    5   decision made that noise is a problem on this side of zero.
+ LINIT  - the maximum number of iterations that can be taken with out
+   getting a sign change in F.
+ LMODE  The value of MODE the last time in this routine.
+ LNLP<br>
+ LTXTxx Names of this form are used in setting up data statements for
+   error messages.  These names are generated automatically by PMESS,
+   the program that makes up these messages.
+ MACT   This array difines the actions to be taken by the error message
+   program.  See comments in MESS for details.
+ MACT1  As for MACT except used for the diagnostic print.
+ MExxxx Parameters defining constants used for interaction with the
+   error message program MESS.  See comments there for definitions.
+ MLOC   Contains locations in MTXTAA for error messages.
+ MODE   (formal) See comments above.
+ MTXTAA Text for error messages.
+ MTXTAB Text for diagnostic message.
+ MTXTAC Text for diagnostic message.
+ NP     If &gt; 0, gives number of iterations till diagnostic print stops.
+ QFM <br>
+ QXM <br>
+ RND    Largest relative difference between succesive floating point
+   numbers.
+ SMALL  .5 / (RND * largest floating point number)
+ TOL    (Formal) See description above.
+ TOLX   Actually tolerance required for accuracy in X.  Usually =
+   max(TOL, XRND).  It can be cut by a factor of 2 for use in setting
+   bounds on an acceptable interval.
+ TP     Ordinarily the ratio (FF / prev. FF of the same sign.
+ TP1    Used for temporary storage.
+ X1     (Formal) Value of x where F is to be computed, and value
+   returned for the zero after convergence.
+ X2     (Formal) Initially other value of x where F is given.  After
+   convergence gives the other closest x which gives an F of opposite
+   sign from that given by x1.
+ XL     Value of XX from the previous iteration.
+ XLMXB  Value of XXMXL from the previous iteration.
+ XO     Value of x on opposite side of the zero from the current x.
+ XRND   Best accuracy that one could hope for based on the finite
+   precision of floating point numbers.
+ XX     Current x, the last value of X1 where F was computed.
+ XXMXL  XX - XL
+ XXMXO  XX - XO = length of interval in which 0 lies.
+ XXMXOL Value of XXMXO from a previous iteration.</p>
+            </td>
+        </tr>
+    </tbody>
+  </table>
+
+    <br>
+
+
+    
+    
+
+    
+    
+
+
+
+    
+    
+    </div>
+  </div>
+
+      <hr>
+    </div> <!-- /container -->
+    <footer>
+      <div class="container">
+        <div class="row justify-content-between">
+          <div class="col">
+            <p>
+              Volume Library
+ was developed by Yingfang<br>              &copy; 2025 
+</p>
+          </div>
+          <div class="col">
+            <p class="text-end">
+              Documentation generated by
+              <a href="https://github.com/Fortran-FOSS-Programmers/ford">FORD</a>
+            </p>
+          </div>
+        </div>
+        <br>
+      </div> <!-- /container -->
+    </footer>
+  </body>
+</html>
