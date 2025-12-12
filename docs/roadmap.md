@@ -1,9 +1,12 @@
 ## Problem
 
-The Volume Library is a large codebase with 149 code files in the main project and a bit more in other conected projects. 415 individual subrutines and functions. Most files have around 200 - 500 lines of code, some larger have 2000, 800 lines of code. 
-A rough ball park estimation comes to around 90-60k lines of code. These are code files have been written by many different contributers over the years. Not all of them follow the same coding conventions. Use of pass by value with no enforcment of in/out variables makes it hard to tell when are where values are being changed.  
+The Volume Library is a large codebase where code has been written over several decades by a handful of developers. Some code was originaly from seperate projects and not designed holesticly. Not all of the code follow the same codeing conventions. Many variables have short non discriptive variables. It may not be intuitive what all the code is doing. Use of pass by value with no enforcment of in/out variables makes it hard to tell when are where values are being changed. 
 
-on a reasonable persons estimate, optimisticly converting on average about one file a day it would take over 7 months of dedicated work to convert all the code. 
+Although Fortran still remains in use by many people these days. Its uses is somewhat limited to niche uses, mainly mathmatical, and liniar algebra. 
+The Volume Library hasn't kept up with modern Fortran and in its current state it may become hard to maintian in the longer term.
+
+Converting over to a new language not only offers the advantage of picking a language that may be easier to find programmers for but it also forces is to take a deeper look at the code and see if there is a better way to work it. 
+
 
 ## language options
 One key determinizers on leguage is the interoperability with existing projects that depend on the volume library.
@@ -67,6 +70,11 @@ I am recomending using C++, with the option of using C as an interface/wrapper f
 
 
 ## Time estimates
+So to get a scale of the conversion effort, metrics of the origianal code base are:
+ - 149 individual code files
+ - 415 subroutines and functions arcross the code files
+ - about 200-500 lines in most files with larger files up to 2000
+ - rough balpark 60k - 90k lines of code
 
 Making a highly optimistic estimate where about 1 code file is converted on average every day, to get a sence of what might be a lower bounds for a time estimate. That comes out to about 30 week or 7 and a half months. 
 Based on my experiance working on similar code - code that had been converted from Fortran with minimal changes from the original code. 
