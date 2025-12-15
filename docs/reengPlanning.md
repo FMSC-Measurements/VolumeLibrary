@@ -73,16 +73,14 @@ I am recomending using C++, with the option of using C as an interface/wrapper f
 So to get a scale of the conversion effort, metrics of the origianal code base are:
  - 149 individual code files
  - 415 subroutines and functions arcross the code files
- - about 200-500 lines in most files with larger files up to 2000
- - rough balpark 60k - 90k lines of code
+ - most files are around 200-500 lines of code with some larger files up to 2000loc
+ - rough ballpark estimated lines of code 60k - 90k 
 
-Making a highly optimistic estimate where about 1 code file is converted on average every day, to get a sence of what might be a lower bounds for a time estimate. That comes out to about 30 week or 7 and a half months. 
-Based on my experiance working on similar code - code that had been converted from Fortran with minimal changes from the original code. 
-Since code file range a bit in length, the number of Subroutines and Functions might be a better estimate. 
+To get a rough estimate of how long it might take to convert the code I'll use the number of subrutines and functions, since thats a more consistant metric, and make an estimate number of functions to convert per day. 
 I think it might be reasonable to esitmate converting about 1-2 methods a day. Some methods can be on the longer side and my take a bit of thinking to understand what they are doing and may take a day. Other methods just do simple math or logic and could be easy to convert. With that we are looking at around a year. 
 
 Although I did consider some options that could help with speeding up the process. Using the `f2c` project which offers the ability to automaticly convert Fortran 77 code to C or C++ could lift a lot of the load from the convertion process. Then I tried it, converting as much code I could automaticly. Some files couldn't convert since they used more modern fortran features which are not supported by f2c. 
-What I got was even less readable than the original Fortran code. It would surely still need to be hand pollished to get maintainable code. Additionaly the resulting code would much more a mirror of the old code and risk bringing old flaws with it. One place where it could be benifitial would be migrating over old hard coded data, since automation will help reduce risk of human error. 
+What I got was even less readable than the original Fortran code. Any code automaticly converted to C would need to be reworked by hand and would take as much time to rework as a compleat rewrite. Additionaly one advantave to a manual rewrite is that it allows us to better clear out the "cobwebs" of the old code. With a automated conversion the resulting code would much more a mirror of the old code and risk bringing old flaws with it. One place where it could be benifitial would be migrating over old hardcoded data, since automation will help reduce risk of human error. 
 
 Another option that I think would be worth considering is enlisting the help of AI. AI works best when you narrow down context and contraints. Having it convert one function at a time may give us reasonably good results. 
 With the help of AI it may be feasable to hit closer to 3-4 methods converted a day which could bring the overall effor down to 3-5 months. 
