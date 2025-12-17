@@ -38,7 +38,7 @@ I am recomending using C++, with the option of using C as an interface/wrapper f
  - identify and fill in missing documentation 
 
  ### Phase I
- This phase will focus on setting up the core API of the new Volume Library and core utility classes 
+ This phase will focus on setting up the core API of the new Volume Library, the main entry point, and core utility classes 
  #### Sprint 1
   - create new `VolumeLibrary` class as the main API entry point 
     - define volume library input types (TreeHeights, TreeDiamaters, VolumeCalulationOptions, ...)
@@ -52,7 +52,7 @@ I am recomending using C++, with the option of using C as an interface/wrapper f
   - create `ConfigurationManager` class for loading coefficent data in from JSON files. The configuration manager will also handle storing configuration data in mememory so that JSON files only need to be read once in the case of calculating many tree volumes at once. 
 
   ### Phase II
-  This phase will takle the biomass calculation side of things first. Since biomass calculation is less extensive this will help warm up to working in a new language while not bighting off a big chunk. 
+  This phase will tackle the biomass calculation side of things first. Since biomass calculation is less extensive this will help warm up to working in a new language while not bighting off a big chunk. 
 
  - design out `BiomassCalculator` base class and base logic. 
  - create `JenkinsBiomassCalculator` sub class
@@ -61,7 +61,7 @@ I am recomending using C++, with the option of using C as an interface/wrapper f
  - create `species_mappings.json` file
 
  ### Phase III
- This phase will takle the region specific volume calculation logic. 
+ This phase will tackle the region specific volume calculation logic. 
 
  - create `RegionalVolmeCalculator` base class
  - create region and method specific volume calculators e.g. `R1VolumeCalculator`, `R2TaperCalculator`, etc.
