@@ -2,19 +2,24 @@
 ```mermaid
 flowchart TB
 
-    VolumeLibaryEntry --> VolumeCalculation --> BiomassCalculation --> Output
+    VolumeLibraryInputs --> VolumeCalculation --> BiomassCalculation --> Output
 
-    subgraph VolumeLibaryEntry
-
+    subgraph VolumeLibraryInputs
+        direction TB
+        MerchRules
+        EquationCoefficient
+        TreeMeasurments
+        
     end
     
 
     subgraph VolumeCalculation
         direction TB
-        Inputs --> Profile
-        Inputs --> DVE
-        Inputs --> FIA
 
+        A{VolumeCalculatorSelector}
+        A-->ProfileVolumeCalculator
+        A-->DveVolumeCalculator
+        A-->FiaVolumeCalculator
     end
 
 ```
@@ -27,7 +32,7 @@ flowchart TB
             GetMerchHeightPrimary --> CalculatePrimaryVolume --> GetMerchHeightSecondary --> CalculateSecondaryVolume
 
     subgraph ProfileInputs
-            direction LR
+            direction TB
             MerchRules
             EquationCoefficient
             TreeMeasurments
