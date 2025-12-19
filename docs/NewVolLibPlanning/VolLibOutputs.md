@@ -7,15 +7,21 @@ The `TreeOutput` data type contins the following core metrics:
  - Green and Dry weights
  - Merch heights
 
+
+ notes: 
+ need to keep seconday. 
+
 ```mermaid
 classDiagram
 
     TreeOutput-->LogOutput
-    TreeOutput-->Weights
+    TreeOutput-->Biomass
     TreeOutput-->ErrorInfo
 
     class TreeOutput{
         Log[] Logs
+
+        float MerchHeight
 
         int TotalLogs
         float TotalCubic
@@ -30,8 +36,8 @@ classDiagram
         float DryWeightPrimary
         float DryWeightSecondary
 
-        Weights GreeWeights
-        Weights DryWeights
+        Biomass GreeBio
+        Biomass DryBio
 
         float MerchHeightPrimary
         float MerchHeightSecondary
@@ -44,29 +50,27 @@ classDiagram
         string ErrorMessage
     }
 
-    class Weights {
+    class Biomass {
         float AboveGroundTotal
-        float BranchesAndTop
-        float DeadBranches
+        float Branches
         float Foliage
         float StemTip
     }
 
 
     class LogOutput {
-        float smallEndDiaScaled
-        float largeEndDiaScaled
-        string prod 
+        float SmallEndDiaScaled
+        float LargeEndDiaScaled
+        string Prod 
         bool IsSecondary?
         float Length
         int LogNumber
         float GrossBoardFoot
         float GrossCubicFoot
-        float GrossCords 
         float GreenWeight
         float DryWeight
         float? InternationalBoardFoot
-        float BaseHeight?
+        float HieghtToLargeEndDiameter
     }
 
 ```
