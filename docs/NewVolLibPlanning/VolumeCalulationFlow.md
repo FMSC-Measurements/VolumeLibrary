@@ -1,25 +1,60 @@
+## VolumeLibrary Main Class
+```mermaid
+classDiagram
+    class VolumeLibrary {
+        TreeOutput CalculateVolume(VolumeCalulationOptions options, TreeMeasurments treeData)
+
+        TreeOutput CalculateVolume(VolumeCalulationOptions options, TreeMeasurments treeData, MerchRules merchRules)
+        
+        string GetVolumeEquationNumber(VolumeCalulationOptions options)
+
+        real GetHeightAtDiamater(VolumeCalulationOptions options, TreeMeasurments treeData, real diameter)
+
+        real GetDiameterAtHeight(VolumeCalulationOptions options, TreeMeasurments treeData, real height)
+
+        int GetNumberOfLog(VolumeCalulationOptions options, TreeMeasurments treeData)
+
+        string VersionNumber() 
+    }
+
+
+```
+
+### CalculateVolume Outline
 
 ```mermaid
 flowchart TB
 
-    VolumeLibraryInputs --> VolumeCalculation --> BiomassCalculation --> Output
+    VLVC -->GetVolumeCalculator-->VolumeCalculator.Initialize--> 
+    IsMerchRulesDefined-- yes -->VC 
+    IsMerchRulesDefined-- no -->GetDefaultMerchRules 
 
-    subgraph VolumeLibraryInputs
+    GetDefaultMerchRules--->VC
+
+    
+    --> BiomassCalculation --> Output
+
+    subgraph VLVC[VolumeLibrary.CalculateVolume ]
         direction TB
-        MerchRules
-        EquationCoefficient
-        TreeMeasurments
+        1a[VolumeCalulationOptions]
+        1b[TreeMeasurments]
+        1c[MerchRules*]
+        
         
     end
     
+    subgraph GetVolumeCalculator
+        2a[VolumeCalulationOptions]
+    end
 
-    subgraph VolumeCalculation
+
+    subgraph VC[VolumeCalculator.CalculateVolume]
         direction TB
 
-        A{VolumeCalculatorSelector}
-        A-->GetMerchRules-->ProfileVolumeCalculator
-        A-->DveVolumeCalculator
-        A-->GetMerchRulesb-->FiaVolumeCalculator
+        3a[TreeMeasurments]
+        3b[MerchRules]
+
+
     end
 
 ```
@@ -30,7 +65,9 @@ flowchart TB
 ```mermaid
 flowchart TB
     ProfileInputs -->
-            GetMerchHeightPrimary --> CalculatePrimaryVolume --> GetMerchHeightSecondary --> CalculateSecondaryVolume
+            GetMerchHeightPrimary --> GenerateLogsPrimaryProduct --> 
+            GetMerchHeightSecondary --> GenerateLogsSecondaryProduct --> 
+            CalculateSecondaryVolume --> OutputVolume
 
     subgraph ProfileInputs
             direction TB
@@ -67,71 +104,76 @@ subgraph FiaInputs
 
 MerchRules.Opt -- enum value for different options for dealing with topwood
 
-### Additional Tree Values (AuxData)
-Single Char Value
-
-- Species Variant Info
-- Appraisal Group
-
-
-### MerchHeightLogs
-Instead of using MerchHeightType we are now using MerchHeightLogs where if a value is provided as either 8, 16, 32 then implicitly the MerchHeight will be Logs, otherwise MerchHeights will be in Feet
-
-``` mermaid
----
-  config:
-    class:
-      hideEmptyMembersBox: true
----
-classDiagram
-
-
+### VolumeCalulationOptions
+```mermaid
+classDiagram 
+direction LR
     class VolumeCalulationOptions {
         string FiaCode
  
-        int Region
+        int Region [something]
         int Forest
         int District
         int PrimaryProduct
         int SecondaryProduct
-        DataType DataType - optional - defaults to FVS
-        char AuxData - optional 
+        VolumeCalculationType VolumeCalculationType - optional - defaults to FVS
+        char AuxFlag - optional 
         string EcoRegion - optional - fia only
     }
+    class VolumeCalculationType {
+        <<Enumeration>>
+        FVS - default
+        FIA
+        Cruise
+        VariableLogLength
+    }
+```
+#### AuxFlag - Single Char Value
+Additional flag value to indicate
+- Species Variant Info
+- Appraisal Group
 
+
+
+### TreeMeasurments
+```mermaid
+classDiagram
     class TreeMeasurments {
-        
-        
         heights:
-        float TotalHeight
-        float ReferenceHeight - 479 aka UpperstemHeight
-        float MerchHeightPrimary
-        float MerchHeightSecondary
+        real TotalHeight
+        real ReferenceHeight - 479 aka UpperstemHeight
+        real MerchHeightPrimary
+        real MerchHeightSecondary
         int MerchHeightLogs - if zero feet else 8,16,32
-        float HeightToFirstLiveLimb
+        real HeightToFirstLiveLimb
         
-
+---
         diameters:
-        float DBH
-        float DRC
-        float ReferenceDiamater
-
+        real DBH
+        real DRC
+        real ReferenceDiamater
+---
         other:
         int FormClass
         int NumberOfStems
-        float CrownRatio
+        real CrownRatio
         int CullPercent
-
+---
         merch rule overrides:
         real StumpHeightOverride
         real MinTopDibPrimaryOverride
         real MinTopDibSecondaryOverride
     }
 
+```
 
+#### MerchHeightLogs
+Instead of using MerchHeightType we are now using MerchHeightLogs where if a value is provided as either 8, 16, 32 then implicitly the MerchHeight will be Logs, otherwise MerchHeights will be in Feet
 
+### MerchRules
 
-
+``` mermaid
+classDiagram
     class MerchRules {
         int EvenOdd
         int SegmentationOption
@@ -146,56 +188,9 @@ classDiagram
         real BarkThicknessRatio
         real DoubleBarkThicknessAtBrestHeight
         real MinimumBoardFootDiameter - maybe remove
-        ...
-    }
-
-    class EquationCoefficientBase {
-        ...
-    }
-
-
-    class AuxValue {
-
-        char 
     }
 ```
 
-### Enums
-```mermaid
-classDiagram
-    class MerchHeightType {
-        Feet
-        Logs
-    }
-
-    class DataType {
-        FVS - default
-        FIA
-        Cruise
-        VariableLogLength
-    }
-
-```
 
 
-### VolumeLibrary Main Class
-```mermaid
-classDiagram
-    class VolumeLibrary {
-        TreeOutput CalculateVolume(VolumeCalulationOptions options, TreeMeasurments treeData)
 
-        TreeOutput CalculateVolume(VolumeCalulationOptions options, TreeMeasurments treeData, MerchRules merchRules)
-        
-        string GetVolumeEquationNumber(VolumeCalulationOptions options)
-
-        real GetHeightAtDiamater(VolumeCalulationOptions options, TreeMeasurments treeData, real diameter)
-
-        real GetDiameterAtHeight(VolumeCalulationOptions options, TreeMeasurments treeData, real height)
-
-        int GetNumberOfLog(VolumeCalulationOptions options, TreeMeasurments treeData)
-
-        string VersionNumber() 
-    }
-
-
-```

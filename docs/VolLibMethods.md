@@ -158,7 +158,7 @@ Used in `r8prep.f`
  #### OTOTOAL
  - 49,7
 
-### `r8dib.inc` - not used
+### `r8dib.inc` 
 Used in `r8clkdib.f`
 Used in `r8prep.f`
 Used in `r8vol2.f`
