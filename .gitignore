@@ -1,6 +1,9 @@
 #SVN
 /.SVN/
 
+#FORD documentation
+/docs/ford/src/
+
 archive_SourceCodes/
 dll_releases/
 release/
