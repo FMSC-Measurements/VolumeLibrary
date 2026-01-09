@@ -15,12 +15,25 @@ classDiagram
         int GetNumberOfLog(VolumeCalulationOptions options, TreeMeasurments treeData)
 
         string VersionNumber() 
-    }
 
+        ----
+        MerchRules GetDefaultMerchRules(VolumeCalculationOptions options)
+    }
+```
+
+
+```mermaid
+classDiagram
+  class VolumeCalculatorFactory {
+        VolumeCalculator GetVolumeCalculator(VolumeCalculationOptions options)
+  }
 
 ```
 
+
+
 ### CalculateVolume Outline
+
 
 ```mermaid
 flowchart TB
@@ -59,46 +72,8 @@ flowchart TB
 
 ```
 
-## Profile Volume Calculation
 
 
-```mermaid
-flowchart TB
-    ProfileInputs -->
-            GetMerchHeightPrimary --> GenerateLogsPrimaryProduct --> 
-            GetMerchHeightSecondary --> GenerateLogsSecondaryProduct --> 
-            CalculateSecondaryVolume --> OutputVolume
-
-    subgraph ProfileInputs
-            direction TB
-            MerchRules
-            EquationCoefficient
-            TreeMeasurments
-            TaperModel
-            end
-            
-```
-
-## FIA Volume Calculation
-Requited Tree measuremtnts: DBH and (TotalHeight or BrokenTopHeight)
-MerchRule: TopDib (calculated)
-
-Doesn't break tree into multple logs. Calculates volume for Stump, Main stem, and top
-```mermaid
-flowchart TB
-    FiaInputs-->CalculateMerchHeightFromTopDib-->GetDaimetersForMainStem-->CalcualteVoluemForMainStem-->CalculateVolumeForTopWood-->CalculateStumpVolume
-
-
-subgraph FiaInputs
-            direction TB
-            EquationCoefficient
-            TreeMeasurments
-            TaperModel
-            end
-
-
-
-```
 
 ## Volume Library input Data Types
 
@@ -130,8 +105,8 @@ direction LR
 ```
 #### AuxFlag - Single Char Value
 Additional flag value to indicate
-- Species Variant Info
-- Appraisal Group
+- Species Variant Info (young/old growth)
+- Appraisal Group (R6 Dougfur, house logs)
 
 
 
@@ -161,8 +136,8 @@ classDiagram
 ---
         merch rule overrides:
         real StumpHeightOverride
-        real MinTopDibPrimaryOverride
-        real MinTopDibSecondaryOverride
+        real MinTopDibSawOverride
+        real MinTopDibNonSawOverride
     }
 
 ```
@@ -180,8 +155,9 @@ classDiagram
         real MaxLogLength
         real MinLogLength
         real MinLengthTop
-        real MinTopDibPrimary
-        real MinTopDibSecondary
+        real MinTopDibSaw
+        real MinTopDibNonSaw
+        real MinMerchLength
 
         real SumpHeight
         real Trim
