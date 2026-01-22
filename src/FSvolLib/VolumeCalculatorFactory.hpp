@@ -29,35 +29,35 @@ public:
 
 
 
-	VolumeCalculatorBase& MakeVolumeCalculator(VolumeCalculationOptions vco);
+	VolumeCalculatorBase& MakeVolumeCalculator(VolumeCalculationOptions vco)
+	{
+		auto volumeEquation = volumeEquationResolver_.GetVolumeEquation(vco);
+		auto volumeEquationStr = volumeEquation.GetVolumeEquationNumber();
+
+		if (volumeCalculatorCahe_.count(volumeEquationStr))
+		{
+			return *(volumeCalculatorCahe_[volumeEquationStr]);
+		}
+
+
+		if (volumeEquation.modelType == VolumeEquation::ModelType::WO2)
+		{
+			auto modelPtr = std::make_unique<WenselOlsonTaperModel>(volumeEquation);
+
+			auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *modelPtr); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+			volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+			return *volCalcPtr;
+		}
+
+		throw std::invalid_argument("could not make volume equation");
+
+	}
 
 private:
 };
 
-VolumeCalculatorBase& VolumeCalculatorFactory::MakeVolumeCalculator(VolumeCalculationOptions vco)
-{
-	auto volumeEquation = volumeEquationResolver_.GetVolumeEquation(vco);
-	auto volumeEquationStr = volumeEquation.GetVolumeEquationNumber();
 
-	if (volumeCalculatorCahe_.count(volumeEquationStr))
-	{
-		return *(volumeCalculatorCahe_[volumeEquationStr]);
-	}
-
-
-	if (volumeEquation.modelType == VolumeEquation::ModelType::WO2)
-	{
-		auto modelPtr = std::make_unique<WenselOlsonTaperModel>(volumeEquation);
-
-		auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *modelPtr); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
-		volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
-
-		return *volCalcPtr;
-	}
-
-	throw std::invalid_argument("could not make volume equation");
-
-}
 
 
 

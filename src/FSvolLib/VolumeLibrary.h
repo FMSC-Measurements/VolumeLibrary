@@ -58,55 +58,55 @@ public:
 
 };
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-// C interop functions 
-void CalculateVolume(TreeOutput* treeOutput, const VolumeCalculationOptions volOpt, const TreeMeasurment tree)
-{
-	
-	auto result = VolumeLibrary::getInstance().CalculateVolume(volOpt, tree);
-
-	//TODO copy result data to treeOutput
-}
-
-void CalculateVolumeWithMerchRules(TreeOutput* treeOutput, const VolumeCalculationOptions volOpt, const TreeMeasurment tree, MerchRules merchRules)
-{
-	auto result = VolumeLibrary::getInstance().CalculateVolume(volOpt, tree, merchRules);
-
-	//TODO copy result data to treeOutput
-}
-
-// WIP still needto figure out the best way to handle passing strings 
-//void GetVolumeEquationNumber(const VolumeCalculationOptions volOpt, char* volEq_out_buffer)
+//#ifdef __cplusplus
+//extern "C" {
+//#endif
+//
+//// C interop functions 
+//void CalculateVolume(TreeOutput* treeOutput, const VolumeCalculationOptions volOpt, const TreeMeasurment tree)
 //{
-//	auto volEq = VolumeLibrary::getInstance().GetVolumeEquationNumber(volOpt);
-//	strncpy(volEq_out_buffer, volEq.c_str(), )
+//	
+//	auto result = VolumeLibrary::getInstance().CalculateVolume(volOpt, tree);
+//
+//	//TODO copy result data to treeOutput
 //}
-
-double GetHeightAtDiameter(VolumeCalculationOptions volOpt, TreeMeasurment tree, double diameter)
-{
-	return VolumeLibrary::getInstance().GetHeightAtDiameter(volOpt, tree, diameter);
-}
-
-double GetDiameterAtHeight(VolumeCalculationOptions volOpt, TreeMeasurment tree, double height)
-{
-	return VolumeLibrary::getInstance().GetDiameterAtHeight(volOpt, tree, height);
-}
-
-int GetNumberOfLogs(VolumeCalculationOptions volOpt, TreeMeasurment tree)
-{
-	return VolumeLibrary::getInstance().GetNumberOfLogs(volOpt, tree);
-}
-
-int GetNumberOfLogsWithMerchRules(VolumeCalculationOptions volOpt, TreeMeasurment tree, MerchRules merchRules)
-{
-	return VolumeLibrary::getInstance().GetNumberOfLogs(volOpt, tree, merchRules);
-}
-
-#ifdef __cplusplus
-}
-#endif
+//
+//void CalculateVolumeWithMerchRules(TreeOutput* treeOutput, const VolumeCalculationOptions volOpt, const TreeMeasurment tree, MerchRules merchRules)
+//{
+//	auto result = VolumeLibrary::getInstance().CalculateVolume(volOpt, tree, merchRules);
+//
+//	//TODO copy result data to treeOutput
+//}
+//
+//// WIP still needto figure out the best way to handle passing strings 
+////void GetVolumeEquationNumber(const VolumeCalculationOptions volOpt, char* volEq_out_buffer)
+////{
+////	auto volEq = VolumeLibrary::getInstance().GetVolumeEquationNumber(volOpt);
+////	strncpy(volEq_out_buffer, volEq.c_str(), )
+////}
+//
+//double GetHeightAtDiameter(VolumeCalculationOptions volOpt, TreeMeasurment tree, double diameter)
+//{
+//	return VolumeLibrary::getInstance().GetHeightAtDiameter(volOpt, tree, diameter);
+//}
+//
+//double GetDiameterAtHeight(VolumeCalculationOptions volOpt, TreeMeasurment tree, double height)
+//{
+//	return VolumeLibrary::getInstance().GetDiameterAtHeight(volOpt, tree, height);
+//}
+//
+//int GetNumberOfLogs(VolumeCalculationOptions volOpt, TreeMeasurment tree)
+//{
+//	return VolumeLibrary::getInstance().GetNumberOfLogs(volOpt, tree);
+//}
+//
+//int GetNumberOfLogsWithMerchRules(VolumeCalculationOptions volOpt, TreeMeasurment tree, MerchRules merchRules)
+//{
+//	return VolumeLibrary::getInstance().GetNumberOfLogs(volOpt, tree, merchRules);
+//}
+//
+//#ifdef __cplusplus
+//}
+//#endif
 
 

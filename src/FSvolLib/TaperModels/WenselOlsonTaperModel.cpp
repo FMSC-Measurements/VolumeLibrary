@@ -1,8 +1,5 @@
 //#include "..\pch.h"
 #include "WenselOlsonTaperModel.h"
-#include "..\VolumeEquation.h"
-#include <stdexcept>
-#include <cmath>
 
 WenselOlsonTaperModel::WenselOlsonTaperModel(VolumeEquation volumeEquation)
     : TaperModel(), fiaCode_(volumeEquation.fiaCode)

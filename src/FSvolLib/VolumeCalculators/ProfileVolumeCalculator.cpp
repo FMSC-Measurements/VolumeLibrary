@@ -1,5 +1,5 @@
 //#include "..\pch.h"
-#include ".\ProfileVolumeCalculator.h"
+#include "ProfileVolumeCalculator.h"
 
 
 TreeOutput ProfileVolumeCalculator::CalculateVolume(TreeMeasurment tree, MerchRules merchRules)
