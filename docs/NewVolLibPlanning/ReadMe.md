@@ -1,1 +1,0 @@
-This directory contains in progress design documentation for the purpouse of designing a object oriented verson of the Volume Library that will use C++

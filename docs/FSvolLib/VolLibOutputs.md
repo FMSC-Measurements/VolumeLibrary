@@ -61,7 +61,7 @@ classDiagram
     class LogOutput {
         float SmallEndDiaScaled
         float LargeEndDiaScaled
-        string Prod 
+        string Product 
         bool IsSecondary?
         float Length
         int LogNumber
