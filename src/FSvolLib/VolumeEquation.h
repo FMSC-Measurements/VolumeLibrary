@@ -95,7 +95,7 @@ public:
 			volumeEquationNumber.copy(volEq.subregionalCode, 2, 1);
 			volEq.modelType = ParseModelType(volumeEquationNumber.substr(3, 3));
 			volEq.usRegion = volumeEquationNumber[6];
-			volEq.fiaCode = std::stoi(volumeEquationNumber.substr(8, 3)); // parse fiaCode
+			volEq.fiaCode = std::stoi(volumeEquationNumber.substr(7, 3)); // parse fiaCode
 		}
 		return volEq;
 	}
