@@ -1,6 +1,8 @@
 #SVN
 /.SVN/
 
+.vs/
+
 #FORD documentation
 /docs/ford/src/
 
