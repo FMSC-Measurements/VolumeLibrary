@@ -43,17 +43,16 @@ public:
 		MAT, // Mathis (Rastagi and Loveless profile model)
 		SN2, // Sharpnack's 2 point profile model
 		WO2, // Wensel and Olsen 2 point profile model
-
 	};
 
 
 	GeoCode geoCode;
-	char subregionalCode[2];
+	char subregionalCode[2] = { '0', '0' };
 	ModelType modelType;
 	char usRegion; // West('W') or East('E') coast
-	int fiaCode;
-	bool isNsvbEquation;
-	char nsvbDivision[4];
+	int fiaCode = -1;
+	bool isNsvbEquation = false;
+	char nsvbDivision[4] = { '0', '0', '0', '0'};
 
 	std::string GetFiaCodeString() const
 	{
@@ -67,12 +66,35 @@ public:
 	{
 		if (isNsvbEquation)
 		{
-			return "NSVB" + std::string(nsvbDivision) + GetFiaCodeString();
+			return "NVB" + std::string(nsvbDivision, std::size(nsvbDivision)) + GetFiaCodeString();
 		}
 		else
 		{
 			char geoCodeChar = static_cast<char>(geoCode);
-			return geoCodeChar + std::string(subregionalCode) + usRegion + GetFiaCodeString();
+			return geoCodeChar + 
+				std::string(subregionalCode, std::size(subregionalCode)) + 
+				ModelTypeToStr(modelType) + 
+				usRegion + 
+				GetFiaCodeString();
+		}
+	}
+
+	std::string ModelTypeToStr(ModelType model) const
+	{
+		switch (model)
+		{
+			case ModelType::DVE: { return "DVE"; }
+			case ModelType::BEH: { return "BEH"; }
+			case ModelType::CLK: { return "CLK"; }
+			case ModelType::CZ2: { return "CZ2"; }
+			case ModelType::CZ3: { return "CZ3"; }
+			case ModelType::DEM: { return "DEM"; }
+			case ModelType::FW2: { return "FW2"; }
+			case ModelType::FW3: { return "FW3"; }
+			case ModelType::MAT: { return "MAT"; }
+			case ModelType::SN2: { return "SN2"; }
+			case ModelType::WO2: { return "WO2"; }
+			default: throw std::invalid_argument("Unknown ModelType: " + std::to_string(static_cast<int>(model)));		
 		}
 	}
 
@@ -83,14 +105,15 @@ public:
 
 		VolumeEquation volEq;
 
-		if (volumeEquationNumber.substr(0, 4) == "NSVB")
+		if (volumeEquationNumber.substr(0, 3) == "NVB")
 		{
 			volEq.isNsvbEquation = true;
-			volumeEquationNumber.copy(volEq.nsvbDivision, 4, 4);
-			volEq.fiaCode = std::stoi(volumeEquationNumber.substr(8, 3)); // parse fiaCode
+			volumeEquationNumber.copy(volEq.nsvbDivision, 3, 4);
+			volEq.fiaCode = std::stoi(volumeEquationNumber.substr(7, 3)); // parse fiaCode
 		}
 		else
 		{
+			volEq.isNsvbEquation = false;
 			volEq.geoCode = static_cast<GeoCode>(volumeEquationNumber[0]); // cast first volEq char to GeoCode, Note this doesn't enforce that GeoCode is a valid value
 			volumeEquationNumber.copy(volEq.subregionalCode, 2, 1);
 			volEq.modelType = ParseModelType(volumeEquationNumber.substr(3, 3));
