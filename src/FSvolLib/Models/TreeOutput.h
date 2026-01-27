@@ -19,10 +19,10 @@ struct TreeOutput
 	double dryWeightPrimary;
 	double dryWeightSecondary;
 
-	BiomassOutput GreenBio;
-	BiomassOutput DryBio;
+	BiomassOutput greenBio;
+	BiomassOutput dryBio;
 
-	LogOutput Logs[MAX_NUMBER_LOGS];
+	LogOutput logs[MAX_NUMBER_LOGS];
 	int numberOfLogs;
 
 };

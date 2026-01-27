@@ -4,7 +4,7 @@
 
 struct ErrorInfo
 {
-	std::string ErrorType;
-	std::string ErrorMessage;
+	std::string errorType;
+	std::string errorMessage;
 };
 
