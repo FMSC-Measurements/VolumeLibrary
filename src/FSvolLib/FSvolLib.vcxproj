@@ -148,10 +148,10 @@
     <ClInclude Include="Models\TreeMeasurment.h" />
     <ClInclude Include="Models\TreeOutput.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="string_helper.hpp" />
+    <ClInclude Include="string_helper.h" />
     <ClInclude Include="TaperModels\TaperModel.h" />
     <ClInclude Include="Models\VolumeCalculationOptions.h" />
-    <ClInclude Include="VolumeCalculatorFactory.hpp" />
+    <ClInclude Include="VolumeCalculatorFactory.h" />
     <ClInclude Include="VolumeCalculators\ProfileVolumeCalculator.h" />
     <ClInclude Include="VolumeCalculators\VolumeCalculatorBase.h" />
     <ClInclude Include="VolumeEquation.h" />

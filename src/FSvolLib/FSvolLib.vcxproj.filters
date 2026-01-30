@@ -60,13 +60,13 @@
     <ClInclude Include="TaperModels\WenselOlsonTaperModel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="VolumeCalculatorFactory.hpp">
+    <ClInclude Include="VolumeCalculatorFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VolumeEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="string_helper.hpp">
+    <ClInclude Include="string_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MerchRulesResolver.h">
