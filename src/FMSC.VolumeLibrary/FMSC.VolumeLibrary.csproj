@@ -1,0 +1,52 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net472;net9-windows;net9-android</TargetFrameworks>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<LangVersion>10</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<_TargetPlatformIdentifier>$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)'))</_TargetPlatformIdentifier>
+		<_IsFramework Condition="$(TargetFramework.StartsWith('net4'))">True</_IsFramework>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<InternalsVisibleTo Include="FMSC.VolumeLibrary.Test" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.2" />
+	</ItemGroup>
+
+	<!--<ItemGroup Condition="$([MSBuild]::IsTargetFrameworkCompatible('net4', '$(TargetFramework'))">
+		<Compile  Remove="$(MSBuildThisFile)\Interop\VolLibMethodProvider_netcore.cs"/>
+	</ItemGroup>-->
+
+
+	<ItemGroup Condition="$(_TargetPlatformIdentifier.Contains('windows')) == 'True' Or '$(_IsFramework)' == 'True'">
+
+		<Content Include="..\..\vollib\Release\vollib.dll" Link="win-x86\vollib.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+		<Content Include="..\..\vollib\x64\Release\vollib.dll" Link="win-x64\vollib.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+
+	</ItemGroup>
+
+	<!--<ItemGroup Condition="'$(_TargetPlatformIdentifier)' == 'android'">
+	<EmbeddedNativeLibrary Include="..\..\vollib\Release\arm\vollib.so">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<Link>armeabi-v7a\vollib.so</Link>
+	</EmbeddedNativeLibrary>
+	<EmbeddedNativeLibrary Include="..\..\vollib\Release\arm64\vollib.so">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<Link>arm64-v8a\vollib.so</Link>
+	</EmbeddedNativeLibrary>
+</ItemGroup>-->
+
+</Project>

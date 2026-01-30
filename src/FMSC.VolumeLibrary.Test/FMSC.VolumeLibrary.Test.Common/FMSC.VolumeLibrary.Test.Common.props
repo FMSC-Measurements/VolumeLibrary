@@ -1,0 +1,30 @@
+<Project>
+
+	<PropertyGroup>
+		<!--<TargetFramework>net9.0-windows</TargetFramework>-->
+		<TargetFramework>net472</TargetFramework>
+		<IsTestProject>true</IsTestProject>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<IsPackable>false</IsPackable>
+		<AssemblyName>FMSC.VolumeLibrary.Test</AssemblyName>
+		<RootNamespace>FMSC.VolumeLibrary.Test</RootNamespace>
+		<LangVersion>10</LangVersion>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="coverlet.collector" Version="6.0.2" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
+		<PackageReference Include="xunit" Version="2.9.2" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\FMSC.VolumeLibrary\FMSC.VolumeLibrary.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Using Include="Xunit" />
+	</ItemGroup>
+
+</Project>

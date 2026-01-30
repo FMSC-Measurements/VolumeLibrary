@@ -1,0 +1,36 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="Win32" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/Tests/">
+    <Project Path="src/FMSC.VolumeLibrary.Test/FMSC.VolumeLibrary.Test.Android/FMSC.VolumeLibrary.Test.Android.csproj" Id="318721ac-9369-47e4-8363-8634d65270b4">
+      <Deploy />
+    </Project>
+    <Project Path="src/FMSC.VolumeLibrary.Test/FMSC.VolumeLibrary.Test.AnyCPU/FMSC.VolumeLibrary.Test.AnyCPU.csproj" />
+    <Project Path="src/FMSC.VolumeLibrary.Test/FMSC.VolumeLibrary.Test.Common/FMSC.VolumeLibrary.Test.Common.shproj" Id="c95fb6e6-e706-412d-b3c5-69c1f886795d" />
+    <Project Path="src/FMSC.VolumeLibrary.Test/FMSC.VolumeLibrary.Test.x64/FMSC.VolumeLibrary.Test.x64.csproj" />
+    <Project Path="src/FMSC.VolumeLibrary.Test/FMSC.VolumeLibrary.Test.x86/FMSC.VolumeLibrary.Test.x86.csproj" />
+  </Folder>
+  <Project Path="deployment/deployment.vdproj" Type="Installer">
+    <Build Solution="*|Win32" />
+    <Build Solution="*|x86" />
+    <Build Solution="Release|x64" />
+  </Project>
+  <Project Path="src/FMSC.VolumeLibrary/FMSC.VolumeLibrary.csproj" Id="927fcfae-9c96-46a4-a385-7c7359b2591c" />
+  <Project Path="src/FSvolLib/FSvolLib.vcxproj" Id="8cc4bbbe-d401-4b25-8a88-6e7d6e22f273" />
+  <Project Path="tests/FSvolLib.test/FSvolLib.test.vcxproj" />
+  <Project Path="volCStest/volCStest.csproj" Id="7ee7756b-dbf7-4152-8fa4-04c211845018">
+    <Platform Solution="*|x86" Project="x86" />
+    <Build Solution="Debug|x64" Project="false" />
+  </Project>
+  <Project Path="vollib/vollib.vfproj" Type="6989167d-11e4-40fe-8c1a-2192a86a7e90" Id="dd129eec-6427-4818-924f-87c2cdbba9ad">
+    <Platform Solution="*|Any CPU" Project="x64" />
+    <Platform Solution="*|x86" Project="Win32" />
+    <Build Solution="*|Any CPU" Project="false" />
+    <Build Solution="*|x86" Project="false" />
+    <Build Solution="Debug|Win32" Project="false" />
+  </Project>
+</Solution>

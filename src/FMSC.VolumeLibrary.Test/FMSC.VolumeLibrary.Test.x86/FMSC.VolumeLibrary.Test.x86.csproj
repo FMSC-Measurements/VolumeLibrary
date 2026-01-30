@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--<Import Project="$(MSBuildThisFileDirectory)\..\FMSC.VolumeLibrary.test.common.props"/>-->
+
+	<PropertyGroup>
+		<Platform>x86</Platform>
+	</PropertyGroup>
+
+	<Import Project="..\FMSC.VolumeLibrary.Test.Common\FMSC.VolumeLibrary.Test.Common.projitems" Label="Shared" />
+	<Import Project="..\FMSC.VolumeLibrary.Test.Common\FMSC.VolumeLibrary.Test.Common.props" />
+
+</Project>

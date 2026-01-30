@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<!--<Import Project="..\FMSC.VolumeLibrary.Test.Common\FMSC.VolumeLibrary.Test.Common.projitems" Label="Shared" />
+	<Import Project="..\FMSC.VolumeLibrary.Test.Common\FMSC.VolumeLibrary.Test.Common.props" />-->
+
+	<PropertyGroup>
+		<TargetFramework>net9.0-android35.0</TargetFramework>
+		<SupportedOSPlatformVersion>25.0</SupportedOSPlatformVersion>
+		<OutputType>Exe</OutputType>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<ApplicationId>com.companyname.FMSC.VolumeLibrary.Test.Android</ApplicationId>
+		<ApplicationVersion>1</ApplicationVersion>
+		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
+		<!--
+      Enables trim analyzers and full trimming during Release mode.
+      To learn more, see: https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options#trimming-granularity
+    -->
+		<TrimMode>full</TrimMode>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\FMSC.VolumeLibrary\FMSC.VolumeLibrary.csproj" />
+	</ItemGroup>
+</Project>

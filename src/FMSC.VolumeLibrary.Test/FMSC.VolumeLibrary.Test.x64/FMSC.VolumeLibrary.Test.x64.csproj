@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<Import Project="..\FMSC.VolumeLibrary.Test.Common\FMSC.VolumeLibrary.Test.Common.projitems" Label="Shared" />
+	<Import Project="..\FMSC.VolumeLibrary.Test.Common\FMSC.VolumeLibrary.Test.Common.props" />
+	
+  <PropertyGroup>
+	  <Platform>x64</Platform>
+  </PropertyGroup>
+
+</Project>
