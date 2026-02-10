@@ -75,6 +75,9 @@
     <ClInclude Include="VolumeEquationResolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SmalianScribnerIntl14.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -102,6 +105,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VolumeEquationResolver.R5.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SmalianScribnerIntl14.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

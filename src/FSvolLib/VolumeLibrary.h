@@ -7,7 +7,7 @@
 #include "Models\VolumeCalculationOptions.h"
 #include "Models\TreeMeasurment.h"
 #include "Models\MerchRules.h"
-#include "VolumeCalculatorFactory.hpp"
+#include "VolumeCalculatorFactory.h"
 #include "MerchRulesResolver.h"
 
 

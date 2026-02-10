@@ -10,7 +10,7 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 
 	auto merchRules = (maybe_merchRules.has_value()) ? maybe_merchRules.value() : merchRulesResolver_.GetMerchRules(options);
 
-	auto treeOutput = volumeCalculator.CalculateVolume(tree, merchRules);
+	auto treeOutput = volumeCalculator.CalculateVolume(options,tree, merchRules);
 
 	return treeOutput;
 

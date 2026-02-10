@@ -6,6 +6,7 @@
 #include "..\Models\MerchRules.h"
 #include "..\Models\TreeOutput.h"
 #include "..\Models\TreeMeasurment.h"
+#include "..\Models\VolumeCalculationOptions.h"
 #include "..\VolumeEquation.h"
 
 class VolumeCalculatorBase
@@ -19,7 +20,7 @@ class VolumeCalculatorBase
 public:
 	const std::string volumeEquationNumber;
 
-	virtual TreeOutput CalculateVolume(TreeMeasurment tree, MerchRules merchRules) = 0;
+	virtual TreeOutput CalculateVolume(VolumeCalculationOptions vco,TreeMeasurment tree, MerchRules merchRules) = 0;
 
 
 protected:

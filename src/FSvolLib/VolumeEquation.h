@@ -6,7 +6,7 @@
 #include <sstream>
 #include <exception>
 
-#include "string_helper.hpp"
+#include "string_helper.h"
 
 class VolumeEquation
 {

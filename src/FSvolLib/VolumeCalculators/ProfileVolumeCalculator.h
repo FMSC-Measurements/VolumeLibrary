@@ -9,7 +9,7 @@
 #include "..\Models\TreeOutput.h"
 #include "..\Models\TreeMeasurment.h"
 #include "..\VolumeEquation.h"
-
+#include "..\Models\VolumeCalculationOptions.h"
 
 
 
@@ -25,9 +25,13 @@ public:
 		taperModel_(taperModel)
 	{}
 
-	TreeOutput CalculateVolume(TreeMeasurment tree, MerchRules merchRules) override;
+	TreeOutput CalculateVolume(VolumeCalculationOptions vco,TreeMeasurment tree, MerchRules merchRules) override;
 
-	std::vector<LogOutput> SegmentLogs();
+	std::vector<LogOutput> SegmentLogs(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules);
 
+protected:
+	std::vector<double> getLogs(double merchLength, MerchRules merchRules, int& numseg);
+
+	std::vector<LogOutput> getLogData(std::vector<double> loglen, TreeMeasurment tree, MerchRules merchRules, int product, bool cubicOnly = false);
 };
 

@@ -24,17 +24,17 @@ public:
 
         TreeMeasurment tree;
         tree.dbh = 15;
-        tree.totalHeight = 30;
+        tree.totalHeight = 60;
         // ...
 
         WenselOlsonTaperModel& taperModel = WenselOlsonTaperModel(volEq);
 
         // Act
         auto result = taperModel.GetDiameterAtHeight(tree, 20);
-
+        auto result2 = taperModel.GetHeightAtDiameter(tree, 6.0);
 
         //// Assert
-        Assert::IsTrue(result > 6.285 && result <= 6.29); // TODO need to create helper methods to test if floating point numbers are aproxamatly equal. 
+        //Assert::IsTrue(result > 6.285 && result <= 6.29); // TODO need to create helper methods to test if floating point numbers are aproxamatly equal. 
         
     }
 

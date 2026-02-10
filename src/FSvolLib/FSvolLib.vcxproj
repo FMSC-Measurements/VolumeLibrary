@@ -148,6 +148,7 @@
     <ClInclude Include="Models\TreeMeasurment.h" />
     <ClInclude Include="Models\TreeOutput.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="SmalianScribnerIntl14.h" />
     <ClInclude Include="string_helper.h" />
     <ClInclude Include="TaperModels\TaperModel.h" />
     <ClInclude Include="Models\VolumeCalculationOptions.h" />
@@ -163,6 +164,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="MerchRulesResolver.cpp" />
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="SmalianScribnerIntl14.cpp" />
     <ClCompile Include="TaperModels\TaperModel.cpp" />
     <ClCompile Include="VolumeCalculators\ProfileVolumeCalculator.cpp" />
     <ClCompile Include="VolumeEquationResolver.cpp" />
