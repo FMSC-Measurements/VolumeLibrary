@@ -19,9 +19,50 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     if (vco.region == 7) merchRules.minTopDibSaw = tree.dbh * 0.184 + 2.24;
 	
     // Segment Logs
-    result.logs = SegmentLogs(vco, tree, merchRules);
+    std::vector<LogOutput> logs = SegmentLogs(vco, tree, merchRules);
+    result.logs = logs;
 
 	// calculate volume for all logs
+    double grossCubicFootPrimary = 0.0;
+    double grossCubicFootSecondary = 0.0;
+    double grossBoardFootPrimary = 0.0;
+    double grossBoardFootSecondary = 0.0;
+    double grossIntl14Primary = 0.0;
+    double grossIntl14Secondary = 0.0;
+    int numberOfLogs = 0;
+
+    //sum log volumes
+    for (const auto& item : logs) {
+        if (item.isSecondary)
+        {
+            grossCubicFootSecondary += item.grossCubicFoot;
+            grossBoardFootSecondary += item.grossBoardFoot;
+            grossIntl14Secondary += item.internationalBoardFoot;
+        }
+        else
+        {
+            grossCubicFootPrimary += item.grossCubicFoot;
+            grossBoardFootPrimary += item.grossBoardFoot;
+            grossIntl14Primary += item.internationalBoardFoot;
+            ++numberOfLogs;
+        }
+    }
+
+    //calculate tip volume above the last log
+    double tipVolume = 0.0;
+    if (!logs.empty()) {
+        size_t topIndex = logs.size() - 1; // Last element index
+        if (!logs[topIndex].length > 0.0) topIndex -= 1;
+        double merchHeight = logs[topIndex].heightToLargeEndDiameter + logs[topIndex].length;
+        double tipLength = tree.totalHeight - merchHeight;
+        tipVolume = smallian(logs[topIndex].smallEndDiameterScaled, 0.0, tipLength);
+    }
+
+    result.grossBoardFootPrimary = grossBoardFootPrimary;
+    result.grossBoardFootSecondary = grossBoardFootSecondary;
+    result.grossCubicFootPrimary = grossCubicFootPrimary;
+    result.grossCubicFootSecondary = grossCubicFootSecondary;
+    result.numberOfLogs = numberOfLogs;
 
 	// calcualte log weights using weight factor
 
@@ -29,9 +70,43 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
 
 
 	// calculate total cubic and cords
+    //using 4' piece length and no trim for total cibic
+    MerchRules merchRulesTotal;
+    merchRulesTotal = merchRules;
+    merchRulesTotal.maxLogLength = 4.0;
+    merchRulesTotal.minLogLength = 0.0;
+    merchRulesTotal.trim = 0.0;
+    merchRulesTotal.minTopDibSaw = merchRulesTotal.minTopDibNonSaw;
+    merchRulesTotal.segmentationOption = 23;
+    merchRulesTotal.evenOdd = 0; //not round to foot
+    bool cubicOnly = true;
+    
+    std::vector<LogOutput> totalCubicFoot = SegmentLogs(vco, tree, merchRules, cubicOnly);
+    
+    //calculate stump volume
+    double stumpDib = totalCubicFoot[0].largeEndDiameterScaled; //for cubicOnly, this is the actual Dib
+    double stumpVolume = smallian(stumpDib, stumpDib, merchRulesTotal.stumpHeight);
+    
+    //calculate volume from stump to nonSawTop and cord volume
+    double merchCubic = 0.0;
+    for (const auto& item : totalCubicFoot)
+    {
+        merchCubic += item.grossCubicFoot;
+    }
+    //calculate cord volume using a factor, each region has its own factor
+    double cordVolume = std::round((merchCubic / 90.0) * 10.0) / 10.0;
 
+    //calculate tip volume for tree total cubic volume
+    tipVolume = 0.0;
+    if (!totalCubicFoot.empty()) {
+        size_t topIndex = totalCubicFoot.size() - 1; // Last element index
+        double merchHeight = totalCubicFoot[topIndex].heightToLargeEndDiameter + totalCubicFoot[topIndex].length;
+        double tipLength = tree.totalHeight - merchHeight;
+        tipVolume = smallian(merchRulesTotal.minTopDibNonSaw, 0.0, tipLength);
+    }
 
-
+    double totalCubicVolume = stumpVolume + merchCubic + tipVolume;
+    
 	// return tree 
 	return result;
 
@@ -39,7 +114,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
 
 std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRules merchRules, int &numseg)
 {
-	std::vector<double>loglen(MAX_NUMBER_LOGS);
+	std::vector<double>loglen;
 
     double lmerch{ merchLength };
     double maxlen{ merchRules.maxLogLength };
@@ -81,13 +156,13 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
         if (leftov >= (segmentLen / 4.0)) ++numseg;
     }
 
-    if (numseg > MAX_NUMBER_LOGS) numseg = MAX_NUMBER_LOGS;
-
     // If there are no segments, set merchantable length to zero and return.
     if (numseg == 0) {
         lmerch = 0.0;
         return loglen;
     }
+
+    loglen.reserve(numseg);
 
     // Remove trim from merchantable length.
     lmerch = lmerch - (static_cast<double>(numseg) * trim);
@@ -97,7 +172,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
         // Nearest foot: INT(LMERCH + 0.5)
         lmerch = static_cast<double>(static_cast<int>(lmerch + 0.5));
     }
-    else {
+    else if (evod == 2) {
         // Nearest even foot: INT((LMERCH + 1.0)/2.0) * 2.0
         int evenFeet = static_cast<int>((lmerch + 1.0) / 2.0) * 2;
         lmerch = static_cast<double>(evenFeet);
@@ -142,7 +217,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
         double leftov = lmerch - static_cast<double>(avlen) * static_cast<double>(numseg);
 
         // Set all lengths equal to AVLEN.
-        for (int i = 0; i < numseg && i < 20; ++i) {
+        for (int i = 0; i < numseg; ++i) {
             loglen[i] = static_cast<double>(avlen);
         }
 
@@ -153,7 +228,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
             for (int i = 0; i < numseg; ++i) {
                 if ((numseg - 2 * (i + 1) + 1) >= 1) { // matches Fortran condition
                     int topIndex = numseg - 1 - i;
-                    if (i < 20 && topIndex >= 0 && topIndex < 20) {
+                    if (topIndex >= 0) {
                         loglen[i] += 1.0;
                         loglen[topIndex] -= 1.0;
                     }
@@ -165,14 +240,14 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
             // If NUMSEG is odd, distribute LEFTOV among odd-length segments first.
             if ((numseg % 2) != 0) {
                 for (int i = 0; i < numseg && leftov > 0.0; ++i) {
-                    if (i < 20) {
+                    //if (i < 20) {
                         // Check if loglen[i] is odd using Fortran-like test:
                         int half = static_cast<int>(loglen[i] / 2.0);
                         if (loglen[i] > static_cast<double>(half * 2)) {
                             loglen[i] += 1.0;
                             leftov -= 1.0;
                         }
-                    }
+                    //}
                 }
             }
 
@@ -180,7 +255,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
             int kntit = 0;
             while (leftov > 0.0) {
                 for (int i = 0; i < numseg && leftov > 0.0; ++i) {
-                    if (i >= 20) break; // respect array bounds
+                    //if (i >= 20) break; // respect array bounds
                     if (loglen[i] < maxlen) {
                         int topIndex = numseg - 1; // LOGLEN(NUMSEG) in Fortran
 
@@ -190,7 +265,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
                                 loglen[i] += 2.0;
                                 leftov -= 2.0;
                             }
-                            else if (i + 1 < numseg && (i + 1) < 20 && loglen[i] > loglen[i + 1]) {
+                            else if ((i + 1) < numseg && loglen[i] > loglen[i + 1]) {
                                 loglen[i + 1] += 2.0;
                                 leftov -= 2.0;
                             }
@@ -201,7 +276,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
                                 loglen[i] += 1.0;
                                 leftov -= 1.0;
                             }
-                            else if (i + 1 < numseg && (i + 1) < 20 && loglen[i] > loglen[i + 1]) {
+                            else if ((i + 1) < numseg && loglen[i] > loglen[i + 1]) {
                                 loglen[i + 1] += 1.0;
                                 leftov -= 1.0;
                             }
@@ -225,23 +300,23 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
         double leftov = lmerch - static_cast<double>(intMaxLen) * static_cast<double>(numseg - 1);
 
         // Set all logs to the nominal log length (MAXLEN)
-        for (int i = 0; i < numseg && i < 20; ++i) {
+        for (int i = 0; i < numseg; ++i) {
             loglen[i] = maxlen;
         }
 
         if (opt == 21) {
             if (leftov >= (maxlen / 2.0)) {
-                if (numseg - 1 < 20) loglen[numseg - 1] = leftov;
+                loglen[numseg - 1] = leftov;
             }
             else {
                 // Split the top two segments
                 double last = static_cast<double>(static_cast<int>((maxlen + leftov) / 2.0));
                 double prev = maxlen + leftov - last;
-                if (numseg - 1 < 20) loglen[numseg - 1] = last;
-                if (numseg - 2 >= 0 && (numseg - 2) < 20) loglen[numseg - 2] = prev;
+                loglen[numseg - 1] = last;
+                if ((numseg - 2) >= 0) loglen[numseg - 2] = prev;
 
                 // If both are odd and equal, move 1' from upper to lower
-                if (numseg - 2 >= 0 && (numseg - 2) < 20 && (numseg - 1) < 20) {
+                if ((numseg - 2) >= 0) {
                     if (loglen[numseg - 1] == loglen[numseg - 2]) {
                         int half = static_cast<int>(loglen[numseg - 1] / 2.0);
                         if (loglen[numseg - 1] > static_cast<double>(half * 2)) {
@@ -258,19 +333,19 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
             double last = static_cast<double>(static_cast<int>((maxlen + leftov) / 2.0));
             double prev = maxlen + leftov - last;
 
-            if (numseg - 1 < 20) loglen[numseg - 1] = last;
-            if (numseg - 2 >= 0 && (numseg - 2) < 20) loglen[numseg - 2] = prev;
+            loglen[numseg - 1] = last;
+            if ((numseg - 2) >= 0) loglen[numseg - 2] = prev;
 
             // Enforce minimum length for the last log
-            if ((numseg - 1) < 20 && loglen[numseg - 1] < minlen) {
+            if (loglen[numseg - 1] < minlen) {
                 // Drop the last log
                 loglen[numseg - 1] = 0.0;
-                if (numseg - 2 >= 0 && (numseg - 2) < 20) loglen[numseg - 2] = maxlen;
+                if ((numseg - 2) >= 0) loglen[numseg - 2] = maxlen;
                 numseg = std::max(0, numseg - 1);
             }
             else {
                 // If both are odd and equal, move 1' from upper to lower
-                if (numseg - 2 >= 0 && (numseg - 2) < 20 && (numseg - 1) < 20) {
+                if ((numseg - 2) >= 0) {
                     if (loglen[numseg - 1] == loglen[numseg - 2]) {
                         int half = static_cast<int>(loglen[numseg - 1] / 2.0);
                         if (loglen[numseg - 1] > static_cast<double>(half * 2)) {
@@ -285,10 +360,10 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
         else if (opt == 23) {
             // Top segment stands on its own if >= MINLEN; otherwise drop it.
             if (leftov >= minlen) {
-                if (numseg - 1 < 20) loglen[numseg - 1] = leftov;
+                loglen[numseg - 1] = leftov;
             }
             else {
-                if (numseg - 1 < 20) loglen[numseg - 1] = 0.0;
+                loglen[numseg - 1] = 0.0;
                 numseg = std::max(0, numseg - 1);
             }
 
@@ -296,15 +371,15 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
         else if (opt == 24) {
             // Top segment: <1/4 NNL drop; 1/4..3/4 => half NNL; >3/4 => NNL
             if (leftov < (maxlen * 0.25)) {
-                if (numseg - 1 < 20) loglen[numseg - 1] = 0.0;
+                loglen[numseg - 1] = 0.0;
                 numseg = std::max(0, numseg - 1);
             }
             else if (leftov >= (maxlen * 0.25) && leftov <= (maxlen * 0.75)) {
                 double halfNominalRounded = static_cast<double>(static_cast<int>(maxlen * 0.5 + 0.5));
-                if (numseg - 1 < 20) loglen[numseg - 1] = halfNominalRounded;
+                loglen[numseg - 1] = halfNominalRounded;
             }
             else {
-                if (numseg - 1 < 20) loglen[numseg - 1] = maxlen;
+                loglen[numseg - 1] = maxlen;
             }
         }
     }
@@ -315,7 +390,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
 std::vector<LogOutput> ProfileVolumeCalculator::getLogData(std::vector<double> loglen, TreeMeasurment tree, MerchRules merchRules, int product, bool cubicOnly)
 {
     double stump = merchRules.stumpHeight;
-    std::vector<LogOutput> treeLogs(MAX_NUMBER_LOGS);
+    std::vector<LogOutput> treeLogs;
     double prevHeight = stump;
     double trim = merchRules.trim;
     double actualDiaLarge;
@@ -324,8 +399,9 @@ std::vector<LogOutput> ProfileVolumeCalculator::getLogData(std::vector<double> l
     char COR = 'Y';
 
     if (!merchRules.useCorrectedFactor) COR = 'N';
+    int sz = loglen.capacity();
 
-    for (int i = 0; i < MAX_NUMBER_LOGS; ++i) {
+    for (int i = 0; i < sz; ++i) {
         if (loglen[i] == 0.0) break;
         if (i == 0)
         {
@@ -371,12 +447,12 @@ std::vector<LogOutput> ProfileVolumeCalculator::getLogData(std::vector<double> l
     return treeLogs;
 }
 
-std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
+std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules, bool cubicOnly)
 {
 	std::vector<LogOutput> result;
     int numseg{ 0 };
-    std::vector<double> primaryLogs(MAX_NUMBER_LOGS);
-    std::vector<LogOutput> primaryLogData(MAX_NUMBER_LOGS);
+    std::vector<double> primaryLogs;
+    std::vector<LogOutput> primaryLogData;
     double merchHeight;
     double actualSawHeight = merchRules.stumpHeight;
 	// merchendize the tree
@@ -404,7 +480,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
         primaryLogs = getLogs(merchLength, merchRules, numseg);
         if (numseg > 0)
         {
-            primaryLogData = getLogData(primaryLogs, tree, merchRules, vco.primaryProduct);
+            primaryLogData = getLogData(primaryLogs, tree, merchRules, vco.primaryProduct, cubicOnly);
             actualSawHeight = primaryLogData[numseg - 1].heightToLargeEndDiameter + primaryLogs[numseg - 1] + merchRules.trim;
         }
     }
@@ -426,7 +502,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
             std::vector<double> secondaryLogs = getLogs(merchLength, merchRules, numseg2);
             if (numseg2 > 0)
             {
-                std::vector<LogOutput> secondaryLogData = getLogData(secondaryLogs, tree, merchRules, vco.secondaryProduct);
+                std::vector<LogOutput> secondaryLogData = getLogData(secondaryLogs, tree, merchRules, vco.secondaryProduct, cubicOnly);
                 //add secondary log data into primaryLogData
                 for (int i = 0; i < numseg2; ++i)
                 {

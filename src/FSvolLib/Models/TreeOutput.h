@@ -2,6 +2,7 @@
 
 #include "BiomassOutput.h"
 #include "LogOutput.h"
+#include <vector>
 
 constexpr int MAX_NUMBER_LOGS = 32;
 
@@ -22,7 +23,7 @@ struct TreeOutput
 	BiomassOutput greenBio;
 	BiomassOutput dryBio;
 
-	LogOutput logs[MAX_NUMBER_LOGS];
+	std::vector<LogOutput> logs;
 	int numberOfLogs;
 
 };
