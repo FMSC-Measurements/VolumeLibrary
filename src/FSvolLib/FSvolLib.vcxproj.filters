@@ -78,6 +78,51 @@
     <ClInclude Include="SmalianScribnerIntl14.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WeightFactorAndRefData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WeightFactorAndRefDataResolver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table1.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.TableStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table5.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table7.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table8.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table9.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table11.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.DistrictProvinceData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -108,6 +153,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SmalianScribnerIntl14.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WeightFactorAndRefDataResolver.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\NationalScaleVolumeBiomassCalculator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator.R5.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

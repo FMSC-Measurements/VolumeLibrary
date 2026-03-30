@@ -21,11 +21,13 @@ public:
         volOpt.forest = 1;
         volOpt.fiaCode = 122;
         volOpt.primaryProduct = 1;
+        volOpt.secondaryProduct = 2;
         // ...
         
         TreeMeasurment tree;
-        tree.dbh = 15;
-        tree.totalHeight = 30;
+        tree.dbh = 19.7;
+        tree.totalHeight = 72.0;
+        tree.minTopDibNonSawOverride = 3.5;
         // ...
 
         // Act

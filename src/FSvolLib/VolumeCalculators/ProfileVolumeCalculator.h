@@ -27,11 +27,10 @@ public:
 
 	TreeOutput CalculateVolume(VolumeCalculationOptions vco,TreeMeasurment tree, MerchRules merchRules) override;
 
-	std::vector<LogOutput> SegmentLogs(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules, bool cubicOnly = false);
+	std::vector<LogOutput> SegmentLogs(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules);
 
-protected:
+private:
 	std::vector<double> getLogs(double merchLength, MerchRules merchRules, int& numseg);
 
-	std::vector<LogOutput> getLogData(std::vector<double> loglen, TreeMeasurment tree, MerchRules merchRules, int product, bool cubicOnly = false);
 };
 

@@ -42,9 +42,10 @@ public:
 
 		if (volumeEquation.modelType == VolumeEquation::ModelType::WO2)
 		{
-			auto modelPtr = std::make_unique<WenselOlsonTaperModel>(volumeEquation);
+			auto  model = new WenselOlsonTaperModel(volumeEquation);
+			//auto modelPtr = std::make_unique<WenselOlsonTaperModel>(volumeEquation);
 
-			auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *modelPtr); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+			auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
 			volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 			return *volCalcPtr;

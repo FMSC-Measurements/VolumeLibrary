@@ -12,5 +12,12 @@ public:
 		std::transform(s.begin(), s.end(), s.begin(), ::toupper);
 		return s;
 	}
+
+	static std::string pad3(int n) {
+		std::ostringstream oss;
+		oss << std::setw(3) << std::setfill('0') << (n < 0 ? 0 : (n % 1000));
+		return oss.str();
+	}
+
 };
 

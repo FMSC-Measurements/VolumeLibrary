@@ -172,7 +172,7 @@ double scribner(double DIA, double LEN, char COR)
             break;
         }
     }
-
+    if (COR == 'Y') VOL *= 10.0;
     return VOL;
 }
 

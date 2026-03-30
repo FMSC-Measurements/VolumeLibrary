@@ -11,10 +11,6 @@
 
 class VolumeCalculatorBase
 {
-	const VolumeEquation volumeEquation_;
-	double weightFactorDry;
-	double weightFactorGreen;
-	double weightFactorDead;
 
 
 public:
@@ -24,6 +20,12 @@ public:
 
 
 protected:
+	const VolumeEquation volumeEquation_;
+	double weightFactorDry;
+	double weightFactorGreenSaw;
+	double weightFactorGreenNonsaw;
+	double weightFactorDead;
+
 	VolumeCalculatorBase(VolumeEquation volumeEquation) 
 		: volumeEquation_(volumeEquation), volumeEquationNumber(volumeEquation.GetVolumeEquationNumber())
 	{
@@ -32,5 +34,6 @@ protected:
 		if (volumeEquationNumber.length() < 10) { throw std::invalid_argument("Volume equation number should be at least 10 charaters long"); }
 
 	}
+
 };
 

@@ -38,3 +38,7 @@ struct VolumeCalculationOptions
 	std::string ecoRegion; // optional fia only
 };
 
+// Global alias (optional, but convenient)
+using VolumeCalculationType = VolumeCalculationOptions::VolumeCalculationType;
+using AuxFlag = VolumeCalculationOptions::AuxFlag;
+

@@ -15,6 +15,7 @@ struct TreeMeasurment
 	double merchHeightNonsaw = 0.0;
 	MerchHeightUnit merchHeightUnit = MerchHeightUnit::FEET; // if zero merch height is in feet else merch height is in 8,16,32 foot logs
 	double heightToFirstLiveLimb = 25.0;
+	double heightToTopBroken = 0.0;
 
 	bool isLive = true;
 
@@ -22,10 +23,16 @@ struct TreeMeasurment
 	double dbh;
 	double drc = 0.0;
 	double referenceDiameter = 0.0; // diamater at reference height
+	double topBrokenDiameter = 0.0;
 
 	// merch rule overrides - if not zero these values can be used to overrice merch rule values
 	double stumpHeightOverride = -1.0;
 	double minTopDibSawOverride = -1.0;
 	double minTopDibNonSawOverride = -1.0;
+
+	//cull, decay, cr
+	double cull = 0.0;  //percent
+	int decaycd = 0;
+	double crownRatio = 0.0; //percent
 };
 
