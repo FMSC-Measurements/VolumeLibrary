@@ -43,6 +43,7 @@ public:
 		MAT, // Mathis (Rastagi and Loveless profile model)
 		SN2, // Sharpnack's 2 point profile model
 		WO2, // Wensel and Olsen 2 point profile model
+		NVB, // National Scale Volume and Biomass
 	};
 
 
@@ -53,6 +54,8 @@ public:
 	int fiaCode = -1;
 	bool isNsvbEquation = false;
 	char nsvbDivision[4] = { '0', '0', '0', '0'};
+	bool isProfileModel = true;
+	std::string volEqStr;
 
 	std::string GetFiaCodeString() const
 	{
@@ -94,6 +97,7 @@ public:
 			case ModelType::MAT: { return "MAT"; }
 			case ModelType::SN2: { return "SN2"; }
 			case ModelType::WO2: { return "WO2"; }
+			case ModelType::NVB: { return "NVB"; }
 			default: throw std::invalid_argument("Unknown ModelType: " + std::to_string(static_cast<int>(model)));		
 		}
 	}
@@ -104,12 +108,14 @@ public:
 		if (volumeEquationNumber.length() > 11) { throw std::invalid_argument("Volume equation number should be not be longer than 11 charaters"); }
 
 		VolumeEquation volEq;
+		volEq.volEqStr = volumeEquationNumber;
 
 		if (volumeEquationNumber.substr(0, 3) == "NVB")
 		{
 			volEq.isNsvbEquation = true;
-			volumeEquationNumber.copy(volEq.nsvbDivision, 3, 4);
+			volumeEquationNumber.copy(volEq.nsvbDivision, 4, 3);
 			volEq.fiaCode = std::stoi(volumeEquationNumber.substr(7, 3)); // parse fiaCode
+			volEq.modelType = ParseModelType(volumeEquationNumber.substr(0, 3));
 		}
 		else
 		{
@@ -117,6 +123,9 @@ public:
 			volEq.geoCode = static_cast<GeoCode>(volumeEquationNumber[0]); // cast first volEq char to GeoCode, Note this doesn't enforce that GeoCode is a valid value
 			volumeEquationNumber.copy(volEq.subregionalCode, 2, 1);
 			volEq.modelType = ParseModelType(volumeEquationNumber.substr(3, 3));
+			if (volumeEquationNumber.substr(3, 3) == "DVE" || volumeEquationNumber.substr(3, 3) == "SN2") volEq.isProfileModel = false;
+			//volume equation 223DVEW122 uses NSVB taper model to calculate volume
+			if (volumeEquationNumber == "223DVEW122") volEq.isProfileModel = true;
 			volEq.usRegion = volumeEquationNumber[6];
 			volEq.fiaCode = std::stoi(volumeEquationNumber.substr(7, 3)); // parse fiaCode
 		}
@@ -137,6 +146,7 @@ public:
 		if (modelCode == "MAT") { return ModelType::MAT; }
 		if (modelCode == "SN2") { return ModelType::SN2; }
 		if (modelCode == "WO2") { return ModelType::WO2; }
+		if (modelCode == "NVB") { return ModelType::NVB; }
 		else { return ModelType::UNKNOWN; }
 	}
 

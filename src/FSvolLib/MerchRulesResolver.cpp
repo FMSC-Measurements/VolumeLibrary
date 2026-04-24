@@ -49,6 +49,11 @@ MerchRules MerchRulesResolver::GetMerchRules(VolumeCalculationOptions vco)
 			
 		}
 	}
+	else if (vco.region == 4)
+	{
+		result.segmentationOption = 23;
+		result.useCorrectedFactor = false;
+	}
 	else if (vco.region == 6)
 	{
 		result.segmentationOption = 23;

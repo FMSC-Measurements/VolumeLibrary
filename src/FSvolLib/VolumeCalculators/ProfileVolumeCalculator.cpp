@@ -6,9 +6,11 @@
 
 TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
 {
-	TreeOutput result;
+    TreeOutput result;
 
-	// initialize model on tree - i.e fwelling models
+    // initialize model on tree - i.e fwelling models, nsvb model
+    taperModel_.InitializeOnTree(tree);
+
     //check override parameters for stump, sawTopDib, nonsawTopDib
     if (tree.stumpHeightOverride > 0.0) merchRules.stumpHeight = tree.stumpHeightOverride;
 
@@ -18,7 +20,15 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
 
     //region 7 (BLM) saw top diameter
     if (vco.region == 7) merchRules.minTopDibSaw = tree.dbh * 0.184 + 2.24;
-	
+
+    //small tree volume calculation
+    //BLM BEH model
+    //if (tree.totalHeight <= 17.8 || SQRT(DBHIB * DBHIB - (DBHIB * DBHIB) * 17.3 / TTH)) < merchRules.minTopDibSaw)
+    //{
+    //    TOTCUB = 0.00272708 * (DBHIB * DBHIB) * TTH;
+    //    return;
+    //}
+
     // Segment Logs
     //for product 07 and 18 no need to to log segmentation
     if (vco.primaryProduct != 7 && vco.primaryProduct != 18)
@@ -114,6 +124,8 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     }
 
 	// calculate total cubic and cords
+    // total volume for NVB and CLK profile will be calculated differently (will be added later)
+    // 
     // stump volume
     double ht2 = merchRules.stumpHeight;
     double stumpDib = taperModel_.GetDiameterAtHeight(tree, ht2);
@@ -169,6 +181,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     result.totalCubicFoot = totalCubicVolume;
     result.stumpCubicFoot = stumpVolume;
 
+    //for firewood (prod=7) and biomass (prod=18) merchCubic also include trim
     if (vco.primaryProduct == 7 || vco.primaryProduct == 18)
     {
         result.grossCubicFootPrimary = merchCubic;

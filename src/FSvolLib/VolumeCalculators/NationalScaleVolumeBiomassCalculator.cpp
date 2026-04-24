@@ -220,6 +220,16 @@ void NationalScaleVolumeBiomass::setNSVBcoeffs()
     wtTotal_eqCoeffs = find_spEqCoef2(SPcoef8, JKcoef8);
     wtFoliage_eqCoeffs = find_spEqCoef2(SPcoef9, JKcoef9);
     //get the volume and ratio
+    //volIB = getVolWt(strVolIB, dbh, totalHt);
+    //volOB = getVolWt(strVolOB, dbh, totalHt);
+    //volBK = getVolWt(strVolBK, dbh, totalHt);
+    //if (volIB > 0.0) ibToObRatio = sqrt(volIB / (volIB + volBK));
+}
+
+//set the volume and ratio
+void NationalScaleVolumeBiomass::setIbToObRatio(double dbh, double totalHt)
+{
+    //get the volume and ratio
     volIB = getVolWt(strVolIB, dbh, totalHt);
     volOB = getVolWt(strVolOB, dbh, totalHt);
     volBK = getVolWt(strVolBK, dbh, totalHt);
@@ -265,58 +275,7 @@ void NationalScaleVolumeBiomass::buildVolEqStr()
 
 }
 
-// ---- Calculator core (equations 1..5) ----
-// calculate volume or biomass using the species (or jenkins species group) equation and coefficients
-//inline double getVolWt_impl(
-//    int spcd,
-//    double D, double H,
-//    double WDSG,
-//    EqCoeffs eqCoeffs)
-//{
-//    int equation = eqCoeffs.equation;
-//    double a = eqCoeffs.a;
-//    double a0 = eqCoeffs.a0;
-//    double a1 = eqCoeffs.a1;
-//    double b = eqCoeffs.b;
-//    double b0 = eqCoeffs.b0;
-//    double b1 = eqCoeffs.b1;
-//    double b2 = eqCoeffs.b2;
-//    double c = eqCoeffs.c;
-//    double c1 = eqCoeffs.c1;
-//
-//    if (equation <= 0) return 0.0;
-//
-//    switch (equation) {
-//    case 1: {
-//        return a * std::pow(D, b) * std::pow(H, c);
-//    }
-//    case 2: {
-//        int k = 11;
-//        if (spcd < 300) k = 9;
-//        if (D < k) {
-//            return a0 * std::pow(D, b0) * std::pow(H, c);
-//        }
-//        else {
-//            return a0 * std::pow(static_cast<double>(k), (b0 - b1)) * std::pow(D, b1) * std::pow(H, c);
-//        }
-//    }
-//    case 3: {
-//        // D^( a1 * (1 - exp(-b1*D))^c1 )
-//        const double inner = 1.0 - std::exp(-b1 * D);
-//        const double expo = a1 * std::pow(inner, c1);
-//        return a * std::pow(D, expo) * std::pow(H, c);
-//    }
-//    case 4: {
-//        return a * std::pow(D, b) * std::pow(H, c) * std::exp(-(b2 * D));
-//    }
-//    case 5: {
-//        // Weight with WDSG; 62.4 lb/ft^3 divisor as in Fortran
-//        return a * std::pow(D, b) * std::pow(H, c) * (WDSG / 62.4);
-//    }
-//    default:
-//        return 0.0;
-//    }
-//}
+
 
 inline double NationalScaleVolumeBiomass::getVolWt_impl(double D, double H, EqCoeffs eqCoeffs)
 {
@@ -436,99 +395,7 @@ inline VolWtType parseVolWtType(std::string s) noexcept {
     return VolWtType::Unknown;
 }
 
-// Generic evaluator that encapsulates the repeated pattern:
-//  find_spEqCoef(...) -> if found -> getVolWt_impl(...)
-//template <std::size_t N>
-//inline double evalVolWtDiaHt(int spcd,
-//    double dbh,
-//    double totalHt,
-//    double WDSG,
-//    int jkSpGrp,
-//    const std::array<spCoefRow, N>& SPcoef,
-//    const std::array<jkCoefRow, 9>& JKcoef,
-//    int ecoRegion,
-//    int standOrigin,
-//    double totalCubic,
-//    double upperHeight,
-//    double upperDiameter,
-//    std::string_view VolWtDiaHt = "VolWt") noexcept
-//{
-//    if (VolWtDiaHt == "VolWt")
-//    {
-//        if (auto maybeEqCoeffs = find_spEqCoef(spcd, jkSpGrp, SPcoef, JKcoef, ecoRegion, standOrigin)) {
-//            return getVolWt_impl(spcd, dbh, totalHt, WDSG, *maybeEqCoeffs);
-//        }
-//    }
-//    else if (VolWtDiaHt == "Dia")
-//    {
-//        if (auto maybeEqCoeffs = find_spEqCoef(spcd, jkSpGrp, SPcoef, JKcoef, ecoRegion, standOrigin)) {
-//            return getDiaAtHeight_impl(totalCubic, totalHt, upperHeight, *maybeEqCoeffs);
-//        }
-//    }
-//    else if (VolWtDiaHt == "Ht")
-//    {
-//        if (auto maybeEqCoeffs = find_spEqCoef(spcd, jkSpGrp, SPcoef, JKcoef, ecoRegion, standOrigin)) {
-//            return getHeightAtDiameter_impl(totalCubic, totalHt, upperDiameter, *maybeEqCoeffs);
-//        }
-//    }
-//    else if (VolWtDiaHt == "Ratio")
-//    {
-//        if (auto maybeEqCoeffs = find_spEqCoef(spcd, jkSpGrp, SPcoef, JKcoef, ecoRegion, standOrigin)) {
-//            return getRatio_impl(totalHt, upperHeight, *maybeEqCoeffs);
-//        }
-//    }
-//    
-//    return 0.0; // Preserve your current behavior (no match -> 0.0)
-//}
 
-//double NationalScaleVolumeBiomass::getVolWt(std::string typeVolWt,
-//    int spcd,
-//    double dbh,
-//    double totalHt,
-//    int jkSpGrp,
-//    double WDSG,
-//    int ecoRegion,
-//    int standOrigin)
-//{
-//    double volwt = 0.0;
-//    double totalCubic = 0.0;
-//    double upperHeight = 0.0;
-//    double upperDiameter = 0.0;
-//
-//    // If you can change call sites, prefer std::string_view here:
-//    const VolWtType t = parseVolWtType(typeVolWt);
-//
-//    switch (t) {
-//    case VolWtType::VolIB:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef1, JKcoef1, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::VolBK:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef2, JKcoef2, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::VolOB:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef3, JKcoef3, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::WtBark:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef6, JKcoef6, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::WtBranch:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef7, JKcoef7, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::WtTotal:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef8, JKcoef8, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::WtFoliage:
-//        volwt = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef9, JKcoef9, ecoRegion, standOrigin, totalCubic, upperHeight, upperDiameter);
-//        break;
-//    case VolWtType::Unknown:
-//    default:
-//        // Unknown type — keep current behavior (returns 0.0).
-//        // Optionally, log an error here.
-//        break;
-//    }
-//
-//    return volwt;
-//}
 
 double NationalScaleVolumeBiomass::getVolWt(std::string typeVolWt, double dbh, double totalHt)
 {
@@ -570,40 +437,7 @@ double NationalScaleVolumeBiomass::getVolWt(std::string typeVolWt, double dbh, d
     return volwt;
 }
 
-//double NationalScaleVolumeBiomass::getDiaAtHeight(int spcd,
-//    double dbh,
-//    double totalHt,
-//    int jkSpGrp,
-//    int ecoRegion,
-//    int standOrigin,
-//    double upperHeight,
-//    double totalCubic,
-//    std::string_view IbOrOb)
-//{
-//    std::string_view VolWtDiaHt = "Dia";
-//    double value = 0.0;
-//    double upperDiameter = 0.0;
-//    double WDSG = 0.0; //WDSG is not required for diameter and height calculation
-//    double totCF = totalCubic;
-//
-//    if (IbOrOb == "IB")  // indicate the upperDiameter is inside or outside bark
-//    {
-//        if (totCF == 0.0)
-//        {
-//            totCF = getVolWt("VolIB", spcd, dbh, totalHt, jkSpGrp, WDSG, ecoRegion, standOrigin);
-//        }
-//        value = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef5, JKcoef5, ecoRegion, standOrigin, totCF, upperHeight, upperDiameter, VolWtDiaHt);
-//    }
-//    else // for Outside bark Dia
-//    {
-//        if (totCF == 0.0)
-//        {
-//            totCF = getVolWt("VolOB", spcd, dbh, totalHt, jkSpGrp, WDSG, ecoRegion, standOrigin);
-//        }
-//        value = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef4, JKcoef4, ecoRegion, standOrigin, totCF, upperHeight, upperDiameter, VolWtDiaHt);
-//    }
-//    return value;
-//}
+
 
 double NationalScaleVolumeBiomass::getDiaAtHeight(double dbh, double totalHt, double upperHeight, bool isDIB)
 {
@@ -617,45 +451,13 @@ double NationalScaleVolumeBiomass::getDiaAtHeight(double dbh, double totalHt, do
     value = getDiaAtHeight_impl(totCF, totalHt, upperHeight, ratioOB_eqCoeffs);
     
     // the diameter is always calculated using outside bar coefficients. it convert into inside bark diameter by mutily the ratio
+    if (ibToObRatio == 1.0) setIbToObRatio(dbh, totalHt);
     if (isDIB) value = value * ibToObRatio;
 
     return value;
 }
 
-//double NationalScaleVolumeBiomass::getHeightAtDiameter(int spcd,
-//    double dbh,
-//    double totalHt,
-//    int jkSpGrp,
-//    int ecoRegion,
-//    int standOrigin,
-//    double upperDiameter,
-//    double totalCubic,
-//    std::string_view IbOrOb)
-//{
-//    std::string_view VolWtDiaHt = "Ht";
-//    double value = 0.0;
-//    double upperHeight = 0.0;
-//    double WDSG = 0.0; //WDSG is not required for diameter and height calculation
-//    double totCF = totalCubic;
-//
-//    if (IbOrOb == "IB")  // indicate the upperDiameter is inside or outside bark
-//    {
-//        if (totCF == 0.0)
-//        {
-//            totCF = getVolWt("VolIB", spcd, dbh, totalHt, jkSpGrp, WDSG, ecoRegion, standOrigin);
-//        }
-//        value = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef5, JKcoef5, ecoRegion, standOrigin, totCF, upperHeight, upperDiameter, VolWtDiaHt);
-//    }
-//    else // for Outside bark Dia
-//    {
-//        if (totCF == 0.0)
-//        {
-//            totCF = getVolWt("VolOB", spcd, dbh, totalHt, jkSpGrp, WDSG, ecoRegion, standOrigin);
-//        }
-//        value = evalVolWtDiaHt(spcd, dbh, totalHt, WDSG, jkSpGrp, SPcoef4, JKcoef4, ecoRegion, standOrigin, totCF, upperHeight, upperDiameter, VolWtDiaHt);
-//    }
-//    return value;
-//}
+
 
 //changed this function to only use outside bark coefficient and outside bark diameter
 double NationalScaleVolumeBiomass::getHeightAtDiameter(double dbh, double totalHt, double upperDiameter, bool isDIB)
@@ -665,6 +467,7 @@ double NationalScaleVolumeBiomass::getHeightAtDiameter(double dbh, double totalH
     double upDia = upperDiameter;
 
     // if upperDiameter is inside bark, convert it to outside bark for calculation
+    if (ibToObRatio == 1.0) setIbToObRatio(dbh, totalHt);
     if (isDIB) upDia = upDia / ibToObRatio;
 
     if (totCF == 0.0)

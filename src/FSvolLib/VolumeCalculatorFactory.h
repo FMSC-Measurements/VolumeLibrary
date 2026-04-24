@@ -13,6 +13,10 @@
 #include "VolumeCalculators\VolumeCalculatorBase.h"
 #include "VolumeCalculators\ProfileVolumeCalculator.h"
 #include "TaperModels\WenselOlsonTaperModel.h"
+#include "TaperModels\NationalScaleVolumeBiomassTaperModel.h"
+#include "TaperModels\RustagiTaperModel.h"
+#include "TaperModels\BehreHyperbolaTaperModel.h"
+#include "VolumeCalculators\DirectVolumeCalculator.h"
 
 class VolumeCalculatorFactory
 {
@@ -39,13 +43,55 @@ public:
 			return *(volumeCalculatorCahe_[volumeEquationStr]);
 		}
 
-
-		if (volumeEquation.modelType == VolumeEquation::ModelType::WO2)
+		if (volumeEquation.isProfileModel)
 		{
-			auto  model = new WenselOlsonTaperModel(volumeEquation);
-			//auto modelPtr = std::make_unique<WenselOlsonTaperModel>(volumeEquation);
+			if (volumeEquation.modelType == VolumeEquation::ModelType::WO2)
+			{
+				auto  model = new WenselOlsonTaperModel(volumeEquation);
 
-			auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::NVB)
+			{
+				auto  model = new NationalScaleVolumeBiomassTaperModel(volumeEquation, vco);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::DVE)
+			{
+				auto  model = new NationalScaleVolumeBiomassTaperModel(volumeEquation); //for VOLEQ 223DVEW122
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::MAT)
+			{
+				auto  model = new RustagiTaperModel(volumeEquation);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+
+			}
+			//else if ((volumeEquation.modelType == VolumeEquation::ModelType::BEH)
+			//{
+			//	//auto model = new BehreHyperbolaTaperModel(volumeEquation, merchRules);
+			//}
+
+
+		}
+		else
+		//else if (volumeEquation.modelType == VolumeEquation::ModelType::DVE || volumeEquation.modelType == VolumeEquation::ModelType::SN2)
+		{
+			auto volCalcPtr = new DirectVolumeCalculator(volumeEquation);
 			volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 			return *volCalcPtr;

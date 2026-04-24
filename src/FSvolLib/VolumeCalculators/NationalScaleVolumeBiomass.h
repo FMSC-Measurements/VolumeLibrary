@@ -50,8 +50,8 @@ class NationalScaleVolumeBiomass //: public VolumeCalculatorBase
 
     //NVB equation component
     int spcd;
-    double dbh;
-    double totalHt;
+    //double dbh;
+    //double totalHt;
     int iDivision = 0;
     int iProvince = 0;
     int iStandOrigin = 0;
@@ -67,9 +67,26 @@ class NationalScaleVolumeBiomass //: public VolumeCalculatorBase
 
 
 public:
-    NationalScaleVolumeBiomass(VolumeCalculationOptions vco, TreeMeasurment tree)
+    NationalScaleVolumeBiomass(std::string nsvbEquationNumber, VolumeCalculationOptions vco)
         : weightFactorAndRefData(getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode)),
-        volEqStr(vco.volumeEquationNumberOverride), spcd(vco.fiaCode), dbh(tree.dbh), totalHt(tree.totalHeight)
+        volEqStr(nsvbEquationNumber), spcd(std::stoi(nsvbEquationNumber.substr(7, 3)))
+    {
+        //No calculation for woodland species.
+        if (!(weightFactorAndRefData.jenkinsSpeciesGroupCD > 0 && weightFactorAndRefData.jenkinsSpeciesGroupCD < 10))
+        {
+            throw std::invalid_argument("NSVB cannot calculate for woodland species!");
+        }
+        
+        if (isValidNVBeq(volEqStr)) setDivisionFromVolEq();
+        else throw std::invalid_argument("Invalid NSVB equation!");
+
+        //set the coefficients for the volEqStr
+        setNSVBcoeffs();
+    }
+
+    NationalScaleVolumeBiomass(VolumeCalculationOptions vco)
+        : weightFactorAndRefData(getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode)),
+        volEqStr(vco.volumeEquationNumberOverride), spcd(vco.fiaCode)
     {
         //No calculation for woodland species.
         if (!(weightFactorAndRefData.jenkinsSpeciesGroupCD > 0 && weightFactorAndRefData.jenkinsSpeciesGroupCD < 10))
@@ -111,43 +128,25 @@ public:
         //set the coefficients for the volEqStr
         setNSVBcoeffs();
     }
-        
+    
+    //calculation for Black hill Ponderosa pine nonSaw equation 223DVEW122
+    NationalScaleVolumeBiomass(std::string volEquationNumber)
+    {
+        if(volEquationNumber == "223DVEW122")
+        {
+            ibToObRatio = 0.99999;
+            volOB_eqCoeffs = EqCoeffs{ 1, 0.003573, 0.0, 0.0, 1.89865505, 0.0, 0.0, 0.0, 0.95409984, 0.0 };
+            ratioOB_eqCoeffs = EqCoeffs{ 6,2.187093,0.0,0.0,0.9399898,0.0,0.0,0.0,0.0,0.0 };
+        }
+    }
+
     static bool isValidNVBeq(std::string_view s);
     void setNSVBcoeffs();
+    void setIbToObRatio(double dbh, double totalHt);
     void setDivisionFromVolEq();
     void buildVolEqStr();
     bool isValidEcoRegion(std::string s);
     int getEcoProvince(int regn, int forst, int dist);
-
- /*   static double getVolWt(std::string typeVolWt,
-        int spcd,
-        double dbh,
-        double totalHt,
-        int jkSpGrp,
-        double WDSG,
-        int ecoRegion,
-        int standOrigin);
-
-    static double getDiaAtHeight(int spcd,
-        double dbh,
-        double totalHt,
-        int jkSpGrp,
-        int ecoRegion,
-        int standOrigin,
-        double upperHeight,
-        double totalCubic = 0.0,
-        std::string_view IbOrOb = "Ib");
-
-    static double getHeightAtDiameter(int spcd,
-        double dbh,
-        double totalHt,
-        int jkSpGrp,
-        int ecoRegion,
-        int standOrigin,
-        double upperDiameter,
-        double totalCubic = 0.0,
-        std::string_view IbOrOb = "Ib");*/
-
 
     template <std::size_t N>
     EqCoeffs find_spEqCoef2(const std::array<spCoefRow, N>& SPcoef, const std::array<jkCoefRow, 9>& JKcoef);

@@ -24,6 +24,7 @@ struct TreeMeasurment
 	double drc = 0.0;
 	double referenceDiameter = 0.0; // diamater at reference height
 	double topBrokenDiameter = 0.0;
+	int formClass = 0;
 
 	// merch rule overrides - if not zero these values can be used to overrice merch rule values
 	double stumpHeightOverride = -1.0;
@@ -34,5 +35,6 @@ struct TreeMeasurment
 	double cull = 0.0;  //percent
 	int decaycd = 0;
 	double crownRatio = 0.0; //percent
+	int stems = 1;  //1 = single stem, others = multi-stems
 };
 

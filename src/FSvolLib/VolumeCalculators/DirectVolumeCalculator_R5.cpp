@@ -1,13 +1,9 @@
-// r5harv.hpp (or .cpp)
-// Compile with: g++ -std=c++17 r5harv.cpp -O2
-
 #include <array>
 #include <string>
 #include <cmath>
 #include <algorithm>
 #include <cctype>
-#include "..\Models\TreeOutput.h"
-#include "..\Models\TreeMeasurment.h"
+#include "DirectVolumeCalculator_R5.h"
 
 namespace r5dve {
 
@@ -26,12 +22,14 @@ namespace r5dve {
     //   vol   : outputs array; uses indices 1..15 in Fortran -> vol[0..14] in C++
     //   bfpflg, cupflg : flags (INTEGER)
     //   errflag : output error flag (INTEGER) same as Fortran
-    TreeOutput R5HARV(const std::string& voleq, TreeMeasurment tree)
+    TreeOutput r5dve::R5HARV(const std::string& voleq, TreeMeasurment tree, MerchRules merchRules)
     {
         TreeOutput out;
         double dbhob = tree.dbh;
         double httot = tree.totalHeight;
-        double mtopp = tree.minTopDibSawOverride;
+        double mtopp = merchRules.minTopDibSaw; //tree.minTopDibSawOverride;
+        if (tree.minTopDibSawOverride > 0.0) mtopp = tree.minTopDibSawOverride;
+
         std::array<double, 15> vol;
         int errflag;
     

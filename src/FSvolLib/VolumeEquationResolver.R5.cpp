@@ -127,3 +127,13 @@ VolumeEquation VolumeEquationResolver::GetR5VolumeEquation(VolumeCalculationOpti
 	// If not found, return unknown/default
 	return VolumeEquation::ParseVolumeEquationNumber("500DVEW631");
 }
+
+
+bool VolumeEquationResolver::isValidR5Equation(const std::string& voleq)
+{
+	const auto& m = fiaToEquationMap_R5_;
+	for (const auto& [code, eq] : m) {
+		if (eq == voleq) return true;
+	}
+	return false;
+}

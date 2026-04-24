@@ -64,17 +64,20 @@ public:
  
         TreeMeasurment tree;
         tree.dbh = 19.7;
-        tree.totalHeight = 0.0;
+        tree.totalHeight = 72.0;
         tree.isLive = true;
-        tree.heightToTopBroken = 50.0;
-        tree.topBrokenDiameter = 8.1;
-        tree.minTopDibNonSawOverride = 4.0;
-        tree.minTopDibSawOverride = 7.0;
+        tree.heightToTopBroken = 0.0;
+        tree.topBrokenDiameter = 0.0;
+        tree.minTopDibNonSawOverride = 0.0;
+        tree.minTopDibSawOverride = 0.0;
         tree.cull = 0.0;
         tree.decaycd = 0;
         tree.crownRatio = 0.0;
+        tree.merchHeightSaw = 60.0;
+        tree.merchHeightNonsaw = 0.0;
+        tree.formClass = 80;
 
-        vco.fiaCode = 202;
+        vco.fiaCode = 301;
         vco.region = 5;
         vco.forest = 1;
         vco.primaryProduct = 1;
@@ -87,10 +90,10 @@ public:
 
         MerchRules merchRules{ 2,22,16.0,2.0,2.0,6.0,4.0,8.0,1.0,0.5,0.0,0.0,1.0, true };
 
-        NationalScaleVolumeBiomass nsvb = NationalScaleVolumeBiomass(vco,tree);
+        NationalScaleVolumeBiomass nsvb = NationalScaleVolumeBiomass(vco);
         TreeOutput result = nsvb.CalculateVolumeBiomass(vco, tree, merchRules);
-        double dib = nsvb.getDiaAtHeight(tree.dbh, tree.totalHeight, upht, isDIB);
-        double ht2 = nsvb.getHeightAtDiameter(tree.dbh, tree.totalHeight, upDib, isDIB);
+        //double dib = nsvb.getDiaAtHeight(tree.dbh, tree.totalHeight, upht, isDIB);
+        //double ht2 = nsvb.getHeightAtDiameter(tree.dbh, tree.totalHeight, upDib, isDIB);
         int i = 0;
         //// Assert
 
