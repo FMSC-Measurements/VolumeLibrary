@@ -48,7 +48,7 @@ private:
 public:
     WenselOlsonTaperModel(VolumeEquation volumeEquation);
 
-    void InitializeOnTree(TreeMeasurment tree) override {/* do nothing */ };
+    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override {/* do nothing */ };
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
     

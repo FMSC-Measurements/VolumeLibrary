@@ -3,6 +3,8 @@
 #include <map>
 #include <string>
 #include "..\Models\TreeMeasurment.h"
+#include "..\Models\MerchRules.h"
+#include "..\Models\VolumeCalculationOptions.h"
 
 class TaperModel
 {
@@ -10,7 +12,7 @@ class TaperModel
 public:
 	TaperModel() {};
 
-	virtual void InitializeOnTree(TreeMeasurment tree) = 0; // for flewelling models
+	virtual void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) = 0; // for flewelling models
 
 	
 	virtual double GetDiameterAtHeight(TreeMeasurment tree, double height) = 0;

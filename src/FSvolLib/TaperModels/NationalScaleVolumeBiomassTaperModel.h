@@ -24,10 +24,11 @@ public:
     }
 
 
-    void InitializeOnTree(TreeMeasurment tree) override;
+    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override;
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter) override;
 
+    std::array<double, 4> GetStemVolumes(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco);
 };

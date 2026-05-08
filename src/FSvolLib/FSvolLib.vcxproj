@@ -139,6 +139,7 @@
     <None Include="Conventions.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DefaultFormClassForFVS.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MerchRulesResolver.h" />
     <ClInclude Include="Models\BiomassOutput.h" />
@@ -151,15 +152,21 @@
     <ClInclude Include="SmalianScribnerIntl14.h" />
     <ClInclude Include="string_helper.h" />
     <ClInclude Include="TaperModels\BehreHyperbolaTaperModel.h" />
+    <ClInclude Include="TaperModels\ClarkProfileCoefficients_R9.h" />
+    <ClInclude Include="TaperModels\ClarkTaperModel.h" />
+    <ClInclude Include="TaperModels\CzaplewskiTaperModel.h" />
+    <ClInclude Include="TaperModels\DeMarsTaperModel.h" />
     <ClInclude Include="TaperModels\NationalScaleVolumeBiomassTaperModel.h" />
     <ClInclude Include="TaperModels\RustagiTaperModel.h" />
     <ClInclude Include="TaperModels\TaperModel.h" />
     <ClInclude Include="Models\VolumeCalculationOptions.h" />
     <ClInclude Include="VolumeCalculatorFactory.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator.h" />
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_BIA.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R1.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R234.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R5.h" />
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R610.h" />
     <ClInclude Include="VolumeCalculators\HawaiiSharpnackTaper.h" />
     <ClInclude Include="VolumeCalculators\HawaiiSharpnackVolume.h" />
     <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.DistrictProvinceData.h" />
@@ -176,6 +183,7 @@
     <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table9.h" />
     <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.TableStruct.h" />
     <ClInclude Include="VolumeCalculators\ProfileVolumeCalculator.h" />
+    <ClInclude Include="VolumeCalculators\JenkinsBiomass.h" />
     <ClInclude Include="VolumeCalculators\VolumeCalculatorBase.h" />
     <ClInclude Include="VolumeEquation.h" />
     <ClInclude Include="VolumeEquationResolver.h" />
@@ -183,6 +191,7 @@
     <ClInclude Include="TaperModels\WenselOlsonTaperModel.h" />
     <ClInclude Include="WeightFactorAndRefData.h" />
     <ClInclude Include="WeightFactorAndRefDataResolver.h" />
+    <ClInclude Include="WoodlandBiomass.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -190,16 +199,22 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="SmalianScribnerIntl14.cpp" />
     <ClCompile Include="TaperModels\BehreHyperbolaTaperModel.cpp" />
+    <ClCompile Include="TaperModels\ClarkTaperModel.cpp" />
+    <ClCompile Include="TaperModels\CzaplewskiTaperModel.cpp" />
+    <ClCompile Include="TaperModels\DeMarsTaperModel.cpp" />
     <ClCompile Include="TaperModels\NationalScaleVolumeBiomassTaperModel.cpp" />
     <ClCompile Include="TaperModels\RustagiTaperModel.cpp" />
     <ClCompile Include="TaperModels\TaperModel.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator.cpp" />
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_BIA.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R1.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R234.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R5.cpp" />
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R610.cpp" />
     <ClCompile Include="VolumeCalculators\HawaiiSharpnackVolume.cpp" />
     <ClCompile Include="VolumeCalculators\NationalScaleVolumeBiomassCalculator.cpp" />
     <ClCompile Include="VolumeCalculators\ProfileVolumeCalculator.cpp" />
+    <ClCompile Include="VolumeCalculators\JenkinsBiomass.cpp" />
     <ClCompile Include="VolumeEquationResolver.cpp" />
     <ClCompile Include="VolumeEquationResolver.R1.cpp" />
     <ClCompile Include="VolumeEquationResolver.R10.cpp" />
@@ -214,6 +229,7 @@
     <ClCompile Include="VolumeLibrary.cpp" />
     <ClCompile Include="TaperModels\WenselOlsonTaperModel.cpp" />
     <ClCompile Include="WeightFactorAndRefDataResolver.cpp" />
+    <ClCompile Include="WoodlandBiomass.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

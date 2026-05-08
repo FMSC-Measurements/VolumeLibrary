@@ -16,6 +16,7 @@ struct RefSpeciesDataRow {
 	int softHard; // 0 = soft, 1 = hard
 	int jkSpGrpCD;
 	double WDSG;    // wood dry weight(lb/cf), wood special gravity * 62.4
+	double barkDen; // bark dry weight(lb/cf), bark special gravity * 62.4
 	double greenWeightFactor;
 	double dryWeightFactor;
 	double carbonFraction;

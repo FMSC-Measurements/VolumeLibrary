@@ -150,6 +150,33 @@
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R234.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R610.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_BIA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\JenkinsBiomass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="WoodlandBiomass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\DeMarsTaperModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\CzaplewskiTaperModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\ClarkProfileCoefficients_R9.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\ClarkTaperModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DefaultFormClassForFVS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -237,6 +264,27 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R234.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R610.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_BIA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\JenkinsBiomass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WoodlandBiomass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaperModels\DeMarsTaperModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaperModels\CzaplewskiTaperModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaperModels\ClarkTaperModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

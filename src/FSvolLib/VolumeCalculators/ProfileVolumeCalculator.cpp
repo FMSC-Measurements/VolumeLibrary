@@ -9,17 +9,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     TreeOutput result;
 
     // initialize model on tree - i.e fwelling models, nsvb model
-    taperModel_.InitializeOnTree(tree);
-
-    //check override parameters for stump, sawTopDib, nonsawTopDib
-    if (tree.stumpHeightOverride > 0.0) merchRules.stumpHeight = tree.stumpHeightOverride;
-
-    if (tree.minTopDibSawOverride > 0.0) merchRules.minTopDibSaw = tree.minTopDibSawOverride;
-
-    if (tree.minTopDibNonSawOverride > 0.0) merchRules.minTopDibNonSaw = tree.minTopDibNonSawOverride;
-
-    //region 7 (BLM) saw top diameter
-    if (vco.region == 7) merchRules.minTopDibSaw = tree.dbh * 0.184 + 2.24;
+    taperModel_.InitializeOnTree(tree, merchRules, vco);
 
     //small tree volume calculation
     //BLM BEH model
@@ -80,6 +70,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
         result.greenWeightSecondary = grossGreenWeightSecondary;
         result.dryWeightPrimary = grossDryWeightPrimary;
         result.dryWeightSecondary = grossDryWeightSecondary;
+        result.grossInternationalBoardFoot = grossIntl14Primary + grossIntl14Secondary;
 
         //The boardfoot volume is International ¼ board foot volume for Region 8 Forest 8, 9, 10, and 12 (except Andrew Pickens district)
         // and Region 9 Forest 4,5,8,11,12,14,19,20,21,22,24, and 30 when using Clark profile equation
@@ -122,7 +113,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
 
         // sum volume from logs into tree volume
     }
-
+    
 	// calculate total cubic and cords
     // total volume for NVB and CLK profile will be calculated differently (will be added later)
     // 
@@ -176,6 +167,8 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
             cordVolume = std::round((merchCubic / 79.0) * 10.0) / 10.0;
         else
             cordVolume = std::round((merchCubic / 90.0) * 10.0) / 10.0;
+
+        result.cordMerchantable = cordVolume;
     }
         
     result.totalCubicFoot = totalCubicVolume;
@@ -574,7 +567,8 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
             if (numseg2 > 0)
             {
                 result.reserve(numseg + numseg2);
-                
+                double heightToSmallEnd = actualSawHeight;
+
                 //add secondary log data into primaryLogData
                 for (int i = 0; i < numseg2; ++i)
                 {
@@ -582,7 +576,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     logData.length = secondaryLogs[i];
                     logData.logNumber = numseg + i + 1;
                     logData.product = vco.secondaryProduct;
-                    double heightToSmallEnd = actualSawHeight;
+                    
                     if (i == 0)
                     {
                         if (numseg == 0) logData.heightToLargeEndDiameter = 4.5;

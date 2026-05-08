@@ -36,6 +36,12 @@
     <ClCompile Include="NSVB.TaperModel.test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DeMarsTaperModel.test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CzaplewskiTaperModel.test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

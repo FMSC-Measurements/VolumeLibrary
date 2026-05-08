@@ -2,6 +2,8 @@
 #include "DirectVolumeCalculator_R1.h"
 #include "DirectVolumeCalculator_R234.h"
 #include "DirectVolumeCalculator_R5.h"
+#include "DirectVolumeCalculator_R610.h"
+#include "DirectVolumeCalculator_BIA.h"
 #include "HawaiiSharpnackVolume.h"
 
 TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
@@ -32,9 +34,16 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 		return R4D2H(volumeEquationNumber, vco, tree);
 	case VolumeEquation::GeoCode::R5:
 		return r5dve::R5HARV(volumeEquationNumber, tree, merchRules);
+	case VolumeEquation::GeoCode::R6:
+		return R6VOL2(volumeEquationNumber, tree);
+	case VolumeEquation::GeoCode::R10:
+		return r10d2h(volumeEquationNumber, tree, merchRules);
 	case VolumeEquation::GeoCode::HAWAII:
 		return R12VOL(volumeEquationNumber, vco, tree, merchRules);
-
+	case VolumeEquation::GeoCode::BIA_EAST:   //BIA eastern region DVE C00DVEE***
+		return Voleq_Honer(volumeEquationNumber, vco, tree, merchRules);
+	case VolumeEquation::GeoCode::INGYMODEL:  //BIA west DVE I00DVEW000
+		return VolEq_Johnson(tree);
 	case VolumeEquation::GeoCode::UNKNOWN:
 		break;
 	default:

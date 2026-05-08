@@ -10,6 +10,7 @@ class BehreHyperbolaTaperModel : public TaperModel
 private:
     std::string volEqStr;
     double topDibSaw;
+    int formClass;
     // -----------------------------
     // Utility helpers
     // -----------------------------
@@ -445,9 +446,9 @@ private:
         return D2;
     }
 public:
-    BehreHyperbolaTaperModel(VolumeEquation volumeEquation, MerchRules merchRules);
+    BehreHyperbolaTaperModel(VolumeEquation volumeEquation);
 
-    void InitializeOnTree(TreeMeasurment tree) override {/* do nothing */ };
+    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // {/* do nothing */ };
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 

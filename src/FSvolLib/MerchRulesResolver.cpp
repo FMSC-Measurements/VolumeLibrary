@@ -3,7 +3,22 @@
 
 MerchRules MerchRulesResolver::GetMerchRules(VolumeCalculationOptions vco)
 {
-	MerchRules result{ 2,22,16.0,2.0,2.0,6.0,4.0,8.0,1.0,0.5,0.0,0.0,1.0, true };
+	MerchRules result;
+	result.evenOdd = 2;
+	result.segmentationOption = 22;
+	result.maxLogLength = 16.0;
+	result.minLogLength = 2.0;
+	result.minLengthTop = 2.0;
+	result.minTopDibSaw = 6.0;
+	result.minTopDibNonSaw = 4.0;
+	result.minMerchLength = 8.0;
+	result.stumpHeight = 1.0;
+	result.trim = 0.5;
+	result.doubleBarkThicknessAtBrestHeight = 0.0;
+	result.barkThicknessRatio = 0.0;
+	result.minimumBoardFootDiameter = 1.0;
+	result.useCorrectedFactor = true;
+
 	//Reset merch rule items for each region
 	if (vco.region == 1)
 	{

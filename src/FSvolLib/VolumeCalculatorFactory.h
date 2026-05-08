@@ -16,6 +16,9 @@
 #include "TaperModels\NationalScaleVolumeBiomassTaperModel.h"
 #include "TaperModels\RustagiTaperModel.h"
 #include "TaperModels\BehreHyperbolaTaperModel.h"
+#include "TaperModels\DeMarsTaperModel.h"
+#include "TaperModels\CzaplewskiTaperModel.h"
+#include "TaperModels\ClarkTaperModel.h"
 #include "VolumeCalculators\DirectVolumeCalculator.h"
 
 class VolumeCalculatorFactory
@@ -61,7 +64,6 @@ public:
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 				return *volCalcPtr;
-
 			}
 			else if (volumeEquation.modelType == VolumeEquation::ModelType::DVE)
 			{
@@ -70,7 +72,6 @@ public:
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 				return *volCalcPtr;
-
 			}
 			else if (volumeEquation.modelType == VolumeEquation::ModelType::MAT)
 			{
@@ -79,14 +80,39 @@ public:
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 				return *volCalcPtr;
-
 			}
-			//else if ((volumeEquation.modelType == VolumeEquation::ModelType::BEH)
-			//{
-			//	//auto model = new BehreHyperbolaTaperModel(volumeEquation, merchRules);
-			//}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::BEH)
+			{
+				auto model = new BehreHyperbolaTaperModel(volumeEquation);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
+				return *volCalcPtr;
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::DEM || volumeEquation.modelType == VolumeEquation::ModelType::CUR)
+			{
+				auto model = new DeMarsTaperModel(volumeEquation);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
+				return *volCalcPtr;
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::CZ2 || volumeEquation.modelType == VolumeEquation::ModelType::CZ3)
+			{
+				auto model = new CzaplewskiTaperModel(volumeEquation);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::CLK)
+			{
+				auto model = new ClarkTaperModel(volumeEquation);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+			}
 		}
 		else
 		//else if (volumeEquation.modelType == VolumeEquation::ModelType::DVE || volumeEquation.modelType == VolumeEquation::ModelType::SN2)

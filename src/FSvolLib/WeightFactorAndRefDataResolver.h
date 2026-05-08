@@ -1,5 +1,4 @@
 #pragma once
-//#include "WeightFactorData.h"
 
 struct WeightFactorAndRefData {
 	double weightFactorSaw;
@@ -16,6 +15,7 @@ struct RefSpeciesData {
 	int softHard;				//0 = soft, 1 = hard
 	int jenkinsSpeciesGroupCD;	//Jenkins species group code
 	double WDSG;				//wood density (lb/cf)
+	double barkDen;             //bark density (lb/cf)
 	double weightFactorGreen;
 	double weightFactorDry;
 	double carbonFraction;

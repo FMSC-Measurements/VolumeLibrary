@@ -28,6 +28,7 @@ public:
 		INGYMODEL = 'I',
 		FLWELLINGMODEL_WEST = 'F',
 		NATIONAL = 'N',
+		BIA_EAST = 'C',
 	};
 
 	enum class ModelType {
@@ -44,6 +45,7 @@ public:
 		SN2, // Sharpnack's 2 point profile model
 		WO2, // Wensel and Olsen 2 point profile model
 		NVB, // National Scale Volume and Biomass
+		CUR, // Curtis profile model (R10 red alder)
 	};
 
 
@@ -98,6 +100,7 @@ public:
 			case ModelType::SN2: { return "SN2"; }
 			case ModelType::WO2: { return "WO2"; }
 			case ModelType::NVB: { return "NVB"; }
+			case ModelType::CUR: { return "CUR"; }
 			default: throw std::invalid_argument("Unknown ModelType: " + std::to_string(static_cast<int>(model)));		
 		}
 	}
@@ -147,6 +150,7 @@ public:
 		if (modelCode == "SN2") { return ModelType::SN2; }
 		if (modelCode == "WO2") { return ModelType::WO2; }
 		if (modelCode == "NVB") { return ModelType::NVB; }
+		if (modelCode == "CUR") { return ModelType::CUR; }
 		else { return ModelType::UNKNOWN; }
 	}
 

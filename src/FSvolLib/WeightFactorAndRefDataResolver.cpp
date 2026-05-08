@@ -101,6 +101,7 @@ RefSpeciesData getRefSpeciesData(int fiaSpcd)
 	out.softHard = static_cast<int>(row[1]);
 	out.jenkinsSpeciesGroupCD = static_cast<int>(row[2]);
 	out.WDSG = row[3];
+	out.barkDen = row[4];
 	out.weightFactorGreen = row[8];
 	out.weightFactorDry = row[9];
 	out.carbonFraction = row[11];

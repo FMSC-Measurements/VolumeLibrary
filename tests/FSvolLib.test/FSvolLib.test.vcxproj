@@ -157,6 +157,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CzaplewskiTaperModel.test.cpp" />
+    <ClCompile Include="DeMarsTaperModel.test.cpp" />
     <ClCompile Include="FSvolLib.test.cpp" />
     <ClCompile Include="NSVB.TaperModel.test.cpp" />
     <ClCompile Include="NSVB.test.cpp" />

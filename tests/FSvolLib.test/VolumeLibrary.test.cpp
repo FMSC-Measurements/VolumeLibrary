@@ -17,19 +17,21 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 5;
+        volOpt.region = 9;
         volOpt.forest = 1;
-        volOpt.fiaCode = 65;
+        volOpt.fiaCode = 742;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        volOpt.volumeEquationNumberOverride = "223DVEW122";
+        volOpt.volumeEquationNumberOverride = "900CLKE742";
         // ...
         
         TreeMeasurment tree;
-        tree.dbh = 24;
-        tree.totalHeight = 57.0;
+        tree.dbh = 19.7;
+        tree.totalHeight = 76.0;
+        tree.referenceHeight = 0.0;
+        tree.referenceDiameter = 0.0;
         tree.minTopDibNonSawOverride = 0.0;
-        tree.minTopDibSawOverride = 3.0;
+        tree.minTopDibSawOverride = 0.0;
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
         tree.formClass = 0;
