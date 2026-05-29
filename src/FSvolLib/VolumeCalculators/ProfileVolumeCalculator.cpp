@@ -1,7 +1,7 @@
 #include "..\SmalianScribnerIntl14.h"
 #include "ProfileVolumeCalculator.h"
 #include "..\WeightfactorAndRefDataResolver.h"
-
+#include <array>
 
 
 TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
@@ -115,8 +115,40 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     }
     
 	// calculate total cubic and cords
-    // total volume for NVB and CLK profile will be calculated differently (will be added later)
-    // 
+    // total volume forBEH,  NVB and CLK profile will be calculated differently.
+    StemVolume stemVol = taperModel_.GetStemCubicVol(tree, merchRules, vco);
+    if (stemVol.volCalculated) {
+        //for Behre's taper to calculate the total cubic volume
+        if (stemVol.isBEH) {
+            result.stumpCubicFoot = stemVol.stumpVol;
+            result.totalCubicFoot = stemVol.primaryVol;
+            result.cordMerchantable = std::round((result.grossCubicFootPrimary / 90.0) * 10.0) / 10.0;
+        }
+        else {
+            //for taper CLK and NVB
+            double merchCF = result.grossCubicFootPrimary + result.grossCubicFootSecondary;
+            double cubicRatio = 1.0;
+            if (merchCF > 0.0) cubicRatio = (stemVol.primaryVol + stemVol.topwoodVol) / merchCF;
+
+            //Correct log cubic volume and weight
+            for (auto& item : result.logs) {
+                item.grossCubicFoot *= cubicRatio;
+                item.greenWeight *= cubicRatio;
+                item.dryWeight *= cubicRatio;
+            }
+
+            result.stumpCubicFoot = stemVol.stumpVol;
+            result.grossCubicFootPrimary = stemVol.primaryVol;
+            result.grossCubicFootSecondary = stemVol.topwoodVol;
+            result.tipCubicFoot = stemVol.tipVol;
+            result.totalCubicFoot = stemVol.stumpVol + stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol;
+            double cordFactor = 90.0;
+            if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
+            result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
+        }
+        return result;
+    }
+
     // stump volume
     double ht2 = merchRules.stumpHeight;
     double stumpDib = taperModel_.GetDiameterAtHeight(tree, ht2);
@@ -481,15 +513,16 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
 
 	// merchendize primary product
 		// get heights
+    bool useDob = (vco.region == 8 ? true : false);
     if (vco.primaryProduct == 1)  //for saw tree
     {
         if (tree.merchHeightSaw > 0) merchHeight = tree.merchHeightSaw;
-        else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibSaw);
+        else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibSaw, useDob);
     }
     else // for nonsaw tree
     {
         if (tree.merchHeightNonsaw > 0) merchHeight = tree.merchHeightNonsaw;
-        else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw);
+        else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw, useDob);
     }
     double merchLength = merchHeight - merchRules.stumpHeight;
 
@@ -552,7 +585,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
     if (vco.primaryProduct == 1)
     {
         if (tree.merchHeightNonsaw > 0) merchHeight = tree.merchHeightNonsaw;
-        else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw);
+        else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw, useDob);
 
         merchLength = merchHeight - actualSawHeight;
         if (merchLength > merchRules.minLengthTop)

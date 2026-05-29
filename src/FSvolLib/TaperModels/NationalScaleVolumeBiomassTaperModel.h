@@ -28,7 +28,7 @@ public:
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 
-    double GetHeightAtDiameter(TreeMeasurment tree, double diameter) override;
+    double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
-    std::array<double, 4> GetStemVolumes(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco);
+    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override;
 };

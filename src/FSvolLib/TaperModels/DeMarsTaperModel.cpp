@@ -19,7 +19,7 @@ double DeMarsTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double height)
 	return R10TAP(tree.dbh, totalHeight, height);
 }
 
-double DeMarsTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter)
+double DeMarsTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob)
 {
     // This model doesn't have a direct inverse function
     // Need to iterate to find height at diameter

@@ -37,14 +37,6 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
     }
 
 
-    //auto safe_sub = int start_1based, int end_1based->std::string{
-    //    if (start_1based <= 0 || end_1based <= 0 || end_1based < start_1based) return "";
-    //    std::size_t start = static_cast<std::size_t>(start_1based - 1);
-    //    std::size_t len = static_cast<std::size_t>(end_1based - start_1based + 1);
-    //    if (VOLEQ.size() < start + len) return "";
-    //    return VOLEQ.substr(start, len);
-    //};
-
     const std::string code_1_3 = VOLEQ.substr(1, 3);
     const std::string code_8_10 = VOLEQ.substr(8, 10);
 
@@ -524,8 +516,8 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
     TreeOutput out;
     double DBHOB = tree.dbh;
     double HTTOT = tree.totalHeight;
-    //int PROD = vco.primaryProduct;
     int UNT = vco.primaryProduct;
+    if (vco.primaryProduct != 1) UNT = 3;
     double MTOPP = merchRules.minTopDibSaw;
     if (tree.minTopDibSawOverride > 0.0) MTOPP = tree.minTopDibSawOverride;
     if (UNT != 1) {
@@ -565,7 +557,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
     double TWVOL = 0.0;
     double TOPD = 4.0;
 
-    std::string PROD = (UNT == 1) ? "01" : "02";
+    //std::string PROD = (UNT == 1) ? "01" : "02";
     const std::string code13 = safe_substr_1based(VOLEQU, 1, 3);
     const std::string code810 = safe_substr_1based(VOLEQU, 8, 10);
 
@@ -931,16 +923,6 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
 
 //R4------------------------------------------------------
 
-// Safe substring helper: FORTRAN (start..end) 1-based to C++ substr
-//static inline std::string safe_substr_1based(const std::string& s, int start_1based, int end_1based) {
-//    if (start_1based <= 0 || end_1based <= 0 || end_1based < start_1based) return "";
-//    std::size_t start = static_cast<std::size_t>(start_1based - 1);
-//    std::size_t len = static_cast<std::size_t>(end_1based - start_1based + 1);
-//    if (start > s.size()) return "";
-//    if (len > s.size() - start) return "";
-//    return s.substr(start, len);
-//}
-
 /**
  * R4D2H — Region 4 cubic volume via D^2*H equations (Chojnacky INT-339)
  *
@@ -953,20 +935,11 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
  * @param ERRFLAG Output error flag (3 = invalid diameters; 4 = invalid height; else 0)
  */
 TreeOutput R4D2H(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMeasurment tree)
-//void R4D2H(const std::string& VOLEQ,
-//    double HTTOT,
-//    double DBHOB,
-//    double DRC,
-//    int FCLASS,
-//    std::array<double, 15>& VOL,
-//    int& ERRFLAG)
 {
     TreeOutput out;
     double HTTOT = tree.totalHeight;
     double DBHOB = tree.dbh;
     double DRC = tree.drc;
-    //std::array<double, 15> VOL;
-    //VOL.fill(0.0);
     int ERRFLAG = 0;
 
     // Input validation (matches FORTRAN)

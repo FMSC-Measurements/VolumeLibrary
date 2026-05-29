@@ -152,10 +152,14 @@
     <ClInclude Include="SmalianScribnerIntl14.h" />
     <ClInclude Include="string_helper.h" />
     <ClInclude Include="TaperModels\BehreHyperbolaTaperModel.h" />
+    <ClInclude Include="TaperModels\ClarkProfileCoefficients_R8.h" />
     <ClInclude Include="TaperModels\ClarkProfileCoefficients_R9.h" />
     <ClInclude Include="TaperModels\ClarkTaperModel.h" />
     <ClInclude Include="TaperModels\CzaplewskiTaperModel.h" />
     <ClInclude Include="TaperModels\DeMarsTaperModel.h" />
+    <ClInclude Include="TaperModels\FlewellingShapeCoef.h" />
+    <ClInclude Include="TaperModels\FlewellingTaperModel.h" />
+    <ClInclude Include="TaperModels\FlewellingTaperModel_Alaska.h" />
     <ClInclude Include="TaperModels\NationalScaleVolumeBiomassTaperModel.h" />
     <ClInclude Include="TaperModels\RustagiTaperModel.h" />
     <ClInclude Include="TaperModels\TaperModel.h" />
@@ -202,6 +206,7 @@
     <ClCompile Include="TaperModels\ClarkTaperModel.cpp" />
     <ClCompile Include="TaperModels\CzaplewskiTaperModel.cpp" />
     <ClCompile Include="TaperModels\DeMarsTaperModel.cpp" />
+    <ClCompile Include="TaperModels\FlewellingTaperModel.cpp" />
     <ClCompile Include="TaperModels\NationalScaleVolumeBiomassTaperModel.cpp" />
     <ClCompile Include="TaperModels\RustagiTaperModel.cpp" />
     <ClCompile Include="TaperModels\TaperModel.cpp" />

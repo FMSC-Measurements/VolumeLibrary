@@ -35,12 +35,15 @@ public:
 		UNKNOWN,
 		DVE, // Direct Volume Esimator
 		BEH, // Behre's Hyperbola
+		B32, // Behre's Hyperbola 32 foot equation for BLM
 		CLK, // Clark
 		CZ2, // Czaplewski 2 point profile model
 		CZ3, // Czaplewski 3 point profile model
 		DEM, // DeMars and Bruce profile models
 		FW2, // Flewelling 2 point profile model
 		FW3, // Flewelling 3 point profile model
+		F32, // Flewelling 2 point profile model (32 foot log)
+		F33, // Flewelling 3 point profile model (32 foot log)
 		MAT, // Mathis (Rastagi and Loveless profile model)
 		SN2, // Sharpnack's 2 point profile model
 		WO2, // Wensel and Olsen 2 point profile model
@@ -90,12 +93,15 @@ public:
 		{
 			case ModelType::DVE: { return "DVE"; }
 			case ModelType::BEH: { return "BEH"; }
+			case ModelType::B32: { return "B32"; }
 			case ModelType::CLK: { return "CLK"; }
 			case ModelType::CZ2: { return "CZ2"; }
 			case ModelType::CZ3: { return "CZ3"; }
 			case ModelType::DEM: { return "DEM"; }
 			case ModelType::FW2: { return "FW2"; }
 			case ModelType::FW3: { return "FW3"; }
+			case ModelType::F32: { return "F32"; }
+			case ModelType::F33: { return "F33"; }
 			case ModelType::MAT: { return "MAT"; }
 			case ModelType::SN2: { return "SN2"; }
 			case ModelType::WO2: { return "WO2"; }
@@ -140,12 +146,15 @@ public:
 		modelCode = string_helper::StrToUpper(modelCode);
 		if (modelCode == "DVE") { return ModelType::DVE; }
 		if (modelCode == "BEH") { return ModelType::BEH; }
+		if (modelCode == "B32") { return ModelType::B32; }
 		if (modelCode == "CLK") { return ModelType::CLK; }
 		if (modelCode == "CZ2") { return ModelType::CZ2; }
 		if (modelCode == "CZ3") { return ModelType::CZ3; }
 		if (modelCode == "DEM") { return ModelType::DEM; }
 		if (modelCode == "FW2") { return ModelType::FW2; }
 		if (modelCode == "FW3") { return ModelType::FW3; }
+		if (modelCode == "F32") { return ModelType::F32; }
+		if (modelCode == "F33") { return ModelType::F33; }
 		if (modelCode == "MAT") { return ModelType::MAT; }
 		if (modelCode == "SN2") { return ModelType::SN2; }
 		if (modelCode == "WO2") { return ModelType::WO2; }

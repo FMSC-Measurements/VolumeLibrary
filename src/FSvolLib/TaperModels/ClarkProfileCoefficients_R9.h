@@ -220,7 +220,7 @@ static constexpr std::array<std::array<double, 8>, arySiz> coef79 = { {
     {1970, 0.873, -0.170, 10.10, 0.848,  364.,  4.118, 0.797 }
 } };
 
-static constexpr std::array<int, arySiz> speciesCode = {
+static constexpr std::array<int, arySiz> r9SpeciesCode = {
     12,   68,   94,   95,  105,  110,  125,  129,  241,  261,
    316,  317,  318,  371,  375,  407,  531,  541,  543,  621,
    741,  742,  743,  746,  762,  802,  806,  809,  823,  833,
@@ -230,10 +230,10 @@ static constexpr std::array<int, arySiz> speciesCode = {
 
 static int R9SpIndex(int spcd)
 {
-    auto it = std::find(speciesCode.begin(), speciesCode.end(), spcd);
+    auto it = std::find(r9SpeciesCode.begin(), r9SpeciesCode.end(), spcd);
 
-    if (it != speciesCode.end()) {
-        return std::distance(speciesCode.begin(), it);
+    if (it != r9SpeciesCode.end()) {
+        return std::distance(r9SpeciesCode.begin(), it);
     }
     return -1;
 }

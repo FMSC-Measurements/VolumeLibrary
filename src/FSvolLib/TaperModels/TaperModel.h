@@ -18,5 +18,8 @@ public:
 	virtual double GetDiameterAtHeight(TreeMeasurment tree, double height) = 0;
 
 	// some taper models are able to calculate height at diameter directly, but for others we need to iterate to find the height at diameter
-	virtual double GetHeightAtDiameter(TreeMeasurment tree, double diameter) = 0;
+	virtual double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) = 0;
+
+	//get stem cubicfoot volume for NSVB and Clark taper model
+	virtual StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) = 0;
 };

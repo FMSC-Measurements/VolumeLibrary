@@ -17,12 +17,12 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 9;
+        volOpt.region = 7;
         volOpt.forest = 1;
-        volOpt.fiaCode = 742;
+        volOpt.fiaCode = 202;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        volOpt.volumeEquationNumberOverride = "900CLKE742";
+        volOpt.volumeEquationNumberOverride = "B01BEHW202";
         // ...
         
         TreeMeasurment tree;
@@ -34,12 +34,29 @@ public:
         tree.minTopDibSawOverride = 0.0;
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
-        tree.formClass = 0;
+        tree.formClass = 80;
         // ...
 
+        //test input merch rules for BEH
+        MerchRules merchRules;
+        merchRules.evenOdd = 2;
+        merchRules.segmentationOption = 24;
+        merchRules.maxLogLength = 16.0;
+        merchRules.minLogLength = 4.0;
+        merchRules.minLengthTop = 2.0;
+        merchRules.minTopDibSaw = 6.0;
+        merchRules.minTopDibNonSaw = 6.0;
+        merchRules.minMerchLength = 8.0;
+        merchRules.stumpHeight = 1.0;
+        merchRules.trim = 0.3;
+        merchRules.barkThicknessRatio = 0.0;
+        merchRules.doubleBarkThicknessAtBrestHeight = 0.0;
+        merchRules.minimumBoardFootDiameter = 1.0;
+        merchRules.useCorrectedFactor = false;
+
         // Act
-        auto treeOutput = volLib.CalculateVolume(volOpt, tree);
-        
+        //auto treeOutput = volLib.CalculateVolume(volOpt, tree);
+        auto treeOutput = volLib.CalculateVolume(volOpt, tree, merchRules);
 
         //// Assert
         Assert::IsTrue(treeOutput.greenWeightPrimary > 0);

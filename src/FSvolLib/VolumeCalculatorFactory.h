@@ -81,7 +81,7 @@ public:
 
 				return *volCalcPtr;
 			}
-			else if (volumeEquation.modelType == VolumeEquation::ModelType::BEH)
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::BEH || volumeEquation.modelType == VolumeEquation::ModelType::B32)
 			{
 				auto model = new BehreHyperbolaTaperModel(volumeEquation);
 				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);

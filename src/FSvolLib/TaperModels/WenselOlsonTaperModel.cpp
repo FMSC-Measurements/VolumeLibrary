@@ -76,7 +76,7 @@ double WenselOlsonTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double he
     return dibcor;
 }
 
-double WenselOlsonTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter)
+double WenselOlsonTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob)
 {
     // This model doesn't have a direct inverse function
     // Need to iterate to find height at diameter

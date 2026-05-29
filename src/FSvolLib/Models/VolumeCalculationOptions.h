@@ -38,6 +38,16 @@ struct VolumeCalculationOptions
 	std::string ecoRegion; // optional fia only
 };
 
+struct StemVolume {
+	double stumpVol = 0.0;
+	double primaryVol = 0.0;
+	double topwoodVol = 0.0;
+	double tipVol = 0.0;
+	bool volCalculated = false;
+	bool isBEH = false;
+};
+
+
 // Global alias (optional, but convenient)
 using VolumeCalculationType = VolumeCalculationOptions::VolumeCalculationType;
 using AuxFlag = VolumeCalculationOptions::AuxFlag;

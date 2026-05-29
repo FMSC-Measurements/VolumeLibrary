@@ -203,7 +203,7 @@ double CzaplewskiTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double hei
     return D2;
 }
 
-double CzaplewskiTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter)
+double CzaplewskiTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob)
 {
     // This model doesn't have a direct inverse function
     // Need to iterate to find height at diameter

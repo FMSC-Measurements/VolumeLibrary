@@ -8,7 +8,7 @@
 
 double smallian(double diameterLarge, double diameterSmall, double logLength)
 {
-	return 0.002727 * (pow(diameterLarge, 2.0) + pow(diameterSmall, 2.0)) * logLength;
+	return 0.002727 * (std::pow(diameterLarge, 2.0) + std::pow(diameterSmall, 2.0)) * logLength;
 }
 
 

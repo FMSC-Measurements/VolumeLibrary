@@ -3,6 +3,7 @@
 #include "TaperModel.h"
 #include <cmath>
 #include <string>
+#include <array>
 
 class DeMarsTaperModel : public TaperModel
 {
@@ -177,6 +178,7 @@ public:
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 
-    double GetHeightAtDiameter(TreeMeasurment tree, double diameter) override;
+    double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
+    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0, false, false }; };
 };
