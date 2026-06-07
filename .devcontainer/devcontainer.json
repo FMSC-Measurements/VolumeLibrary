@@ -1,0 +1,49 @@
+{
+    "name": "VolumeLibrary Dev Container",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": "..",
+        "target": "dev"
+    },
+    "remoteUser": "nvel-dev",
+    "updateRemoteUserUID": true,
+    "remoteEnv": {
+        "PYTHONPATH": "${containerWorkspaceFolder}",
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+    },
+    "features": {
+        "ghcr.io/devcontainers/features/common-utils": {
+            "username": "nvel-dev",
+            "installNano": true,
+            "installZsh": true,
+            "configureZshAsDefaultShell": true
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "charliermarsh.ruff",
+                "github.vscode-github-actions",
+                "github.vscode-pull-request-github",
+                "johnpapa.vscode-peacock",
+                "ms-azuretools.vscode-docker",
+                "ms-python.mypy-type-checker",
+                "ms-python.python",
+                "ms-toolsai.jupyter",
+                "vscode-icons-team.vscode-icons"
+            ],
+            "settings": {
+                "notebook.formatOnSave.enabled": true,
+                "[python]": {
+                    "editor.formatOnSave": true,
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": "explicit",
+                        "source.organizeImports": "explicit"
+                    }
+                }
+            }
+        }
+    },
+    "postCreateCommand": "uv sync --frozen --extra dev && chmod +x fortran_build/build_gfortran_shared.sh fortran_build/build_gfortran_warnings.sh fortran_build/check_warnings.sh && fortran_build/build_gfortran_shared.sh && uv run pre-commit install"
+}

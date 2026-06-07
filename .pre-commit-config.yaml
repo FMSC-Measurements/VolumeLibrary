@@ -1,0 +1,20 @@
+repos:
+- repo: https://github.com/gitleaks/gitleaks
+  rev: v8.30.1
+  hooks:
+    - id: gitleaks
+      entry: gitleaks detect --source . --redact --verbose
+      pass_filenames: false
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  rev: v0.15.13
+  hooks:
+    - id: ruff
+      args: [--fix]
+    - id: ruff-format
+- repo: https://github.com/pre-commit/mirrors-mypy
+  rev: v2.1.0
+  hooks:
+    - id: mypy
+      args: [--config-file=pyproject.toml]
+      pass_filenames: false
+      additional_dependencies: ["typing_extensions>=4.0"]
