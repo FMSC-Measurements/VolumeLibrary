@@ -1,0 +1,70 @@
+{
+  "cases": [
+    {
+      "name": "vernum",
+      "api": "vernum",
+      "expected": {
+        "version": 20260415
+      }
+    },
+    {
+      "name": "getvoleq_r9_837",
+      "api": "getvoleq_r",
+      "inputs": {
+        "region": 9,
+        "forest": "01",
+        "district": "1",
+        "species": 837
+      },
+      "expected": {
+        "voleq": "900CLKE837",
+        "errflag": 0
+      }
+    },
+    {
+      "name": "r9_clark_837_small_tree",
+      "api": "vollib_r",
+      "inputs": {
+        "volume_equation": "616BEHW000",
+        "region": 9,
+        "forest": "01",
+        "district": "1",
+        "species": 837,
+        "dbh": 5.1,
+        "total_height": 25.4,
+        "primary_merchantable_top": 0.0,
+        "secondary_merchantable_top": 0.0,
+        "height_to_first_product": 0.0,
+        "height_to_second_product": 9.0,
+        "upper_stem_height": 0.0,
+        "upper_stem_diameter": 0.0,
+        "stump_height": 0.0,
+        "form_class": 0,
+        "diameter_outside_bark": 0.0,
+        "butt_swelling_ratio": 0.0
+      },
+      "expected": {
+        "errflag": 0,
+        "vol": [
+          2.3842787742614746,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "tolerance": 0.01,
+      "notes": "R9 Clark via vollib_r; vol[0] total cuft"
+    }
+  ]
+}

@@ -1,0 +1,166 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nvel"
+version = "0.1.0"
+description = "Python ctypes wrapper for the NVEL volume equation library"
+readme = "nvel/README.md"
+requires-python = ">=3.10"
+
+[project.optional-dependencies]
+dev = [
+    "mypy==2.1.0",
+    "pre-commit==4.6.0",
+    "pytest>=7.0",
+    "ruff==0.15.13",
+    "typing_extensions>=4.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["nvel*"]
+
+[tool.uv]
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "nvel/tests"]
+
+[tool.ruff]
+required-version = ">=0.11"
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "fortran_build",
+    "venv",
+]
+line-length = 80
+indent-width = 4
+
+[tool.ruff.format]
+preview = true
+
+[tool.ruff.lint]
+select = [
+    "A",
+    "AIR",
+    "ARG",
+    "ASYNC",
+    "BLE",
+    "C4",
+    "COM",
+    "D",
+    "DJ",
+    "DTZ",
+    "E",
+    "EM",
+    "EXE",
+    "F",
+    "FA",
+    "FBT",
+    "FIX",
+    "G",
+    "I",
+    "ICN",
+    "INP",
+    "INT",
+    "ISC",
+    "NPY201",
+    "PD",
+    "PIE",
+    "PT",
+    "PYI",
+    "Q",
+    "RET",
+    "RSE",
+    "SIM",
+    "SLF",
+    "SLOT",
+    "T10",
+    "T20",
+    "TD",
+    "TID",
+    "UP",
+    "W",
+    "YTT",
+]
+ignore = [
+    "COM812",
+    "D100",
+    "D104",
+    "D105",
+    "D107",
+    "D203",
+    "D213",
+    "D215",
+    "D400",
+    "D401",
+    "D404",
+    "D406",
+    "D407",
+    "D408",
+    "D409",
+    "D413",
+    "E501",
+    "FBT001",
+    "FBT002",
+    "FIX002",
+    "G004",
+    "ISC001",
+    "TD003",
+    "ARG002",
+    "ARG004",
+    "PIE796",
+    "PT018",
+    "PYI024",
+    "PYI041",
+    "SIM102",
+    "SIM115",
+    "SIM117",
+    "SLF001",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["nvel"]
+
+[tool.ruff.lint.pycodestyle]
+max-doc-length = 72
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"test_*.py" = ["D", "PD901"]
+"nvel/tests/*.py" = ["D", "PD901"]
+"tests/*.py" = ["D", "PD901", "E402", "INP001", "T201", "W505"]
+"tests/record_goldens.py" = ["D", "T201", "W505"]
+"fortran_build/*.py" = ["INP001", "T201"]
+
+[tool.mypy]
+mypy_path = "."
+files = "nvel"
+exclude = ["nvel/tests/"]
