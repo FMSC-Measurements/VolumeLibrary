@@ -1,10 +1,6 @@
-# ADR-001: Upstream contribution workflow
+# Upstream contribution workflow
 
-| Field | Value |
-|-------|-------|
-| **Status** | Accepted |
-| **Date** | 2026-06-07 |
-| **Related** | [FORK.md](FORK.md), [fortran_build/PLAN.md](fortran_build/PLAN.md), [tests/README.md](tests/README.md) |
+Fork policy for contributing warning fixes to [FMSC-Measurements/VolumeLibrary](https://github.com/FMSC-Measurements/VolumeLibrary). Related: [FORK.md](../FORK.md), [PLAN.md](PLAN.md), [tests/README.md](../tests/README.md).
 
 ## Context
 
@@ -65,7 +61,7 @@ git checkout main
 git merge upstream/master
 ```
 
-Resolve conflicts per [FORK.md](FORK.md) (e.g. keep upstream content under `_legacy/` when paths diverge).
+Resolve conflicts per [FORK.md](../FORK.md) (e.g. keep upstream content under `_legacy/` when paths diverge).
 
 ### 2. Create a fork development branch
 
@@ -77,7 +73,7 @@ Use a descriptive scope (`fix/r10vol1-type-conversions`, `fix/volumelibrary-entr
 
 ### 3. Establish regression baselines before editing sources
 
-**Tier A changes** (correctness risk: type conversions, truncation, uninitialized variables — see [fortran_build/PLAN.md](fortran_build/PLAN.md)) require numerical goldens recorded **before** Fortran edits:
+**Tier A changes** (correctness risk: type conversions, truncation, uninitialized variables — see [PLAN.md](PLAN.md)) require numerical goldens recorded **before** Fortran edits:
 
 ```bash
 fortran_build/build_gfortran_shared.sh
@@ -85,7 +81,7 @@ python3 tests/record_goldens.py
 pytest -v
 ```
 
-Add cases to [tests/goldens/cases.json](tests/goldens/cases.json) for any region, equation, or entry point not already covered. Commit goldens before source edits.
+Add cases to [tests/goldens/cases.json](../tests/goldens/cases.json) for any region, equation, or entry point not already covered. Commit goldens before source edits.
 
 Capture the warning baseline for every batch:
 
@@ -95,7 +91,7 @@ fortran_build/check_warnings.sh
 
 ### 4. Edit sources
 
-- Change only root sources listed in [fortran_build/nvel_fortran_sources.txt](fortran_build/nvel_fortran_sources.txt).
+- Change only root sources listed in [nvel_fortran_sources.txt](nvel_fortran_sources.txt).
 - Do **not** edit `_legacy/` for upstream-bound work.
 - Do **not** touch fork-only tooling in the same commit as upstream-bound source fixes when avoidable (see commit structure below).
 
@@ -118,7 +114,7 @@ fortran_build/check_warnings.sh
 |------|-------------|
 | Numerical | `pytest` passes; golden outputs unchanged within tolerance (default `1e-3`) |
 | Warnings | Total count decreases or stays flat; no new Tier A warnings in touched files |
-| CI | Fork PR green — lint, test, and warnings jobs in [.github/workflows/nvel-tests.yml](.github/workflows/nvel-tests.yml) |
+| CI | Fork PR green — lint, test, and warnings jobs in [.github/workflows/nvel-tests.yml](../.github/workflows/nvel-tests.yml) |
 
 **Optional:** FVS smoke test before large Tier A upstream PRs (embed fork commit at `volume/NVEL` in [ForestVegetationSimulator](https://github.com/USDAForestService/ForestVegetationSimulator)). Not a daily gate; document in the upstream PR if run.
 
@@ -195,60 +191,14 @@ gh pr create \
   --head d-diaz:upstream/fix-<scope> \
   --base master \
   --title "…" \
-  --body-file /path/to/pr-body.md
+  --body-file fortran_build/upstream_pr_template.md
 ```
 
 ### 8. Document regression evidence in the upstream PR
 
-Upstream does not run fork CI. The PR body must include reproducible setup and results.
+Upstream does not run fork CI. The PR body must include reproducible setup and results. Use [upstream_pr_template.md](upstream_pr_template.md) and fill in the placeholders before opening the PR.
 
-#### Required sections
-
-**Summary**
-
-- Files changed and why.
-- Intended behavioral impact (e.g. “no numerical change; warning cleanup only”).
-
-**Build and test setup**
-
-```markdown
-## Build & test setup
-- gfortran on Ubuntu: `sudo apt-get install gfortran`
-- Build: `fortran_build/build_gfortran_shared.sh` → `build/libnvel.so`
-- Tests: `pip install -e ".[dev]" && pytest -v`
-- Warnings: `fortran_build/check_warnings.sh`
-- Optional: `.devcontainer/` for a preconfigured environment
-```
-
-**Numerical regression**
-
-| Check | Result |
-|-------|--------|
-| pytest goldens | e.g. 12/12 passed |
-| Fork CI run | link to Actions run |
-| Cases covering changed code paths | list case names from `cases.json` |
-| Tolerance | e.g. `1e-3` on `vollib_r` outputs |
-
-**Warning regression**
-
-| Metric | Before | After |
-|--------|--------|-------|
-| Total warnings (repo manifest) | … | … |
-| Warnings in touched file(s) | … | … |
-| New Tier A in touched files | — | none |
-
-**Cross-links**
-
-- Fork development PR: `d-diaz/VolumeLibrary#N`
-- Note that full baselines and tooling live on the fork; this PR is source-only.
-
-**Optional FVS smoke**
-
-State whether it was run, with commit hash and outcome, or explicitly note that pytest covers the affected regions.
-
-#### Fork progress tracker
-
-After opening the upstream PR, add a row to [fortran_build/warnings_progress.md](fortran_build/warnings_progress.md) on the fork.
+After opening the upstream PR, add a row to [warnings_progress.md](warnings_progress.md) on the fork.
 
 ### 9. After upstream merge
 
@@ -268,7 +218,7 @@ Keep fork `main` aligned with upstream so future PRs start from a current base.
 | Shared tooling **if** FMSC agrees to adopt it (separate PR) | Fork CI, devcontainer, `pyproject.toml` |
 | | `nvel/`, `tests/`, warning baselines (unless tooling PR) |
 
-Per [fortran_build/PLAN.md](fortran_build/PLAN.md): do **not** bundle Phase 0 wrapper/test infrastructure with Fortran source-fix PRs. Propose tooling adoption in its own upstream PR when ready.
+Per [PLAN.md](PLAN.md): do **not** bundle Phase 0 wrapper/test infrastructure with Fortran source-fix PRs. Propose tooling adoption in its own upstream PR when ready.
 
 Prefer **one upstream PR per file** for large mechanical batches unless FMSC prefers grouped PRs.
 
@@ -309,23 +259,13 @@ sequenceDiagram
 - Cherry-picks can conflict if fork and upstream layouts diverge; selective checkout avoids some pain at the cost of losing commit SHA parity.
 - Upstream reviewers depend on fork CI links until FMSC adopts similar tooling.
 
-## Alternatives considered
+## Why two PRs?
 
-| Alternative | Why not chosen |
-|-------------|----------------|
-| PR fork `main` directly to upstream | Includes `_legacy/`, CI, Python wrapper — too large and unrelated for source fixes |
-| Develop only on upstream branches, no fork PR | Loses fork CI and baseline tracking before merge |
-| Single commit mixing sources and baselines | Hard to extract clean upstream diffs |
-| Skip numerical goldens for Tier B hygiene fixes | Tier A still requires goldens; workflow stays one process with a lighter gate for Tier B |
+- **PR fork `main` directly to upstream** — includes `_legacy/`, CI, Python wrapper; too large and unrelated for source fixes.
+- **Develop only on upstream branches, no fork PR** — loses fork CI and baseline tracking before merge.
+- **Single commit mixing sources and baselines** — hard to extract clean upstream diffs.
+- **Skip numerical goldens for Tier B hygiene fixes** — Tier A still requires goldens; workflow stays one process with a lighter gate for Tier B.
 
-## Example (illustrative)
+## Example
 
-Batch 1 in [fortran_build/PLAN.md](fortran_build/PLAN.md) targets regional shape files such as `f_west.f` for Tier A `type_conversion` fixes (~70 warnings). The generic workflow above applies as:
-
-1. Record goldens covering western-region scenarios.
-2. Fix `D0` literals and implicit promotions on fork branch `fix/batch-1-f-west`.
-3. Rebaseline warnings on the fork; merge fork PR.
-4. Branch `upstream/fix-f-west-tier-a` from `upstream/master` with only `f_west.f`.
-5. Upstream PR body cites pytest pass, warning delta, and fork CI run URL.
-
-Repeat for `f_other.f`, `f_alaska.f`, and subsequent batches.
+See [PLAN.md — Batch 1](PLAN.md#batch-1--tier-a-regional-shape-files) for the first Tier A batch (`f_west.f`, `f_other.f`, `f_alaska.f`, …). The workflow above applies: record goldens, fix on a fork branch, merge fork PR, then branch from `upstream/master` with source-only changes and open an upstream PR using [upstream_pr_template.md](upstream_pr_template.md).

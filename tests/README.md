@@ -44,7 +44,7 @@ python3 tests/record_goldens.py
 pytest -v
 ```
 
-Record goldens **before** making changes to Fortran source files; re-run after changes to confirm no regression.
+Record goldens **before** making changes to Fortran source files; re-run after changes to confirm no regression. Tier rules: [fortran_build/PLAN.md](../fortran_build/PLAN.md). Upstream PR process: [fortran_build/upstream-workflow.md](../fortran_build/upstream-workflow.md).
 
 ## API
 

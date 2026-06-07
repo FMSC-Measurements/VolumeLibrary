@@ -9,11 +9,13 @@ Reduce gfortran `-Wall` warnings across **repo-native NVEL sources**, without ch
 This fork treats VolumeLibrary as a **self-contained project**:
 
 - Own source manifest (`nvel_fortran_sources.txt`), compiler flags (`build_flags.conf`), warning baseline, and pytest golden tests
-- **Phase 0** (prerequisite): Python ctypes wrapper + `libnvel.so` — see [`tests/README.md`](../tests/README.md) when implemented
+- **Phase 0** (prerequisite): Python ctypes wrapper + `libnvel.so` — see [`tests/README.md`](../tests/README.md)
 - **Phase 1**: Warning remediation batches backed by warning CI + pytest
 - **FVS** is a downstream consumer (embeds NVEL at `volume/NVEL`); optional manual smoke before large upstream PRs — not a daily gate
 
 Upstream target: [FMSC-Measurements/VolumeLibrary](https://github.com/FMSC-Measurements/VolumeLibrary)
+
+Related: [`tests/README.md`](../tests/README.md), [`upstream-workflow.md`](upstream-workflow.md)
 
 ## Execution order
 
@@ -130,62 +132,27 @@ Document `large_stack_array` warnings; optional `-fmax-stack-var-size` note.
 
 ## Verification
 
+Commands: see [README.md](README.md) quick start (`check_warnings.sh`, `build_gfortran_shared.sh`, `pytest`).
+
 ### Warning regression (every batch)
 
-```bash
-fortran_build/build_gfortran_warnings.sh
-python3 fortran_build/parse_build_warnings.py
-python3 fortran_build/compare_warnings.py   # when implemented
-```
-
-Compare to `warnings_inventory_baseline.csv`. Fail if total count increases or new Tier A warnings appear in touched files.
+Run `fortran_build/check_warnings.sh` (or the underlying `build_gfortran_warnings.sh` + `parse_build_warnings.py` + `compare_warnings.py`). Compare to `warnings_inventory_baseline.csv`. Fail if total count increases or new Tier A warnings appear in touched files.
 
 ### Numerical regression (Tier A and wrapper batches)
 
-```bash
-fortran_build/build_gfortran_shared.sh      # when implemented
-pytest tests/ -v
-```
-
-Record goldens before Tier A edits:
-
-```bash
-python3 tests/record_goldens.py
-```
+Record goldens with `python3 tests/record_goldens.py` **before** Tier A edits, then `pytest tests/ -v` after fixes. Golden outputs must stay within tolerance (default `1e-3`).
 
 ### Optional FVS smoke (before large upstream PRs)
 
-Not required per batch. FVS embeds this repo and may compile a slightly different file subset; use as a courtesy check if FMSC asks or before merging large Tier A work.
-
-```bash
-# In ForestVegetationSimulator: point volume/NVEL at your commit, then:
-cd bin && make clean && make FVSpn
-cd ../tests/FVSpn && make
-```
+Not required per batch. FVS embeds this repo and may compile a slightly different file subset; use as a courtesy check if FMSC asks or before merging large Tier A work. In ForestVegetationSimulator: point `volume/NVEL` at your commit, then `cd bin && make clean && make FVSpn` and `cd ../tests/FVSpn && make`.
 
 ### ifort (manual, Windows)
 
 Production DLL builds use Intel ifort (`compdll.bat`, `vollib.vfproj`). Spot-check Release builds after Tier A batches if you maintain DLL releases. Not a CI gate.
 
-## Upstream workflow
+## Upstream PRs
 
-```mermaid
-flowchart LR
-  fork[VolumeLibrary_fork]
-  ci[Fork_CI_warnings_pytest]
-  pr[PR_to_FMSC]
-  fvs_smoke[Optional_FVS_smoke]
-
-  fork --> ci --> pr
-  pr -.-> fvs_smoke
-```
-
-1. Branch on fork
-2. Fix batch; run warning capture + pytest (Tier A)
-3. PR to FMSC-Measurements/VolumeLibrary with CI evidence (see `PR_EVIDENCE.md` when added)
-4. Optional: FVS smoke before or after merge
-
-Do **not** bundle Phase 0 wrapper infrastructure with warning-fix PRs to upstream.
+After a batch passes warning and numerical gates on the fork, follow the two-track git workflow in [upstream-workflow.md](upstream-workflow.md). Fill in [upstream_pr_template.md](upstream_pr_template.md) for the FMSC PR body. Do **not** bundle Phase 0 wrapper infrastructure with warning-fix PRs to upstream.
 
 ## Out of scope
 

@@ -17,17 +17,15 @@ Build: `fortran_build/build_gfortran_shared.sh` → `build/libnvel.so`
 
 ## Legacy archive (`_legacy/`)
 
-Pre-existing Windows/Intel tooling, C# test harness, duplicate case
-directories, and dated snapshots live under [`_legacy/`](_legacy/README.md).
-That content is **fork housekeeping** — not intended for upstream PRs.
+Pre-existing Windows/Intel tooling, C# test harness, duplicate case directories, and dated snapshots live under [`_legacy/`](_legacy/README.md). That content is **fork housekeeping** — not intended for upstream PRs.
 
 ## Syncing with upstream
 
-Merge or rebase `upstream/main` into this fork for new Fortran releases.
-Conflicts on archived paths are rare; resolve by keeping upstream changes
-in `_legacy/` if needed.
+Merge or rebase `upstream/master` into this fork for new Fortran releases. Conflicts on archived paths are rare; resolve by keeping upstream changes in `_legacy/` if needed.
 
 ## PRs to upstream
 
-Open PRs only for shared work: Fortran fixes, `fortran_build/`, `nvel/`,
-`tests/`, CI. Do not PR `_legacy/` moves to FMSC.
+Do not PR `_legacy/` moves to FMSC.
+
+- **Source-fix PRs** (warning remediation): root `*.f` / `*.for` / `*.inc` only — see [fortran_build/upstream-workflow.md](fortran_build/upstream-workflow.md).
+- **Tooling PRs** (`fortran_build/`, `nvel/`, `tests/`, CI): propose separately when FMSC is ready to adopt them.

@@ -14,7 +14,7 @@
 ## Approach
 
 - Real code fixes preferred over suppression
-- PR fixes upstream to FMSC-Measurements/VolumeLibrary
+- PR fixes upstream to FMSC-Measurements/VolumeLibrary — see [upstream-workflow.md](upstream-workflow.md)
 - Phase 0 (wrapper + pytest): **done**
 - Numerical gate: `pytest tests/`; optional FVS smoke before large upstream PRs
 

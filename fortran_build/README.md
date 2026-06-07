@@ -19,6 +19,15 @@ Planning and tooling for the National Volume Estimator Library (NVEL) on this fo
 
 Phase 0 infrastructure is in place. Execute Tier A warning batches only after recording pytest goldens.
 
+## Documentation
+
+| Doc | When to read |
+|-----|----------------|
+| [PLAN.md](PLAN.md) | Choosing batches, tier rules, success criteria |
+| [upstream-workflow.md](upstream-workflow.md) | Opening PRs to FMSC (two-track git workflow) |
+| [upstream_pr_template.md](upstream_pr_template.md) | Filling in upstream PR evidence |
+| [warnings_progress.md](warnings_progress.md) | Batch status tracker |
+
 ## Files in this directory
 
 ### Active
@@ -26,6 +35,8 @@ Phase 0 infrastructure is in place. Execute Tier A warning batches only after re
 | File | Purpose |
 |------|---------|
 | [PLAN.md](PLAN.md) | Remediation plan, tiers, batches, verification |
+| [upstream-workflow.md](upstream-workflow.md) | Two-track git workflow for upstream PRs |
+| [upstream_pr_template.md](upstream_pr_template.md) | Upstream PR evidence template |
 | [warnings_progress.md](warnings_progress.md) | Batch status tracker |
 | [nvel_fortran_sources.txt](nvel_fortran_sources.txt) | Canonical source list (121 root `.f`/`.for`) |
 | [build_flags.conf](build_flags.conf) | gfortran flags for this project |
@@ -70,7 +81,7 @@ fortran_build/check_warnings.sh
 1. Tier A: `python3 tests/record_goldens.py` first, then fix (see [PLAN.md](PLAN.md))
 2. `fortran_build/check_warnings.sh`
 3. `pytest tests/ -v`
-4. Upstream PR with fork CI evidence
+4. Open upstream PR per [upstream-workflow.md](upstream-workflow.md); use [upstream_pr_template.md](upstream_pr_template.md) for evidence
 
 ### Optional FVS smoke
 
