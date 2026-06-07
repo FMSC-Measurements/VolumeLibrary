@@ -105,6 +105,23 @@ dlldata.c
 *.svclog
 *.scc
 
+# Python / dev tooling
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+.dmypy.json
+dmypy.json
+
+# fortran_build generated output
+fortran_build/gfortran_obj/
+fortran_build/gfortran_build.log
+fortran_build/warnings_inventory.csv
+fortran_build/warnings_summary.md
+fortran_build/.mypy_cache/
+
 # Chutzpah Test files
 _Chutzpah*
 
