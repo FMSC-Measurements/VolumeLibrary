@@ -1,7 +1,6 @@
 # VolumeLibrary Fortran Build and Remediation
 
-Planning and tooling for the National Volume Estimator Library (NVEL) on this fork:
-warning cleanup, repo-native builds, and Python regression tests.
+Planning and tooling for the National Volume Estimator Library (NVEL) on this fork: warning cleanup, repo-native builds, and Python regression tests.
 
 ## Relationship to upstream and FVS
 
