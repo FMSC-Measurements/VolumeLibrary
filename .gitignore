@@ -115,6 +115,12 @@ __pycache__/
 .dmypy.json
 dmypy.json
 
+# Fork: legacy IDE / publish outputs (archive lives in _legacy/)
+.vs/
+**/publish/
+**/publish*.zip
+**/bin_/Release
+
 # fortran_build generated output
 fortran_build/gfortran_obj/
 fortran_build/gfortran_build.log
