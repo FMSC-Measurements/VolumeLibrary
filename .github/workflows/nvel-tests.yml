@@ -1,0 +1,42 @@
+name: NVEL tests
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Ruff and mypy
+        run: |
+          pip install -e ".[dev]"
+          ruff check .
+          ruff format --check .
+          mypy
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gfortran
+        run: sudo apt-get update && sudo apt-get install -y gfortran
+      - name: Build libnvel.so
+        run: |
+          chmod +x fortran_build/build_gfortran_shared.sh
+          fortran_build/build_gfortran_shared.sh
+      - name: Run pytest
+        run: |
+          pip install -e ".[dev]"
+          pytest -v
+
+  warnings:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install gfortran
+        run: sudo apt-get update && sudo apt-get install -y gfortran
+      - name: Warning regression
+        run: |
+          chmod +x fortran_build/check_warnings.sh
+          fortran_build/check_warnings.sh

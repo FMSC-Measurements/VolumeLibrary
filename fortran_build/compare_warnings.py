@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -17,6 +18,25 @@ from warning_taxonomy import Tier
 FORTRAN_BUILD = Path(__file__).resolve().parent
 DEFAULT_BASELINE = FORTRAN_BUILD / "warnings_inventory_baseline.csv"
 DEFAULT_CURRENT = FORTRAN_BUILD / "warnings_inventory.csv"
+
+_FORTRAN_TYPE_QUOTED_RE = re.compile(
+    r"'(REAL|INTEGER|LOGICAL|COMPLEX)\((\d+)\)'",
+    re.IGNORECASE,
+)
+
+
+def normalize_warning_message(message: str) -> str:
+    """Normalize gfortran wording drift for stable comparison keys.
+
+    gfortran versions differ in prefixes (``Possible change`` vs
+    ``Change of value``) and whether type names are quoted.
+    """
+    msg = message.strip()
+    if msg.startswith("Possible "):
+        msg = msg[len("Possible ") :]
+    msg = msg.replace("\u2018", "'").replace("\u2019", "'")
+    msg = _FORTRAN_TYPE_QUOTED_RE.sub(r"\1(\2)", msg)
+    return msg.casefold()
 
 
 def load_rows(path: Path) -> list[dict]:
@@ -40,14 +60,15 @@ def row_key(row: dict) -> tuple:
         row: Inventory row dict.
 
     Returns:
-        Tuple of file, line, column, warning type, and message fields.
+        Tuple of file, line, column, warning type, and normalized
+        message text.
     """
     return (
         row.get("file", ""),
         row.get("line", ""),
         row.get("column", ""),
         row.get("warning_type", ""),
-        row.get("message", ""),
+        normalize_warning_message(row.get("message", "")),
     )
 
 

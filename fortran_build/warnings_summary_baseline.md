@@ -1,11 +1,11 @@
 # VolumeLibrary gfortran Warning Summary
 
 Source log: `fortran_build/gfortran_build.log`
-Inventory: `warnings_inventory.csv`
+Inventory: `warnings_inventory_baseline.csv`
 
-- **Total warnings:** 1369
+- **Total warnings:** 1371
 - **Files:** 94
-- **Tier A / B / C:** 365 / 995 / 9
+- **Tier A / B / C:** 365 / 997 / 9
 
 ## By category
 
@@ -13,15 +13,15 @@ Inventory: `warnings_inventory.csv`
 |----------|------:|
 | `unused_variable` | 552 |
 | `type_conversion` | 317 |
-| `tab_character` | 300 |
+| `tab_character` | 302 |
 | `unused_dummy_argument` | 82 |
 | `unused_label` | 32 |
 | `character_truncation` | 29 |
 | `deleted_feature` | 27 |
-| `uninitialized` | 15 |
+| `uninitialized` | 17 |
 | `large_stack_array` | 9 |
-| `integer_division` | 4 |
 | `extension` | 2 |
+| `integer_division` | 2 |
 
 ## Top files
 
@@ -50,6 +50,6 @@ Inventory: `warnings_inventory.csv`
 | `pnwtarif.f` | 16 |
 | `fia_nw_tarif.for` | 15 |
 | `formclas.f` | 15 |
-| `sf_zero.f` | 15 |
 | `vollib09.f` | 15 |
+| `f_ingy.f` | 14 |
 

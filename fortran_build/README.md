@@ -36,7 +36,7 @@ Phase 0 infrastructure is in place. Execute Tier A warning batches only after re
 | [parse_build_warnings.py](parse_build_warnings.py) | Parse build log → inventory CSV |
 | [compare_warnings.py](compare_warnings.py) | Diff inventory vs baseline |
 | [check_warnings.sh](check_warnings.sh) | Warning regression orchestration |
-| [warnings_inventory_baseline.csv](warnings_inventory_baseline.csv) | Repo-native baseline (**1,365** warnings) |
+| [warnings_inventory_baseline.csv](warnings_inventory_baseline.csv) | Repo-native baseline (**1,371** warnings; GitHub Actions `ubuntu-latest`, gfortran 13) |
 | [warnings_summary_baseline.md](warnings_summary_baseline.md) | Baseline tier/category stats |
 
 ## Quick start
@@ -59,6 +59,8 @@ python3 tests/record_goldens.py
 
 ### Warning regression
 
+Matches the GitHub Actions `warnings` job (`ubuntu-latest`, apt `gfortran`):
+
 ```bash
 chmod +x fortran_build/check_warnings.sh
 fortran_build/check_warnings.sh
@@ -79,7 +81,8 @@ Before a large upstream PR, see [PLAN.md](PLAN.md).
 
 | Toolchain | Use on this fork |
 |-----------|------------------|
-| **gfortran** | Warning capture, shared library, pytest — primary |
+| **gfortran** (GitHub Actions `ubuntu-latest`) | Warning baseline and CI regression gate |
+| **Dev container** (follow-up PR) | Local development; rebaseline when adopted |
 | **ifort** | Production DLL on Windows; manual spot-check after Tier A |
 
 ## Approach

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """Record expected outputs in tests/goldens/cases.json from the current libnvel.so."""
 
 from __future__ import annotations

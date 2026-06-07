@@ -12,6 +12,8 @@ if [[ ! -f fortran_build/nvel_fortran_sources.txt ]]; then
   python3 fortran_build/generate_source_manifest.py
 fi
 
+gfortran --version | head -1
+
 fortran_build/build_gfortran_warnings.sh
 python3 fortran_build/parse_build_warnings.py fortran_build/gfortran_build.log
 python3 fortran_build/compare_warnings.py
