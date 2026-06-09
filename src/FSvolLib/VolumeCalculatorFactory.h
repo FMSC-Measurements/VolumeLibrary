@@ -19,6 +19,7 @@
 #include "TaperModels\DeMarsTaperModel.h"
 #include "TaperModels\CzaplewskiTaperModel.h"
 #include "TaperModels\ClarkTaperModel.h"
+#include "TaperModels\FlewellingTaperModel.h"
 #include "VolumeCalculators\DirectVolumeCalculator.h"
 
 class VolumeCalculatorFactory
@@ -108,6 +109,15 @@ public:
 			else if (volumeEquation.modelType == VolumeEquation::ModelType::CLK)
 			{
 				auto model = new ClarkTaperModel(volumeEquation);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);
+				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
+
+				return *volCalcPtr;
+			}
+			else if (volumeEquation.modelType == VolumeEquation::ModelType::FW2 || volumeEquation.modelType == VolumeEquation::ModelType::FW3
+				  || volumeEquation.modelType == VolumeEquation::ModelType::F32 || volumeEquation.modelType == VolumeEquation::ModelType::F33)
+			{
+				auto model = new FlewellingTaperModel(volumeEquation);
 				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model);
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 

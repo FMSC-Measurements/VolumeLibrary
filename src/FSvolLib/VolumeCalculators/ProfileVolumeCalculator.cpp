@@ -552,6 +552,10 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     actualDiaLarge = actualDiaSmall;
                 }
                 actualDiaSmall = taperModel_.GetDiameterAtHeight(tree, prevHeight + loglen[i] + merchRules.trim);
+                //reset the last log small end diameter
+                if (i == numseg - 1 && actualDiaSmall < merchRules.minTopDibSaw) {
+                    actualDiaSmall = merchRules.minTopDibSaw;
+                }
                 logData.length = loglen[i];
                 logData.logNumber = i + 1;
                 logData.product = vco.primaryProduct;

@@ -53,7 +53,7 @@ public:
 
 
 	GeoCode geoCode;
-	char subregionalCode[2] = { '0', '0' };
+	char subregionalCode[3] = { '0', '0' };
 	ModelType modelType;
 	char usRegion; // West('W') or East('E') coast
 	int fiaCode = -1;

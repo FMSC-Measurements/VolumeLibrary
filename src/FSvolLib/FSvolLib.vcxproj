@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -160,6 +160,9 @@
     <ClInclude Include="TaperModels\FlewellingShapeCoef.h" />
     <ClInclude Include="TaperModels\FlewellingTaperModel.h" />
     <ClInclude Include="TaperModels\FlewellingTaperModel_Alaska.h" />
+    <ClInclude Include="TaperModels\FlewellingTaperModel_Ingy.h" />
+    <ClInclude Include="TaperModels\FlewellingTaperModel_Other.h" />
+    <ClInclude Include="TaperModels\FlewellingTaperModel_West.h" />
     <ClInclude Include="TaperModels\NationalScaleVolumeBiomassTaperModel.h" />
     <ClInclude Include="TaperModels\RustagiTaperModel.h" />
     <ClInclude Include="TaperModels\TaperModel.h" />
@@ -207,6 +210,9 @@
     <ClCompile Include="TaperModels\CzaplewskiTaperModel.cpp" />
     <ClCompile Include="TaperModels\DeMarsTaperModel.cpp" />
     <ClCompile Include="TaperModels\FlewellingTaperModel.cpp" />
+    <ClCompile Include="TaperModels\FlewellingTaperModel_Ingy.cpp" />
+    <ClCompile Include="TaperModels\FlewellingTaperModel_Other.cpp" />
+    <ClCompile Include="TaperModels\FlewellingTaperModel_West.cpp" />
     <ClCompile Include="TaperModels\NationalScaleVolumeBiomassTaperModel.cpp" />
     <ClCompile Include="TaperModels\RustagiTaperModel.cpp" />
     <ClCompile Include="TaperModels\TaperModel.cpp" />

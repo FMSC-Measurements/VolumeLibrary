@@ -189,6 +189,15 @@
     <ClInclude Include="TaperModels\FlewellingTaperModel_Alaska.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TaperModels\FlewellingTaperModel_Ingy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\FlewellingTaperModel_Other.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\FlewellingTaperModel_West.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -300,6 +309,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TaperModels\FlewellingTaperModel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaperModels\FlewellingTaperModel_Ingy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaperModels\FlewellingTaperModel_Other.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TaperModels\FlewellingTaperModel_West.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

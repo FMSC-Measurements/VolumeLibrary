@@ -17,12 +17,12 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 7;
+        volOpt.region = 10;
         volOpt.forest = 1;
-        volOpt.fiaCode = 202;
+        volOpt.fiaCode = 98;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        volOpt.volumeEquationNumberOverride = "B01BEHW202";
+        volOpt.volumeEquationNumberOverride = "A00FW2W098";
         // ...
         
         TreeMeasurment tree;
@@ -55,8 +55,8 @@ public:
         merchRules.useCorrectedFactor = false;
 
         // Act
-        //auto treeOutput = volLib.CalculateVolume(volOpt, tree);
-        auto treeOutput = volLib.CalculateVolume(volOpt, tree, merchRules);
+        auto treeOutput = volLib.CalculateVolume(volOpt, tree);
+        //auto treeOutput = volLib.CalculateVolume(volOpt, tree, merchRules);
 
         //// Assert
         Assert::IsTrue(treeOutput.greenWeightPrimary > 0);

@@ -74,7 +74,7 @@ MerchRules MerchRulesResolver::GetMerchRules(VolumeCalculationOptions vco)
 		result.segmentationOption = 23;
 		result.minTopDibSaw = 2.0;
 		result.minTopDibNonSaw = 2.0;
-		result.stumpHeight = 0.0;
+		//result.stumpHeight = 0.0;
 		result.useCorrectedFactor = false;
 	}
 	else if (vco.region == 7)

@@ -1,6 +1,8 @@
-#include "FlewellingTaperModel.h"
-#include "FlewellingShapeCoef.h"
+﻿#include "FlewellingTaperModel.h"
 #include "FlewellingTaperModel_Alaska.h"
+#include "FlewellingTaperModel_Ingy.h"
+#include "FlewellingTaperModel_Other.h"
+#include "FlewellingTaperModel_West.h"
 #include <array>
 #include <string_view>
 #include <cmath>
@@ -41,6 +43,7 @@ FlewellingTaperModel::FlewellingTaperModel(VolumeEquation volumeEquation)
     int fiaCode = volumeEquation_.fiaCode;
     geoCode = volumeEquation_.geoCode;
     geoSubregion = { volumeEquation_.subregionalCode };
+    if (volumeEquation_.volEqStr.substr(5, 1) == "3") threePoint = true;
 
     // ---------------- REGION I ----------------
     if (geoCode== VolumeEquation::GeoCode::INGYMODEL)      
@@ -180,96 +183,13 @@ FlewellingTaperModel::FlewellingTaperModel(VolumeEquation volumeEquation)
 
 }
 
-//double bark thickness in West
-inline int find_geo_index(std::string_view code) {
-    static constexpr std::array<std::string_view, 8> GCODE =
-    { "01","02","03","04","05","06","07","08" };
-
-    for (int i = 0; i < 8; ++i)
-        if (GCODE[i] == code)
-            return i;
-
-    return -1; // GEOSUB = "00" or not found
-}
-
-double FDBT_C1(int JSP, std::string_view GEOSUB, double DBHOB, double HTTOT)
-{
-    static constexpr std::array<double, 8> ROFF =
-    { 0.0, 0.117, 0.121, 0.133, 0.025, 0.028, 0.088, 0.028 };
-
-    static constexpr std::array<double, 8> ROFF1 =
-    { 0.0, 0.118, 0.204, 0.105, 0.058, 0.061, 0.118, 0.071 };
-
-    double ratio = 0.0;
-    int id = find_geo_index(GEOSUB);
-    double logd = std::log(DBHOB); // reused
-
-    switch (JSP)
-    {
-    case 3:
-    {
-        double DMEDIAN =
-            0.566 * std::pow(HTTOT - 4.5, 0.634 + 0.00074 * HTTOT);
-
-        double DFORM = DBHOB / DMEDIAN - 1.0;
-
-        if (id < 0)   // GEOSUB = "00"
-        {
-            ratio = std::exp(
-                -2.4641 +
-                0.04393 * logd -
-                0.2922 * DFORM +
-                0.05964 * DFORM * logd
-            );
-        }
-        else
-        {
-            ratio = std::exp(
-                -2.5087 +
-                0.03600 * logd -
-                0.4086 * DFORM +
-                0.10120 * DFORM * logd +
-                ROFF[id]
-            );
-        }
-        return ratio * DBHOB;
-    }
-
-    case 4:
-    {
-        if (id < 0)
-        {
-            ratio = 0.04504 * (1.0 + 0.8307 * std::exp(-0.2048 * DBHOB));
-        }
-        else
-        {
-            ratio =
-                0.04221 * (1.0 + 0.8836 * std::exp(-0.2145 * DBHOB))
-                * (1.0 + ROFF1[id]);
-        }
-        return ratio * DBHOB;
-    }
-
-    case 5:
-    {
-        double D_USE = std::max(DBHOB, 3.8);
-        ratio = 0.01949 *
-            (1.0 + 15.599 / D_USE - 29.212 / (D_USE * D_USE));
-
-        return ratio * DBHOB;
-    }
-    }
-
-    // Unknown species
-    return 0.0;
-}
 
 //get dbhIb
-double getDbhIb(int JSP, std::string_view geoSub, double dbh, double totalHt)
+double FlewellingTaperModel::getDbhIb(int JSP, std::string_view geoSub, double dbh, double totalHt)
 {
     double dbtBH = 0.0;
     if (DBTBH > 0.0) dbtBH = DBTBH;
-    if (dbtBH == 0.0 && BTR > 0.0) dbtBH = dbh * BTR / 100.0;
+    if (dbtBH == 0.0 && BTR > 0.0) dbtBH = dbh * (1.0 - BTR / 100.0);
 
     if(dbtBH ==0.0) {
         //get doublebarkThicknessAtBreastHeight from bark model
@@ -279,16 +199,18 @@ double getDbhIb(int JSP, std::string_view geoSub, double dbh, double totalHt)
         }
         else if (JSP >= 11 && JSP <= 21) {
             //Ingy
-
+            dbtBH = FDBT_C2(JSP, geoSub, dbh, totalHt);
         }
         else if (JSP >= 31 && JSP <= 36) {
             //Alaska
             dbtBH = FDBT_AK(JSP, dbh, totalHt);
         }
-        else if (JSP >= 22 && JSP <= 31) {
-            //other use dbhOb
-            dbtBH = 0.0;
-        }
+    }
+
+    //f_other use DBHOB for taper
+    if (JSP >= 22 && JSP <= 30) {
+        //other use dbhOb
+        dbtBH = 0.0;
     }
 
     double dbhIb = dbh - dbtBH;
@@ -296,43 +218,43 @@ double getDbhIb(int JSP, std::string_view geoSub, double dbh, double totalHt)
 }
 
 //get shape parameters
-FlewellingShapeParams getShapeParameter(int JSP, std::string_view geoSub, double dbh, double totalHt)
+FlewellingShapeParams FlewellingTaperModel::getShapeParameter(int JSP, std::string_view geoSub, double dbh, double totalHt)
 {
     //sf_shp.f
     FlewellingShapeParams shapeParameter;
     if (JSP == 3) {
         //shp_w3
-
+        shapeParameter = SHP_W3(dbh, totalHt, geoSub);
     }
     else if (JSP == 4) {
         //shp_w4
-
+        shapeParameter = SHP_W4(dbh, totalHt, geoSub);
     }
     else if (JSP == 5) {
         //shp_w5
-
+        shapeParameter = SHP_W5(dbh, totalHt, geoSub);
     }
-    else if (JSP >= 11 && JSP <= 22) {
+    else if (JSP >= 11 && JSP <= 21) {
         //shp_c2
-
+        shapeParameter = shapeIngy(JSP, geoSub, dbh, totalHt);
     }
     else if (JSP == 22) {
         //shp_bh
-
+        shapeParameter = SHP_BH(dbh, totalHt);
     }
     else if (JSP >= 23 && JSP <= 30) {
         //shp_ot
-
+        shapeParameter = SHP_OT(JSP, dbh, totalHt);
     }
     else if (JSP >= 31 && JSP <= 36) {
-        shapeParameter = SHP_AK(JSP, geoSub, dbh, totalHt);
+        shapeParameter = shapeAlaska(JSP, geoSub, dbh, totalHt);
     }
 
     return shapeParameter;
 }
 
 //get taper coef
-FlewellingTaperCoef getTaperCoef(FlewellingShapeParams shapeParemeter)
+FlewellingTaperCoef FlewellingTaperModel::getTaperCoef(FlewellingShapeParams shapeParemeter)
 {
     //sf_taper.f
     FlewellingTaperCoef taperCoef;
@@ -446,7 +368,9 @@ FlewellingTaperCoef getTaperCoef(FlewellingShapeParams shapeParemeter)
 }
 
 //predicate dib at given relative height using two point model (sf_yhat.f)
-double getDibFrom2PointModel(int jsp, double relativeHeight, FlewellingShapeParams shapeParemeter, FlewellingTaperCoef taperCoef, double scalingFactor = 1.0)
+double FlewellingTaperModel::getDibFrom2PointModel(int jsp, double relativeHeight, double totalHt,
+    FlewellingShapeParams shapeParemeter, FlewellingTaperCoef taperCoef, 
+    double& slope, double scalingFactor, bool needSlope)
 {
     double dib = 0.0;
 
@@ -481,6 +405,10 @@ double getDibFrom2PointModel(int jsp, double relativeHeight, FlewellingShapePara
 
     double y = 0.0;
     double x = 0.0;
+    slope = 0.0;
+    double RH_LENGTH = 0.0;
+    double dy_dx = 0.0;
+    int I_SEG = 0;
 
     // Invalid input
     if (RH > 1.0 || RH < 0.0) {
@@ -497,7 +425,14 @@ double getDibFrom2PointModel(int jsp, double relativeHeight, FlewellingShapePara
         else {
             y = x * (C2 + x * ((C1 / 2.0) - (C1 / 6.0) * x));
         }
+        
+        RH_LENGTH = 1.0 - RHC;
+        I_SEG = 1;
 
+        if (needSlope) {
+            dy_dx = C2 + x * (C1 - (C1 / 2.0) * x);
+        }
+            
     }
 
     // --- Middle segment ---
@@ -528,11 +463,34 @@ double getDibFrom2PointModel(int jsp, double relativeHeight, FlewellingShapePara
             y = B0;
         }
 
+        if (needSlope) {
+            RH_LENGTH = RHC - RHI2;
+            I_SEG = 2;
+
+            if (x > 0.0) {
+                double SUS3;
+                if (B1 * log10(x) <= -20.0)
+                    SUS3 = 0.0;
+                else
+                    SUS3 = pow(x, B1 + 1.0);
+
+                dy_dx = B4 - B2 / (B1 + 1.0) * SUS3 + B2 / 2.0 * x * x;
+            }
+            else {
+                dy_dx = B4;
+            }
+        }
     }
 
     // --- Straight segment ---
     else if (RHLONGI > 0.0 && RH > RHI1) {
         y = E1 + E2 * RH;
+
+        if (needSlope) {
+            I_SEG = 3;
+            dy_dx = E2;
+            RH_LENGTH = 1.0;
+        }
     }
 
     // --- Lower segment ---
@@ -551,26 +509,40 @@ double getDibFrom2PointModel(int jsp, double relativeHeight, FlewellingShapePara
                     + x * (A2 / (2.0 * A3 * A3) + A1 * x))
                 + A2 * std::log(1.0 - x / A3);
         }
+
+        if (needSlope) {
+            RH_LENGTH = RHI1;
+            I_SEG = 4;
+            dy_dx = A4 + A2 / A3 + A2 / (A3 * A3) * x + 3 * A1 * x * x - A2 / (A3 - x);
+        }
     }
 
     // Final yhat
     double yhat = F * y;
     dib = yhat;
 
+    if (needSlope) {
+        double dd_dH = dy_dx * F / (RH_LENGTH * totalHt);
+        if (I_SEG != 2 && I_SEG != 3)
+            dd_dH = -dd_dH;
+        slope = dd_dH;
+    }
+
     return dib;
 }
 
 //get scaling factor F
-double getScalingFactor(int JSP, double dbhIb, double totalHeight, FlewellingShapeParams shapeParameter, FlewellingTaperCoef taperCoef)
+double FlewellingTaperModel::getScalingFactor(int JSP, double dbhIb, double totalHeight, FlewellingShapeParams shapeParameter, FlewellingTaperCoef taperCoef)
 {
     double RH = 4.5 / totalHeight;
-    double dbhIbPred = getDibFrom2PointModel(JSP, RH, shapeParameter, taperCoef);
+    double slope;
+    double dbhIbPred = getDibFrom2PointModel(JSP, RH, totalHeight, shapeParameter, taperCoef, slope);
     
     return dbhIb / dbhIbPred;
 }
 
 //get 3-point extra parameter
-Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, double dbtBH, 
+Flewelling3PointExtra FlewellingTaperModel::getThreePointExtra(int jsp, std::string_view geoSub, double dbh, double totalHt, double dbtBH,
     double heightExtra, double diameterExtra, double scalingFactor,
     FlewellingShapeParams shapeParameter, FlewellingTaperCoef taperCoef)
 {
@@ -580,6 +552,7 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
     double HEX = heightExtra;
     double DEX = diameterExtra;
     double TOTALH = totalHt;
+    double slope;
 
     const double BH = 4.5;
     double FMODMAX = 0.15;
@@ -598,7 +571,7 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
     double x = h / TOTALH;
 
     double slope_dummy = 0.0;
-    dhatex = getDibFrom2PointModel(jsp, x, shapeParameter, taperCoef, F);
+    dhatex = getDibFrom2PointModel(jsp, x, TOTALH, shapeParameter, taperCoef, slope, F);
 
     // actual diameter processing
     double dibmod = dhatex;
@@ -607,8 +580,7 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
     if (jsp >= 11 && jsp <= 21) {
         double dob = DEX;
         dobex = dob;
-        //need add later
-        //bark_r = BRK_UPB2(jsp, DBH, TOTALH, DBT_BH, h, dob);
+        bark_r = BRK_UPB2(jsp, dbh, TOTALH, dbtBH, h, dob);
 
         double dbt = bark_r * dob;
         dibact = dob - dbt;
@@ -616,8 +588,7 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
     else if (jsp >= 3 && jsp <= 5) {
         double dob = DEX;
         dobex = dob;
-        //need add later
-        //bark_r = BRK_WS(jsp, DBH, TOTALH, DBT_BH, h);
+        bark_r = BRK_WS(jsp, dbh, TOTALH, dbtBH, h);
 
         double dbt = bark_r * dob;
         dibact = dob - dbt;
@@ -631,17 +602,14 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
     double se_lnx = 0.0;
 
     if (jsp >= 11 && jsp <= 21) {
-        //need add later
-        //VAR_C2(jsp, geosub, DBH, TOTALH, h, se_lnx);
+        se_lnx = VAR_C2(jsp, geoSub, dbh, TOTALH, h);
         Z = std::log(dibact / dibmod) / se_lnx;
     }
     else if (jsp >= 3 && jsp <= 5) {
-        //need add later
-        //VAR_C1(jsp, DBH, TOTALH, h, dibmod, dibact, Z);
+        Z = VAR_C1(jsp, dbh, TOTALH, h, dibmod, dibact);
     }
     else if (jsp >= 23 && jsp <= 30) {
-        //need add later
-        //VAR_OT(jsp, DBH, TOTALH, h, se_lnx);
+        se_lnx = VAR_OT(jsp, dbh, TOTALH, h);
         Z = std::log(dibact / dibmod) / se_lnx;
     }
     else if (jsp >= 31 && jsp <= 36) {
@@ -649,8 +617,7 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
         Z = std::log(dibact / dibmod) / se_lnx;
     }
     else if (jsp == 22) {
-        //need add later
-        //VAR_BH(DBH, TOTALH, h, se_lnx);
+        se_lnx = VAR_BH(dbh, TOTALH, h);
         Z = (dibact - dibmod) / se_lnx;
     }
 
@@ -674,7 +641,7 @@ Flewelling3PointExtra getThreePointExtra(int jsp, double dbh, double totalHt, do
 }
 
 //get dib from 3-point model
-double getDibFrom3PointModel(int jsp, std::string_view geoSub, double dbh, double totalHt, double H, double DIB, double HEX, double DEX, Flewelling3PointExtra threePointExtra)
+double FlewellingTaperModel::getDibFrom3PointModel(int jsp, std::string_view geoSub, double dbh, double totalHt, double H, double DIB, double HEX, double DEX, Flewelling3PointExtra threePointExtra)
 {
     const double BH = 4.5;
     double THT = totalHt;
@@ -694,7 +661,7 @@ double getDibFrom3PointModel(int jsp, std::string_view geoSub, double dbh, doubl
     // EZ = p12 * ZEX(1)
     // ------------------------------------------------------------
     //need to add later
-    //double p12 = SF_CORR(jsp, geosub, THT, HEX, H);
+    double p12 = SF_CORR(jsp, geoSub, THT, HEX, H);
     double EZ = p12 * ZEX;
 
     // ------------------------------------------------------------
@@ -702,8 +669,7 @@ double getDibFrom3PointModel(int jsp, std::string_view geoSub, double dbh, doubl
     // DIBact = f(DIB, EZ)
     // ------------------------------------------------------------
     double DIBact = 0.0;
-    //need to add later
-    //SF_DFZ(jsp, geosub, DBH, THT, H, DIB, EZ, DIBact);
+    DIBact = SF_DFZ(jsp, geoSub, dbh, THT, H, DIB, EZ);
 
     double CHANGE = DIBact - DIB;
 
@@ -731,7 +697,7 @@ double getDibFrom3PointModel(int jsp, std::string_view geoSub, double dbh, doubl
 // ------------------------------------------------------------
 // Helper: compute diameter error at H1 for HT trial
 // ------------------------------------------------------------
-double computeDiameterError(int jsp, std::string_view geoSub, 
+double FlewellingTaperModel::computeDiameterError(int jsp, std::string_view geoSub,
     double DBH,
     double HT_try,
     double DBTBH,
@@ -748,23 +714,25 @@ double computeDiameterError(int jsp, std::string_view geoSub,
 
     FlewellingTaperCoef taperCoef = getTaperCoef(shapeParameter);
 
-    double dbhIb = DBH - DBTBH;
+    dbhIb = DBH - DBTBH;
     double F = getScalingFactor(jsp, dbhIb, HT_try, shapeParameter, taperCoef);
 
     double relativeHeight = H1 / HT_try;
-    double D2 = getDibFrom2PointModel(jsp, relativeHeight, shapeParameter, taperCoef, F);
+    double slope;
+    double D2 = getDibFrom2PointModel(jsp, relativeHeight, HT_try, shapeParameter, taperCoef, slope, F);
 
     if (jsp >= 22 && jsp <= 30) {
         double DOB, DBT;
-        //add BRK_UP later
-        //BRK_UP(S, DBH, HT_try, DBTBH, H1, D2, DOB, DBT);
+        DOB = D2;
+        //the D2 calculated is DOB, need to get DIB
+        D2 = BRK_OT(jsp, geoSub, dbh, DOB, H1, DBTBH, DBT);
     }
 
     return D2 - D1;  // inside-bark difference
 }
 
 // solve total height from merch height and top diameter
-double solveTotalHeight(int JSP, std::string_view geoSub, double DBH, double dbtBH, double H1, double D1)
+double FlewellingTaperModel::solveTotalHeight(int JSP, std::string_view geoSub, double DBH, double dbtBH, double H1, double D1)
 {
     //Fortran sf_2pth1
     const double BH = 4.5;
@@ -816,13 +784,226 @@ double solveTotalHeight(int JSP, std::string_view geoSub, double DBH, double dbt
     return 0.0;  // failed to converge in 25 iterations
 }
 
+// given 2 heights(hi and hj), estimate the correlation of the
+// errors in the corresponding dib's
+
+double FlewellingTaperModel::SF_CORR(int JSP, const std::string_view geosub, double TOTALH, double HI, double HJ)
+{
+    // 11–21 use COR_C2
+    if (JSP >= 11 && JSP <= 21)
+        return COR_C2(JSP, geosub, TOTALH, HI, HJ);
+
+    // 22 = Black Hills correction
+    if (JSP == 22)
+        return COR_BH(TOTALH, HI, HJ);
+
+    // 23–30 = Other regions (OT model)
+    if (JSP >= 23 && JSP <= 30)
+        return COR_OT(JSP, TOTALH, HI, HJ);
+
+    // 31–36 = Alaska taper model
+    if (JSP >= 31 && JSP <= 36)
+        return COR_AK(JSP, TOTALH, HI, HJ);
+
+    // 1 or 2 → historic placeholder routines (unknown)
+    if (JSP == 1 || JSP == 2)
+        return 0.0;  // original FORTRAN had no implementation
+
+    // 3–5 = Western species (Douglas‑fir, Hemlock, Cedar)
+    if (JSP >= 3 && JSP <= 5)
+        return COR_WS(JSP, TOTALH, HI, HJ);
+
+    // default (invalid species)
+    return 0.0;
+}
+
+
+// -------------------------------------------------------------------
+// Modern C++ version of:
+// SUBROUTINE SF_DFZ(JSP,GEOSUB,DBH,THT, H, DIBmod, Z, DIBact)
+// -------------------------------------------------------------------
+double FlewellingTaperModel::SF_DFZ(int JSP, const std::string_view geoSub, double DBH, double THT, double H, double DIBmod, double Z)
+{
+    // Output variable
+    double DIBact = DIBmod;
+
+    // ---------------------------------------------------------------
+    // GROUP 1: LOGNORMAL species
+    // ---------------------------------------------------------------
+    if (JSP >= 11)
+    {
+        double SE_LNX = 0.0;
+
+        if (JSP >= 11 && JSP <= 21)
+        {
+            SE_LNX = VAR_C2(JSP, geoSub, DBH, THT, H);
+        }
+        else if (JSP >= 23 && JSP <= 30)
+        {
+            SE_LNX = VAR_OT(JSP, DBH, THT, H);
+        }
+        else if (JSP == 22)
+        {
+            SE_LNX = VAR_BH(DBH, THT, H);
+        }
+        else if (JSP >= 31 && JSP <= 36)
+        {
+            SE_LNX = VAR_AK(JSP, DBH, THT, H);
+        }
+
+        // Clamp Z*SE to ±5
+        double prod = Z * SE_LNX;
+        if (std::fabs(prod) > 5.0)
+            prod = (prod < 0.0 ? -5.0 : 5.0);
+
+        // Compute actual dib
+        DIBact = DIBmod * std::exp(prod);
+        return DIBact;
+    }
+
+    // ---------------------------------------------------------------
+    // GROUP 2: NORMAL species (JSP = 1, 2)
+    // (Original FORTRAN had no VAR_STD implemented)
+    // ---------------------------------------------------------------
+    if (JSP == 1 || JSP == 2)
+    {
+        // No SE available; FORTRAN left these unimplemented
+        // Equivalent behavior: return base prediction
+        return DIBmod;
+    }
+
+    // ---------------------------------------------------------------
+    // GROUP 3: Johnson Sb species (JSP = 3,4,5)
+    // ---------------------------------------------------------------
+    if (JSP == 3)
+        return dib_from_Z_sf3(DBH, THT, H, DIBmod, Z);
+
+    if (JSP == 4)
+        return dib_from_Z_sf4(DBH, THT, H, DIBmod, Z);
+
+    if (JSP == 5)
+        return dib_from_Z_sf5(DBH, THT, H, DIBmod, Z);
+
+    // ---------------------------------------------------------------
+    // Default: unprogrammed species
+    // ---------------------------------------------------------------
+    return DIBmod;
+}
+
+//sf_ds.f
+//Estimate Dib at any height  (any species, any method)
+//Optionally estimate slope   d(DIB) / d(H)
+double FlewellingTaperModel::SF_DS(
+    int JSP,
+    const std::string_view GEOSUB,
+    double DBH,
+    double TOTALH,
+    double HTUP,
+    double Hex,
+    double Dex,
+    FlewellingShapeParams shapeParameter,
+    FlewellingTaperCoef taperCoef,
+    Flewelling3PointExtra threePointExtra,
+    double scalingFactor,
+    double& slope,
+    bool needSlope)
+{
+    double DIB;
+    //------------------------------------------------------
+    // Invalid input: height above total height
+    //------------------------------------------------------
+    if (HTUP > TOTALH) {
+        DIB = 0.0;
+        if (needSlope)
+            slope = -1.0;
+        return DIB;
+    }
+
+    //------------------------------------------------------
+    // Compute base taper function
+    //------------------------------------------------------
+    double RH = HTUP / TOTALH;
+
+    // This call computes:
+    // D1 = predicted dib
+    // slope = dD/dH (if ineedsl=1)
+    double D1 = getDibFrom2PointModel(JSP, RH, TOTALH, shapeParameter, taperCoef, slope, scalingFactor, needSlope);
+    double SL1 = slope;  // base derivative
+
+    DIB = D1;
+    //------------------------------------------------------
+    // If no extra taper modifiers → return immediately
+    //------------------------------------------------------
+    if (threePoint && Hex > 0.0 && Dex > 0.0) {
+
+        //------------------------------------------------------
+        // WITH EXTRA MODIFIERS
+        // Call sf_yhat3 to get modified dib and offset
+        //------------------------------------------------------
+        double D1rev = getDibFrom3PointModel(JSP, GEOSUB, DBH, TOTALH, HTUP, D1, Hex, Dex, threePointExtra);
+
+        // Modified diameter
+        DIB = D1rev;
+
+        double off1 = D1rev - D1;
+
+        //------------------------------------------------------
+        // If slope needed: compute derivative of the offset as well
+        //------------------------------------------------------
+        if (needSlope) {
+
+            // pick a nearby height HH2 for numerical derivative
+            double HH1 = HTUP;
+            double HH2;
+
+            if (HH1 < 0.99 * TOTALH)
+                HH2 = HH1 + TOTALH / 800.0;
+            else
+                HH2 = HH1 - TOTALH / 800.0;
+
+            // Compute base taper at HH2
+            double slope2 = 0.0;
+            double RH2 = HH2 / TOTALH;
+            double D2 = getDibFrom2PointModel(JSP, RH2, TOTALH, shapeParameter, taperCoef, slope2, scalingFactor, needSlope);
+
+            // Compute modifier taper at HH2
+            double D2rev = getDibFrom3PointModel(JSP, GEOSUB, DBH, TOTALH, HH2, D2, Hex, Dex, threePointExtra);
+
+            double off2 = D2rev - D2;
+
+            // Numerical derivative of offset
+            double SL2 = (off2 - off1) / (HH2 - HH1);
+
+            // Combined slope = base taper slope + modifier slope
+            slope = SL1 + SL2;
+        }
+    }
+
+    //For JSP 22 - 30, the profile use DOB, need to convert the DOB to DIB
+    if (JSP >= 22 && JSP <= 30) {
+        double dbt = 0;
+        double DOB = DIB;
+        DIB = BRK_OT(JSP, geoSubregion, dbh, DOB, HTUP, DBTBH, dbt);
+    }
+    return DIB;
+}
+
 void FlewellingTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     //fwinit.f
-    bool threePoint = false;
+    //bool threePoint = false;
     dbh = tree.dbh;
-    DBTBH = merchRules.doubleBarkThicknessAtBrestHeight;
-    if (BTR == 0.0) BTR = merchRules.barkThicknessRatio;
+    if (merchRules.doubleBarkThicknessAtBrestHeight > 0.0) {
+        DBTBH = merchRules.doubleBarkThicknessAtBrestHeight;
+    }
+    else if (merchRules.barkThicknessRatio > 0.0) {
+        BTR = merchRules.barkThicknessRatio;
+    }
+
+    //R3 could set BTR from Equation default
+    if (DBTBH == 0.0 && BTR > 0.0) {
+        DBTBH = dbh * (1.0 - BTR / 100.0);
+    }
 
     //If totalheight is not measured, get the estimated from merchHeight and merchTopDiameter
     if (tree.totalHeight <= 0.0) {
@@ -865,12 +1046,13 @@ void FlewellingTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merc
     double dbtBH = dbh - dbhIb;
 
     //Get shape parameters: r1, r2, r3, r4, r5, a3, rhi1, rhi2, rhc, rhlongi
-    FlewellingShapeParams shapeParameter = getShapeParameter(JSP, geoSubregion, dbh, totalHeight);
+    shapeParameter = getShapeParameter(JSP, geoSubregion, dbh, totalHeight);
 
     //Get Flewelling coefficients: a0, a1, a2, a4, b0, b1, b2, b4, c1, c2, e1, e2, F
-    FlewellingTaperCoef taperCoef = getTaperCoef(shapeParameter);
+    taperCoef = getTaperCoef(shapeParameter);
 
     //Get scaling factor
+    //if (JSP >= 22 && JSP < 30) dbhIb = dbh;
     F = getScalingFactor(JSP, dbhIb, totalHeight, shapeParameter, taperCoef);
 
     //add 3-point model here. Only work with one pair of heightExtra/diameterExtra
@@ -905,8 +1087,242 @@ void FlewellingTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merc
 
 
         //sf_3pt.f
-        Flewelling3PointExtra threePointExtra = getThreePointExtra(JSP, dbh, totalHeight, dbtBH, heightExtra, diameterExtra, F, shapeParameter, taperCoef);
+        threePointExtra = getThreePointExtra(JSP, geoSubregion, dbh, totalHeight, dbtBH, heightExtra, diameterExtra, F, shapeParameter, taperCoef);
         zValueExtra = threePointExtra.zValueExtra;
         
     }
+}
+
+double FlewellingTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double height)
+{
+    double relativeHeight = height / totalHeight;
+    double slope;
+
+    //Small tree stump diameter 
+    if (totalHeight <= 15.0 && height < 2.0) {
+        double H1 = 1.0;
+        double H5 = 5.0;
+        double H15 = 15.0;
+
+        double HR_5 = 0.18;
+        double HR_15LO = 0.11;
+        double HR_15HI = 0.25;
+
+        double DIB = 0.0;
+
+        // Species-specific adjustment (Ponderosa Pine)
+        if (JSP == 14) {
+            HR_5 = 0.25;
+            HR_15LO = 0.21;
+            HR_15HI = 0.27;
+        }
+
+        DIB = SF_DS(JSP, geoSubregion, dbh, totalHeight, H1, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope);
+
+        // Compute and possibly modify ratio DIB(1 ft)/(TOTALH - 1)
+        double HRATIO = DIB / (totalHeight - H1);
+
+        double HR_MIN = HR_5 + (totalHeight - H5) / (H15 - H5) * (HR_15LO - HR_5);
+        double HR_MAX = HR_5 + (totalHeight - H5) / (H15 - H5) * (HR_15HI - HR_5);
+
+        if (HRATIO < HR_MIN) HRATIO = HR_MIN;
+        if (HRATIO > HR_MAX) HRATIO = HR_MAX;
+
+        double DIB1 = HRATIO * (totalHeight - H1);
+
+        // Impose a limit of DOB(1 ft)/DBHob > DR_MIN
+        double DR_MIN = 1.0;
+
+        if (totalHeight < H15)
+            DR_MIN += 0.3 * (H15 - totalHeight) / (H15 - H5);
+
+        double DR = DIB1 / (dbh - DBTBH);
+
+        if (DR < DR_MIN)
+            DIB1 = DR_MIN * (dbh - DBTBH);
+
+        return DIB1;
+    }
+    else {
+
+        double dia = getDibFrom2PointModel(JSP, relativeHeight, totalHeight, shapeParameter, taperCoef, slope, F);
+        if (threePoint) {
+            dia = getDibFrom3PointModel(JSP, geoSubregion, dbh, totalHeight, height, dia, heightExtra, diameterExtra, threePointExtra);
+        }
+        double dib = dia;
+        if (JSP >= 22 && JSP <= 30) {
+            double dbt = 0;
+            dib = BRK_OT(JSP, geoSubregion, dbh, dia, height, DBTBH, dbt);
+        }
+        return dib;
+    }
+}
+
+double FlewellingTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob)
+{
+    const double EPSILON = 0.001;
+    const double TOL = 0.0005;
+    double DIB = diameter;
+    double H = 0.0;
+
+    double RHI1 = shapeParameter.rhi1;
+    double RHI2 = shapeParameter.rhi2;
+    double RHC = shapeParameter.rhc;
+    double RHLONGI = shapeParameter.rhlongi;
+
+    bool needSlope = false;
+    double slope = 0.0;
+
+    double HI2 = RHI2 * totalHeight;
+    double TOOHIGH = totalHeight;
+    double TOOLOW = 0.0;
+
+    // Compute diameter at inflection height
+    double DI2 = SF_DS(JSP, geoSubregion, dbh, totalHeight, HI2, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+    double RH = 0.0;
+    // ------------------------------------------------------------
+//   INITIAL GUESS FOR H
+// ------------------------------------------------------------
+    if (DIB > DI2) {
+        TOOHIGH = HI2;
+        double HI1 = RHI1 * totalHeight;
+
+        // check straight region if it exists
+        double DI1 = SF_DS(JSP, geoSubregion, dbh, totalHeight, HI1, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+        if (RHLONGI > 0.0) {
+            if (DIB < DI1) {
+                TOOLOW = DI1;
+                RH = RHI2 - (RHI2 - RHI1) * (DIB - DI2) / (DI1 - DI2);
+                H = RH * totalHeight;
+                goto START_NEWTON;
+            }
+            TOOHIGH = DI1;
+        }
+        else {
+            DI1 = DI2;
+        }
+
+        // Base diameter
+        double DBASE = SF_DS(JSP, geoSubregion, dbh, totalHeight, 0.0, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+        if (DBASE <= DIB) {
+            H = 0.0;
+            return H;
+        }
+
+        double RZ = pow((DIB - DI1) / (DBASE - DI1), 0.25);
+        RH = (1.0 - RZ) * RHI1;
+    }
+    else {
+        // Solution above inflection
+        TOOLOW = DI2;
+        double RZ = 1.0 - pow(DIB / DI2, 2.0);
+        RH = RHI2 + (1.0 - RHI2) * RZ;
+    }
+
+    H = RH * totalHeight;
+
+START_NEWTON:
+
+    // ------------------------------------------------------------
+    // NEWTON ITERATION
+    // ------------------------------------------------------------
+    {
+        needSlope = true;
+        int IBREAK = 0;
+        int ITER = 0;
+
+        while (true) {
+            ITER++;
+            if (ITER > 30) goto BISECTION;
+
+            double D = SF_DS(JSP, geoSubregion, dbh, totalHeight, H, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+            double ERR = D - DIB;
+
+            if (ERR < 0.0) TOOHIGH = H;
+
+            double ADJUST = -ERR / slope;
+            double H_new = H + ADJUST;
+
+            if (H_new > totalHeight)
+                H_new = (H + totalHeight) / 2.0;
+            if (H_new < 0.0)
+                H_new = H / 2.0;
+
+            H = H_new;
+
+            if (std::abs(ADJUST) <= TOL * totalHeight &&
+                std::abs(ERR) <= EPSILON)
+            {
+                // One more step was taken; now test slope
+                if (slope > 0.0) {
+                    if (IBREAK < 2) {
+                        IBREAK++;
+                        if (IBREAK == 1) H = 0.8 * H;
+                        if (IBREAK == 2) H = H + 0.25 * (totalHeight - H);
+                        continue; // restart tightening
+                    }
+                }
+                return H;
+            }
+        }
+    }
+
+    // ------------------------------------------------------------
+    // BISECTION METHOD
+    // ------------------------------------------------------------
+BISECTION:
+    {
+        needSlope = false;
+        int ITER = 0;
+
+        double HHIGH = TOOHIGH;
+        double HLOW = TOOLOW;
+
+        double D1, D2;
+        D1 = SF_DS(JSP, geoSubregion, dbh, totalHeight, HHIGH, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+        D2 = SF_DS(JSP, geoSubregion, dbh, totalHeight, HLOW, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+        double EHIGH = D1 - DIB;
+        double ELOW = D2 - DIB;
+
+        if (EHIGH * ELOW > 0.0) {
+            H = 0.0;
+            return H; // failed
+        }
+
+        double EPS = EPSILON * 2.0;
+
+        while (true) {
+            double HTRY = 0.5 * (HHIGH + HLOW);
+
+            double DTRY;
+            DTRY = SF_DS(JSP, geoSubregion, dbh, totalHeight, HTRY, heightExtra, diameterExtra, shapeParameter, taperCoef, threePointExtra, F, slope, needSlope);
+
+            double ERR = DTRY - DIB;
+
+            if (std::abs(ERR) < EPS) {
+                H = HTRY;
+                return H;
+            }
+
+            if (ITER > 40) {
+                H = HTRY;
+                return H;
+            }
+
+            ITER++;
+
+            if (ERR > 0.0)
+                HLOW = HTRY;
+            else
+                HHIGH = HTRY;
+        }
+    }
+
+    return H;
 }
