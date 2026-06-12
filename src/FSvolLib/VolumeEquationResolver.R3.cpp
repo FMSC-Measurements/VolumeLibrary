@@ -119,5 +119,12 @@ bool VolumeEquationResolver::isValidR3Equation(const std::string& voleq)
     if (std::find(EQNUM_R3.begin(), EQNUM_R3.end(), voleq) != EQNUM_R3.end()) {
         return true;
     }
+    //check 3-point equation
+    if (voleq.substr(5, 1) == "3") {
+        std::string voleqNew = voleq.substr(0, 5) + "2" + voleq.substr(6, 4);
+        if (std::find(EQNUM_R3.begin(), EQNUM_R3.end(), voleqNew) != EQNUM_R3.end()) {
+            return true;
+        }
+    }
     return false; // parity with Fortran (no change if not found)
 }

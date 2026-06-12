@@ -17,12 +17,12 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 10;
+        volOpt.region = 2;
         volOpt.forest = 1;
-        volOpt.fiaCode = 98;
+        volOpt.fiaCode = 122;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        volOpt.volumeEquationNumberOverride = "A00FW2W098";
+        volOpt.volumeEquationNumberOverride = "200FW2W122";
         // ...
         
         TreeMeasurment tree;
@@ -34,7 +34,7 @@ public:
         tree.minTopDibSawOverride = 0.0;
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
-        tree.formClass = 80;
+        tree.formClass = 0;
         // ...
 
         //test input merch rules for BEH

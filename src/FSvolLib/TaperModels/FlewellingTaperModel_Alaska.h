@@ -105,7 +105,8 @@ FlewellingShapeParams shapeAlaska(int JSP, const std::string_view geocode,
 
     auto F = F_shape[JRSP - 1];
 
-    // second‑growth submodel
+    // second‑growth submodel, 
+    // the original Fortran uses geoCode 01 and JRSP = 3. I think it should be JRSP=4 and geoCode = "02"!!!
     if (JRSP == 3 && geocode == "01") {
         F[25] = SUBF[0];
         F[34] = SUBF[1];

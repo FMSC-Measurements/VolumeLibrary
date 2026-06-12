@@ -215,5 +215,14 @@ bool VolumeEquationResolver::isValidR7Equation(const std::string& VOLEQ)
         contains(EQNUMD_R7, VOLEQ)) {
         return true;
     }
+    //check for 3-point equation
+    if (VOLEQ.substr(5, 1) == "3") {
+        std::string VOLEQ2 = VOLEQ.substr(0, 5) + "2" + VOLEQ.substr(6, 4);
+        if (contains(EQNUM_R7, VOLEQ2) || contains(EQNUMI_R7, VOLEQ2) ||
+            contains(EQNUMF_R7, VOLEQ2) || contains(EQNUMC_R7, VOLEQ2) ||
+            contains(EQNUMD_R7, VOLEQ2)) {
+            return true;
+        }
+    }
     return false; 
 }

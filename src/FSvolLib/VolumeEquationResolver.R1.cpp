@@ -168,5 +168,12 @@ bool VolumeEquationResolver::isValidR1Equation(const std::string& voleq)
     if (prefix == "616BEHW" || prefix == "632BEHW" || prefix == "B00BEHW") {
         return true;
     }
+    //check 3-point equation
+    if (voleq.substr(5, 1) == "3") {
+        std::string voleqNew = voleq.substr(0, 5) + "2" + voleq.substr(6, 4);
+        if (std::find(EQNUM_R1.begin(), EQNUM_R1.end(), voleqNew) != EQNUM_R1.end()) {
+            return true;
+        }
+    }
     return false; // No match; leave values unchanged (parity with Fortran)
 }

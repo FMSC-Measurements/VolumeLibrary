@@ -4,6 +4,7 @@
 #include <vector>
 #include <algorithm>
 #include <cctype>
+#include <stdexcept>
 
 // ----------------- Data tables (from Fortran DATA) -----------------
 
@@ -61,6 +62,11 @@ static inline std::string trim(const std::string& s) {
 template <typename T>
 static inline const T& at1(const std::vector<T>& v, int oneBasedIndex) {
     return v.at(static_cast<size_t>(oneBasedIndex - 1));
+}
+
+template <typename Container, typename T>
+bool contains(const Container& c, const T& x) {
+    return std::find(c.begin(), c.end(), x) != c.end();
 }
 
 // ----------------- C++ translation of SUBROUTINE R10_EQN ----------------------
@@ -127,6 +133,14 @@ bool VolumeEquationResolver::isValidR10Equation(const std::string& VOLEQ)
     }
     for (int i = 1; i <= 27; ++i) {
         if (VOLEQ == at1(OTHEREQN_R10, i)) {
+            return true;
+        }
+    }
+    //check for 3-point equation
+    if (VOLEQ.substr(5, 1) == "3") {
+        std::string VOLEQ2 = VOLEQ.substr(0, 5) + "2" + VOLEQ.substr(6, 4);
+        if (contains(TONEQN_R10, VOLEQ2) || contains(CHUEQN_R10, VOLEQ2) ||
+            contains(OTHEREQN_R10, VOLEQ2) ) {
             return true;
         }
     }

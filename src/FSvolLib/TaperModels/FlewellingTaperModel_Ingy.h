@@ -4,19 +4,6 @@
 #include <string_view>
 #include <functional>
 
-//struct ShapeResult {
-//    std::array<float, 6> RFLW;
-//    std::array<float, 4> RHFW;
-//};
-//
-//// Computes COOP #2 (INGY east‑side) taper geometric parameters.
-//ShapeResult shp_c2(
-//    int jsp,                 // Species code
-//    float dbh,               // Diameter at breast height
-//    float ht,                // Total height
-//    std::string_view geosub  // Geographic subclass, e.g. "15"
-//);
-
 // ------------------------------------------------------------
 // Coefficient Tables (constexpr)
 // ------------------------------------------------------------

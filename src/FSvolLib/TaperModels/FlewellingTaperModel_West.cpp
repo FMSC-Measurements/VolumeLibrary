@@ -145,12 +145,6 @@ FlewellingShapeParams SHP_W3(double DBHOB, double HTTOT, std::string_view geoSub
     double FR34 = F[33];  // F(34)
 
     if (geoSub != "00") {
-        //for (size_t i = 0; i < 8; i++) {
-        //    if (DFSUB[i] == geoSub) {
-        //        FR25 = R25[i];
-        //        FR34 = R34[i];
-        //    }
-        //}
         int i = find_geo_index(geoSub);
         FR25 = R25[i];
         FR34 = R34[i];
@@ -631,7 +625,7 @@ double COR_WS(int JSP, double HTTOT, double HI, double HJ)
 
     // FORTRAN uses 1-based: JSPR = JSP - 2
     // QH index: QH(JSP,1) → QH[JSPR][0]
-    int JSPR = JSP - 2;
+    int JSPR = JSP - 2 - 1;  //-1 to get 0-based index
 
     // Extract Q-coefficients
     double Q1 = QH[JSPR][0];

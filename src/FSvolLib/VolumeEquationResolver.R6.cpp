@@ -441,5 +441,13 @@ bool VolumeEquationResolver::isValidR6Equation(const std::string& VOLEQ)
         contains(EQNUMC_R6, VOLEQ) || contains(EQNUMD_R6, VOLEQ)) {
         return true;
     }
+    //check for 3-point equation
+    if (VOLEQ.substr(5, 1) == "3") {
+        std::string voleqNew = VOLEQ.substr(0, 5) + "2" + VOLEQ.substr(6, 4);
+        if (contains(EQNUMB_R6, voleqNew) || contains(EQNUMI_R6, voleqNew) || contains(EQNUMF_R6, voleqNew) ||
+            contains(EQNUMC_R6, voleqNew) || contains(EQNUMD_R6, voleqNew)) {
+            return true;
+        }
+    }
     return false;
 }

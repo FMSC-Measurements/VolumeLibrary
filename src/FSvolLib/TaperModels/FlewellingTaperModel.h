@@ -10,27 +10,30 @@ private:
     VolumeEquation volumeEquation_;
 
     //Flewelling parameters:
-    int JSP = 0;
-    double BTR = 0.0;
-    double DBTBH = 0.0;
-    VolumeEquation::GeoCode geoCode;
-    std::string geoSubregion = "00";
-    double dbhIb;
-    double dbh;
-    double totalHeight;
-    double merchHeight = 0.0;
-    double merchTopD = 0.0;
+    int JSP_ = 0;
+    //double BTR = 0.0;
+    double dibDobPercent_ = 0.0;
+    //double DBTBH = 0.0;
+    double doubleBarkThicknessBH_ = 0.0;
+    VolumeEquation::GeoCode geoCode_;
+    std::string geoSubregion_ = "00";
+    double dbhIb_;
+    double dbh_;
+    double totalHeight_;
+    double merchHeight_ = 0.0;
+    double merchTopDib_ = 0.0;
 
-    FlewellingShapeParams shapeParameter;
-    FlewellingTaperCoef taperCoef;
-    Flewelling3PointExtra threePointExtra;
-    double F; //scallingFactor
+    FlewellingShapeParams shapeParameter_;
+    FlewellingTaperCoef taperCoef_;
+    Flewelling3PointExtra threePointExtra_;
+    //double F; //scallingFactor
+    double scalingFactor_ = 1.0;
 
     //3-point
-    bool threePoint = false;
-    double heightExtra = 0.0;
-    double diameterExtra = 0.0;
-    double zValueExtra = 0.0;
+    bool threePoint_ = false;
+    double heightExtra_ = 0.0;
+    double diameterExtra_ = 0.0;
+    double zValueExtra_ = 0.0;
 
     double getDbhIb(int JSP, std::string_view geoSub, double dbh, double totalHt);
     
@@ -50,29 +53,15 @@ private:
     
     double getDibFrom3PointModel(int jsp, std::string_view geoSub, double dbh, double totalHt, double H, double DIB, double HEX, double DEX, Flewelling3PointExtra threePointExtra);
     
-    double computeDiameterError(int jsp, std::string_view geoSub,
-        double DBH,
-        double HT_try,
-        double DBTBH,
-        double H1,
-        double D1);
+    double computeDiameterError(int jsp, std::string_view geoSub, double DBH, double HT_try, double DBTBH, double H1, double D1);
+    
     double solveTotalHeight(int JSP, std::string_view geoSub, double DBH, double dbtBH, double H1, double D1);
-    double SF_CORR(int JSP, const std::string_view geosub, double TOTALH, double HI, double HJ);
-    double SF_DFZ(int JSP, const std::string_view geoSub, double DBH, double THT, double H, double DIBmod, double Z);
-    double SF_DS(
-        int JSP,
-        const std::string_view GEOSUB,
-        double DBH,
-        double TOTALH,
-        double HTUP,
-        double heightExtra,
-        double diameterExtra,
-        FlewellingShapeParams shapeParameter,
-        FlewellingTaperCoef taperCoef,
-        Flewelling3PointExtra threePointExtra,
-        double scalingFactor,
-        double& slope,
-        bool needSlope = false);
+    
+    double computeDibErrorCorrelationAtHeights(int JSP, const std::string_view geosub, double TOTALH, double HI, double HJ);
+    
+    double adjustDibAtHeight(int JSP, const std::string_view geoSub, double DBH, double THT, double H, double DIBmod, double Z);
+    
+    double estimateDibAtHeight(double upperHeight, double& slope, bool needSlope = false);
 
 
 public:

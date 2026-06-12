@@ -12,7 +12,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     taperModel_.InitializeOnTree(tree, merchRules, vco);
 
     //small tree volume calculation
-    //BLM BEH model
+    //BLM BEH model and also Clark model
     //if (tree.totalHeight <= 17.8 || SQRT(DBHIB * DBHIB - (DBHIB * DBHIB) * 17.3 / TTH)) < merchRules.minTopDibSaw)
     //{
     //    TOTCUB = 0.00272708 * (DBHIB * DBHIB) * TTH;
@@ -582,6 +582,62 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
 
             }
         }
+
+        // check for 32 foot log equation to combine the two 16-foot log into one and recalculate log board foot volume
+        std::string volumeEquationNumber_;
+        if (volumeEquationNumber_.substr(3, 2) == "F3" || volumeEquationNumber_.substr(1, 2) == "32" ||
+            volumeEquationNumber_.substr(1, 2) == "61" || volumeEquationNumber_.substr(1, 2) == "62") {
+            
+            std::vector<LogOutput> result32;
+            int numseg32 = (numseg + 1) / 2;
+            result32.reserve(numseg32);
+
+            for (int i = 0; i < numseg; i += 2) {
+                logData.logNumber = i + 1;
+                logData.product = vco.primaryProduct;
+                logData.isSecondary = false;
+                logData.length = result[i * 2].length + result[i * 2 + 1].length;
+                logData.largeEndDiameterScaled = result[i * 2].largeEndDiameterScaled;
+                logData.smallEndDiameterScaled = result[i * 2 + 1].smallEndDiameterScaled;
+                logData.heightToLargeEndDiameter = result[i * 2].heightToLargeEndDiameter;
+                logData.grossCubicFoot = result[i * 2].grossCubicFoot + result[i * 2 + 1].grossCubicFoot;
+                logData.greenWeight = result[i * 2].greenWeight + result[i * 2 + 1].greenWeight;
+                logData.dryWeight = result[i * 2].dryWeight + result[i * 2 + 1].dryWeight;
+                logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
+                logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
+                result32.push_back(logData);
+            }
+
+            //check the top log
+            if (numseg % 2 != 0) {
+                logData.logNumber = numseg32;
+                logData.product = vco.primaryProduct;
+                logData.isSecondary = false;
+                logData.length = result[numseg - 1].length;
+                logData.largeEndDiameterScaled = result[numseg - 1].largeEndDiameterScaled;
+                logData.smallEndDiameterScaled = result[numseg - 1].smallEndDiameterScaled;
+                logData.heightToLargeEndDiameter = result[numseg - 1].heightToLargeEndDiameter;
+                logData.grossCubicFoot = result[numseg - 1].grossCubicFoot;
+                logData.greenWeight = result[numseg - 1].greenWeight;
+                logData.dryWeight = result[numseg - 1].dryWeight;
+                logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
+                logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
+                result32.push_back(logData);
+            }
+
+            if (vco.region == 10) {
+                //clear the 16-foot log result and reset to the 32-foot log data
+                result.clear();
+                result = result32;
+                numseg = numseg32;
+            }
+            else {
+                //prorate 32 boardfoot volumes into 16 foot pieces
+
+            }
+
+        }
+
     }
 	// merchendize secondary product
 		// get heights

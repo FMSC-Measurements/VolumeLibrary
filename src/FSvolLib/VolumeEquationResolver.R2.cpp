@@ -134,9 +134,15 @@ VolumeEquation VolumeEquationResolver::GetR2VolumeEquation(VolumeCalculationOpti
 bool VolumeEquationResolver::isValidR2Equation(const std::string& voleq)
 {
     // --- Validation branch: SPEC == 9999 ---
-        if (std::find(EQNUM_R2.begin(), EQNUM_R2.end(), voleq) != EQNUM_R2.end()) {
-            return true;
-        return false; // No match; parity with Fortran
+    if (std::find(EQNUM_R2.begin(), EQNUM_R2.end(), voleq) != EQNUM_R2.end()) {
+        return true;
     }
-
+    //check 3-point equation
+    else if (voleq.substr(5, 1) == "3") {
+        std::string voleqNew = voleq.substr(0, 5) + "2" + voleq.substr(6, 4);
+        if (std::find(EQNUM_R2.begin(), EQNUM_R2.end(), voleqNew) != EQNUM_R2.end()) {
+            return true;
+        }
+    }
+    return false; // No match; parity with Fortran
 }

@@ -193,5 +193,12 @@ bool VolumeEquationResolver::isValidR4Equation(const std::string& voleq)
     if (it != R4_EQNUM.end()) {
         return true;
     }
+    //check 3-point equation
+    if (voleq.substr(5, 1) == "3") {
+        std::string voleqNew = voleq.substr(0, 5) + "2" + voleq.substr(6, 4);
+        if (std::find(R4_EQNUM.begin(), R4_EQNUM.end(), voleqNew) != R4_EQNUM.end()) {
+            return true;
+        }
+    }
     return false; 
 }
