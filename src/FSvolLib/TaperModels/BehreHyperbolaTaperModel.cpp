@@ -3,7 +3,7 @@
 #include "../Volumecalculators/JenkinsBiomass.h"
 
 BehreHyperbolaTaperModel::BehreHyperbolaTaperModel(VolumeEquation volumeEquation)
-    : TaperModel(), volEqStr(volumeEquation.GetVolumeEquationNumber())
+    : TaperModel(), volEqStr_(volumeEquation.GetVolumeEquationNumber())
 {
     
 }
@@ -11,7 +11,7 @@ BehreHyperbolaTaperModel::BehreHyperbolaTaperModel(VolumeEquation volumeEquation
 // -----------------------------
 // BLMTAP: computes D2 (Diameter Inside Bark)
 // -----------------------------
-double BehreHyperbolaTaperModel::BLMTAP(double DBHOB, double HTTOT, double TLH, double HTUP,
+double BehreHyperbolaTaperModel::BlmBehrTaper(double DBHOB, double HTTOT, double TLH, double HTUP,
     double D17, double TOP, double XLEN, int Profile)
 {
     // Ensure Profile maps to 0..9 for BLMTHT
@@ -25,7 +25,7 @@ double BehreHyperbolaTaperModel::BLMTAP(double DBHOB, double HTTOT, double TLH, 
 
     // Height given in FEET (TLH == 0.0)
     if (TLH == 0.0) {
-        const double HBUTT = HTTOT - (XLEN + stumpHeight); //should use stump height to replace the 1.5
+        const double HBUTT = HTTOT - (XLEN + stumpHeight_); //should use stump height to replace the 1.5
         if (HBUTT <= 0.0) {
             return 0.0;
         }
@@ -67,7 +67,7 @@ double BehreHyperbolaTaperModel::BLMTAP(double DBHOB, double HTTOT, double TLH, 
         double B = 1.0 - A;
         const double C = (TLH - 1.0) * XLEN;
         double H = C / (1.0 - TOP * B / (D17 - A * TOP));
-        double HtTot_est = H + XLEN + stumpHeight; // retained though not used in the A-formula
+        double HtTot_est = H + XLEN + stumpHeight_; // retained though not used in the A-formula
 
         const int iLimit = 20;
         int iCount = 0;
@@ -84,7 +84,7 @@ double BehreHyperbolaTaperModel::BLMTAP(double DBHOB, double HTTOT, double TLH, 
             B = 1.0 - A;
 
             H = C / (1.0 - TOP * B / (D17 - A * TOP));
-            HtTot_est = H + XLEN + stumpHeight;
+            HtTot_est = H + XLEN + stumpHeight_;
 
             Tolerance = std::fabs(RA - A);
             RA = A;
@@ -103,31 +103,31 @@ double BehreHyperbolaTaperModel::BLMTAP(double DBHOB, double HTTOT, double TLH, 
 // -----------------------------
 // BEHTAP: wrapper calculating D17 and calling BLMTAP or simplified flow
 // -----------------------------
-double BehreHyperbolaTaperModel::BEHtaper(const std::string& VOLEQ_in,
+double BehreHyperbolaTaperModel::BehrTaper(const std::string& VOLEQ_in,
     double DBHOB, double HTTOT, double TLH, double HTUP,
     int FCLASS, double TOP)
 {
     const std::string VOLEQ = normalize_voleq(VOLEQ_in);
 
-    double XLEN = 16.3;  //should use max log length + trim to replace the 16.3
+    double XLEN = maxLogLength_ + trim_;  // 16.3;  //should use max log length + trim to replace the 16.3
     double D2 = 0.0;
     double D17 = (DBHOB * static_cast<double>(FCLASS)) / 100.0;
 
     if (starts_with_b(VOLEQ)) {
         D17 = std::round(D17); // ANINT in Fortran
-        if (slice_1based(VOLEQ, 4, 3) == "B32") XLEN = 32.6;
+        if (slice_1based(VOLEQ, 4, 3) == "B32") XLEN = (maxLogLength_ + trim_) * 2.0;  // 32.6;
 
         int PROFILE = 10;
         int TAPEQU = 56;
         BLMTAPEQ(VOLEQ, PROFILE, TAPEQU);
 
         if (HTUP == 4.5) D2 = double_bark(TAPEQU, DBHOB);
-        else D2 = BLMTAP(DBHOB, HTTOT, TLH, HTUP, D17, TOP, XLEN, PROFILE);
+        else D2 = BlmBehrTaper(DBHOB, HTTOT, TLH, HTUP, D17, TOP, XLEN, PROFILE);
     }
     else {
         // Set XLEN by VOLEQ prefix
-        if (slice_1based(VOLEQ, 1, 3) == "632") XLEN = 32.6;
-        else XLEN = 16.3;
+        if (slice_1based(VOLEQ, 1, 3) == "632") XLEN = (maxLogLength_ + trim_) * 2.0;  //32.6;
+        //else XLEN = 16.3;
 
         double A = 0.62;
         if (slice_1based(VOLEQ, 1, 1) == "I") {  //for BIA Behr equation I16BEH
@@ -137,7 +137,7 @@ double BehreHyperbolaTaperModel::BEHtaper(const std::string& VOLEQ_in,
 
         if (HTTOT > 0.0) {
             // Height in FEET
-            const double H1 = HTTOT - XLEN - stumpHeight;
+            const double H1 = HTTOT - XLEN - stumpHeight_;
             if (H1 <= 0.0) return 0.0;
 
             const double HX = HTTOT - HTUP;
@@ -150,7 +150,7 @@ double BehreHyperbolaTaperModel::BEHtaper(const std::string& VOLEQ_in,
             const double T = TOP / D17;
             const double AT = A / (1.0 - A * T);
             const double BT = (1.0 / (1.0 - T)) - AT;
-            const double H1 = (TLH - 1.0) * XLEN - stumpHeight;
+            const double H1 = (TLH - 1.0) * XLEN - stumpHeight_;
             const double HX = TLH * XLEN - HTUP;
             const double HR = HX / H1;
             const double DR = T + (HR / (AT * HR + BT));
@@ -163,24 +163,28 @@ double BehreHyperbolaTaperModel::BEHtaper(const std::string& VOLEQ_in,
 
 void BehreHyperbolaTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
-    topDibSaw = merchRules.minTopDibSaw;
-    formClass = tree.formClass;
+    topDibSaw_ = merchRules.minTopDibSaw;
+    formClass_ = tree.formClass;
+    maxLogLength_ = merchRules.maxLogLength;
+    trim_ = merchRules.trim;
+
     if (tree.formClass == 0) {
         if (vco.volumeCalculationOptions == VolumeCalculationOptions::VolumeCalculationType::CRUISE) {
             throw std::invalid_argument("Form Class missing");
         }
         else {
-            formClass = GetFormClass(volEqStr, vco.forest, tree.dbh);
+            if (volEqStr_.substr(0, 1) == "I") formClass_ = 70;
+            else formClass_ = GetFormClass(volEqStr_, vco.forest, tree.dbh);
         }
     }
 
-    if (slice_1based(volEqStr, 4, 3) == "B32" || slice_1based(volEqStr, 1, 3) == "632") formClassHeight = 33.6;
+    if (slice_1based(volEqStr_, 4, 3) == "B32" || slice_1based(volEqStr_, 1, 3) == "632") formClassHeight_ = 33.6;
 
-    dbhIb = tree.dbh - merchRules.doubleBarkThicknessAtBrestHeight;
+    dbhIb_ = tree.dbh - merchRules.doubleBarkThicknessAtBrestHeight;
 
-    d17 = (tree.dbh * static_cast<double>(formClass)) / 100.0;
+    d17_ = (tree.dbh * static_cast<double>(formClass_)) / 100.0;
 
-    stumpHeight = merchRules.stumpHeight;
+    stumpHeight_ = merchRules.stumpHeight;
 }
 
 double BehreHyperbolaTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double height)
@@ -188,7 +192,7 @@ double BehreHyperbolaTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double
     double totalLogHeight = 0.0;
     if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET) totalLogHeight = tree.totalHeight;
 
-    return BEHtaper(volEqStr, tree.dbh, tree.totalHeight, totalLogHeight, height, formClass, topDibSaw);
+    return BehrTaper(volEqStr_, tree.dbh, tree.totalHeight, totalLogHeight, height, formClass_, topDibSaw_);
 }
 
 double BehreHyperbolaTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob)
@@ -224,40 +228,40 @@ double BehreHyperbolaTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double
 
 StemVolume BehreHyperbolaTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
-    StemVolume result = { 0.0,0.0,0.0,0.0,false,false };
+    StemVolume result = { 0.0,0.0,0.0,0.0};
 
     //no calculation here for BLM Behre equation
-    if (starts_with_b(volEqStr)) return result;
+    if (starts_with_b(volEqStr_)) return result;
 
     //Region 6 BEH equation statts here
     StumpVolume stumpVol = raileVol(vco.fiaCode, tree.dbh, merchRules.stumpHeight);
     result.stumpVol = stumpVol.woodVol;
 
-    if (tree.totalHeight < formClassHeight || dbhIb < topDibSaw) {
-        result.primaryVol = 0.00272708 * (dbhIb * dbhIb) * tree.totalHeight;
+    if (tree.totalHeight < formClassHeight_ || dbhIb_ < topDibSaw_) {
+        result.primaryVol = 0.00272708 * (dbhIb_ * dbhIb_) * tree.totalHeight;
     }
-    else if (d17 < topDibSaw) {
+    else if (d17_ < topDibSaw_) {
         //small tree use d17 for butt log
-        double logVol = 0.00272708 * (dbhIb * dbhIb + d17 * d17) * formClassHeight;
+        double logVol = 0.00272708 * (dbhIb_ * dbhIb_ + d17_ * d17_) * formClassHeight_;
         result.primaryVol = logVol;
         //find tip volume
-        logVol = 0.00272708 * (d17 * d17) * (tree.totalHeight - formClassHeight);
+        logVol = 0.00272708 * (d17_ * d17_) * (tree.totalHeight - formClassHeight_);
         result.primaryVol += logVol;
     }
     else {
         // find cubicfoot volume for butt log
-        double H17 = formClassHeight;
-        double logVol = 0.00272708 * (dbhIb * dbhIb + d17 * d17) * H17;
+        double H17 = formClassHeight_;
+        double logVol = 0.00272708 * (dbhIb_ * dbhIb_ + d17_ * d17_) * H17;
         result.primaryVol = logVol;
 
         double HTUP = tree.totalHeight - H17;
         double A = 0.62;
         double B = 1.0 - A;
-        double topD = topDibSaw;
+        double topD = topDibSaw_;
         double S = 0.0;
         std::array<double, 21> D;
 
-        D[1] = d17;
+        D[1] = d17_;
 
         int I = 2;
         bool hitLabel100 = false;
@@ -293,7 +297,7 @@ StemVolume BehreHyperbolaTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchR
         // ----- FORTRAN LABEL 100 LOGIC -----
         if (hitLabel100) {
 
-            double DR = topD / d17;
+            double DR = topD / d17_;
             double HX = (DR * B * HTUP) / (1.0 - (A * DR));
             double H = (I - 2) * 16.3;
             S = HTUP - HX - H;
@@ -315,8 +319,8 @@ StemVolume BehreHyperbolaTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchR
         }
     }
 
-    result.volCalculated = true;
-    result.isBEH = true;
+    //result.volCalculated = true;
+    //result.isBEH = true;
 
     return result;
 }

@@ -8,6 +8,8 @@
 class WenselOlsonTaperModel : public TaperModel
 {
 private:
+    VolumeEquation volumeEquation_;
+
     // Coefficients for Wensel and Krumland model
     // Species: DF(0), PP(1), SP(2), WF(3), RF(4), IC(5), JP(6), LP(7), RW(8)
     static constexpr std::array<std::array<double, 5>, 9> COEF_C = {{
@@ -54,5 +56,6 @@ public:
     
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
-    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0, false, false }; };
+    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0 }; };
+
 };

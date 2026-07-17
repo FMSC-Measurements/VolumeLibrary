@@ -17,17 +17,14 @@ class ClarkTaperModel : public TaperModel
 {
 private:
     ClarkCoef clarkCoef, clarkCoefOb;
-    double totHt, dbhIb;
-    //double dib17, fixDi, dx, dob17;
-    //double r, c, e, p, b, a, a4, b4, a17, b17, q, afi, bfi;
-    //double ro, co, eo, po, bo, ao, ao17, bo17;
-    //double tr1, tr2, tr3;
-
+    
+    double totHt;
+    double dbhIb;
+    double dbhOb_;
     int volSp;
     int spgrp;
     int sppIdx;
     int geoSppIdx;
-    double dbhOb;
     bool shortHeight = false;
     double shrtHt;
     double topHt = 0.0;
@@ -37,8 +34,8 @@ private:
     double r9VolCorFactor = 1.0; //Correction factors to account for proper merchandising R9
 
     VolumeEquation volumeEquation_;
-    int subRegion = 0; // for R8, valid 1, 2, 3, 4, 5, 6, 7, 9
-    int eqHeightType = 0; // for R8, 0 = total Ht, 4 = height to 4" top, 7 = height to 7" top, 9 = height to 9" top, 1 = any of the heights
+    int subRegion_ = 0; // for R8, valid 1, 2, 3, 4, 5, 6, 7, 9
+    int eqHeightType_ = 0; // for R8, 0 = total Ht, 4 = height to 4" top, 7 = height to 7" top, 9 = height to 9" top, 1 = any of the heights
 
     int findSpeciesIndex(int spcd);
     
@@ -64,8 +61,8 @@ public:
     ClarkTaperModel(VolumeEquation volumeEquation)
         : TaperModel(), volumeEquation_(volumeEquation)
     {
-        subRegion = volumeEquation_.subregionalCode[0] - '0';
-        eqHeightType = volumeEquation_.subregionalCode[1] - '0';
+        subRegion_ = volumeEquation_.subregionalCode[0] - '0';
+        eqHeightType_ = volumeEquation_.subregionalCode[1] - '0';
         setClarkCoef(volumeEquation_.fiaCode);
     }
 
@@ -76,4 +73,5 @@ public:
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
     StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override;
+
 };

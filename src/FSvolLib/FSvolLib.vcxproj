@@ -174,8 +174,10 @@
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R234.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R5.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R610.h" />
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R89.h" />
     <ClInclude Include="VolumeCalculators\HawaiiSharpnackTaper.h" />
     <ClInclude Include="VolumeCalculators\HawaiiSharpnackVolume.h" />
+    <ClInclude Include="VolumeCalculators\MerchHeightCalculator_R89.h" />
     <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.DistrictProvinceData.h" />
     <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.h" />
     <ClInclude Include="VolumeCalculators\NationalScaleVolumeBiomass.Table1.h" />
@@ -222,6 +224,7 @@
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R234.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R5.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R610.cpp" />
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R89.cpp" />
     <ClCompile Include="VolumeCalculators\HawaiiSharpnackVolume.cpp" />
     <ClCompile Include="VolumeCalculators\NationalScaleVolumeBiomassCalculator.cpp" />
     <ClCompile Include="VolumeCalculators\ProfileVolumeCalculator.cpp" />

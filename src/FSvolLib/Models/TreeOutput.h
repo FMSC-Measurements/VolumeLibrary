@@ -14,7 +14,7 @@ struct TreeOutput
 	double grossCubicFootSecondary = 0.0;
 	double grossInternationalBoardFoot = 0.0;
 	
-	double totalCubicFoot = 0.0; //from ground to tip
+	double totalCubicFoot = 0.0; //from stump to tip
 	double stumpCubicFoot = 0.0;
 	double tipCubicFoot = 0.0;
 

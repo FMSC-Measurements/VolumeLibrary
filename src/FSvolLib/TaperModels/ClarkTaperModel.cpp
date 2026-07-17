@@ -104,6 +104,7 @@ int ClarkTaperModel::findSpeciesIndex(int spcd)
 
         idx = r8SpeciesIndex(sppGrp);
     }
+    //spgrp = sppGrp;
     return idx;
 }
 
@@ -138,14 +139,16 @@ void ClarkTaperModel::setClarkCoef(int spcd)
     else if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R8)
     {
         volSp = R8Species[idx];
-        geoSppIdx = findR8GeoSppIndex(subRegion, volSp);
+        geoSppIdx = findR8GeoSppIndex(subRegion_, volSp);
 
         clarkCoef.a4 = R8CF[geoSppIdx][3];
         clarkCoef.b4 = R8CF[geoSppIdx][4];
         clarkCoef.afi = R8CF[geoSppIdx][5];
         clarkCoef.bfi = R8CF[geoSppIdx][6];
+        clarkCoef.spgrp = R8CF[geoSppIdx][2];
+        spgrp = clarkCoef.spgrp;
 
-        if (eqHeightType == 0 || eqHeightType == 1 || eqHeightType == 8) {
+        if (eqHeightType_ == 0 || eqHeightType_ == 1 || eqHeightType_ == 8) {
             
             clarkCoef.r = coefH0[idx][1];
             clarkCoef.c = coefH0[idx][2];
@@ -168,7 +171,7 @@ void ClarkTaperModel::setClarkCoef(int spcd)
             clarkCoef.fixDi = DIB479[idx][1];
             clarkCoef.spgrp = R8CF[geoSppIdx][2];
         }
-        else if (eqHeightType == 4) {
+        else if (eqHeightType_ == 4) {
             clarkCoef.r = coefH4[idx][1];
             clarkCoef.c = coefH4[idx][2];
             clarkCoef.e = coefH4[idx][3];
@@ -180,7 +183,7 @@ void ClarkTaperModel::setClarkCoef(int spcd)
             clarkCoefOb.b17 = obR8CF[geoSppIdx][6];
             clarkCoef.fixDi = DIB479[idx][1];
         }
-        else if (eqHeightType == 7 || eqHeightType == 9) {
+        else if (eqHeightType_ == 7 || eqHeightType_ == 9) {
             clarkCoef.r = coefH79[idx][1];
             clarkCoef.c = coefH79[idx][2];
             clarkCoef.e = coefH79[idx][3];
@@ -208,7 +211,7 @@ void ClarkTaperModel::setClarkCoef(int spcd)
 //  (dbhIb), top height(topHt) and inside - bark top diameter(topDib).
 //  a and b are coefficients for inside - bark calculations.
 
-double GetTotalHeight(double htTot, double dbhIb, double dib17, double topHt, double topDib, double a, double b)
+double GetTotalHeight(double htTot, double dib17, double topHt, double topDib, double a, double b)
 {
     double totHt = 0.0;
 
@@ -302,7 +305,7 @@ double ClarkTaperModel::ClarkCubicFootVol(double lowrHt, double upprHt)
         return cfVol;
 
     // If equation use height to 4, 7, 9 top
-    if (eqHeightType == 4 || eqHeightType == 7 || eqHeightType == 9) {
+    if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
         return ClarkCubicVolH479(lowrHt, upprHt);
     }
 
@@ -547,7 +550,7 @@ double ClarkTaperModel::ClarkDib(double stemHt)
     double stmDib = 0.0;
 
     // If equation use height to 4, 7, 9 top
-    if (eqHeightType == 4 || eqHeightType == 7 || eqHeightType == 9) {
+    if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
         return ClarkDibH479(stemHt);
     }
 
@@ -716,11 +719,6 @@ double ClarkTaperModel::ClarkDibH479(double stemHt)
 //  diameter at 17.3' (dib17) and total height (totHt).  r, c, e, p, b,
 //  and a are the coefficients for inside - bark calculations.
 
-//struct CLKCOEF {
-//    double R, C, E, P, B, A;
-//    double TOTHT, DBHIB, DIB17;
-//};
-
 // ---------------------------------------------------------------
 // C++ version of: SUBROUTINE R9HT(stemHt, COEFFS, stmDib, errFlg)
 // ---------------------------------------------------------------
@@ -743,14 +741,14 @@ double ClarkTaperModel::ClarkHt(double stmDib, bool useDob)
         b = clarkCoefOb.b;
         a = clarkCoefOb.a;
         dib17 = clarkCoefOb.dib17;
-        dbhIb = dbhOb;
+        dbhIb = dbhOb_;
     }
     double xxx = 0.0;
 
     double stemHt = 0.0;
 
     // If equation use height to 4, 7, 9 top
-    if (eqHeightType == 4 || eqHeightType == 7 || eqHeightType == 9) {
+    if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
         return ClarkHtH479(stmDib, useDob);
     }
     // -----------------------------------------------------------
@@ -846,7 +844,7 @@ double ClarkTaperModel::ClarkHtH479(double stmDib, bool useDob) {
         p = clarkCoefOb.p;
         q = clarkCoefOb.q;
         dib17 = clarkCoefOb.dib17;
-        dbhIb = dbhOb;
+        dbhIb = dbhOb_;
     }
    
     double stmHt = 0.0;
@@ -906,7 +904,7 @@ double ClarkTaperModel::ClarkHtH479(double stmDib, bool useDob) {
 void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     int errFlg = 0;
-    dbhOb = tree.dbh;
+    dbhOb_ = tree.dbh;
     if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R9)
     {
         sawDib = merchRules.minTopDibSaw;
@@ -1033,7 +1031,7 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
             clarkCoef.dib17 = 0.1;
 
         //get total height
-        totHt = GetTotalHeight(tree.totalHeight, dbhIb, clarkCoef.dib17, topHt, topDib, clarkCoef.a, clarkCoef.b);
+        totHt = GetTotalHeight(tree.totalHeight, clarkCoef.dib17, topHt, topDib, clarkCoef.a, clarkCoef.b);
 
         //set the volume correction factor
         if (volumeEquation_.fiaCode < 300) r9VolCorFactor = 1.04;
@@ -1044,14 +1042,14 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
     } //end geoCode R9
     else if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R8)
     {
-        if (eqHeightType == 4) {
+        if (eqHeightType_ == 4) {
             if (tree.referenceDiameter != 4.0 && tree.referenceHeight == 0.0 && tree.merchHeightNonsaw == 0.0) {
                 throw std::invalid_argument("Reference height to 4 inch top is needed for this equation");
             }
             topDib = 4.0;
         }
 
-        if (eqHeightType == 7  || eqHeightType == 9) {
+        if (eqHeightType_ == 7  || eqHeightType_ == 9) {
             if ((tree.referenceDiameter != 7.0 && tree.referenceDiameter != 9.0) && tree.referenceHeight == 0.0 && tree.merchHeightSaw == 0.0) {
                 throw std::invalid_argument("Reference height to 7 or 9 inch top is needed for this equation");
             }
@@ -1265,7 +1263,7 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
         }
 
         //Get total height
-        totHt = GetTotalHeight(tree.totalHeight, tree.dbh, clarkCoefOb.dib17, topHt, topDob, clarkCoefOb.a, clarkCoefOb.b);
+        totHt = GetTotalHeight(tree.totalHeight, clarkCoefOb.dib17, topHt, topDob, clarkCoefOb.a, clarkCoefOb.b);
 
     }
 }
@@ -1289,50 +1287,57 @@ double ClarkTaperModel::GetHeightAtDiameter(TreeMeasurment tree, double diameter
 //get stem volume for stump, promary prod, topwood, and tip
 StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
-    StemVolume result = { 0.0,0.0,0.0,0.0, false, false };
+    StemVolume result = { 0.0,0.0,0.0,0.0 };
     double tr1 = clarkCoef.tr1;
     double tr2 = clarkCoef.tr2;
     double tr3 = clarkCoef.tr3;
     double lowHt = 0.0;
     double upHt = merchRules.stumpHeight;
     result.stumpVol = ClarkCubicFootVol(lowHt, upHt);
-    //double stumpvol = ClarkCubicVolH479(lowHt, upHt);
     lowHt = merchRules.stumpHeight;
     bool useDob = false;
     if (vco.region == 8) useDob = true;
     if (vco.primaryProduct == 1) {
         upHt = (tree.merchHeightSaw > 0.0 ? tree.merchHeightSaw : ClarkHt(merchRules.minTopDibSaw, useDob));
-        if (eqHeightType == 4 || eqHeightType == 7 || eqHeightType == 9) {
-            result.primaryVol = ClarkCubicVolH479(lowHt, upHt);
-            if (eqHeightType == 7 || eqHeightType == 9) {
-                double yr = ClarkTopwoodRatio(clarkCoef.dib17, topHt, tr1, tr2, tr3);
-                result.topwoodVol = result.primaryVol * yr;
-                if (result.topwoodVol < 0.0) result.topwoodVol = 0.0;
+        if (upHt > merchRules.minMerchLength + merchRules.stumpHeight + merchRules.trim) {
+
+            if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
+                result.primaryVol = ClarkCubicVolH479(lowHt, upHt);
+                if (eqHeightType_ == 7 || eqHeightType_ == 9) {
+                    double yr = ClarkTopwoodRatio(clarkCoef.dib17, topHt, tr1, tr2, tr3);
+                    result.topwoodVol = result.primaryVol * yr;
+                    if (result.topwoodVol < 0.0) result.topwoodVol = 0.0;
+                }
             }
+            else result.primaryVol = ClarkCubicFootVol(lowHt, upHt);
         }
-        else result.primaryVol = ClarkCubicFootVol(lowHt, upHt);
 
         upHt = (tree.merchHeightNonsaw > 0.0 ? tree.merchHeightNonsaw : ClarkHt(merchRules.minTopDibNonSaw, useDob));
         double vol4 = 0.0;
-        if (eqHeightType != 4 && eqHeightType != 7 && eqHeightType != 9) {
-            vol4 = ClarkCubicFootVol(lowHt, upHt);
-            result.topwoodVol = vol4 - result.primaryVol;
-            if (result.topwoodVol < 0.0) result.topwoodVol = 0.0;
+        if (upHt > merchRules.minMerchLength + merchRules.stumpHeight + merchRules.trim) {
+
+            if (eqHeightType_ != 4 && eqHeightType_ != 7 && eqHeightType_ != 9) {
+                vol4 = ClarkCubicFootVol(lowHt, upHt);
+                result.topwoodVol = vol4 - result.primaryVol;
+                if (result.topwoodVol < 0.0) result.topwoodVol = 0.0;
+            }
         }
     }
     else
     {
         upHt = (tree.merchHeightNonsaw > 0.0 ? tree.merchHeightNonsaw : ClarkHt(merchRules.minTopDibNonSaw, useDob));
-        
-        if (eqHeightType == 4 || eqHeightType == 7 || eqHeightType == 9) {
-            result.primaryVol = ClarkCubicVolH479(lowHt, upHt);
-            if (eqHeightType == 7 || eqHeightType == 9) {
-                double yr = ClarkTopwoodRatio(clarkCoef.dib17, topHt, tr1, tr2, tr3);
-                result.topwoodVol = result.primaryVol * yr;
-                if (result.topwoodVol < 0.0) result.topwoodVol = 0.0;
+        if (upHt > merchRules.minMerchLength + merchRules.stumpHeight + merchRules.trim) {
+
+            if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
+                result.primaryVol = ClarkCubicVolH479(lowHt, upHt);
+                if (eqHeightType_ == 7 || eqHeightType_ == 9) {
+                    double yr = ClarkTopwoodRatio(clarkCoef.dib17, topHt, tr1, tr2, tr3);
+                    result.topwoodVol = result.primaryVol * yr;
+                    if (result.topwoodVol < 0.0) result.topwoodVol = 0.0;
+                }
             }
+            else result.primaryVol = ClarkCubicFootVol(lowHt, upHt);
         }
-        else result.primaryVol = ClarkCubicFootVol(lowHt, upHt);
 
         result.topwoodVol = 0.0;
     }
@@ -1340,7 +1345,7 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
     result.tipVol = ClarkCubicFootVol(lowHt, totHt) - result.primaryVol - result.topwoodVol;
     if (result.tipVol < 0.0) result.tipVol = 0.0;
     
-    result.volCalculated = true;
+    //result.volCalculated = true;
 
     if (vco.region == 9) {
 

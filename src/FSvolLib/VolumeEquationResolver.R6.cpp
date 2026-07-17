@@ -432,7 +432,7 @@ bool VolumeEquationResolver::isValidR6Equation(const std::string& VOLEQ)
     // ----- Validation branch -----
     // Prefix checks
     if (hasPrefix(VOLEQ, "616BEHW") || hasPrefix(VOLEQ, "628BEHW") || hasPrefix(VOLEQ, "632BEHW") ||
-        hasPrefix(VOLEQ, "616TRFW") || hasPrefix(VOLEQ, "632TRFW")) {
+        hasPrefix(VOLEQ, "I16BEHW") ) {  //|| hasPrefix(VOLEQ, "616TRFW") || hasPrefix(VOLEQ, "632TRFW")
         return true;
     }
 

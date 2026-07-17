@@ -22,9 +22,9 @@ public:
         volOpt.fiaCode = 122;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        volOpt.volumeEquationNumberOverride = "200FW2W122";
         // ...
-        
+        auto volEqDefault = volLib.GetVolumeEquationNumber(volOpt);
+
         TreeMeasurment tree;
         tree.dbh = 19.7;
         tree.totalHeight = 76.0;
@@ -34,8 +34,10 @@ public:
         tree.minTopDibSawOverride = 0.0;
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
-        tree.formClass = 0;
+        tree.formClass = 70;
         // ...
+        volOpt.volumeEquationNumberOverride = "200FW2W122";
+        auto treeOutput = volLib.CalculateVolume(volOpt, tree);
 
         //test input merch rules for BEH
         MerchRules merchRules;
@@ -55,11 +57,10 @@ public:
         merchRules.useCorrectedFactor = false;
 
         // Act
-        auto treeOutput = volLib.CalculateVolume(volOpt, tree);
         //auto treeOutput = volLib.CalculateVolume(volOpt, tree, merchRules);
 
         //// Assert
-        Assert::IsTrue(treeOutput.greenWeightPrimary > 0);
+        Assert::IsTrue(treeOutput.grossCubicFootPrimary > 0);
     }
 
 

@@ -8,6 +8,7 @@
 class DeMarsTaperModel : public TaperModel
 {
 private:
+    VolumeEquation volumeEquation_;
     const int fiaCode_;
     double topDibSaw = 6.0;
     double totalHeight = 0.0;
@@ -171,7 +172,7 @@ private:
 
 public:
     DeMarsTaperModel(VolumeEquation volumeEquation)
-        : TaperModel(), fiaCode_(volumeEquation.fiaCode)
+        : TaperModel(), fiaCode_(volumeEquation.fiaCode), volumeEquation_(volumeEquation)
     {}
 
     void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // {/* do nothing */ };
@@ -180,5 +181,6 @@ public:
 
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
-    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0, false, false }; };
+    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0 }; };
+
 };

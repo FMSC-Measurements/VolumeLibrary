@@ -6,16 +6,6 @@
 
 //R6 DVE for boardfoot volume -----------------------------
 
-// C++ translation of the Fortran subroutine:
-//   SUBROUTINE R6VOL2(VOLEQ, DBHOB, HT, VOL, ERRFLAG)
-// Inputs:
-//   VOLEQ  : volume equation identifier, 10 characters (e.g., "601...263...")
-//   DBHOB  : diameter at breast height over bark (inches)
-//   HT     : total height (feet)
-// Outputs:
-//   VOL    : array of length 15; this routine sets VOL(2) and VOL(3) (Fortran 1-based).
-//            In C++ we map VOL[1] to VOL(2), VOL[2] to VOL(3).
-//   ERRFLAG: set to 0 (as in the Fortran) even when no equation is matched.
 TreeOutput R6VOL2(const std::string& VOLEQ, TreeMeasurment tree)
 {
     TreeOutput out;

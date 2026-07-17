@@ -207,6 +207,7 @@ BiomassOutput woodlandBiomass(VolumeCalculationOptions vco, TreeMeasurment tree,
     //use Jenkins' method to calculate foliage biomass
     BiomassOutput jenkinsBiomass = jenkins(SPCD, DRC);
     out.foliage = jenkinsBiomass.foliage;
+    if (!tree.isLive) out.foliage = 0.0;
 
     return out;
 }

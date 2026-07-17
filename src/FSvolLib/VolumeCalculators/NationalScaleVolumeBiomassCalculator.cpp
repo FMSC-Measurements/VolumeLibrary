@@ -500,7 +500,7 @@ double getAverageCrownRatio(int DIVISION, int SPCD)
 }
 
 //calculate branch remaining for broken height tree
-double getBranchRem(int province, int spcd, double totalHeight, double brokenHeight, double crownRatioDecimal)
+double NationalScaleVolumeBiomass::getBranchRem(int province, int spcd, double totalHeight, double brokenHeight, double crownRatioDecimal)
 {
     double BrchRem = 1.0;
     double CR = crownRatioDecimal;
@@ -564,7 +564,7 @@ int NationalScaleVolumeBiomass::getEcoProvince(int REGN, int FORST, int DIST) {
 }
 
 //get decay densitity proportion and dead carbon fraction.
-double getDecayDenProp(int SFTHRD, int DECAYCD,  double& DeadCF)
+double NationalScaleVolumeBiomass::getDecayDenProp(int SFTHRD, int DECAYCD,  double& DeadCF)
 {
     double DenProp = 0.97;
     // Softwood SFTHRD==0; Hardwood SFTHRD!=0

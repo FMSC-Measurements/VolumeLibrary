@@ -146,7 +146,10 @@ public:
     void setDivisionFromVolEq();
     void buildVolEqStr();
     bool isValidEcoRegion(std::string s);
-    int getEcoProvince(int regn, int forst, int dist);
+    static int getEcoProvince(int regn, int forst, int dist);
+    static double getDecayDenProp(int SFTHRD, int DECAYCD, double& DeadCF);
+    static double getBranchRem(int province, int spcd, double totalHeight, double brokenHeight, double crownRatioDecimal);
+
 
     template <std::size_t N>
     EqCoeffs find_spEqCoef2(const std::array<spCoefRow, N>& SPcoef, const std::array<jkCoefRow, 9>& JKcoef);

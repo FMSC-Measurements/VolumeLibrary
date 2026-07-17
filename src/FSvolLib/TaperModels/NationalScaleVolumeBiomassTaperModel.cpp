@@ -17,13 +17,13 @@ double NationalScaleVolumeBiomassTaperModel::GetHeightAtDiameter(TreeMeasurment 
 
 StemVolume NationalScaleVolumeBiomassTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
-	StemVolume result = { 0.0,0.0,0.0,0.0, false, false };
+	StemVolume result = { 0.0,0.0,0.0,0.0 };
 	TreeOutput out = nsvb.CalculateVolumeBiomass(vco, tree, merchRules);
 	result.stumpVol = out.stumpCubicFoot;
 	result.primaryVol = out.grossCubicFootPrimary;
 	result.topwoodVol = out.grossCubicFootSecondary;
 	result.tipVol = out.tipCubicFoot;
-	result.volCalculated = true;
+	//result.volCalculated = true;
 
 	return result;
 }

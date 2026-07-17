@@ -42,7 +42,7 @@ FlewellingTaperModel::FlewellingTaperModel(VolumeEquation volumeEquation)
 
     int fiaCode = volumeEquation_.fiaCode;
     geoCode_ = volumeEquation_.geoCode;
-    geoSubregion_ = { volumeEquation_.subregionalCode };
+    geoSubregion_ = std::string(volumeEquation_.subregionalCode, std::size(volumeEquation_.subregionalCode));
     if (volumeEquation_.volEqStr.substr(5, 1) == "3") threePoint_ = true;
 
     // ---------------- REGION I ----------------

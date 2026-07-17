@@ -2,7 +2,7 @@
 #include "WenselOlsonTaperModel.h"
 
 WenselOlsonTaperModel::WenselOlsonTaperModel(VolumeEquation volumeEquation)
-    : TaperModel(), fiaCode_(volumeEquation.fiaCode)
+    : TaperModel(), fiaCode_(volumeEquation.fiaCode), volumeEquation_(volumeEquation)
 {
     int speciesIndex = GetSpeciesIndex(fiaCode_);
 

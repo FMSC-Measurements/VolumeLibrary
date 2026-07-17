@@ -214,11 +214,12 @@ bool VolumeEquationResolver::isValidR9Equation(const std::string& VOLEQ)
     const bool isDVEE = VOLEQ.size() >= 7 && VOLEQ.compare(3, 4, "DVEE") == 0;
     if (isCLKE || isDVEE) {
         if (VOLEQ.size() >= 10) {
-            const std::string sp3 = VOLEQ.substr(7, 3); // positions 8..10 in Fortran
-            if (std::find(LSSP.begin(), LSSP.end(), sp3) != LSSP.end() ||
-                std::find(CSSP.begin(), CSSP.end(), sp3) != CSSP.end() ||
-                std::find(NESP.begin(), NESP.end(), sp3) != NESP.end() ||
-                std::find(SNSP.begin(), SNSP.end(), sp3) != SNSP.end()) {
+            //const std::string sp3 = VOLEQ.substr(7, 3); // positions 8..10 in Fortran
+            int sp3 = std::stoi(VOLEQ.substr(7, 3));
+            if (std::find(LSFIA.begin(), LSFIA.end(), sp3) != LSFIA.end() ||
+                std::find(CSFIA.begin(), CSFIA.end(), sp3) != CSFIA.end() ||
+                std::find(NEFIA.begin(), NEFIA.end(), sp3) != NEFIA.end() ||
+                std::find(SNFIA.begin(), SNFIA.end(), sp3) != SNFIA.end()) {
                 return true;
             }
         }

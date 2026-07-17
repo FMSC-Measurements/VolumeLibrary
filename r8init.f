@@ -749,6 +749,35 @@ C----------------------------------------------------------------------
 C     MAIN LOGIC
       PTR = 0
       SPEC = VOLEQ(8:10)
+      !Added R8 species mapping for height calculation 20260702
+      if (SPEC .EQ. '100') then 
+          SPEC = '131'
+      elseif (SPEC .EQ. '197') then 
+          SPEC = '090'
+      elseif (SPEC .EQ. '261') then 
+          SPEC = '260'
+      elseif (SPEC .EQ. '300' .OR. SPEC .EQ. '500') then 
+          SPEC = '998'
+      elseif (SPEC .EQ. '314') then 
+          SPEC = '318'
+      elseif (SPEC .EQ. '404') then 
+          SPEC = '400'
+      elseif (SPEC .EQ. '545' .OR. SPEC .EQ. '546') then 
+          SPEC = '540'
+      elseif (SPEC .EQ. '550') then 
+          SPEC = '552'
+      elseif (SPEC .EQ. '742') then 
+          SPEC = '740'
+      elseif (SPEC .EQ. '800' .OR. SPEC .EQ. '804') then 
+          SPEC = '802'
+      elseif (SPEC .EQ. '817' .OR. SPEC .EQ. '831') then 
+          SPEC = '827'
+      elseif (SPEC.EQ.'823'.OR.SPEC.EQ.'828'.OR.SPEC.EQ.'830') then 
+          SPEC = '812'
+      elseif (SPEC .EQ. '930') then 
+          SPEC = '931'
+      endif
+      
       IF(SPEC.EQ.'298') THEN
          PTR = 88
       ELSEIF(SPEC.EQ.'998')THEN

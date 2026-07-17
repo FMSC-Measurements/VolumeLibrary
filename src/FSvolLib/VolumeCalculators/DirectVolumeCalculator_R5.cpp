@@ -13,15 +13,6 @@ namespace r5dve {
         return s.substr(7, 3); // Fortran VOLEQ(8:10) is C++ substr(7, 3)
     }
 
-    // Main function matching Fortran semantics
-    // Arguments:
-    //   voleq : species equation string (CHARACTER*10 in Fortran)
-    //   dbhob : diameter at breast height (REAL)
-    //   httot : total height (REAL)
-    //   mtopp : merchantability top (REAL); logic uses ranges [4,6,8] inches or tip (0)
-    //   vol   : outputs array; uses indices 1..15 in Fortran -> vol[0..14] in C++
-    //   bfpflg, cupflg : flags (INTEGER)
-    //   errflag : output error flag (INTEGER) same as Fortran
     TreeOutput r5dve::R5HARV(const std::string& voleq, TreeMeasurment tree, MerchRules merchRules)
     {
         TreeOutput out;
@@ -336,8 +327,5 @@ namespace r5dve {
         out.grossBoardFootPrimary = vol[1] > 0.0 ? vol[1] : vol[9];
 
         return out;
-        // NOTE: stump (VOL(14)) and tip (VOL(15)) volumes moved to voinit in original Fortran.
-        // They remain unset here, matching commented-out lines in the source.
     }
-
 } // namespace r5

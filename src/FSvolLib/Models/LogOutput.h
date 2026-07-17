@@ -10,6 +10,9 @@ struct LogOutput
 	int product = 1;
 	bool isSecondary = false; // indicates log is topwood
 
+	double smallEndDiameterActual = 0.0;
+	double largeEndDiameterActual = 0.0;
+
 	double smallEndDiameterScaled = 0.0;
 	double largeEndDiameterScaled = 0.0;
 	

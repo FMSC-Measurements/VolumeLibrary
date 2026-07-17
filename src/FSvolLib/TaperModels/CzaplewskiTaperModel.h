@@ -10,11 +10,11 @@ class CzaplewskiTaperModel : public TaperModel
 private:
     const int fiaCode_;
     const VolumeEquation::ModelType modelType_;
-    std::string volEqStr;
-    double top6Ht = 0.0;
-    double heightExtra = 0.0;
-    double diameterExtra = 0.0;
-    double dbtbh = 0.0;
+    std::string volEqStr_;
+    double top6Ht_ = 0.0;
+    double heightExtra_ = 0.0;
+    double diameterExtra_ = 0.0;
+    double dbtbh_ = 0.0;
 
     // --- Coefficients for Two Parameter Model ---
     // Arrays adjusted for 0-based indexing [SP][Coefficient]
@@ -66,7 +66,7 @@ private:
 
 public:
     CzaplewskiTaperModel(VolumeEquation volumeEquation)
-        : TaperModel(), fiaCode_(volumeEquation.fiaCode), modelType_(volumeEquation.modelType), volEqStr(volumeEquation.volEqStr)
+        : TaperModel(), fiaCode_(volumeEquation.fiaCode), modelType_(volumeEquation.modelType), volEqStr_(volumeEquation.volEqStr)
     {}
 
     void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // {/* do nothing */ };
@@ -75,5 +75,5 @@ public:
 
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
-    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0, false, false }; };
+    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0 }; };
 };

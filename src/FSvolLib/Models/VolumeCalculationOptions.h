@@ -36,6 +36,8 @@ struct VolumeCalculationOptions
 	VolumeCalculationType volumeCalculationOptions = VolumeCalculationType::FVS;
 	std::string volumeEquationNumberOverride; 
 	std::string ecoRegion; // optional fia only
+	int basalArea = 0;
+	int siteIndex = 0;
 };
 
 struct StemVolume {
@@ -43,8 +45,8 @@ struct StemVolume {
 	double primaryVol = 0.0;
 	double topwoodVol = 0.0;
 	double tipVol = 0.0;
-	bool volCalculated = false;
-	bool isBEH = false;
+	//bool volCalculated = false;
+	//bool isBEH = false;
 };
 
 

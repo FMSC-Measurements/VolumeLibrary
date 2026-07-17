@@ -60,17 +60,6 @@ static inline std::string buildR8Code(char geoDigit, char topCode, const std::st
     return out;                    // total length = 10
 }
 
-/**
- * @brief C++ translation of SUBROUTINE R8_CEQN(FORST, DIST, SPEC, PROD, VAR, VOLEQ, ERRFLAG)
- *
- * @param FORST   Two-character forest code (e.g., "01"), parsed as integer.
- * @param DIST    Two-character district code (e.g., "06"), parsed as integer.
- * @param SPEC    FIA species code (int). If 9999 → validation branch; may be set to 8888 if VOLEQ is valid.
- * @param PROD    Product code (2 chars). In current logic, always set VOLEQ[2] to '1' (PROD=='08' path is commented out).
- * @param VAR     Variant code (unused in this subroutine’s logic, but kept to match signature).
- * @param VOLEQ   Output volume equation string (10 chars).
- * @param ERRFLAG Error flag (0 = OK, 1 = species not matched → fallback species index used).
- */
 VolumeEquation VolumeEquationResolver::GetR8VolumeEquation(VolumeCalculationOptions vco)
 {
     //(void)PROD; (void)VAR; // not used in current logic per commented-out Fortran path
@@ -182,9 +171,7 @@ VolumeEquation VolumeEquationResolver::GetR8VolumeEquation(VolumeCalculationOpti
 
 bool VolumeEquationResolver::isValidR8Equation(const std::string& VOLEQ)
 {
-    // --- Validation branch (SPEC == 9999) ---
-    // VEQTEM(1:1)='8', VEQTEM(4:7)='CLKE'
-    // Loop I = 1..7 (geo digit), J over TOPCODE, K over species
+    // Clark equation
     for (int i = 1; i <= 7; ++i) {
         char geoDigit = static_cast<char>('0' + i);
         for (char top : TOPCODE_R8) {
@@ -194,6 +181,26 @@ bool VolumeEquationResolver::isValidR8Equation(const std::string& VOLEQ)
                     return true;
                 }
             }
+        }
+    }
+
+    //DVE (Lasher)equation
+    if (VOLEQ.substr(3, 3) == "DVE") {
+        int geoCode = std::stoi(VOLEQ.substr(1, 2));
+        if (geoCode > 0 && geoCode <= 35) {
+            int spCode = std::stoi(VOLEQ.substr(7, 3));
+
+            bool exists = std::find(SNFIA_R8.begin(), SNFIA_R8.end(), spCode) != SNFIA_R8.end();
+
+            if (exists) {
+                // species code is present
+                return true;
+            }
+            else {
+                // not present
+                return false;
+            }
+
         }
     }
     // No match; return with SPEC unchanged

@@ -198,6 +198,12 @@
     <ClInclude Include="TaperModels\FlewellingTaperModel_West.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R89.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\MerchHeightCalculator_R89.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -318,6 +324,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TaperModels\FlewellingTaperModel_West.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R89.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -78,33 +78,7 @@ static const std::map<int, std::string> fia_to_eqnum_R1 = {
     { 999, eqR1(38) }  // Unknown
 };
 
-// ----------------- Small helpers ---------------------------------------------
-//static inline std::string trim(const std::string& s) {
-//    size_t b = 0, e = s.size();
-//    while (b < e && std::isspace(static_cast<unsigned char>(s[b]))) ++b;
-//    while (e > b && std::isspace(static_cast<unsigned char>(s[e - 1]))) --e;
-//    return s.substr(b, e - b);
-//}
-//
-//static inline std::string to_upper(std::string s) {
-//    std::transform(s.begin(), s.end(), s.begin(),
-//        [](unsigned char c) { return static_cast<chard::toupper(c)); });
-//        return s;
-//}
-
-// ----------------- C++ translation of SUBROUTINE R1_EQN ----------------------
-/**
- * @brief C++ translation of Fortran SUBROUTINE R1_EQN(FORST, SPEC, VAR, VOLEQ, ERRFLAG)
- *
- * @param FORST   Two-character forest code, read as integer (e.g., "08", "12")
- * @param SPEC    FIA species code (may be remapped; may be set to 8888 in validation branch)
- * @param VAR     FVS variant code (2-char), case-insensitive comparisons used
- * @param VOLEQ   Volume equation identifier (10 chars typical). Set by this function.
- * @param ERRFLAG Error flag (0 = OK, 1 = not found in FIA map → fallback applied)
- */
 VolumeEquation VolumeEquationResolver::GetR1VolumeEquation(VolumeCalculationOptions vco)
-//static void R1_EQN_cpp(const std::string& FORST, int& SPEC, const std::string& VAR,
-//    std::string& VOLEQ, int& ERRFLAG)
 {
     int ERRFLAG = 0;
     int FORNUM = vco.forest;

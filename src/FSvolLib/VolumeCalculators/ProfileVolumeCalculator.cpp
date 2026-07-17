@@ -1,6 +1,7 @@
 #include "..\SmalianScribnerIntl14.h"
 #include "ProfileVolumeCalculator.h"
 #include "..\WeightfactorAndRefDataResolver.h"
+#include "../DefaultFormClassForFVS.h"
 #include <array>
 
 
@@ -12,12 +13,26 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     taperModel_.InitializeOnTree(tree, merchRules, vco);
 
     //small tree volume calculation
-    //BLM BEH model and also Clark model
-    //if (tree.totalHeight <= 17.8 || SQRT(DBHIB * DBHIB - (DBHIB * DBHIB) * 17.3 / TTH)) < merchRules.minTopDibSaw)
-    //{
-    //    TOTCUB = 0.00272708 * (DBHIB * DBHIB) * TTH;
-    //    return;
-    //}
+    //BLM and R6 BEH model 
+    if (volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
+        double dbhIb = tree.dbh - merchRules.doubleBarkThicknessAtBrestHeight;
+        double formClass = tree.formClass;
+        if (formClass == 0.0) {
+            formClass = GetFormClass(volumeEquation_.volEqStr, vco.forest, tree.dbh);
+        }
+        double d17 = tree.dbh * formClass / 100.0;
+        if (tree.totalHeight <= 17.8 || 
+            tree.dbh < merchRules.minTopDibNonSaw ||
+            std::sqrt(dbhIb*dbhIb - dbhIb*dbhIb*17.3/tree.totalHeight) < merchRules.minTopDibSaw) {
+            result.totalCubicFoot =   0.00272708 * (dbhIb * dbhIb) * tree.totalHeight;
+            return result;
+        }
+        else if (d17 < merchRules.minTopDibNonSaw) {
+            double logvol = 0.00272708 * (dbhIb * dbhIb + std::pow(d17, 2)) * 17.3;
+            result.totalCubicFoot = logvol + 0.00272708 * std::pow(d17, 2) * (tree.totalHeight - 17.3);
+            return result;
+        }
+    }
 
     // Segment Logs
     //for product 07 and 18 no need to to log segmentation
@@ -116,10 +131,13 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     
 	// calculate total cubic and cords
     // total volume forBEH,  NVB and CLK profile will be calculated differently.
-    StemVolume stemVol = taperModel_.GetStemCubicVol(tree, merchRules, vco);
-    if (stemVol.volCalculated) {
+    if ((volumeEquation_.modelType == VolumeEquation::ModelType::BEH && volumeEquation_.geoCode == VolumeEquation::GeoCode::R6) ||
+        volumeEquation_.modelType == VolumeEquation::ModelType::CLK ||
+        volumeEquation_.modelType == VolumeEquation::ModelType::NVB) {
+
+        StemVolume stemVol = taperModel_.GetStemCubicVol(tree, merchRules, vco);
         //for Behre's taper to calculate the total cubic volume
-        if (stemVol.isBEH) {
+        if (volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
             result.stumpCubicFoot = stemVol.stumpVol;
             result.totalCubicFoot = stemVol.primaryVol;
             result.cordMerchantable = std::round((result.grossCubicFootPrimary / 90.0) * 10.0) / 10.0;
@@ -141,7 +159,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
             result.grossCubicFootPrimary = stemVol.primaryVol;
             result.grossCubicFootSecondary = stemVol.topwoodVol;
             result.tipCubicFoot = stemVol.tipVol;
-            result.totalCubicFoot = stemVol.stumpVol + stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol;
+            result.totalCubicFoot = stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol;
             double cordFactor = 90.0;
             if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
             result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
@@ -149,6 +167,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
         return result;
     }
 
+    //all other profile model calculate stem volume as below
     // stump volume
     double ht2 = merchRules.stumpHeight;
     double stumpDib = taperModel_.GetDiameterAtHeight(tree, ht2);
@@ -189,7 +208,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     segVol = smallian(dibLarge, 0.0, tree.totalHeight - ht2);
     tipVol += segVol;
 
-    double totalCubicVolume = stumpVolume + merchCubic + tipVol;
+    double totalCubicVolume = merchCubic + tipVol;
 
     //calculate cord volume for product 07 (firewood) using a factor, each region has its own factor
     double cordVolume = 0.0;
@@ -559,17 +578,31 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                 logData.length = loglen[i];
                 logData.logNumber = i + 1;
                 logData.product = vco.primaryProduct;
+                logData.largeEndDiameterActual = actualDiaLarge;
+                logData.smallEndDiameterActual = actualDiaSmall;
                 logData.largeEndDiameterScaled = static_cast<int>(actualDiaLarge + 0.501);
                 logData.smallEndDiameterScaled = static_cast<int>(actualDiaSmall + 0.501);
                 logData.isSecondary = false;
 
                 //Calculate log cubic and boardfoot volume
                 //call smalian, scribner, and intl14 to calculate cubic and boardfoot volume
-                logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, loglen[i]);
-                logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, loglen[i], COR);
+                //R6 BEH Butt Log cubic volume uses different method
+                if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R6 && volumeEquation_.modelType == VolumeEquation::ModelType::BEH && i == 0) {
+                    logData.grossCubicFoot = r6BehButtLogVolume(tree.dbh, logData.smallEndDiameterScaled);
+                }
+                else {
+                    logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, loglen[i]);
+                }
+
+                //BIA Behr using different boardfoot calculation
+                if (volumeEquation_.volEqStr.substr(0, 1) == "I" && volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
+                    logData.grossBoardFoot = biaBehBoardfoot(logData.smallEndDiameterActual, loglen[i]);
+                }
+                else logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, loglen[i], COR);
+
                 logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, loglen[i]);
 
-                    //calculate log green weight and dry weight using cubic volume and weight factor
+                //calculate log green weight and dry weight using cubic volume and weight factor
                 if (!tree.isLive) logData.greenWeight = logData.grossCubicFoot * wf.weightFactorDead;
                 else
                 {
@@ -583,61 +616,132 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
             }
         }
 
+        //32 foot log equation
         // check for 32 foot log equation to combine the two 16-foot log into one and recalculate log board foot volume
-        std::string volumeEquationNumber_;
-        if (volumeEquationNumber_.substr(3, 2) == "F3" || volumeEquationNumber_.substr(1, 2) == "32" ||
-            volumeEquationNumber_.substr(1, 2) == "61" || volumeEquationNumber_.substr(1, 2) == "62") {
-            
-            std::vector<LogOutput> result32;
-            int numseg32 = (numseg + 1) / 2;
-            result32.reserve(numseg32);
+        // find volume for 32 foot logs (Flewelling & Demars equation only)
+        if (volumeEquation_.modelType == VolumeEquation::ModelType::DEM ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::F32 ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::F33 ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::FW2 ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::FW3)
+        {
 
-            for (int i = 0; i < numseg; i += 2) {
-                logData.logNumber = i + 1;
-                logData.product = vco.primaryProduct;
-                logData.isSecondary = false;
-                logData.length = result[i * 2].length + result[i * 2 + 1].length;
-                logData.largeEndDiameterScaled = result[i * 2].largeEndDiameterScaled;
-                logData.smallEndDiameterScaled = result[i * 2 + 1].smallEndDiameterScaled;
-                logData.heightToLargeEndDiameter = result[i * 2].heightToLargeEndDiameter;
-                logData.grossCubicFoot = result[i * 2].grossCubicFoot + result[i * 2 + 1].grossCubicFoot;
-                logData.greenWeight = result[i * 2].greenWeight + result[i * 2 + 1].greenWeight;
-                logData.dryWeight = result[i * 2].dryWeight + result[i * 2 + 1].dryWeight;
-                logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
-                logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
-                result32.push_back(logData);
+            if (volumeEquationNumber.substr(3, 2) == "F3" || volumeEquationNumber.substr(1, 2) == "32" ||
+                volumeEquationNumber.substr(1, 2) == "61" || volumeEquationNumber.substr(1, 2) == "62")
+            {
+
+                std::vector<LogOutput> result32;
+                int numseg32 = (numseg + 1) / 2;
+                result32.reserve(numseg32);
+                int logNumber32 = 0;
+                for (int i = 0; i + 1 < numseg; i += 2) {
+                    logNumber32 += 1;
+                    logData.logNumber = logNumber32;
+                    logData.product = vco.primaryProduct;
+                    logData.isSecondary = false;
+                    logData.length = result[i].length + result[i + 1].length;
+                    logData.largeEndDiameterActual = result[i].largeEndDiameterActual;
+                    logData.smallEndDiameterActual = result[i + 1].smallEndDiameterActual;
+                    logData.largeEndDiameterScaled = std::floor(logData.largeEndDiameterActual);
+                    logData.smallEndDiameterScaled = std::floor(logData.smallEndDiameterActual);
+                    //logData.largeEndDiameterScaled = result[i].largeEndDiameterScaled;
+                    //logData.smallEndDiameterScaled = result[i + 1].smallEndDiameterScaled;
+                    logData.heightToLargeEndDiameter = result[i].heightToLargeEndDiameter;
+                    logData.grossCubicFoot = result[i].grossCubicFoot + result[i + 1].grossCubicFoot;
+                    logData.greenWeight = result[i].greenWeight + result[i + 1].greenWeight;
+                    logData.dryWeight = result[i].dryWeight + result[i + 1].dryWeight;
+                    logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
+                    logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
+                    result32.push_back(logData);
+                }
+
+                //check the top log
+                if (numseg % 2 != 0) {
+                    logData.logNumber = numseg32;
+                    logData.product = vco.primaryProduct;
+                    logData.isSecondary = false;
+                    logData.length = result[numseg - 1].length;
+                    logData.largeEndDiameterActual = result[numseg - 1].largeEndDiameterActual;
+                    logData.smallEndDiameterActual = result[numseg - 1].smallEndDiameterActual;
+                    logData.largeEndDiameterScaled = result[numseg - 1].largeEndDiameterScaled;
+                    logData.smallEndDiameterScaled = result[numseg - 1].smallEndDiameterScaled;
+                    logData.heightToLargeEndDiameter = result[numseg - 1].heightToLargeEndDiameter;
+                    logData.grossCubicFoot = result[numseg - 1].grossCubicFoot;
+                    logData.greenWeight = result[numseg - 1].greenWeight;
+                    logData.dryWeight = result[numseg - 1].dryWeight;
+                    logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
+                    if (vco.region == 7 && logData.length < 16) logData.grossBoardFoot = 0.0;
+                    logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
+                    result32.push_back(logData);
+                }
+
+                if (vco.region == 10) {
+                    //clear the 16-foot log result and reset to the 32-foot log data
+                    result.clear();
+                    result = result32;
+                    numseg = numseg32;
+                }
+                else {
+                    //prorate 32 boardfoot volumes into 16 foot pieces
+                    int lcnt = 0;
+
+                    // Loop: i = 2, 4, 6, ..., numseg
+                    for (int i = 2; i <= numseg; i += 2)
+                    {
+                        lcnt += 1;
+
+                        if (vco.region == 7)
+                        {
+                            result[i - 1].grossBoardFoot = std::nearbyint(result32[lcnt - 1].grossBoardFoot / 2.0);
+                            result[i].grossBoardFoot = result32[lcnt - 1].grossBoardFoot - result[i - 1].grossBoardFoot;
+                        }
+                        else
+                        {
+                            double topv16 = result[i].grossBoardFoot;
+                            double botv16 = result[i - 1].grossBoardFoot;
+
+                            double R = topv16 / (topv16 + botv16);
+
+                            if (R == 0.5)
+                            {
+                                result[i].grossBoardFoot = static_cast<int>(result32[lcnt - 1].grossBoardFoot * R);
+                            }
+                            else
+                            {
+                                result[i].grossBoardFoot = std::nearbyint(result32[lcnt - 1].grossBoardFoot * R);
+                            }
+
+                            if (result[i].grossBoardFoot <= 0.0)
+                            {
+                                result[i].grossBoardFoot = 1.0;
+                            }
+
+                            result[i - 1].grossBoardFoot = std::nearbyint(result32[lcnt - 1].grossBoardFoot) - result[i].grossBoardFoot;
+
+                            if (merchRules.useCorrectedFactor)
+                            {
+                                result[i - 1].grossBoardFoot *= 10;
+                                result[i].grossBoardFoot *= 10;
+                            }
+
+                        }
+                    }
+                    // check for top log
+                    if (((numseg + 1) / 2) > (numseg / 2))
+                    {
+                        lcnt += 1;
+
+                        result[numseg].grossBoardFoot = result32[lcnt - 1].grossBoardFoot;
+
+                        if (merchRules.useCorrectedFactor)
+                            result[numseg].grossBoardFoot *= 10;
+                    }
+
+                }
+
             }
-
-            //check the top log
-            if (numseg % 2 != 0) {
-                logData.logNumber = numseg32;
-                logData.product = vco.primaryProduct;
-                logData.isSecondary = false;
-                logData.length = result[numseg - 1].length;
-                logData.largeEndDiameterScaled = result[numseg - 1].largeEndDiameterScaled;
-                logData.smallEndDiameterScaled = result[numseg - 1].smallEndDiameterScaled;
-                logData.heightToLargeEndDiameter = result[numseg - 1].heightToLargeEndDiameter;
-                logData.grossCubicFoot = result[numseg - 1].grossCubicFoot;
-                logData.greenWeight = result[numseg - 1].greenWeight;
-                logData.dryWeight = result[numseg - 1].dryWeight;
-                logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
-                logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
-                result32.push_back(logData);
-            }
-
-            if (vco.region == 10) {
-                //clear the 16-foot log result and reset to the 32-foot log data
-                result.clear();
-                result = result32;
-                numseg = numseg32;
-            }
-            else {
-                //prorate 32 boardfoot volumes into 16 foot pieces
-
-            }
-
         }
-
+        //end 32 foot log
     }
 	// merchendize secondary product
 		// get heights
@@ -684,6 +788,8 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     
                     actualDiaLarge = taperModel_.GetDiameterAtHeight(tree, logData.heightToLargeEndDiameter);
                     actualDiaSmall = taperModel_.GetDiameterAtHeight(tree, heightToSmallEnd);
+                    logData.largeEndDiameterActual = actualDiaLarge;
+                    logData.smallEndDiameterActual = actualDiaSmall;
                     logData.largeEndDiameterScaled = static_cast<int>(actualDiaLarge + 0.501);
                     logData.smallEndDiameterScaled = static_cast<int>(actualDiaSmall + 0.501);
                     //Calculate log cubic and boardfoot volume
@@ -703,6 +809,9 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
             }
         }
     }
+    //end segment for topwood
+
+    
 
 	return result;
 }

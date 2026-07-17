@@ -58,7 +58,11 @@ public:
 		case 8: { return isValidR8Equation(voleq); }
 		case 9: { return isValidR9Equation(voleq); }
 		case 10: { return isValidR10Equation(voleq); }
-		default: { throw std::invalid_argument("VolumeCalculationOptions.region is invalid"); }
+		default: 
+			{ 
+				if (voleq.size() == 10) return true;
+				else throw std::invalid_argument("VolumeCalculationOptions.region is invalid"); 
+			}
 
 		}
 	}

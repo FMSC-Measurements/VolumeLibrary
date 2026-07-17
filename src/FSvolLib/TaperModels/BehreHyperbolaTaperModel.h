@@ -8,13 +8,15 @@
 class BehreHyperbolaTaperModel : public TaperModel
 {
 private:
-    std::string volEqStr;
-    double topDibSaw = 6.0;
-    int formClass = 0;
-    double formClassHeight = 17.3;
-    double dbhIb;
-    double d17;
-    double stumpHeight = 1.0;
+    std::string volEqStr_;
+    double topDibSaw_ = 6.0;
+    int formClass_ = 0;
+    double formClassHeight_ = 17.3;
+    double dbhIb_;
+    double d17_;
+    double stumpHeight_ = 1.0;
+    double maxLogLength_ = 16.0;
+    double trim_ = 0.3;
 
     // -----------------------------
     // Utility helpers
@@ -205,7 +207,7 @@ private:
     // -----------------------------
     // BLMTAP: computes D2 (Diameter Inside Bark)
     // -----------------------------
-    double BLMTAP(double DBHOB, double HTTOT, double TLH, double HTUP,
+    double BlmBehrTaper(double DBHOB, double HTTOT, double TLH, double HTUP,
         double D17, double TOP, double XLEN, int Profile);
 
 
@@ -314,7 +316,7 @@ private:
 // -----------------------------
 // BEHTAP: wrapper calculating D17 and calling BLMTAP or simplified flow
 // -----------------------------
-    double BEHtaper(const std::string& VOLEQ_in,
+    double BehrTaper(const std::string& VOLEQ_in,
         double DBHOB, double HTTOT, double TLH, double HTUP,
         int FCLASS, double TOP);
  
@@ -328,4 +330,5 @@ public:
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
     StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // { return { 0.0,0.0,0.0,0.0 }; };
+
 };

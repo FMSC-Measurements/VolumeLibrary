@@ -44,7 +44,7 @@ public:
 
 	TreeOutput CalculateVolume(const VolumeCalculationOptions options, const TreeMeasurment tree, std::optional<MerchRules> maybe_merchRules = std::nullopt);
 
-	std::string GetVolumeEquationNumber(VolumeCalculationOptions options) {};
+	std::string GetVolumeEquationNumber(VolumeCalculationOptions options); // {};
 
 	double GetHeightAtDiameter(VolumeCalculationOptions options, TreeMeasurment tree, double diameter) { return 0.0; };
 	double GetDiameterAtHeight(VolumeCalculationOptions options, TreeMeasurment tree, double height) { return 0.0; };

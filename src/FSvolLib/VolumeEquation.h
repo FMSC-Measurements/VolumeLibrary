@@ -29,6 +29,7 @@ public:
 		FLWELLINGMODEL_WEST = 'F',
 		NATIONAL = 'N',
 		BIA_EAST = 'C',
+		ARMY_BASE = 'M',
 	};
 
 	enum class ModelType {
@@ -49,11 +50,12 @@ public:
 		WO2, // Wensel and Olsen 2 point profile model
 		NVB, // National Scale Volume and Biomass
 		CUR, // Curtis profile model (R10 red alder)
+		TRF, // PNW tarif volume equation
 	};
 
 
 	GeoCode geoCode;
-	char subregionalCode[3] = { '0', '0' };
+	char subregionalCode[2] = { '0', '0' };
 	ModelType modelType;
 	char usRegion; // West('W') or East('E') coast
 	int fiaCode = -1;
@@ -79,11 +81,15 @@ public:
 		else
 		{
 			char geoCodeChar = static_cast<char>(geoCode);
-			return geoCodeChar + 
-				std::string(subregionalCode, std::size(subregionalCode)) + 
+			std::string subregion(subregionalCode, std::size(subregionalCode));
+			
+			std::string volumeEquationNumberStr = geoCodeChar +
+				//std::string(subregionalCode, std::size(subregionalCode)) + 
+				subregion.erase(subregion.find_last_not_of('\0') + 1) +
 				ModelTypeToStr(modelType) + 
 				usRegion + 
 				GetFiaCodeString();
+			return volumeEquationNumberStr;
 		}
 	}
 
@@ -107,6 +113,7 @@ public:
 			case ModelType::WO2: { return "WO2"; }
 			case ModelType::NVB: { return "NVB"; }
 			case ModelType::CUR: { return "CUR"; }
+			case ModelType::TRF: { return "TRF"; }
 			default: throw std::invalid_argument("Unknown ModelType: " + std::to_string(static_cast<int>(model)));		
 		}
 	}
@@ -132,7 +139,7 @@ public:
 			volEq.geoCode = static_cast<GeoCode>(volumeEquationNumber[0]); // cast first volEq char to GeoCode, Note this doesn't enforce that GeoCode is a valid value
 			volumeEquationNumber.copy(volEq.subregionalCode, 2, 1);
 			volEq.modelType = ParseModelType(volumeEquationNumber.substr(3, 3));
-			if (volumeEquationNumber.substr(3, 3) == "DVE" || volumeEquationNumber.substr(3, 3) == "SN2") volEq.isProfileModel = false;
+			if (volumeEquationNumber.substr(3, 3) == "DVE" || volumeEquationNumber.substr(3, 3) == "SN2" || volumeEquationNumber.substr(3, 3) == "TRF") volEq.isProfileModel = false;
 			//volume equation 223DVEW122 uses NSVB taper model to calculate volume
 			if (volumeEquationNumber == "223DVEW122") volEq.isProfileModel = true;
 			volEq.usRegion = volumeEquationNumber[6];
@@ -160,6 +167,7 @@ public:
 		if (modelCode == "WO2") { return ModelType::WO2; }
 		if (modelCode == "NVB") { return ModelType::NVB; }
 		if (modelCode == "CUR") { return ModelType::CUR; }
+		if (modelCode == "TRF") { return ModelType::TRF; }
 		else { return ModelType::UNKNOWN; }
 	}
 

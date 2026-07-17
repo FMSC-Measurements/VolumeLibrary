@@ -73,6 +73,5 @@ public:
 
     double GetHeightAtDiameter(TreeMeasurment tree, double diameter, bool useDob = false) override;
 
-    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0, false, false }; };
-
+    StemVolume GetStemCubicVol(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override { return { 0.0,0.0,0.0,0.0 }; };
 };

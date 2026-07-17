@@ -2,7 +2,7 @@
 
 double CzaplewskiTaperModel::R2taper(double dbh, double totalHeight, double heightExtra, double diameterExtra, double top6Ht, double dbtbh, double ht2, int& errflg)
 {
-    std::string VOLEQ = volEqStr;
+    std::string VOLEQ = volEqStr_;
     double DBH = dbh;
     double HTTOT = totalHeight;
     double HTUP = std::min(ht2, HTTOT);
@@ -169,28 +169,28 @@ void CzaplewskiTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merc
     {
         if (tree.formClass > 0.0)
         {
-            heightExtra = 17.3;
-            diameterExtra = tree.formClass / 100.0 * tree.dbh;
+            heightExtra_ = 17.3;
+            diameterExtra_ = tree.formClass / 100.0 * tree.dbh;
         }
         else if (tree.referenceDiameter > 0.0 && tree.referenceHeight > 0.0)
         {
-            heightExtra = tree.referenceHeight;
-            diameterExtra = tree.referenceDiameter;
+            heightExtra_ = tree.referenceHeight;
+            diameterExtra_ = tree.referenceDiameter;
         }
         else if (tree.merchHeightSaw > 0.0)
         {
-            heightExtra = tree.merchHeightSaw;
-            diameterExtra = merchRules.minTopDibSaw;
+            heightExtra_ = tree.merchHeightSaw;
+            diameterExtra_ = merchRules.minTopDibSaw;
         }
-        if (heightExtra <= 0.0 || diameterExtra <= 0.0)
+        if (heightExtra_ <= 0.0 || diameterExtra_ <= 0.0)
         {
             throw std::invalid_argument("Extra height and diameter pair measurement is needed for the 3 points model");
         }
-        dbtbh = merchRules.doubleBarkThicknessAtBrestHeight;
+        dbtbh_ = merchRules.doubleBarkThicknessAtBrestHeight;
         double stump = merchRules.stumpHeight;
         int errflag = 0;
-        top6Ht = top6Height(tree.dbh, tree.totalHeight, heightExtra, diameterExtra, stump, dbtbh, errflag);
-        if (errflag > 0) top6Ht = 0.0;
+        top6Ht_ = top6Height(tree.dbh, tree.totalHeight, heightExtra_, diameterExtra_, stump, dbtbh_, errflag);
+        if (errflag > 0) top6Ht_ = 0.0;
     }
 }
 
@@ -198,7 +198,7 @@ double CzaplewskiTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double hei
 {
     int errflag = 0;
     double D2 = 0.0;
-    D2 =  R2taper(tree.dbh, tree.totalHeight, heightExtra, diameterExtra, top6Ht, dbtbh, height, errflag);
+    D2 =  R2taper(tree.dbh, tree.totalHeight, heightExtra_, diameterExtra_, top6Ht_, dbtbh_, height, errflag);
     if (errflag > 0) D2 = 0.0;
     return D2;
 }
