@@ -45,8 +45,6 @@ struct StemVolume {
 	double primaryVol = 0.0;
 	double topwoodVol = 0.0;
 	double tipVol = 0.0;
-	//bool volCalculated = false;
-	//bool isBEH = false;
 };
 
 

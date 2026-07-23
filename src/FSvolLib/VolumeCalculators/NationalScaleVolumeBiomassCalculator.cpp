@@ -75,7 +75,10 @@ bool NationalScaleVolumeBiomass::isValidNVBeq(std::string_view s) {
 
 bool NationalScaleVolumeBiomass::isValidEcoRegion(std::string s)
 {
-    if (s.size() == 3) {
+    if (s.size() < 3 || s.size() > 4) {
+        return false;
+    }
+    else if (s.size() == 3) {
 
         for (char c : s) {
             if (!std::isdigit(static_cast<unsigned char>(c))) return false;
@@ -529,15 +532,42 @@ double NationalScaleVolumeBiomass::getEstimatedTotalHeight(double dbh, double up
     double b = eqCoeffs.b;
     if (upperHt <= 0.0 || upperDia <= 0.0) return 0.0;
     if (upperDia <= 1.0) return upperHt + 1.0;
-    double tht = upperHt + 1.0;
+    double dH = upperHt * upperDia / (dbh - upperDia);
+    double tht = upperHt + dH;
+    double ht_low = upperHt;
+    double eval_low = -upperDia;
+    double eval_high = 0.0;
+    double ht_high = 0.0;
     int i = 1;
     double diaDiff = 0.0;
+    bool bracketed = false;
     while (i < 100) {
         double Vtotob = getVolWt(strVolOB, dbh, tht);
         double dobAtUpperHt = getDiaAtHeight_impl(Vtotob, tht, upperHt, eqCoeffs);
-        diaDiff = upperDia - dobAtUpperHt;
-        if (abs(diaDiff) < 0.05) break;
-        tht += diaDiff;
+        diaDiff = dobAtUpperHt - upperDia;
+        if (diaDiff > 0.0 || bracketed) {
+            if (abs(diaDiff) < 0.05) return tht;
+
+            bracketed = true;
+
+            if (diaDiff < 0.0) {
+                ht_low = tht;
+                eval_low = diaDiff;
+            }
+            else {
+                ht_high = tht;
+                eval_high = diaDiff;
+            }
+
+            double A = std::abs(eval_low);
+            tht = (A / (A + eval_high)) * (ht_high - ht_low) + ht_low;
+        }
+        else {
+            ht_low = tht;
+            eval_low = diaDiff;
+            tht += dH;
+        }
+        
         i += 1;
     }
     if (tht < upperHt) tht = upperHt + 1.0;
@@ -633,6 +663,7 @@ TreeOutput NationalScaleVolumeBiomass::CalculateVolumeBiomass(VolumeCalculationO
         if (upperHt > 0.0 && upperDia > 0.0)
         {
             totalHt = getEstimatedTotalHeight(dbh, upperHt, upperDia, ratioOB_eqCoeffs);
+            if (totalHt > 0.0) tree.totalHeight = totalHt;
         }
         if (totalHt < 4.5)
         {

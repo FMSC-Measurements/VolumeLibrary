@@ -1037,10 +1037,13 @@ void FlewellingTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merc
 
         totalHeight_ = solveTotalHeight(JSP_, geoSubregion_, dbh_, doubleBarkThicknessBH_, merchHeight_, merchTopDib_);
         
-        if (totalHeight_ > 0.0) threePoint_ = true;
+        if (totalHeight_ > 0.0) {
+            threePoint_ = true;
+            tree.totalHeight = totalHeight_;
+        }
         else {
             //cannot fit total height, use dbhIb and Topd and merch height to calculate log volume
-
+            throw std::invalid_argument("Cannot solve total height from upper stem height and diameter measurement.");
         }
     }
     else totalHeight_ = tree.totalHeight;

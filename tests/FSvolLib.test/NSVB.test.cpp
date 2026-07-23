@@ -64,10 +64,10 @@ public:
  
         TreeMeasurment tree;
         tree.dbh = 19.7;
-        tree.totalHeight = 72.0;
+        tree.totalHeight = 0.0;
         tree.isLive = true;
-        tree.heightToTopBroken = 0.0;
-        tree.topBrokenDiameter = 0.0;
+        tree.heightToTopBroken = 50.0;
+        tree.topBrokenDiameter = 10.0;
         tree.minTopDibNonSawOverride = 0.0;
         tree.minTopDibSawOverride = 0.0;
         tree.cull = 0.0;
@@ -77,7 +77,7 @@ public:
         tree.merchHeightNonsaw = 0.0;
         tree.formClass = 80;
 
-        vco.fiaCode = 301;
+        vco.fiaCode = 202;
         vco.region = 5;
         vco.forest = 1;
         vco.primaryProduct = 1;

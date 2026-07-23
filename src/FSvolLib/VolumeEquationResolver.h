@@ -43,6 +43,8 @@ private:
 	static VolumeEquation GetR10VolumeEquation(VolumeCalculationOptions vco);
 	static bool isValidR10Equation(const std::string& voleq);
 
+	static VolumeEquation GetFiaVolumeEquation(VolumeCalculationOptions vco);
+
 public:
 	static bool isValidEquation(std::string& voleq, VolumeCalculationOptions vco)
 	{
@@ -75,6 +77,11 @@ public:
 				return VolumeEquation::ParseVolumeEquationNumber(vcOpt.volumeEquationNumberOverride);
 			}
 		}
+
+		if (vcOpt.volumeCalculationOptions == VolumeCalculationOptions::VolumeCalculationType::FIA) {
+			return GetFiaVolumeEquation(vcOpt);
+		}
+
 		switch (vcOpt.region)
 		{
 		case 1: { return GetR1VolumeEquation(vcOpt); }
@@ -88,7 +95,6 @@ public:
 		case 9: { return GetR9VolumeEquation(vcOpt); }
 		case 10: { return GetR10VolumeEquation(vcOpt); }
 		default: { throw std::invalid_argument("VolumeCalculationOptions.region is invalid"); }
-
 		}
 	}
 

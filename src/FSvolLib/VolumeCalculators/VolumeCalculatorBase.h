@@ -18,6 +18,10 @@ public:
 
 	virtual TreeOutput CalculateVolume(VolumeCalculationOptions vco,TreeMeasurment tree, MerchRules merchRules) = 0;
 
+	virtual double GetHeightAtDiameter(VolumeCalculationOptions vco, TreeMeasurment tree, double diameter) { return 0.0; };
+
+	virtual double GetDiameterAtHeight(VolumeCalculationOptions vco, TreeMeasurment tree, double height) { return 0.0; };
+
 
 protected:
 	const VolumeEquation volumeEquation_;

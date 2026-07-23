@@ -230,6 +230,7 @@
     <ClCompile Include="VolumeCalculators\ProfileVolumeCalculator.cpp" />
     <ClCompile Include="VolumeCalculators\JenkinsBiomass.cpp" />
     <ClCompile Include="VolumeEquationResolver.cpp" />
+    <ClCompile Include="VolumeEquationResolver.FIA.cpp" />
     <ClCompile Include="VolumeEquationResolver.R1.cpp" />
     <ClCompile Include="VolumeEquationResolver.R10.cpp" />
     <ClCompile Include="VolumeEquationResolver.R2.cpp" />

@@ -100,7 +100,7 @@ BiomassOutput woodlandBiomass(VolumeCalculationOptions vco, TreeMeasurment tree,
 {
     BiomassOutput out;
     int SPCD = vco.fiaCode;
-    double DRC = tree.drc;
+    double DRC = (tree.drc > 0.0) ? tree.drc : tree.dbh;
     double THT = tree.totalHeight;
     int STEMS = tree.stems;
     std::array<double, 15> DRYBIO;

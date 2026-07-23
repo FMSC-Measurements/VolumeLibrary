@@ -145,7 +145,7 @@ public:
     void setIbToObRatio(double dbh, double totalHt);
     void setDivisionFromVolEq();
     void buildVolEqStr();
-    bool isValidEcoRegion(std::string s);
+    static bool isValidEcoRegion(std::string s);
     static int getEcoProvince(int regn, int forst, int dist);
     static double getDecayDenProp(int SFTHRD, int DECAYCD, double& DeadCF);
     static double getBranchRem(int province, int spcd, double totalHeight, double brokenHeight, double crownRatioDecimal);

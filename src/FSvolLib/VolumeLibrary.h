@@ -46,10 +46,10 @@ public:
 
 	std::string GetVolumeEquationNumber(VolumeCalculationOptions options); // {};
 
-	double GetHeightAtDiameter(VolumeCalculationOptions options, TreeMeasurment tree, double diameter) { return 0.0; };
-	double GetDiameterAtHeight(VolumeCalculationOptions options, TreeMeasurment tree, double height) { return 0.0; };
+	double GetHeightAtDiameter(const std::string& volumeEquationNumber, TreeMeasurment tree, double diameter); // { return 0.0; };
+	double GetDiameterAtHeight(const std::string& volumeEquationNumber, TreeMeasurment tree, double height); // { return 0.0; };
 
-	int GetNumberOfLogs(VolumeCalculationOptions options, TreeMeasurment tree, std::optional<MerchRules> maybe_merchRules = std::nullopt) { return 0; };
+	int GetNumberOfLogs(VolumeCalculationOptions options, TreeMeasurment tree, std::optional<MerchRules> maybe_merchRules = std::nullopt); // { return 0; };
 
 	// Q: do we need a get number of logs function for just primary or total? 
 	// A: measurment spec requested total logs and grades. Also for FScruiser we would want a function that can be used to get number of logs for log grading. 

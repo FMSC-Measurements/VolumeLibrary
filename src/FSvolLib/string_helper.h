@@ -4,7 +4,7 @@
 #include <algorithm> // For std::transform
 #include <cctype>    // For ::toupper
 
-static class string_helper
+class string_helper
 {
 public:
 	static std::string StrToUpper(std::string s)

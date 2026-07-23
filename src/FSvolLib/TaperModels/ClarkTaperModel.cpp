@@ -1032,6 +1032,7 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
 
         //get total height
         totHt = GetTotalHeight(tree.totalHeight, clarkCoef.dib17, topHt, topDib, clarkCoef.a, clarkCoef.b);
+        if (tree.totalHeight == 0.0) tree.totalHeight = totHt;
 
         //set the volume correction factor
         if (volumeEquation_.fiaCode < 300) r9VolCorFactor = 1.04;
@@ -1264,7 +1265,7 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
 
         //Get total height
         totHt = GetTotalHeight(tree.totalHeight, clarkCoefOb.dib17, topHt, topDob, clarkCoefOb.a, clarkCoefOb.b);
-
+        if (tree.totalHeight == 0.0) tree.totalHeight = totHt;
     }
 }
 

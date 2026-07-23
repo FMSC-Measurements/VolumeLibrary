@@ -380,7 +380,7 @@ TreeOutput R1KEMP(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
 
     // ---- Number of logs ----
     if (ISPEC_1based < 14) {
-        out.numberOfLogs = R1LOGS(ISPEC_1based, DBHOB, HTTOT, KLASS, IWHEN);
+        out.numberOfLogs = std::nearbyint(R1LOGS(ISPEC_1based, DBHOB, HTTOT, KLASS, IWHEN));
     }
 
     // ---- Write volumes to VOL array ----

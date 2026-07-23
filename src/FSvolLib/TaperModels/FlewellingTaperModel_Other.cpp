@@ -241,28 +241,28 @@ FlewellingShapeParams SHP_OT(int JSP, double DBHOB, double HTTOT)
     if (U9 > 0.3) U9 = 0.3;
 
     // Geometric parameter outputs
-    float R1 = exp(U1) / (1.0 + exp(U1));
-    float R2 = exp(U2) / (1.0 + exp(U2));
-    float R3 = exp(U3) / (1.0 + exp(U3));
-    float R4 = exp(U4) / (1.0 + exp(U4));
+    double R1 = exp(U1) / (1.0 + exp(U1));
+    double R2 = exp(U2) / (1.0 + exp(U2));
+    double R3 = exp(U3) / (1.0 + exp(U3));
+    double R4 = exp(U4) / (1.0 + exp(U4));
 
-    float R5;
+    double R5;
     if (U5 <= 7.0)
         R5 = 0.5 + 0.5 * (exp(U5) / (1.0 + exp(U5)));
     else
         R5 = 1.0;
 
-    float A3 = U6;
+    double A3 = U6;
 
-    float RHI1 = exp(U7) / (1.0 + exp(U7));
+    double RHI1 = exp(U7) / (1.0 + exp(U7));
     if (RHI1 > 0.5) RHI1 = 0.5;
 
-    float RHLONGI = U9;
-    float RHI2 = RHI1 + RHLONGI;
+    double RHLONGI = U9;
+    double RHI2 = RHI1 + RHLONGI;
 
-    float RHC = U8;
+    double RHC = U8;
     if (RHC < RHI2 + 0.01f)
-        RHC = std::min<float>(RHI2 + 0.01f, (RHI2 + 1.f) / 2.f);
+        RHC = std::min<double>(RHI2 + 0.01, (RHI2 + 1.0) / 2.0);
 
     // Fill outputs
     out = { R1,R2,R3,R4,R5,A3,RHI1,RHI2,RHC,RHLONGI };

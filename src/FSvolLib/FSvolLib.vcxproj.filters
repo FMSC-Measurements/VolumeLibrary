@@ -329,5 +329,8 @@
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R89.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="VolumeEquationResolver.FIA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -17,11 +17,13 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 2;
+        volOpt.region = 4;
         volOpt.forest = 1;
-        volOpt.fiaCode = 122;
+        volOpt.fiaCode = 133;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
+        volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
+        //volOpt.ecoRegion = "M260";
         // ...
         auto volEqDefault = volLib.GetVolumeEquationNumber(volOpt);
 
@@ -34,11 +36,19 @@ public:
         tree.minTopDibSawOverride = 0.0;
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
-        tree.formClass = 70;
+        tree.formClass = 0;
+        tree.heightToTopBroken = 0.0;
+        tree.topBrokenDiameter = 0.0;
         // ...
-        volOpt.volumeEquationNumberOverride = "200FW2W122";
-        auto treeOutput = volLib.CalculateVolume(volOpt, tree);
+        //int numLogs = volLib.GetNumberOfLogs(volOpt, tree);
 
+        //double ht2 = volLib.GetHeightAtDiameter(volEqDefault, tree, 3.0);
+
+        //double dia2 = volLib.GetDiameterAtHeight(volEqDefault, tree, 35.5);
+        
+        //volOpt.volumeEquationNumberOverride = "200FW2W122";
+        auto treeOutput = volLib.CalculateVolume(volOpt, tree);
+        
         //test input merch rules for BEH
         MerchRules merchRules;
         merchRules.evenOdd = 2;

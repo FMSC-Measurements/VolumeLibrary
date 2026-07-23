@@ -7,7 +7,34 @@
 
 TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options, const TreeMeasurment tree, std::optional<MerchRules> maybe_merchRules)
 {
-	auto& volumeCalculator = volumeCalculatorFactory_.MakeVolumeCalculator(options);
+	if (tree.dbh < 1.0 && tree.drc < 1.0) {
+		throw std::invalid_argument("DBH less than one!");
+	}
+
+	WeightFactorAndRefData refSpeciesData = getSpeciesWtfactorAndRefData(options.region, options.forest, options.fiaCode);
+
+	double weightFactor = (options.primaryProduct == 1) ? refSpeciesData.weightFactorSaw : refSpeciesData.weightFactorNonsaw;
+	weightFactor = (tree.isLive) ? weightFactor : refSpeciesData.weightFactorDead;
+
+	double moistContent = 0.0;
+	moistContent = (weightFactor - refSpeciesData.weightFactorDry) / refSpeciesData.weightFactorDry;
+	double mcFactor = 1.0 + moistContent;
+
+	double carbonFraction = refSpeciesData.carbonFraction;
+
+	//for trees with DBH only measurement, using Jenkins method to calculate biomass
+	if (tree.dbh > 0.0 && tree.totalHeight == 0.0 &&
+		tree.merchHeightSaw == 0.0 && tree.merchHeightNonsaw == 0.0 &&
+		tree.heightToTopBroken == 0.0 && tree.referenceHeight == 0.0) {
+
+		TreeOutput treeOutput;
+		BiomassOutput treeBiomass = jenkins(options.fiaCode, tree.dbh);
+		treeOutput.dryBio = treeBiomass;
+		treeOutput.greenBio = scale(treeOutput.dryBio, mcFactor);
+		treeOutput.carbonContent = treeOutput.dryBio.aboveGroundTotal * carbonFraction;
+
+		return treeOutput;
+	}
 
 	auto merchRules = (maybe_merchRules.has_value()) ? maybe_merchRules.value() : merchRulesResolver_.GetMerchRules(options);
 	
@@ -18,43 +45,31 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 	if (tree.minTopDibSawOverride > 0.0) merchRules.minTopDibSaw = tree.minTopDibSawOverride;
 	if (tree.minTopDibNonSawOverride > 0.0) merchRules.minTopDibNonSaw = tree.minTopDibNonSawOverride;
 
+	//for FIA with NSVB equation, just call the NSVB calculation
+	if (options.volumeCalculationOptions == VolumeCalculationOptions::VolumeCalculationType::FIA 
+		&& options.volumeEquationNumberOverride.substr(0, 3) == "NVB"
+		&& refSpeciesData.jenkinsSpeciesGroupCD != 10)
+	{
+		NationalScaleVolumeBiomass nsvb = NationalScaleVolumeBiomass(options.volumeEquationNumberOverride, options);
+		TreeOutput nsvbOutput = nsvb.CalculateVolumeBiomass(options, tree, merchRules);
+
+		return nsvbOutput;
+	}
+
+	//Calculate volume for Cruise, FVS, and FIA using volume library profile model and Direct volume equation
+	//volume calculation using Profile model or Direct volume estimator
+	auto& volumeCalculator = volumeCalculatorFactory_.MakeVolumeCalculator(options);
 	auto treeOutput = volumeCalculator.CalculateVolume(options,tree, merchRules);
 
 	//biomass calculation using NSVB 
-	WeightFactorAndRefData refSpeciesData = getSpeciesWtfactorAndRefData(options.region, options.forest, options.fiaCode);
-	
-	double moistContent = 0.0;
-	if (tree.isLive) {
-		moistContent = (refSpeciesData.weightFactorNonsaw - refSpeciesData.weightFactorDry) / refSpeciesData.weightFactorDry;
-	}
-	else {
-		moistContent = (refSpeciesData.weightFactorDead - refSpeciesData.weightFactorDry) / refSpeciesData.weightFactorDry;
-	}
-
-	double mcFactor = 1.0 + moistContent;
-
-	double carbonFraction = refSpeciesData.carbonFraction;
-
-	//for trees with DBH only measurement, using Jenkins method to calculate biomass
-	if (tree.dbh > 0.0 && tree.totalHeight == 0.0 && 
-		tree.merchHeightSaw == 0.0 && tree.merchHeightNonsaw == 0.0 &&
-		tree.heightToTopBroken==0.0 && tree.referenceHeight) {
-
-		BiomassOutput treeBiomass = jenkins(options.fiaCode, tree.dbh);
-		treeOutput.dryBio = treeBiomass;
-		treeOutput.greenBio = scale(treeOutput.dryBio, mcFactor);
-		treeOutput.carbonContent = treeOutput.dryBio.aboveGroundTotal * carbonFraction;
-
-		return treeOutput;
-	}
-
 	if (refSpeciesData.jenkinsSpeciesGroupCD != 10) {
 		//call NSVB to get volume and biomass for non-woodland species
 		NationalScaleVolumeBiomass nsvb = NationalScaleVolumeBiomass(options);
 		TreeOutput nsvbOutput = nsvb.CalculateVolumeBiomass(options, tree, merchRules);
 
-		double weightFactor = (options.primaryProduct == 1) ? refSpeciesData.weightFactorSaw : refSpeciesData.weightFactorNonsaw;
-		weightFactor = (tree.isLive) ? weightFactor : refSpeciesData.weightFactorDead;
+		if (nsvbOutput.dryBio.aboveGroundTotal > 0.0) {
+			mcFactor = nsvbOutput.greenBio.aboveGroundTotal / nsvbOutput.dryBio.aboveGroundTotal;
+		}
 
 		//Adjust nsvb biomass based on the vol from VOLEQ and NSVB
 		double cubicfootPrimary = treeOutput.grossCubicFootPrimary;
@@ -106,12 +121,14 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 		treeOutput.greenBio = scale(nsvbOutput.greenBio, volFactor);
 		treeOutput.dryBio = scale(nsvbOutput.dryBio, volFactor);
 
+		double merchStemDryWeight = treeOutput.dryBio.stemPrimaryBark + treeOutput.dryBio.stemPrimaryWood +
+			treeOutput.dryBio.stemSecondaryBark + treeOutput.dryBio.stemSecondaryWood;
 		//reset biomass conponent value
 		if (treeOutput.grossCubicFootPrimary > 0.0) {
 			treeOutput.greenBio.stemPrimaryWood = treeOutput.greenWeightPrimary * ratioWood;
 			treeOutput.greenBio.stemPrimaryBark = treeOutput.greenWeightPrimary * (1.0 - ratioWood);
-			treeOutput.dryBio.stemPrimaryWood = treeOutput.dryWeightPrimary * ratioWood;
-			treeOutput.dryBio.stemPrimaryBark = treeOutput.dryWeightPrimary * (1.0 - ratioWood);
+			treeOutput.dryBio.stemPrimaryWood = ratioPrimary * merchStemDryWeight * ratioWood;
+			treeOutput.dryBio.stemPrimaryBark = ratioPrimary * merchStemDryWeight * (1.0 - ratioWood);
 		}
 		else {
 			treeOutput.greenBio.stemPrimaryWood = 0.0;
@@ -123,8 +140,8 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 		if (treeOutput.grossCubicFootSecondary > 0.0) {
 			treeOutput.greenBio.stemSecondaryWood = treeOutput.greenWeightSecondary * ratioWood;
 			treeOutput.greenBio.stemSecondaryBark = treeOutput.greenWeightSecondary * (1.0 - ratioWood);
-			treeOutput.dryBio.stemSecondaryWood = treeOutput.dryWeightSecondary * ratioWood;
-			treeOutput.dryBio.stemSecondaryBark = treeOutput.dryWeightSecondary * (1.0 - ratioWood);
+			treeOutput.dryBio.stemSecondaryWood = (1.0 - ratioPrimary) * merchStemDryWeight * ratioWood;
+			treeOutput.dryBio.stemSecondaryBark = (1.0 - ratioPrimary) * merchStemDryWeight * (1.0 - ratioWood);
 		}
 		else {
 			treeOutput.greenBio.stemSecondaryWood = 0.0;
@@ -137,18 +154,36 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 			double tipWeight = treeOutput.tipCubicFoot * weightFactor;
 			treeOutput.greenBio.stemTipWood = tipWeight * ratioWood;
 			treeOutput.greenBio.stemTipBark = tipWeight * (1.0 - ratioWood);
-			treeOutput.dryBio.stemTipWood = treeOutput.greenBio.stemTipWood / (1.0 + mcFactor);
-			treeOutput.dryBio.stemTipBark = treeOutput.greenBio.stemTipBark / (1.0 + mcFactor);
+			treeOutput.dryBio.stemTipWood = treeOutput.greenBio.stemTipWood / mcFactor;
+			treeOutput.dryBio.stemTipBark = treeOutput.greenBio.stemTipBark / mcFactor;
 		}
 
-		double stemGreenWeightDiff = treeOutput.greenBio.stemWoodTotal + treeOutput.greenBio.stemBarkTotal -
-			(treeOutput.greenBio.stumpWood + treeOutput.greenBio.stumpBark + treeOutput.greenBio.stemPrimaryWood +
-			treeOutput.greenBio.stemPrimaryBark + treeOutput.greenBio.stemTipWood + treeOutput.greenBio.stemTipBark);
-		double stemDryWeightDiff = treeOutput.dryBio.stemWoodTotal + treeOutput.dryBio.stemBarkTotal -
-			(treeOutput.dryBio.stumpWood + treeOutput.dryBio.stumpBark + treeOutput.dryBio.stemPrimaryWood +
-			treeOutput.dryBio.stemPrimaryBark + treeOutput.dryBio.stemTipWood + treeOutput.dryBio.stemTipBark);
-		treeOutput.greenBio.branches += stemGreenWeightDiff;
-		treeOutput.dryBio.branches += stemDryWeightDiff;
+		//the difference should be add to branches
+		//double stemGreenWeightDiff = treeOutput.greenBio.stemWoodTotal + treeOutput.greenBio.stemBarkTotal -
+		//	(treeOutput.greenBio.stumpWood + treeOutput.greenBio.stumpBark + treeOutput.greenBio.stemPrimaryWood +
+		//	treeOutput.greenBio.stemPrimaryBark + treeOutput.greenBio.stemTipWood + treeOutput.greenBio.stemTipBark);
+		//double stemDryWeightDiff = treeOutput.dryBio.stemWoodTotal + treeOutput.dryBio.stemBarkTotal -
+		//	(treeOutput.dryBio.stumpWood + treeOutput.dryBio.stumpBark + treeOutput.dryBio.stemPrimaryWood +
+		//	treeOutput.dryBio.stemPrimaryBark + treeOutput.dryBio.stemTipWood + treeOutput.dryBio.stemTipBark);
+		//treeOutput.greenBio.branches += stemGreenWeightDiff;
+		//treeOutput.dryBio.branches += stemDryWeightDiff;
+
+		//adjust other biomass components
+		treeOutput.greenBio.stemBarkTotal = 
+			treeOutput.greenBio.stumpBark + treeOutput.greenBio.stemPrimaryBark +
+			treeOutput.greenBio.stemSecondaryBark + treeOutput.greenBio.stemTipBark;
+		treeOutput.greenBio.stemWoodTotal = 
+			treeOutput.greenBio.stumpWood + treeOutput.greenBio.stemPrimaryWood +
+			treeOutput.greenBio.stemSecondaryWood + treeOutput.greenBio.stemTipWood;
+		treeOutput.dryBio.stemBarkTotal = 
+			treeOutput.dryBio.stumpBark + treeOutput.dryBio.stemPrimaryBark +
+			treeOutput.dryBio.stemSecondaryBark + treeOutput.dryBio.stemTipBark;
+		treeOutput.dryBio.stemWoodTotal = 
+			treeOutput.dryBio.stumpWood + treeOutput.dryBio.stemPrimaryWood +
+			treeOutput.dryBio.stemSecondaryWood + treeOutput.dryBio.stemTipWood;
+
+		treeOutput.greenBio.aboveGroundTotal = treeOutput.greenBio.stemBarkTotal + treeOutput.greenBio.stemWoodTotal + treeOutput.greenBio.branches;
+		treeOutput.dryBio.aboveGroundTotal = treeOutput.dryBio.stemBarkTotal + treeOutput.dryBio.stemWoodTotal + treeOutput.dryBio.branches;
 
 		treeOutput.carbonContent = treeOutput.dryBio.aboveGroundTotal * refSpeciesData.carbonFraction;
 	}
@@ -197,4 +232,51 @@ std::string VolumeLibrary::GetVolumeEquationNumber(VolumeCalculationOptions opti
 {
 	VolumeEquation volumeEquation = VolumeEquationResolver::GetVolumeEquation(options);
 	return volumeEquation.volEqStr;
+}
+
+double VolumeLibrary::GetHeightAtDiameter(const std::string& volumeEquationNumber, TreeMeasurment tree, double diameter)
+{
+	VolumeCalculationOptions vco;
+	vco.volumeEquationNumberOverride = volumeEquationNumber;
+	auto& volumeCalculator = volumeCalculatorFactory_.MakeVolumeCalculator(vco);
+
+	return volumeCalculator.GetHeightAtDiameter(vco, tree, diameter);
+}
+
+double VolumeLibrary::GetDiameterAtHeight(const std::string& volumeEquationNumber, TreeMeasurment tree, double height)
+{
+	VolumeCalculationOptions vco;
+	vco.volumeEquationNumberOverride = volumeEquationNumber;
+	auto& volumeCalculator = volumeCalculatorFactory_.MakeVolumeCalculator(vco);
+
+	return volumeCalculator.GetDiameterAtHeight(vco, tree, height);
+}
+
+int VolumeLibrary::GetNumberOfLogs(VolumeCalculationOptions options, TreeMeasurment tree, std::optional<MerchRules> maybe_merchRules)
+{
+	int numberOfLogs = 0;
+	double merchLength = 0.0;
+	auto merchRules = (maybe_merchRules.has_value()) ? maybe_merchRules.value() : merchRulesResolver_.GetMerchRules(options);
+
+	//region 7 (BLM) saw top diameter
+	if (options.region == 7) merchRules.minTopDibSaw = tree.dbh * 0.184 + 2.24;
+	//check override parameters for stump, sawTopDib, nonsawTopDib
+	if (tree.stumpHeightOverride > 0.0) merchRules.stumpHeight = tree.stumpHeightOverride;
+	if (tree.minTopDibSawOverride > 0.0) merchRules.minTopDibSaw = tree.minTopDibSawOverride;
+
+	if (tree.merchHeightSaw > 0.0) {
+		merchLength = tree.merchHeightSaw - merchRules.stumpHeight;
+	}
+	else {
+		auto& volumeCalculator = volumeCalculatorFactory_.MakeVolumeCalculator(options);
+		double heightToSawTopDib = volumeCalculator.GetHeightAtDiameter(options, tree, merchRules.minTopDibSaw);
+		if (tree.heightToTopBroken > 0.0 && heightToSawTopDib > tree.heightToTopBroken) {
+			heightToSawTopDib = tree.heightToTopBroken;
+		}
+		merchLength = heightToSawTopDib - merchRules.stumpHeight;
+	}
+
+	std::vector<double> logs = ProfileVolumeCalculator::getLogs(merchLength, merchRules, numberOfLogs);
+
+	return numberOfLogs;
 }

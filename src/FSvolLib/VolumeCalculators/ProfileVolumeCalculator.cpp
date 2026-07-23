@@ -1,13 +1,18 @@
 #include "..\SmalianScribnerIntl14.h"
 #include "ProfileVolumeCalculator.h"
 #include "..\WeightfactorAndRefDataResolver.h"
-#include "../DefaultFormClassForFVS.h"
+#include "..\DefaultFormClassForFVS.h"
 #include <array>
 
 
 TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
 {
     TreeOutput result;
+
+    //for broken top tree without total height, estimate total height using broken height and diameter
+    if (tree.totalHeight == 0.0) {
+        solveTotalHeight(tree);
+    }
 
     // initialize model on tree - i.e fwelling models, nsvb model
     taperModel_.InitializeOnTree(tree, merchRules, vco);
@@ -119,7 +124,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
             if (logs[topIndex].length == 0.0) topIndex -= 1;
             double merchHeight = logs[topIndex].heightToLargeEndDiameter + logs[topIndex].length;
             double tipLength = tree.totalHeight - merchHeight;
-            tipVolume = smallian(logs[topIndex].smallEndDiameterScaled, 0.0, tipLength);
+            tipVolume = smallian(logs[topIndex].smallEndDiameterActual, 0.0, tipLength);
         }
         result.tipCubicFoot = tipVolume;
         result.numberOfLogs = numberOfLogs;
@@ -176,8 +181,16 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     double segVol = 0.0;
     double dibLarge = stumpDib;
     double dibSmall = 0.0;
+    double totalHt = tree.totalHeight;
 
     double htToNonsawDib = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw);
+    //check broken top tree
+    if (tree.heightToTopBroken > 0.0) totalHt = tree.heightToTopBroken > 0.0;
+
+    if (tree.heightToTopBroken > 0.0 && htToNonsawDib > tree.heightToTopBroken) {
+        htToNonsawDib = tree.heightToTopBroken;
+    }
+
     int htloop = static_cast<int>((htToNonsawDib - ht2)/4.0);
     for (int i = 0; i < htloop; ++i)
     {
@@ -192,7 +205,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     merchCubic += segVol;
 
     //calculate volume for the piece above minTopDibNonSaw
-    htloop = static_cast<int>((tree.totalHeight - htToNonsawDib) / 4.0);
+    htloop = static_cast<int>((totalHt - htToNonsawDib) / 4.0);
     double tipVol = 0.0;
     ht2 = htToNonsawDib;
     dibLarge = merchRules.minTopDibNonSaw;
@@ -205,7 +218,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
         dibLarge = dibSmall;
     }
     //the very last piece
-    segVol = smallian(dibLarge, 0.0, tree.totalHeight - ht2);
+    segVol = smallian(dibLarge, 0.0, totalHt - ht2);
     tipVol += segVol;
 
     double totalCubicVolume = merchCubic + tipVol;
@@ -511,6 +524,79 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
 	return loglen;
 }
 
+//estimate total height for broken top tree
+void ProfileVolumeCalculator::solveTotalHeight(TreeMeasurment& tree) {
+    double ht2 = 0.0; 
+    double dia2 = 0.0; 
+    double tht = 0.0;
+    double BH = 4.5;
+    double dbh = tree.dbh;
+
+    if (tree.totalHeight == 0.0) {
+        if (tree.heightToTopBroken > 0.0 && tree.topBrokenDiameter > 0.0) {
+            ht2 = tree.heightToTopBroken;
+            dia2 = tree.topBrokenDiameter;
+        }
+        else if (tree.referenceHeight > 0.0 && tree.referenceDiameter > 0.0) {
+            ht2 = tree.referenceHeight;
+            dia2 = tree.referenceDiameter;
+        }
+
+        if (ht2 > 0.0 && dia2 > 0.0) {
+            if (ht2 <= 1.33 * BH || dia2 >= dbh) {
+                tht = 0.0;
+                return;
+            }
+            double dH = ht2 * dia2 / (dbh - dia2);
+            dH = std::clamp(dH, 0.05 * ht2, 0.25 * ht2);
+
+            double HT_low = ht2;
+            double eval_low = -dia2;
+            double HT_try = ht2 + dH;
+
+            bool bracketed = false;
+            double HT_high = 0.0, eval_high = 0.0;
+
+            tree.totalHeight = HT_try;
+
+            for (int i = 0; i < 25; i++) {
+
+                double estmatedDia = taperModel_.GetDiameterAtHeight(tree, ht2);
+                double eval = estmatedDia - dia2;
+                if (eval > 0.0 || bracketed) {
+
+                    if (std::abs(eval) < 0.01) {
+                        return;
+                    }
+
+                    bracketed = true;
+
+                    if (eval < 0.0) {
+                        HT_low = HT_try;
+                        eval_low = eval;
+                    }
+                    else {
+                        HT_high = HT_try;
+                        eval_high = eval;
+                    }
+
+                    double A = std::abs(eval_low);
+                    HT_try = (A / (A + eval_high)) * (HT_high - HT_low) + HT_low;
+                    tree.totalHeight = HT_try;
+                }
+                else {
+                    HT_low = HT_try;
+                    eval_low = eval;
+                    HT_try += dH;
+                    tree.totalHeight = HT_try;
+                }
+            }
+            //reset total height to 0 if it is not resolved
+            if (tree.totalHeight < ht2) tree.totalHeight = 0.0;
+        }
+    }
+
+}
 
 std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
 {
@@ -533,6 +619,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
 	// merchendize primary product
 		// get heights
     bool useDob = (vco.region == 8 ? true : false);
+
     if (vco.primaryProduct == 1)  //for saw tree
     {
         if (tree.merchHeightSaw > 0) merchHeight = tree.merchHeightSaw;
@@ -542,6 +629,13 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
     {
         if (tree.merchHeightNonsaw > 0) merchHeight = tree.merchHeightNonsaw;
         else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw, useDob);
+    }
+
+    //check broken top tree
+    if (tree.heightToTopBroken > 0.0) {
+        if (merchHeight > tree.heightToTopBroken) {
+            merchHeight = tree.heightToTopBroken;
+        }
     }
     double merchLength = merchHeight - merchRules.stumpHeight;
 
@@ -593,6 +687,8 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                 else {
                     logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, loglen[i]);
                 }
+                //rounding
+                logData.grossCubicFoot = std::nearbyint(logData.grossCubicFoot * 10.0) / 10.0;
 
                 //BIA Behr using different boardfoot calculation
                 if (volumeEquation_.volEqStr.substr(0, 1) == "I" && volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
@@ -751,6 +847,11 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
         if (tree.merchHeightNonsaw > 0) merchHeight = tree.merchHeightNonsaw;
         else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw, useDob);
 
+        //check broken top tree
+        if (tree.heightToTopBroken > 0.0 && merchHeight > tree.heightToTopBroken) {
+            merchHeight = tree.heightToTopBroken;
+        }
+
         merchLength = merchHeight - actualSawHeight;
         if (merchLength > merchRules.minLengthTop)
         {
@@ -777,7 +878,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     if (i == 0)
                     {
                         if (numseg == 0) logData.heightToLargeEndDiameter = 4.5;
-                        else logData.heightToLargeEndDiameter = actualSawHeight;
+                        else logData.heightToLargeEndDiameter = actualSawHeight + merchRules.trim;
                         heightToSmallEnd = actualSawHeight + secondaryLogs[i] + merchRules.trim;
                     }
                     else
@@ -795,6 +896,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     //Calculate log cubic and boardfoot volume
                     //call smalian, scribner, and intl14 to calculate cubic and boardfoot volume
                     logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, secondaryLogs[i]);
+                    logData.grossCubicFoot = std::nearbyint(logData.grossCubicFoot * 10.0) / 10.0;
                     logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, secondaryLogs[i], COR);
                     logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, secondaryLogs[i]);
 
@@ -814,4 +916,38 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
     
 
 	return result;
+}
+
+double ProfileVolumeCalculator::GetHeightAtDiameter(VolumeCalculationOptions vco, TreeMeasurment tree, double diameter)
+{
+    MerchRulesResolver merchRulesResolver;
+    double ht2 = 0.0;
+    auto merchRules = merchRulesResolver.GetMerchRules(vco);
+
+    if (tree.totalHeight == 0.0) {
+        solveTotalHeight(tree);
+    }
+    // initialize model on tree - i.e fwelling models, nsvb model
+    taperModel_.InitializeOnTree(tree, merchRules, vco);
+
+    ht2 = taperModel_.GetHeightAtDiameter(tree, diameter);
+
+    return ht2;
+}
+
+double ProfileVolumeCalculator::GetDiameterAtHeight(VolumeCalculationOptions vco, TreeMeasurment tree, double height)
+{
+    MerchRulesResolver merchRulesResolver;
+    double dib = 0.0;
+    auto merchRules = merchRulesResolver.GetMerchRules(vco);
+
+    if (tree.totalHeight == 0.0) {
+        solveTotalHeight(tree);
+    }
+    // initialize model on tree - i.e fwelling models, nsvb model
+    taperModel_.InitializeOnTree(tree, merchRules, vco);
+
+    dib = taperModel_.GetDiameterAtHeight(tree, height);
+
+    return dib;
 }
