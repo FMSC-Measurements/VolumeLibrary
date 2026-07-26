@@ -3,9 +3,9 @@
 Source log: `fortran_build/gfortran_build.log`
 Inventory: `warnings_inventory_baseline.csv`
 
-- **Total warnings:** 1371
+- **Total warnings:** 1369
 - **Files:** 94
-- **Tier A / B / C:** 365 / 997 / 9
+- **Tier A / B / C:** 363 / 997 / 9
 
 ## By category
 
@@ -21,7 +21,6 @@ Inventory: `warnings_inventory_baseline.csv`
 | `uninitialized` | 17 |
 | `large_stack_array` | 9 |
 | `extension` | 2 |
-| `integer_division` | 2 |
 
 ## Top files
 

@@ -1016,8 +1016,6 @@ deleted_feature,B,1,sf_zero.f,427,72,Fortran 2018 deleted feature: Arithmetic IF
 deleted_feature,B,1,sf_zero.f,433,72,Fortran 2018 deleted feature: Arithmetic IF statement at (1),sf_zero.f,sf_zero.f
 deleted_feature,B,1,sf_zero.f,454,72,Fortran 2018 deleted feature: Arithmetic IF statement at (1),sf_zero.f,sf_zero.f
 deleted_feature,B,1,sf_zero.f,475,72,Fortran 2018 deleted feature: Arithmetic IF statement at (1),sf_zero.f,sf_zero.f
-integer_division,A,3,sf_zero.f,948,61,Integer division truncated to constant '-62' at (1) [-Winteger-division],sf_zero.f,sf_zero.f
-integer_division,A,3,sf_zero.f,965,61,Integer division truncated to constant '-510' at (1) [-Winteger-division],sf_zero.f,sf_zero.f
 unused_variable,B,1,stump.f,251,37,Unused variable 'half' declared at (1) [-Wunused-variable],stump.f,stump.f
 unused_variable,B,1,stump.f,251,21,Unused variable 'loc' declared at (1) [-Wunused-variable],stump.f,stump.f
 tab_character,B,1,volapss.f,59,15,Nonconforming tab character at (1) [-Wtabs],volapss.f,volapss.f

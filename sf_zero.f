@@ -945,7 +945,8 @@ C     Weird subterfuges below are NECESSARY to compute DM1 and DM2 on
 C     some systems.  DON'T SIMPLIFY THEM.  We compute RM1 and RM2 using
 C     these subterfuges so it will be clear we're computing the REAL and
 C     DOUBLE PRECISION characteristics in the same way.
-      PARAMETER (RM1 = (RBASE**(IM12/2)) * (RBASE**(IM12-IM12/2-1)))
+      PARAMETER (RM1 = (RBASE**INT(REAL(IM12)/2.0)) *
+     1               (RBASE**(IM12-INT(REAL(IM12)/2.0)-1)))
       PARAMETER (RM2 = RBASE**(IM13-IM11) * ((RBASE**IM11 - RBASE)
      1               + (RBASE - 1.0E0)))
       PARAMETER (RM3 = RBASE**(-IM11))
@@ -962,7 +963,8 @@ C
 C
 C     Weird subterfuges below are NECESSARY to compute DM1 and DM2 on
 C     some systems.  DON'T SIMPLIFY THEM.
-      PARAMETER (DM1 = (DBASE**(IM15/2)) * (DBASE**(IM15-IM15/2-1)))
+      PARAMETER (DM1 = (DBASE**IDINT(DBLE(IM15)/2.0D0)) *
+     1     (DBASE**(IM15-IDINT(DBLE(IM15)/2.0D0)-1)))
       PARAMETER (DM2 = DBASE**(IM16-IM14) * ((DBASE**IM14 - DBASE)
      1               + (DBASE - 1.0D0)))
       PARAMETER (DM3 = DBASE**(-IM14))
