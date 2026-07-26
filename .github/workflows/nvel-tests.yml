@@ -7,7 +7,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Ruff and mypy
         run: |
           pip install -e ".[dev]"
@@ -18,7 +18,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install gfortran
         run: sudo apt-get update && sudo apt-get install -y gfortran
       - name: Build libnvel.so
@@ -33,7 +33,7 @@ jobs:
   warnings:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Install gfortran
         run: sudo apt-get update && sudo apt-get install -y gfortran
       - name: Warning regression
