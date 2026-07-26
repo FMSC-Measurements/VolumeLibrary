@@ -114,6 +114,7 @@ __pycache__/
 .venv/
 .dmypy.json
 dmypy.json
+.devcontainer/
 
 # Fork: legacy IDE / publish outputs (archive lives in _legacy/)
 .vs/

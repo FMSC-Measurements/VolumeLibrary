@@ -9,11 +9,12 @@
     "updateRemoteUserUID": true,
     "remoteEnv": {
         "PYTHONPATH": "${containerWorkspaceFolder}",
-        "PATH": "${containerWorkspaceFolder}/.venv/bin:${containerEnv:PATH}"
+        "PATH": "${containerWorkspaceFolder}/.venv/bin:/home/nvel-dev/.local/bin:${containerEnv:PATH}"
     },
     "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {},
         "ghcr.io/devcontainers/features/common-utils": {
-            "username": "nvel-dev",
+            // "username": "nvel-dev",
             "installNano": true,
             "installZsh": true,
             "configureZshAsDefaultShell": true
@@ -22,6 +23,7 @@
     "customizations": {
         "vscode": {
             "extensions": [
+                "anthropic.claude-code",
                 "charliermarsh.ruff",
                 "github.vscode-github-actions",
                 "github.vscode-pull-request-github",
@@ -31,19 +33,12 @@
                 "ms-python.python",
                 "ms-toolsai.jupyter",
                 "vscode-icons-team.vscode-icons"
-            ],
-            "settings": {
-                "notebook.formatOnSave.enabled": true,
-                "[python]": {
-                    "editor.formatOnSave": true,
-                    "editor.defaultFormatter": "charliermarsh.ruff",
-                    "editor.codeActionsOnSave": {
-                        "source.fixAll": "explicit",
-                        "source.organizeImports": "explicit"
-                    }
-                }
-            }
+            ]
         }
     },
-    "postCreateCommand": "uv sync --frozen --extra dev && chmod +x fortran_build/build_gfortran_shared.sh fortran_build/build_gfortran_warnings.sh fortran_build/check_warnings.sh && fortran_build/build_gfortran_shared.sh && uv run pre-commit install"
+    "mounts": [
+        "source=${localEnv:HOME}/.claude,target=/home/nvel-dev/.claude,type=bind",
+        "source=${localEnv:HOME}/.claude.json,target=/home/nvel-dev/.claude.json,type=bind"
+    ],
+    "postCreateCommand": "uv sync --frozen --extra dev && chmod +x fortran_build/build_gfortran_shared.sh fortran_build/build_gfortran_warnings.sh fortran_build/check_warnings.sh && fortran_build/build_gfortran_shared.sh && uv run pre-commit install && curl -fsSL https://claude.ai/install.sh | bash"
 }

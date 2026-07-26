@@ -8,7 +8,6 @@ RUN apt-get update \
     ca-certificates \
     gfortran \
     python3 \
-    python3-venv \
     && rm -rf /var/lib/apt/lists/* \
     && if id -u ubuntu >/dev/null 2>&1; then \
         usermod -l "${USERNAME}" ubuntu \
