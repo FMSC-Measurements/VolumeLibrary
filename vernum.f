@@ -135,6 +135,9 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !         (4) Changed R4 Forest 17 (Humboldt – Toiyabe) to use R5 merch rules      
 !20260410 Modified nsvb.f logvol to sum match main stem merch volume
 !20260415 Fix nsvb.f divided by zero problem      
+!20260729 Bug fix for cor_ws JSP index error in f_west.f, added species mapping in r8init.f for merch height calc,
+!         and bug fix for R6 32 foot Behr equation butt log cubic volume formula in r6vol1.f
+      
 !...  Contains the volume library version number
 !...  This is simply the date of the latest release/version
 
@@ -164,7 +167,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20260415
+      VERSION = 20260729
       RETURN
       END SUBROUTINE VERNUM
       
@@ -197,7 +200,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 !   15    FORMAT (A)   
 !   		END IF
 
-      VERSION = 20260415
+      VERSION = 20260729
       RETURN
       END SUBROUTINE VERNUM2
 
@@ -220,7 +223,7 @@ C          Added equation for blackjack 301HAB0122, 302HAB0122 and yellow pine 3
 
 !---------------------------------------------------------------------
      
-      VERSION = 20260415
+      VERSION = 20260729
       
       PRINT     '(I8)', VERSION
       RETURN
@@ -233,6 +236,6 @@ C     R program need subroutine name to be all lower case
       !DEC$ ATTRIBUTES C, REFERENCE, ALIAS:'vernum_r_'::vernum_r
 
       integer version
-      version = 20260415
+      version = 20260729
       return
       end subroutine vernum_r

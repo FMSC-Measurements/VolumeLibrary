@@ -135,7 +135,12 @@ C     ***** (BOTH SIDES) CUBIC-FOOT VOLUME *****
 C     ***** BUTTLOG VOLUME *****
       LOGVOL(4,1) = 0.06239*DBHOB**2*(FCLASS/100.0)**2 + 
      >                                               0.025624*DBHOB**2
-
+C     The above formula is not correct for 32 foot log equation because of FCLASS
+C     The butt log for 32 foot equation is as below (20260728):
+      IF(IAPZ.EQ.2) THEN
+      LOGVOL(4,1) = 0.005454*16.0*(0.294*DBHOB**2+0.715*LOGDIA(1,1)**2)
+      ENDIF
+      
 C     ***** EASTSIDE HALF LOG AT TOP *****
       IF (X.EQ.0) GO TO 70
       LOGVOL(4,LOGS+1) = (LOGDIA(LOGS+1,1)**2*F + 

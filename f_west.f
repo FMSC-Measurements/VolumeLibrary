@@ -440,12 +440,12 @@ c       western red cedar
       DATA (QH(3,I),I=1,5)/ -5.6689, 22.896, -28.335, -1.9173, .242/
       
       JSPR=JSP-2
-      
-      Q1=QH(JSP,1)
-      Q2=QH(JSP,2)
-      Q3=QH(JSP,3)
-      Q4=QH(JSP,4)
-      Q5=QH(JSP,5)
+      !changed to JSPR on 20260610
+      Q1=QH(JSPR,1)
+      Q2=QH(JSPR,2)
+      Q3=QH(JSPR,3)
+      Q4=QH(JSPR,4)
+      Q5=QH(JSPR,5)
       
       BH = 4.5
 c                          any error is completely correlated with itself
@@ -753,6 +753,8 @@ c      Z       In    Real*4    Standardized offset
 c      DIBact  Out   Real*4    Actual dib
 
        IENTRY=2 
+       !added BH=4.5 on 20260610
+       BH=4.5
        if(abs(bh - h).lt. 1.0E-6) then
               DIBact=DIBmod
               RETURN
@@ -871,6 +873,8 @@ c      Z       In    Real*4    Standardized offset
 c      DIBact  Out   Real*4    Actual dib
 
        IENTRY=2 
+       !added BH=4.5 on 20260610
+       BH=4.5
        if(abs(bh - h).lt. 1.0E-6) then
               DIBact=DIBmod
               RETURN
