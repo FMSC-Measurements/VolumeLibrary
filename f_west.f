@@ -54,10 +54,10 @@ c                       OR  OR  WA  WA  WA  WA  OR  WA
 c             IREGION:   1   2   3   4   5   6   7   8
       DATA (DFSUB(I),I=1,8)/'01','02','03','04','05','06','07','08'/ 
 c             Region 8 (Washington West coast) uses Region 6 (WA. West) coef.
-      data (r25(i),i=1,8)/   -2.0262D0, -1.7945d0, -2.0366d0,
-     >         -2.0811d0, -1.9868d0, -2.0151d0, -1.9475d0, -2.0151d0 /
-      data (r34(i),i=1,8)/ 5.2132d0, 5.1417d0, 5.1768d0 ,     
-     >          5.1156d0, 5.1654d0, 5.2413d0, 5.1427d0, 5.2413d0 /
+      data (r25(i),i=1,8)/   -2.0262E0, -1.7945e0, -2.0366e0,
+     >         -2.0811e0, -1.9868e0, -2.0151e0, -1.9475e0, -2.0151e0 /
+      data (r34(i),i=1,8)/ 5.2132e0, 5.1417e0, 5.1768e0 ,
+     >          5.1156e0, 5.1654e0, 5.2413e0, 5.1427e0, 5.2413e0 /
 
 c                               Region modifications to coefficients
       FR25=f(25)
@@ -116,20 +116,20 @@ c                                        U6=A3 (bounds: 1.005-100)
          if(U6 .gt. 100.0d0) U6=100.0d0
 
 c                                         Define geometric parameters
-      R1= dexp(U1)/ (1.0d0 + dexp(U1))                             
-      R2= dexp(U2)/ (1.0d0 + dexp(U2))                             
-      R3= dexp(U3)/ (1.0d0 + dexp(U3))                             
-      R4= dexp(U4)/ (1.0d0 + dexp(U4))                             
-      R5= 0.5d0 + 0.5d0*dexp(U5)/ (1.0d0 + dexp(U5))                        
+      R1= REAL(dexp(U1)/ (1.0d0 + dexp(U1)))
+      R2= REAL(dexp(U2)/ (1.0d0 + dexp(U2)))
+      R3= REAL(dexp(U3)/ (1.0d0 + dexp(U3)))
+      R4= REAL(dexp(U4)/ (1.0d0 + dexp(U4)))
+      R5= REAL(0.5d0 + 0.5d0*dexp(U5)/ (1.0d0 + dexp(U5)))
 
-      A3=U6
-      RHI1 =  dexp(U7) / ( 1.0d0 + dexp(U7) )
+      A3=REAL(U6)
+      RHI1 =  REAL(dexp(U7) / ( 1.0d0 + dexp(U7) ))
       if (RHI1.gt. 0.5) RHI1=0.5
 
-      RHLONGI= U9    
+      RHLONGI= REAL(U9)
       RHI2 = RHI1 + RHLONGI
 
-      RHC = RHI2 + (1.0 - RHI2) * dexp(U8)/( 1.0d0 + dexp(U8))
+      RHC = REAL(RHI2 + (1.0 - RHI2) * dexp(U8)/( 1.0d0 + dexp(U8)))
 
 C     PUT COEFFICIENTS INTO AN ARRAY FOR EASIER PASSING
       RFLW(1) = R1
@@ -198,10 +198,10 @@ c                       OR  OR  WA  WA  WA  WA  OR  WA
 c             IREGION:   1   2   3   4   5   6   7   8
       DATA (WHSUB(I),I=1,8)/'01','02','03','04','05','06','07','08'/ 
 c             Region 2 (Oregon West Valley) uses Region 3 (Or. EV) coef.
-      data (r25(i),i=1,8)/  -7.511d0, -7.687d0, -7.224d0, 
-     >              -7.355d0, -7.632d0, -7.646d0, -7.687d0, -7.911d0/
-      data (r34(i),i=1,8)/ -1.215d0, -1.355d0, -1.177d0,
-     >              -1.373d0, -1.398d0, -1.188d0, -1.355d0, -1.449d0 /
+      data (r25(i),i=1,8)/  -7.511e0, -7.687e0, -7.224e0,
+     >              -7.355e0, -7.632e0, -7.646e0, -7.687e0, -7.911e0/
+      data (r34(i),i=1,8)/ -1.215e0, -1.355e0, -1.177e0,
+     >              -1.373e0, -1.398e0, -1.188e0, -1.355e0, -1.449e0 /
 
 c                               Region modifications to coefficients
       FR25=f(25)
@@ -223,7 +223,7 @@ c                                                                RHI1
       U7 = F(13) + f(14)*( 1.0d0 - exp(F(15)*HTTOT))                     
       if (U7.lt. -7.0d0) U7=-7.0d0                               
       if (U7.gt.  7.0d0) U7= 7.0d0                
-      RHI1 =  dexp(U7) / ( 1.0d0 + dexp(U7) )
+      RHI1 =  REAL(dexp(U7) / ( 1.0d0 + dexp(U7) ))
       if (RHI1.gt. 0.5) RHI1=0.5
                              
 c                                                                RHLONGI
@@ -268,18 +268,18 @@ c                                        U6=A3 (bounds: 1.005-100)
          if(U6 .gt. 100.0d0) U6=100.0d0
 
 c                                         Define geometric parameters
-      R1= dexp(U1)/ (1.0d0 + dexp(U1))                             
-      R2= dexp(U2)/ (1.0d0 + dexp(U2))                             
-      R3= dexp(U3)/ (1.0d0 + dexp(U3))                             
-      R4= dexp(U4)/ (1.0d0 + dexp(U4))                             
-      R5= 0.5d0 + 0.5d0*dexp(U5)/ (1.0d0 + dexp(U5))                        
+      R1= REAL(dexp(U1)/ (1.0d0 + dexp(U1)))
+      R2= REAL(dexp(U2)/ (1.0d0 + dexp(U2)))
+      R3= REAL(dexp(U3)/ (1.0d0 + dexp(U3)))
+      R4= REAL(dexp(U4)/ (1.0d0 + dexp(U4)))
+      R5= REAL(0.5d0 + 0.5d0*dexp(U5)/ (1.0d0 + dexp(U5)))
 
-      A3=U6
+      A3=REAL(U6)
 
-      RHLONGI= U9    
+      RHLONGI= REAL(U9)
       RHI2 = RHI1 + RHLONGI
 
-      RHC = RHI2 + (1.0 - RHI2) * dexp(U8)/( 1.0d0 + dexp(U8))
+      RHC = REAL(RHI2 + (1.0 - RHI2) * dexp(U8)/( 1.0d0 + dexp(U8)))
 
 C     PUT COEFFICIENTS INTO AN ARRAY FOR EASIER PASSING
       RFLW(1) = R1
@@ -336,6 +336,10 @@ c              common SF_A provides DBHOB(ob), Total height and D=DBHOB(ib)
 
 
 c                               Region modifications to coefficients
+c              Red cedar has no regional coefficients, so GEOSUB is
+c              unused here (SHP_W3 and SHP_W4 look up r25/r34 by it).
+c              It stays in the argument list because SF_SHP calls
+c              SHP_W3, SHP_W4 and SHP_W5 through one uniform signature.
 
       DMEDIAN = .11*(HTTOT-4.5)**( 1.08 + 0.0006*HTTOT)
       DFORM = DBHOB/DMEDIAN -1.0d0
@@ -344,7 +348,7 @@ c                                                                RHI1
       U7 = F(13)  +F(15)*DFORM                    
        if (U7.lt. -7.0d0) U7=-7.0d0                               
        if (U7.gt.  1.0d0) U7= 1.0d0                
-      RHI1 =  dexp(U7) / ( 1.0d0 + dexp(U7) )
+      RHI1 =  REAL(dexp(U7) / ( 1.0d0 + dexp(U7) ))
                              
 c                                                                RHLONGI
       U9A = f(17) + f(18)*log(HTTOT) 
@@ -387,18 +391,18 @@ c                                        U6=A3 (bounds: 1.005-100)
          if(U6 .gt. 100.0d0) U6=100.0d0
 
 c                                         Define geometric parameters
-      R1= dexp(U1)/ (1.0d0 + dexp(U1))                             
-      R2= dexp(U2)/ (1.0d0 + dexp(U2))                             
-      R3= dexp(U3)/ (1.0d0 + dexp(U3))                             
-      R4= dexp(U4)/ (1.0d0 + dexp(U4))                             
-      R5= 0.5d0 + 0.5d0*dexp(U5)/ (1.0d0 + dexp(U5))                        
+      R1= REAL(dexp(U1)/ (1.0d0 + dexp(U1)))
+      R2= REAL(dexp(U2)/ (1.0d0 + dexp(U2)))
+      R3= REAL(dexp(U3)/ (1.0d0 + dexp(U3)))
+      R4= REAL(dexp(U4)/ (1.0d0 + dexp(U4)))
+      R5= REAL(0.5d0 + 0.5d0*dexp(U5)/ (1.0d0 + dexp(U5)))
 
-      A3=U6
+      A3=REAL(U6)
 
-      RHLONGI= U9    
+      RHLONGI= REAL(U9)
       RHI2 = RHI1 + RHLONGI
 
-      RHC = RHI2 + (1.0 - RHI2) * dexp(U8)/( 1.0d0 + dexp(U8))
+      RHC = REAL(RHI2 + (1.0 - RHI2) * dexp(U8)/( 1.0d0 + dexp(U8)))
 
 C     PUT COEFFICIENTS INTO AN ARRAY FOR EASIER PASSING
       RFLW(1) = R1
@@ -469,8 +473,8 @@ c                             define heights h1 and h2 with h2 > h1
 c                                         both heights are above BH
        t3=(h1-bh)/(HTTOT-bh)
        t4=(h2-bh)/(HTTOT-bh)                                
-       CORR = exp( q1*(t4-t3) + q2*(t4*t4-t3*t3)/2.0D0
-     >                  +q3*(t4*t4*t4 - t3*t3*t3)/3.0D0)     
+       CORR = REAL(exp( q1*(t4-t3) + q2*(t4*t4-t3*t3)/2.0D0
+     >                  +q3*(t4*t4*t4 - t3*t3*t3)/3.0D0))
        GO TO 100
       endif
 
@@ -478,8 +482,8 @@ c                                         both heights are above BH
 c                                              h1 < Bh  and h2 > BH
          t3=(h2-bh)/(HTTOT-bh)                             
          T2 = (BH-H1)/BH    
-         CORR = q5*exp( q4*t2 + q1*t3 +q2*t3*t3/2.0d0 
-     >                    +q3*t3**3 / 3.0d0 )       
+         CORR = REAL(q5*exp( q4*t2 + q1*t3 +q2*t3*t3/2.0d0
+     >                    +q3*t3**3 / 3.0d0 ))
          go to 100
         endif
 
@@ -617,7 +621,7 @@ c                                          EQN 2   Y
            Y=0.999999D0 
       ENDIF
 c                                          EQN 3  ZETA   
-      Z  = GAMMA + DELTA*LOG(Y/(1.0d0-Y))
+      Z  = REAL(GAMMA + DELTA*LOG(Y/(1.0d0-Y)))
 
       RETURN
 
@@ -643,7 +647,7 @@ c                                          reverses the Sb transform
        Y = exp(ylogit)/(1.0d0 + exp(ylogit))
                          
        X = MU + LAMDA*Y                                             
-       DIBact = X * DIBmod
+       DIBact = REAL(X * DIBmod)
 
       RETURN
       END             
@@ -739,7 +743,7 @@ c                                          EQN 2   Y
            Y=0.999999D0 
       ENDIF
 c                                          EQN 3  ZETA   
-      Z  = GAMMA + DELTA*LOG(Y/(1.0d0-Y))
+      Z  = REAL(GAMMA + DELTA*LOG(Y/(1.0d0-Y)))
 
       RETURN
 
@@ -764,7 +768,7 @@ c                                          reverses the Sb transform
 120    YLOGIT = (Z - GAMMA)/DELTA
        Y = exp(ylogit)/(1.0D0 + exp(ylogit))           
        X = MU + LAMDA*Y                                             
-       DIBact = X * DIBmod
+       DIBact = REAL(X * DIBmod)
 
       RETURN
       END             
@@ -859,7 +863,7 @@ c                                          EQN 2   Y
            Y=0.999999D0 
       ENDIF
 c                                          EQN 3  ZETA   
-      Z  = GAMMA + DELTA*LOG(Y/(1.0d0-Y))
+      Z  = REAL(GAMMA + DELTA*LOG(Y/(1.0d0-Y)))
 
       RETURN
 
@@ -884,7 +888,7 @@ c                                          reverses the Sb transform
 120    YLOGIT = (Z - GAMMA)/DELTA
        Y = exp(ylogit)/(1.0D0 + exp(ylogit))           
        X = MU + LAMDA*Y                                             
-       DIBact = X * DIBmod
+       DIBact = REAL(X * DIBmod)
 
       RETURN
       END             
@@ -923,11 +927,14 @@ c        note: WV has no hemlock data; uses EV coefficient
 
 c      note:   English-only on input and output
                                                                  
+c              JSP outside 3-5 will not set FDBT_C1, so we initialize it here.
+      FDBT_C1 = 0.0
+
       IF(JSP.EQ.3) THEN
         DMEDIAN = .566*(HTTOT-4.5)**( .634 + .00074*HTTOT)
         DFORM = DBHOB/DMEDIAN -1.0                                  
 
-  40    if (GEOSUB.EQ.'00') then
+        if (GEOSUB.EQ.'00') then
            RATIO = exp( -2.4641 + .04393*log(DBHOB) -.2922*dform
      >                 +.05964 * DFORM*log(DBHOB))
         else
@@ -942,7 +949,7 @@ c      note:   English-only on input and output
         FDBT_C1 = RATIO*DBHOB
         RETURN
       ELSEIF(JSP.EQ.4) THEN
-  50    if (GEOSUB.EQ.'00') then
+        if (GEOSUB.EQ.'00') then
            RATIO = .04504*(1.0 +0.8307*exp(-.2048*DBHOB))  
         else                                           
           DO 200, ID=1,8
