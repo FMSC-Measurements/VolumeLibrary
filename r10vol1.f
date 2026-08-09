@@ -116,7 +116,7 @@ C--  OF TREE STEM, ACCORDING TO ONE OF THE DEFINED SEGMENTATION
 C--  RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
 
             IF (HTTYPE.EQ.'L' .OR. HTTYPE.EQ.'l') THEN
-               NUMSEG = HT1PRD
+               NUMSEG = INT(HT1PRD)
                NOLOGP=HT1PRD
                IF(NUMSEG.GT.20)THEN
                    ERRFLAG = 12
@@ -127,10 +127,11 @@ C--  RULES IN THE VOLUME ESTIMATOR HANDBOOK FSH ???.
  35            CONTINUE
                IF (FLAG32) THEN
                      NSEG16=INT(HT1PRD*2.0)
-                     DO 36 I=1,NSEG16
- 36                     PIELEN(I)=16.0
+                     DO I=1,NSEG16
+                        PIELEN(I)=16.0
+                     END DO
                ENDIF
-               itmp = anint((ht1prd-int(ht1prd))*10)
+               itmp = INT(ANINT((ht1prd-int(ht1prd))*10))
                IF (itmp .eq. 5) THEN
                      NUMSEG=NUMSEG+1
                      LOGLEN(NUMSEG)=MAXLEN/2.0
@@ -267,8 +268,9 @@ C                       IF (PIELEN(I+1).GT.0.0) THEN  ! REPLACED 1/10/2003 WITH 
                        ILOG=ILOG+1
  252              CONTINUE
 
- 253              DO 254 I=1,NSEG16
- 254                 LOGVOL(1,I)=PIEVOL(I)
+ 253              DO I=1,NSEG16
+                     LOGVOL(1,I)=PIEVOL(I)
+                  END DO
                ENDIF
 
 
@@ -531,7 +533,7 @@ C
       REAL LIMD,LOWD,LUPD,LMERCH,TAPER,HITOP,RH,DSX,BKWRC,DSI
       REAL HTTOT, HT1PRD, DBHOB, STUMP, TOP,RXL,DXL,HTEST
       REAL BKAYC,H,HEST,D,C,HTD,BK,RH32,RH40
-      REAL*8 BKAC,DVA,BKWR,DVR,BB,DD2MI,DVREDA
+      REAL BKAC,DVA,BKWR,DVR,BB,DD2MI,DVREDA
       INTEGER I,K,KNOL,IMO
 C
 C     SPRUCE-HEMLOCK TAPER EQUATION
@@ -638,11 +640,11 @@ C///////////////////////////////////////////////////////////////////////
          I = 1
        
          IF(H.GE.0.01) THEN
-	      IF(ISP.EQ.IRA)THEN
-	         BK = 0
-	      ELSE
+            IF(ISP.EQ.IRA)THEN
+               BK = 0
+            ELSE
                BK = BB(D,H)
-	      ENDIF
+            ENDIF
 C            FV = 0.005454154*D**2*(H - 4.5)*BK
          ENDIF
          
@@ -653,10 +655,10 @@ C            FV = 0.005454154*D**2*(H - 4.5)*BK
          IF(HEST.GT.0.01) BK = BB(D,HEST)
 
          IF(ISP.EQ.IRA)THEN
-	      DST(I) = (LIMD**2)/(D**2)
-	   ELSE
+            DST(I) = (LIMD**2)/(D**2)
+         ELSE
             DST(I) = (LIMD**2)/(BK*D**2)
-	   ENDIF
+         ENDIF
          
          DSLO(I) = DST(I) - 0.0001
          DSHI(I) = DST(I) + 0.0001
@@ -671,44 +673,44 @@ C----------
             IF(RH.LE.0.0)THEN
                RH = 0
                RH32 = 0
-	         RH40 = 0
+               RH40 = 0
             ELSEIF(RH .LT. 0.078) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= 0.078
             ELSEIF(RH .LT. 0.15) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= RH
             ELSE
-	         RH40 = RH
+               RH40 = RH
                RH32= RH
             ENDIF
             
-	      IF(ISP.EQ.IRA)THEN
-	         DS(I) = DVREDA(RH,RH32,RH40,HEST,D)
+            IF(ISP.EQ.IRA)THEN
+               DS(I) = DVREDA(RH,RH32,RH40,HEST,D)
             ELSE
                DS(I) = DD2MI(RH,RH32,D,HEST)
-	      ENDIF
+            ENDIF
             if(ds(i).lt.0.0) ds(i) = 0.0
 
             RXL = 0.9*RH
             IF(RXL.LE.0.0)THEN
                RH32 = 0
-	         RH40 = 0
+               RH40 = 0
             ELSEIF(RXL .LT. 0.078) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= 0.078
             ELSEIF(RXL .LT. 0.15) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= RXL
             ELSE
-	         RH40 = RXL
+               RH40 = RXL
                RH32= RXL
             ENDIF
-	      IF(ISP.EQ.IRA)THEN
-	         DXL = DVREDA(RXL,RH32,RH40,HEST,D)
+            IF(ISP.EQ.IRA)THEN
+               DXL = DVREDA(RXL,RH32,RH40,HEST,D)
             ELSE
                DXL = DD2MI(RXL,RH32,D,HEST)
-	      ENDIF
+            ENDIF
             if(dxl.lt.0.0) dxl = 0.0
             TAPER = (DS(I) - DXL)/(.1*RH)
          ELSE
@@ -717,44 +719,44 @@ C----------
             IF(RH.LE.0.0)THEN
                RH = 0
                RH32 = 0
-	         RH40 = 0
+               RH40 = 0
             ELSEIF(RH .LT. 0.078) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= 0.078
             ELSEIF(RH .LT. 0.15) THEN
-	         RH40 = 0.13
+               RH40 = 0.13
                RH32= RH
             ELSE
-	         RH40 = RH
+               RH40 = RH
                RH32= RH
             ENDIF
-	      IF(ISP.EQ.IRA)THEN
-	         DS(I) = DVREDA(RH,RH32,RH40,H,D)
+            IF(ISP.EQ.IRA)THEN
+               DS(I) = DVREDA(RH,RH32,RH40,H,D)
             ELSE
                DS(I) = DD2MI(RH,RH32,D,H)
-	      ENDIF
+            ENDIF
             if(ds(i).lt.0.0) ds(i) = 0.0
 
             RXL = 0.9*RH
             IF(RXL.LE.0.0)THEN
                RXL = 0
                RH32 = 0
-	         RH40 = 0
+               RH40 = 0
             ELSEIF(RXL .LT. 0.078) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= 0.078
             ELSEIF(RXL .LT. 0.15) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= RXL
             ELSE
-	         RH40 = RXL
+               RH40 = RXL
                RH32= RXL
             ENDIF
-	      IF(ISP.EQ.IRA)THEN
-	         DXL = DVREDA(RXL,RH32,RH40,H,D)
+            IF(ISP.EQ.IRA)THEN
+               DXL = DVREDA(RXL,RH32,RH40,H,D)
             ELSE
                DXL = DD2MI(RXL,RH32,D,H)
-	      ENDIF
+            ENDIF
 
             if(dxl.lt.0.0) dxl = 0.0
             TAPER = (DS(I) - DXL)/(.1*RH)
@@ -771,31 +773,31 @@ C----------
             IF(RH.LE.0.0)THEN
                RH = 0
                RH32 = 0
-	         RH40 = 0
+               RH40 = 0
             ELSEIF(RH .LT. 0.078) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= 0.078
             ELSEIF(RH .LT. 0.15) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= RH
             ELSE
-	         RH40 = RH
+               RH40 = RH
                RH32= RH
             ENDIF
             IF(H.LE.0.01) THEN
                HEST = (HH(I) - 4.5*RH)/(1.0 - RH)
-      	      IF(ISP.EQ.IRA)THEN
-	            DS(I) = DVREDA(RH,RH32,RH40,HEST,D)
-	         ELSE
+                  IF(ISP.EQ.IRA)THEN
+                  DS(I) = DVREDA(RH,RH32,RH40,HEST,D)
+               ELSE
                   DS(I) = DD2MI(RH,RH32,D,HEST)
-	         ENDIF
+               ENDIF
                if(ds(i).lt.0.0) ds(i) = 0.0
             ELSE
-      	      IF(ISP.EQ.IRA)THEN
-	            DS(I) = DVREDA(RH,RH32,RH40,H,D)
-	         ELSE
+                  IF(ISP.EQ.IRA)THEN
+                  DS(I) = DVREDA(RH,RH32,RH40,H,D)
+               ELSE
                   DS(I) = DD2MI(RH,RH32,D,H)
-	         ENDIF
+               ENDIF
                if(ds(i).lt.0.0) ds(i) = 0.0
             ENDIF 
  245     CONTINUE
@@ -895,7 +897,7 @@ C  WESTERN RED CEDAR TAPER EQUATION
 
 C  ALASKA YELLOW CEDAR TAPER EQUATION
             ELSE
- 5546          CONTINUE
+               CONTINUE
                DSX = DVA(RH,RH32,H,DBHOB)   
                BKAYC = BKAC(DBHOB,H)
                if(dsx.lt.0) dsx = 0
