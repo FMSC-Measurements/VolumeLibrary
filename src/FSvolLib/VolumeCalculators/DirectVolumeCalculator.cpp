@@ -5,6 +5,8 @@
 #include "DirectVolumeCalculator_R610.h"
 #include "DirectVolumeCalculator_R89.h"
 #include "DirectVolumeCalculator_BIA.h"
+#include "DirectVolumeCalculator_FIA_Eastern.h"
+#include "DirectVolumeCalculator_FIA_RockyMountain.h"
 #include "HawaiiSharpnackVolume.h"
 #include "..\SmalianScribnerIntl14.h"
 #include <cstring>
@@ -92,6 +94,20 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 			result.grossBoardFootPrimary = treeFormClass78BoardFootTable(tree.dbh, numLogs, "S");
 		}
 		return result;
+	}
+	case VolumeEquation::GeoCode::ROCKYMOUNTAIN:
+	{
+		double drc = tree.drc > 0.0 ? tree.drc : tree.dbh;
+		return ChojnackyWoodlandVol(volumeEquation_.fiaCode, drc, tree.totalHeight);
+	}
+	case VolumeEquation::GeoCode::EASTERN:
+	{
+		if (volumeEquation_.volEqStr.substr(3, 3) == "HAH") {
+			return Hahn_NC_Vol(volumeEquation_.fiaCode, tree, vco.siteIndex, vco.basalArea, merchRules.minTopDibSaw, merchRules.minimumBoardFootDiameter);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "STN") {
+			return Stone_NC_Vol(volumeEquation_.fiaCode, tree, merchRules.minTopDibSaw, vco.siteIndex, vco.basalArea);
+		}
 	}
 	case VolumeEquation::GeoCode::UNKNOWN:
 		break;

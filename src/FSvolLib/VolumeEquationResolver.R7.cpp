@@ -205,6 +205,13 @@ VolumeEquation VolumeEquationResolver::GetR7VolumeEquation(VolumeCalculationOpti
 bool VolumeEquationResolver::isValidR7Equation(const std::string& VOLEQ)
 {
     // --- Validation branch ---
+    // 32 foot Behr equation
+    if (VOLEQ.substr(3, 3) == "B32") {
+        std::string volEq16 = VOLEQ.substr(0, 3) + "BEHW" + VOLEQ.substr(7, 3);
+        if (contains(EQNUM_R7, volEq16)) {
+            return true;
+        }
+    }
     // Westside/Eastside prefixes
     if (hasPrefix(VOLEQ, "616BEHW") || hasPrefix(VOLEQ, "632BEHW")) {
         return true;

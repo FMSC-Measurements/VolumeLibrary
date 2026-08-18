@@ -44,28 +44,35 @@ private:
 	static bool isValidR10Equation(const std::string& voleq);
 
 	static VolumeEquation GetFiaVolumeEquation(VolumeCalculationOptions vco);
+	static bool isValidFiaEquation(const std::string& voleq);
 
 public:
 	static bool isValidEquation(std::string& voleq, VolumeCalculationOptions vco)
 	{
-		switch (vco.region)
-		{
-		case 1: { return isValidR1Equation(voleq); }
-		case 2: { return isValidR2Equation(voleq); }
-		case 3: { return isValidR3Equation(voleq); }
-		case 4: { return isValidR4Equation(voleq); }
-		case 5: { return isValidR5Equation(voleq); }
-		case 6: { return isValidR6Equation(voleq); }
-		case 7: { return isValidR7Equation(voleq); }
-		case 8: { return isValidR8Equation(voleq); }
-		case 9: { return isValidR9Equation(voleq); }
-		case 10: { return isValidR10Equation(voleq); }
-		default: 
-			{ 
+		//need to add validation for woodland species equation validation
+		if (vco.volumeCalculationOptions == VolumeCalculationOptions::VolumeCalculationType::FIA) {
+			return isValidFiaEquation(voleq);
+		}
+		else {
+			switch (vco.region)
+			{
+			case 1: { return isValidR1Equation(voleq); }
+			case 2: { return isValidR2Equation(voleq); }
+			case 3: { return isValidR3Equation(voleq); }
+			case 4: { return isValidR4Equation(voleq); }
+			case 5: { return isValidR5Equation(voleq); }
+			case 6: { return isValidR6Equation(voleq); }
+			case 7: { return isValidR7Equation(voleq); }
+			case 8: { return isValidR8Equation(voleq); }
+			case 9: { return isValidR9Equation(voleq); }
+			case 10: { return isValidR10Equation(voleq); }
+			default:
+			{
 				if (voleq.size() == 10) return true;
-				else throw std::invalid_argument("VolumeCalculationOptions.region is invalid"); 
+				else throw std::invalid_argument("VolumeCalculationOptions.region is invalid");
 			}
 
+			}
 		}
 	}
 

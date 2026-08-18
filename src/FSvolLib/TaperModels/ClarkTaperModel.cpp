@@ -2,13 +2,15 @@
 #include "..\SmalianScribnerIntl14.h"
 #include <cmath>
 #include <algorithm>
+#include "..\array_helper.h"
 
 int ClarkTaperModel::findSpeciesIndex(int spcd)
 {
     int idx = -1;
     int sppGrp;
     if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R9) {
-        idx = R9SpIndex(spcd);
+        //idx = R9SpIndex(spcd);
+        idx = array_helper::findIndexInSortedArray(r9SpeciesCode, spcd);
         if (idx == -1)
         {
             if (spcd < 300) {
@@ -72,7 +74,8 @@ int ClarkTaperModel::findSpeciesIndex(int spcd)
                     sppGrp = 1970;
                 }
             }
-            idx = R9SpIndex(sppGrp);
+            //idx = R9SpIndex(sppGrp);
+            idx = array_helper::findIndexInSortedArray(r9SpeciesCode, sppGrp);
         }
     }
     //else //R8 species
@@ -102,7 +105,8 @@ int ClarkTaperModel::findSpeciesIndex(int spcd)
             sppGrp = 800;
         }
 
-        idx = r8SpeciesIndex(sppGrp);
+        //idx = r8SpeciesIndex(sppGrp);
+        idx = array_helper::findIndexInSortedArray(R8Species, sppGrp);
     }
     //spgrp = sppGrp;
     return idx;
@@ -1346,8 +1350,6 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
     result.tipVol = ClarkCubicFootVol(lowHt, totHt) - result.primaryVol - result.topwoodVol;
     if (result.tipVol < 0.0) result.tipVol = 0.0;
     
-    //result.volCalculated = true;
-
     if (vco.region == 9) {
 
         result.stumpVol *= r9VolCorFactor;    // multiply AND store back into 'result'
@@ -1355,5 +1357,12 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
         result.topwoodVol *= r9VolCorFactor;
         result.tipVol *= r9VolCorFactor;
     }
+
+    //round result to one decimal number
+    result.stumpVol = std::round(result.stumpVol * 10.0) / 10.0;
+    result.primaryVol = std::round(result.primaryVol * 10.0) / 10.0;
+    result.topwoodVol = std::round(result.topwoodVol * 10.0) / 10.0;
+    result.tipVol = std::round(result.tipVol * 10.0) / 10.0;
+
     return result;
 }

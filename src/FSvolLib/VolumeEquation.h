@@ -30,6 +30,10 @@ public:
 		NATIONAL = 'N',
 		BIA_EAST = 'C',
 		ARMY_BASE = 'M',
+		PACIFIC_COAST = 'P',
+		ROCKYMOUNTAIN = 'R',
+		SOUTHERN = 'S',
+		EASTERN = 'E',
 	};
 
 	enum class ModelType {
@@ -139,7 +143,14 @@ public:
 			volEq.geoCode = static_cast<GeoCode>(volumeEquationNumber[0]); // cast first volEq char to GeoCode, Note this doesn't enforce that GeoCode is a valid value
 			volumeEquationNumber.copy(volEq.subregionalCode, 2, 1);
 			volEq.modelType = ParseModelType(volumeEquationNumber.substr(3, 3));
-			if (volumeEquationNumber.substr(3, 3) == "DVE" || volumeEquationNumber.substr(3, 3) == "SN2" || volumeEquationNumber.substr(3, 3) == "TRF") volEq.isProfileModel = false;
+			if (volumeEquationNumber.substr(3, 3) == "DVE" || volumeEquationNumber.substr(3, 3) == "SN2" || volumeEquationNumber.substr(3, 3) == "TRF") {
+				volEq.isProfileModel = false;
+			}
+			//FIA volume equation starts with P, R, S, and E should set volEq.isProfileModel = false
+			if (volEq.geoCode == VolumeEquation::GeoCode::PACIFIC_COAST || volEq.geoCode == VolumeEquation::GeoCode::SOUTHERN ||
+				volEq.geoCode == VolumeEquation::GeoCode::ROCKYMOUNTAIN || volEq.geoCode == VolumeEquation::GeoCode::EASTERN) {
+				volEq.isProfileModel = false;
+			}
 			//volume equation 223DVEW122 uses NSVB taper model to calculate volume
 			if (volumeEquationNumber == "223DVEW122") volEq.isProfileModel = true;
 			volEq.usRegion = volumeEquationNumber[6];

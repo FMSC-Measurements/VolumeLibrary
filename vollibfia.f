@@ -397,6 +397,18 @@ C  variables for stump dia and vol
 c================================================================
       subroutine vollibfsveg(regn,iforst,idist,voleqi,dbhob,httot,
      +       mtopp,stems,dbtbh,stump,ba,si,tcu, mcu, bdf, errflag)
+     +       bind(C, name="vollibfsveg_")
+c--------------------------------------------------------------
+c    This subroutine is created for FSVeg to call the library
+      use iso_c_binding
+      IMPLICIT NONE
+      
+      ! 1. Map the inputs strictly to C-compatible types for the stack
+      integer(c_int) :: regn, iforst, idist, stems, ba, si, errflag
+      real(c_float)  :: dbhob, httot, mtopp, dbtbh, stump, tcu, mcu, bdf
+      
+      ! 2. Handle the character string as a C-character array pointer
+      character(kind=c_char) :: voleqi(*)
 c--------------------------------------------------------------
 c    This subroutine is created for FSVeg to call the library
 !  YW 20210719 Set FCLASS initial to 0 in order to pick the species default form class
@@ -404,26 +416,27 @@ c    This subroutine is created for FSVeg to call the library
 !  YW 20200811 Added stump, ba and si as input variables
 !  YW 20230605  Set the default region and forest for R1 BEH equation and default stump to 1.0   
 !  YW 20241127 Added call NVBC for NVB equation.      
-      IMPLICIT NONE
-      character*(*) voleqi
-      real tcu,mcu,bdf
-      integer stems
+!      IMPLICIT NONE
+      !character*(*) voleqi
+      !real tcu,mcu,bdf
+      !integer stems
 c     variables from VOLINIT
 !**********************************************************************
       CHARACTER*1  HTTYPE,LIVE,CTYPE
       CHARACTER*2  FORST,PROD
       character*4  CONSPEC
       CHARACTER*10 VOLEQ
+      !CHARACTER*11 VOLEQ11
       CHARACTER*2  DIST,VAR
    
 !   MERCH VARIABLES 
-      INTEGER        REGN,HTTFLL,BA,SI
-      REAL           STUMP,MTOPP,MTOPS,THT1,MAXLEN
-      INTEGER        CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG,ERRFLAG
+      INTEGER        HTTFLL  !,REGN,BA,SI
+      REAL           MTOPS,THT1,MAXLEN    !STUMP,MTOPP,
+      INTEGER        CUTFLG,BFPFLG,CUPFLG,CDPFLG,SPFLG !,ERRFLAG
       
 !   Tree variables
-      REAL 	HTTOT,HT1PRD,HT2PRD,LEFTOV 
-      REAL 	DBHOB,DRCOB,DBTBH,BTR,CR,TRIM
+      REAL 	HT1PRD,HT2PRD,LEFTOV   !HTTOT,
+      REAL 	DRCOB,BTR,CR,TRIM  !DBTBH,DBHOB,
       INTEGER   FCLASS,HTLOG,SPCODE, WHOLELOGS
     
 !	3RD POINT VARIABLES
@@ -432,7 +445,7 @@ c     variables from VOLINIT
     
 !   OUTPUTS
       REAL      NOLOGP,NOLOGS
-      INTEGER   TLOGS,IFORST, IDIST
+      INTEGER   TLOGS   !,IFORST, IDIST
     
 !   ARRAYS
       INTEGER   I15,I21,I20,I7,I3,I,J
@@ -450,7 +463,13 @@ C  variables for call NVB
       DRYBIO = 0
       GRNBIO = 0
 !********************************************************************
-      VOLEQ   = VOLEQI(1:10)
+      !VOLEQ   = VOLEQI(1:10)
+      VOLEQ = ' ' ! Initialize with spaces to clear old data
+      do i = 1, 10
+         if (voleqi(i) == c_null_char) exit
+         VOLEQ(i:i) = voleqi(i)
+      end do
+      
 !     Set default value for unused variables
       IF(IFORST.GT.99) THEN
         FORST = '01'

@@ -122,3 +122,16 @@ VolumeEquation VolumeEquationResolver::GetFiaVolumeEquation(VolumeCalculationOpt
 
 	return VolumeEquation::ParseVolumeEquationNumber(volEqStr);
 }
+
+bool VolumeEquationResolver::isValidFiaEquation(const std::string& voleq) {
+	if (std::find(woodlandVolEq.begin(), woodlandVolEq.end(), voleq) != woodlandVolEq.end()) {
+		return true;
+	}
+
+	if (voleq.substr(0, 3) == "NVB" && voleq.size() == 10) {
+		if (NationalScaleVolumeBiomass::isValidNVBeq(voleq)) {
+			return true;
+		}
+	}
+	return false;
+}

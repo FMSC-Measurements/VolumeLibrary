@@ -91,18 +91,27 @@ private:
         };
 
         // --- Begin main logic ---
+        RH = (H - HTUP) / (H - 4.5);
+        if (RH <= 0.0) {
+            D2 = 0.0;
+            return D2;
+        }
+        else if (RH < 0.078) {
+            RH32 = 0.078; 
+            RH40 = 0.15;
+        }
+        else if (RH < 0.15) {
+            RH32 = RH;
+            RH40 = 0.15;
+        }
+        else {
+            RH32 = RH;
+            RH40 = RH;
+        }
 
         // Alaska cedar
         if (ISP == "AC" && DBHOB < 38.01) {
 
-            RH = (H - HTUP) / (H - 4.5);
-
-            if (RH <= 0.0) {
-                D2 = 0.0;
-                return D2;
-            }
-
-            RH32 = (RH < 0.078 ? 0.078 : RH);
             DSI = DVA(RH, RH32, H, DBHOB);
             if (DSI < 0.0) DSI = 0.0;
 
@@ -113,14 +122,6 @@ private:
         // Western redcedar
         else if (ISP == "RC" && DBHOB < 56.01) {
 
-            RH = (H - HTUP) / (H - 4.5);
-
-            if (RH <= 0.0) {
-                D2 = 0.0;
-                return D2;
-            }
-
-            RH32 = (RH < 0.078 ? 0.078 : RH);
             DSI = DVR(RH, RH32, H, DBHOB);
             if (DSI < 0) DSI = 0;
 
@@ -133,31 +134,10 @@ private:
         {
             BK = (ISP == "RA" ? 0.0 : BB(D, H));
 
-            RH = (H - HTUP) / (H - 4.5);
-
-            if (RH <= 0.0) {
-                D2 = 0.0;
-                return D2;
-            }
-
-            if (RH < 0.078) {
-                RH32 = 0.078;
-                RH40 = 0.15;
-            }
-            else if (RH < 0.15) {
-                RH32 = RH;
-                RH40 = 0.15;
-            }
-            else {
-                RH32 = RH;
-                RH40 = RH;
-            }
-
             if (ISP == "RA") {
                 D2 = DVREDA(RH, RH32, RH40, H, D);
                 if (D2 < 0.0) D2 = 0.0;
                 D2 = sqrt(D2) * D;
-                return D2;
             }
             else
             {

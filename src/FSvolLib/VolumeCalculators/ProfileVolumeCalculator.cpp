@@ -1,3 +1,4 @@
+#include "..\TaperModels\BlmTaperAndDbhIb.h"
 #include "..\SmalianScribnerIntl14.h"
 #include "ProfileVolumeCalculator.h"
 #include "..\WeightfactorAndRefDataResolver.h"
@@ -5,27 +6,57 @@
 #include <array>
 
 
+
 TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
 {
     TreeOutput result;
 
-    //for broken top tree without total height, estimate total height using broken height and diameter
-    if (tree.totalHeight == 0.0) {
-        solveTotalHeight(tree);
-    }
-
     // initialize model on tree - i.e fwelling models, nsvb model
     taperModel_.InitializeOnTree(tree, merchRules, vco);
+
+    //for broken top tree without total height, estimate total height using broken height and diameter
+    if (tree.totalHeight == 0.0) {
+        TreeMeasurment tree2 = tree;
+        if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET) {
+            // convert log height to height in feet
+            double logLength = 16.0;
+            if (tree.merchHeightUnit == TreeMeasurment::MerchHeightUnit::LOGS32) {
+                logLength = 32.0;
+            }
+            else if (tree.merchHeightUnit == TreeMeasurment::MerchHeightUnit::LOGS8) {
+                logLength = 8.0;
+            }
+
+            if (tree.merchHeightSaw > 0.0) {
+                tree2.merchHeightSaw = tree.merchHeightSaw / 10.0 * (logLength + merchRules.trim) + merchRules.stumpHeight;
+            }
+            if (tree.merchHeightNonsaw > 0.0) {
+                tree2.merchHeightNonsaw = tree.merchHeightNonsaw / 10.0 * (logLength + merchRules.trim) + merchRules.stumpHeight;
+            }
+            tree2.merchHeightUnit = TreeMeasurment::MerchHeightUnit::FEET;
+        }
+        solveTotalHeight(tree2, merchRules);
+        tree.totalHeight = tree2.totalHeight;
+    }
+
 
     //small tree volume calculation
     //BLM and R6 BEH model 
     if (volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
         double dbhIb = tree.dbh - merchRules.doubleBarkThicknessAtBrestHeight;
+        if (volumeEquation_.geoCode == VolumeEquation::GeoCode::BLM_WO) {
+            int blmProfile = 10, blmTaperEq = 56;
+            getBlmTaperEq(volumeEquation_.volEqStr, blmProfile, blmTaperEq);
+            dbhIb = GetBlmDbhIb(blmTaperEq, tree.dbh);
+        }
+
         double formClass = tree.formClass;
         if (formClass == 0.0) {
             formClass = GetFormClass(volumeEquation_.volEqStr, vco.forest, tree.dbh);
         }
+
         double d17 = tree.dbh * formClass / 100.0;
+
         if (tree.totalHeight <= 17.8 || 
             tree.dbh < merchRules.minTopDibNonSaw ||
             std::sqrt(dbhIb*dbhIb - dbhIb*dbhIb*17.3/tree.totalHeight) < merchRules.minTopDibSaw) {
@@ -58,9 +89,6 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
         double grossDryWeightPrimary = 0.0;
         double grossDryWeightSecondary = 0.0;
         int numberOfLogs = 0;
-
-        //test get regional weight factor
-        //WeightFactors weightfactor = getRegionalDefaultWtfactor(vco.region, vco.forest, vco.fiaCode);
 
         //sum log volumes
         for (const auto& item : logs) {
@@ -135,19 +163,19 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     }
     
 	// calculate total cubic and cords
-    // total volume forBEH,  NVB and CLK profile will be calculated differently.
-    if ((volumeEquation_.modelType == VolumeEquation::ModelType::BEH && volumeEquation_.geoCode == VolumeEquation::GeoCode::R6) ||
-        volumeEquation_.modelType == VolumeEquation::ModelType::CLK ||
+    // total volume for NVB and CLK profile will be calculated differently.
+    //if ((volumeEquation_.modelType == VolumeEquation::ModelType::BEH && volumeEquation_.geoCode == VolumeEquation::GeoCode::R6) ||
+    if (volumeEquation_.modelType == VolumeEquation::ModelType::CLK ||
         volumeEquation_.modelType == VolumeEquation::ModelType::NVB) {
 
         StemVolume stemVol = taperModel_.GetStemCubicVol(tree, merchRules, vco);
         //for Behre's taper to calculate the total cubic volume
-        if (volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
-            result.stumpCubicFoot = stemVol.stumpVol;
-            result.totalCubicFoot = stemVol.primaryVol;
-            result.cordMerchantable = std::round((result.grossCubicFootPrimary / 90.0) * 10.0) / 10.0;
-        }
-        else {
+        //if (volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
+        //    result.stumpCubicFoot = stemVol.stumpVol;
+        //    result.totalCubicFoot = stemVol.primaryVol;
+        //    result.cordMerchantable = std::round((result.grossCubicFootPrimary / 90.0) * 10.0) / 10.0;
+        //}
+        //else {
             //for taper CLK and NVB
             double merchCF = result.grossCubicFootPrimary + result.grossCubicFootSecondary;
             double cubicRatio = 1.0;
@@ -168,7 +196,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
             double cordFactor = 90.0;
             if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
             result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
-        }
+        //}
         return result;
     }
 
@@ -525,7 +553,7 @@ std::vector<double> ProfileVolumeCalculator::getLogs(double merchLength, MerchRu
 }
 
 //estimate total height for broken top tree
-void ProfileVolumeCalculator::solveTotalHeight(TreeMeasurment& tree) {
+void ProfileVolumeCalculator::solveTotalHeight(TreeMeasurment& tree, MerchRules merchRules) {
     double ht2 = 0.0; 
     double dia2 = 0.0; 
     double tht = 0.0;
@@ -540,6 +568,14 @@ void ProfileVolumeCalculator::solveTotalHeight(TreeMeasurment& tree) {
         else if (tree.referenceHeight > 0.0 && tree.referenceDiameter > 0.0) {
             ht2 = tree.referenceHeight;
             dia2 = tree.referenceDiameter;
+        }
+        else if (tree.merchHeightSaw > 0.0) {
+            ht2 = tree.merchHeightSaw;
+            dia2 = merchRules.minTopDibSaw;
+        }
+        else if (tree.merchHeightNonsaw > 0.0) {
+            ht2 = tree.merchHeightNonsaw;
+            dia2 = merchRules.minTopDibNonSaw;
         }
 
         if (ht2 > 0.0 && dia2 > 0.0) {
@@ -611,6 +647,28 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
     double prevHeight = merchRules.stumpHeight;
     char COR = 'Y';
 
+    double treeMerchHeightSaw = tree.merchHeightSaw;
+    double treeMerchHeightNonsaw = tree.merchHeightNonsaw;
+
+    if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET) {
+        // convert log height to height in feet
+        double logLength = 16.0;
+        if (tree.merchHeightUnit == TreeMeasurment::MerchHeightUnit::LOGS32) {
+            logLength = 32.0;
+        }
+        else if (tree.merchHeightUnit == TreeMeasurment::MerchHeightUnit::LOGS8) {
+            logLength = 8.0;
+        }
+
+        if (tree.merchHeightSaw > 0.0) {
+            treeMerchHeightSaw = tree.merchHeightSaw / 10.0 * (logLength + merchRules.trim) + merchRules.stumpHeight;
+        }
+        if (tree.merchHeightNonsaw > 0.0) {
+            treeMerchHeightNonsaw = tree.merchHeightNonsaw / 10.0 * (logLength + merchRules.trim) + merchRules.stumpHeight;
+        }
+    }
+
+
     WeightFactorAndRefData wf = getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode);
 
     if (!merchRules.useCorrectedFactor) COR = 'N';
@@ -622,12 +680,12 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
 
     if (vco.primaryProduct == 1)  //for saw tree
     {
-        if (tree.merchHeightSaw > 0) merchHeight = tree.merchHeightSaw;
+        if (treeMerchHeightSaw > 0) merchHeight = treeMerchHeightSaw;
         else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibSaw, useDob);
     }
     else // for nonsaw tree
     {
-        if (tree.merchHeightNonsaw > 0) merchHeight = tree.merchHeightNonsaw;
+        if (treeMerchHeightNonsaw > 0) merchHeight = treeMerchHeightNonsaw;
         else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw, useDob);
     }
 
@@ -655,8 +713,20 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
 
                 if (i == 0)
                 {
+                    //first log large end DIB using dbhIb
                     logData.heightToLargeEndDiameter = 4.5;
-                    actualDiaLarge = taperModel_.GetDiameterAtHeight(tree, logData.heightToLargeEndDiameter);
+                    if (volumeEquation_.geoCode == VolumeEquation::GeoCode::BLM_WO) {
+                        int blmProfile = 10;
+                        int blmTaperEq = 56;
+                        getBlmTaperEq(volumeEquation_.volEqStr, blmProfile, blmTaperEq);
+                        actualDiaLarge = GetBlmDbhIb(blmTaperEq, tree.dbh);
+                        if (actualDiaLarge == 0.0) {
+                            actualDiaLarge = taperModel_.GetDiameterAtHeight(tree, logData.heightToLargeEndDiameter);
+                        }
+                    }
+                    else {
+                        actualDiaLarge = taperModel_.GetDiameterAtHeight(tree, logData.heightToLargeEndDiameter);
+                    }
                 }
                 else
                 {
@@ -716,6 +786,8 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
         // check for 32 foot log equation to combine the two 16-foot log into one and recalculate log board foot volume
         // find volume for 32 foot logs (Flewelling & Demars equation only)
         if (volumeEquation_.modelType == VolumeEquation::ModelType::DEM ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::BEH ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::B32 ||
             volumeEquation_.modelType == VolumeEquation::ModelType::F32 ||
             volumeEquation_.modelType == VolumeEquation::ModelType::F33 ||
             volumeEquation_.modelType == VolumeEquation::ModelType::FW2 ||
@@ -723,7 +795,9 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
         {
 
             if (volumeEquationNumber.substr(3, 2) == "F3" || volumeEquationNumber.substr(1, 2) == "32" ||
-                volumeEquationNumber.substr(1, 2) == "61" || volumeEquationNumber.substr(1, 2) == "62")
+                volumeEquationNumber.substr(1, 2) == "61" || volumeEquationNumber.substr(1, 2) == "62" ||
+                volumeEquationNumber.substr(3, 3) == "B32" || volumeEquationNumber.substr(0, 3) == "A02") //||
+                //volumeEquationNumber.substr(0, 3) == "628")
             {
 
                 std::vector<LogOutput> result32;
@@ -738,16 +812,21 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     logData.length = result[i].length + result[i + 1].length;
                     logData.largeEndDiameterActual = result[i].largeEndDiameterActual;
                     logData.smallEndDiameterActual = result[i + 1].smallEndDiameterActual;
-                    logData.largeEndDiameterScaled = std::floor(logData.largeEndDiameterActual);
-                    logData.smallEndDiameterScaled = std::floor(logData.smallEndDiameterActual);
-                    //logData.largeEndDiameterScaled = result[i].largeEndDiameterScaled;
-                    //logData.smallEndDiameterScaled = result[i + 1].smallEndDiameterScaled;
+                    if (vco.region == 10 && (volumeEquationNumber.substr(3, 2) == "F3" || volumeEquationNumber.substr(1, 2) == "32")) {
+                        logData.largeEndDiameterScaled = std::floor(logData.largeEndDiameterActual);
+                        logData.smallEndDiameterScaled = std::floor(logData.smallEndDiameterActual);
+                    }
+                    else {
+                        logData.largeEndDiameterScaled = result[i].largeEndDiameterScaled;
+                        logData.smallEndDiameterScaled = result[i + 1].smallEndDiameterScaled;
+                    }
                     logData.heightToLargeEndDiameter = result[i].heightToLargeEndDiameter;
                     logData.grossCubicFoot = result[i].grossCubicFoot + result[i + 1].grossCubicFoot;
                     logData.greenWeight = result[i].greenWeight + result[i + 1].greenWeight;
                     logData.dryWeight = result[i].dryWeight + result[i + 1].dryWeight;
                     logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, logData.length, COR);
-                    logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
+                    //logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, logData.length);
+                    logData.internationalBoardFoot = result[i].internationalBoardFoot + result[i + 1].internationalBoardFoot;
                     result32.push_back(logData);
                 }
 
@@ -771,7 +850,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     result32.push_back(logData);
                 }
 
-                if (vco.region == 10) {
+                if (vco.region == 10 && (volumeEquationNumber.substr(3, 2) == "F3" || volumeEquationNumber.substr(1, 2) == "32")) {
                     //clear the 16-foot log result and reset to the 32-foot log data
                     result.clear();
                     result = result32;
@@ -782,7 +861,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     int lcnt = 0;
 
                     // Loop: i = 2, 4, 6, ..., numseg
-                    for (int i = 2; i <= numseg; i += 2)
+                    for (int i = 1; i < numseg; i += 2)
                     {
                         lcnt += 1;
 
@@ -827,10 +906,10 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     {
                         lcnt += 1;
 
-                        result[numseg].grossBoardFoot = result32[lcnt - 1].grossBoardFoot;
+                        result[numseg-1].grossBoardFoot = result32[lcnt - 1].grossBoardFoot;
 
                         if (merchRules.useCorrectedFactor)
-                            result[numseg].grossBoardFoot *= 10;
+                            result[numseg-1].grossBoardFoot *= 10;
                     }
 
                 }
@@ -844,7 +923,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
     // only do the secondary product for saw tree
     if (vco.primaryProduct == 1)
     {
-        if (tree.merchHeightNonsaw > 0) merchHeight = tree.merchHeightNonsaw;
+        if (treeMerchHeightNonsaw > 0) merchHeight = treeMerchHeightNonsaw;
         else merchHeight = taperModel_.GetHeightAtDiameter(tree, merchRules.minTopDibNonSaw, useDob);
 
         //check broken top tree
@@ -925,7 +1004,7 @@ double ProfileVolumeCalculator::GetHeightAtDiameter(VolumeCalculationOptions vco
     auto merchRules = merchRulesResolver.GetMerchRules(vco);
 
     if (tree.totalHeight == 0.0) {
-        solveTotalHeight(tree);
+        solveTotalHeight(tree, merchRules);
     }
     // initialize model on tree - i.e fwelling models, nsvb model
     taperModel_.InitializeOnTree(tree, merchRules, vco);
@@ -942,7 +1021,7 @@ double ProfileVolumeCalculator::GetDiameterAtHeight(VolumeCalculationOptions vco
     auto merchRules = merchRulesResolver.GetMerchRules(vco);
 
     if (tree.totalHeight == 0.0) {
-        solveTotalHeight(tree);
+        solveTotalHeight(tree, merchRules);
     }
     // initialize model on tree - i.e fwelling models, nsvb model
     taperModel_.InitializeOnTree(tree, merchRules, vco);

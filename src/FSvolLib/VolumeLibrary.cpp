@@ -39,7 +39,8 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 	auto merchRules = (maybe_merchRules.has_value()) ? maybe_merchRules.value() : merchRulesResolver_.GetMerchRules(options);
 	
 	//region 7 (BLM) saw top diameter
-	if (options.region == 7) merchRules.minTopDibSaw = tree.dbh * 0.184 + 2.24;
+	//not sure if we need to set the top dib for BLM like this. Behr Equation uses top DIB 6.0
+	//if (options.region == 7) merchRules.minTopDibSaw = tree.dbh * 0.184 + 2.24;
 	//check override parameters for stump, sawTopDib, nonsawTopDib
 	if (tree.stumpHeightOverride > 0.0) merchRules.stumpHeight = tree.stumpHeightOverride;
 	if (tree.minTopDibSawOverride > 0.0) merchRules.minTopDibSaw = tree.minTopDibSawOverride;
@@ -79,7 +80,8 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 		double dryWeightPrimary = treeOutput.dryWeightPrimary;
 		double dryWeightSecondary = treeOutput.dryWeightSecondary;
 
-		if (cubicfootPrimary > 0.0 && greenWeightPrimary == 0.0) {
+		if (cubicfootPrimary > 0.0) // && greenWeightPrimary == 0.0) {
+		{
 			greenWeightPrimary = cubicfootPrimary * weightFactor;
 			dryWeightPrimary = cubicfootPrimary * refSpeciesData.weightFactorDry;
 
@@ -87,7 +89,8 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 			treeOutput.dryWeightPrimary = dryWeightPrimary;
 		}
 
-		if (cubicfootSecondary > 0.0 && greenWeightSecondary == 0.0) {
+		if (cubicfootSecondary > 0.0) // && greenWeightSecondary == 0.0) {
+		{
 			if (tree.isLive) greenWeightSecondary = cubicfootSecondary * refSpeciesData.weightFactorNonsaw;
 			else greenWeightSecondary = cubicfootSecondary * refSpeciesData.weightFactorDead;
 			dryWeightSecondary = cubicfootSecondary * refSpeciesData.weightFactorDry;

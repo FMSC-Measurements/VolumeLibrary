@@ -61,7 +61,7 @@ public:
 			else if (volumeEquation.modelType == VolumeEquation::ModelType::NVB)
 			{
 				auto  model = new NationalScaleVolumeBiomassTaperModel(volumeEquation, vco);
-				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); 
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 				return *volCalcPtr;
@@ -69,7 +69,7 @@ public:
 			else if (volumeEquation.modelType == VolumeEquation::ModelType::DVE)
 			{
 				auto  model = new NationalScaleVolumeBiomassTaperModel(volumeEquation); //for VOLEQ 223DVEW122
-				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); 
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 				return *volCalcPtr;
@@ -77,7 +77,7 @@ public:
 			else if (volumeEquation.modelType == VolumeEquation::ModelType::MAT)
 			{
 				auto  model = new RustagiTaperModel(volumeEquation);
-				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); //std::make_unique<ProfileVolumeCalculator>(volumeEquation, *modelPtr);
+				auto volCalcPtr = new ProfileVolumeCalculator(volumeEquation, *model); 
 				volumeCalculatorCahe_.emplace(volumeEquationStr, volCalcPtr);
 
 				return *volCalcPtr;

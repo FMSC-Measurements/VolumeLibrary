@@ -204,6 +204,18 @@
     <ClInclude Include="VolumeCalculators\MerchHeightCalculator_R89.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="array_helper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TaperModels\BlmTaperAndDbhIb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_RockyMountain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_Eastern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -330,6 +342,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VolumeEquationResolver.FIA.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_RockyMountain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_Eastern.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

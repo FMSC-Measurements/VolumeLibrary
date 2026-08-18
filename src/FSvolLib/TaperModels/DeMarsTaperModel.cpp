@@ -6,8 +6,8 @@ void DeMarsTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRul
     if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET)
     {
         //log height, the merchHeightSaw is number of logs * 10, then get the estimated total height
-        double logLength = 16.3;
-        if (tree.merchHeightUnit == TreeMeasurment::MerchHeightUnit::LOGS32) logLength = 32.6;
+        double logLength = 16.0 + merchRules.trim;
+        if (tree.merchHeightUnit == TreeMeasurment::MerchHeightUnit::LOGS32) logLength *= 2.0;
         totalHeight = ((tree.merchHeightSaw / 10.0) * logLength + merchRules.stumpHeight) / (1.0 + (2.0 / 3.0) * merchRules.minTopDibSaw / tree.dbh);
     }
 }
