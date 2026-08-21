@@ -4,9 +4,9 @@
 #include <vector>
 #include <cmath>
 #include <array>
+#include <iostream>
 
 TreeOutput Hahn_NC_Vol(int fiaCode, TreeMeasurment tree, int siteIndex, int basalArea, double sawTopDib, double sawMinDbh)
-//TreeOutput Hahn_NC_Vol(int fiaCode, TreeMeasurment tree, int siteIndex, int basalArea, double sawTopDib, double sawMinDbh)
 {
     TreeOutput out;
     int SI = siteIndex;
@@ -288,6 +288,8 @@ TreeOutput Stone_NC_Vol(int fiaCode, TreeMeasurment tree, double sawTopDib, int 
     //-------------------------------------------------
     // Normalize SI, BA
     //-------------------------------------------------
+    if (SI < 10) SI = 65;
+    if (BA < 10) BA = 80;
 
     if (SI < 20) SI = 20;
     else if (SI > 120) SI = 120;
@@ -398,6 +400,142 @@ TreeOutput Stone_NC_Vol(int fiaCode, TreeMeasurment tree, double sawTopDib, int 
             out.grossInternationalBoardFoot = BD;
         }
 
+    }
+    return out;
+}
+
+
+TreeOutput Scott_Vol(int fiaCode, TreeMeasurment tree)
+{
+    TreeOutput out;
+
+    double DBHOB = tree.dbh;
+    double HTTOT = tree.totalHeight;
+    double HT1PRD = tree.merchHeightSaw;
+    double HT2PRD = tree.merchHeightNonsaw;
+
+    // Species number from characters 8-10 (1-based Fortran indexing)
+    int SPN = fiaCode; // std::stoi(VOLEQ.substr(7, 3));
+
+    // VOLSP species list
+    static const std::array<int, 18> VOLSP = {
+        12,94,129,131,241,261,317,318,370,400,
+        531,544,621,762,832,833,950,999
+    };
+
+    // CU coefficients
+    const double CUCOEF[18][7] = {
+        {12,-0.1,-0.05444,2.1194,0.04821,2.0427,0.3579},
+        {94,0.17,-0.06315,2.0654,0.05122,2.0264,0.3508},
+        {129,0.11,-0.05977,2.0498,0.04965,2.0198,0.3468},
+        {131,-0.03,-0.05604,2.0473,0.05022,2.0198,0.3242},
+        {241,0.19,-0.05904,1.9935,0.04981,2.0027,0.3214},
+        {261,0.24,-0.05895,2.0362,0.04947,2.0172,0.3366},
+        {317,-0.45,-0.00523,2.2323,0.01338,2.0093,0.6384},
+        {318,-0.19,-0.01171,1.8949,0.0134,1.9928,0.6471},
+        {370,-0.27,-0.00675,1.9738,0.01327,1.9967,0.6407},
+        {400,-0.27,-0.00466,2.1575,0.01174,2.0035,0.664},
+        {531,-0.6,-0.00711,2.2693,0.01399,2.019,0.6518},
+        {544,0.06,-0.02437,1.5419,0.01299,1.9885,0.6453},
+        {621,-0.45,-0.00523,2.2323,0.01338,2.0093,0.6384},
+        {762,-0.04,-0.01783,1.8109,0.01358,1.9905,0.6553},
+        {832,-0.26,0.00038,2.0,0.01068,1.998,0.6438},
+        {833,-0.13,-0.00536,1.9172,0.01131,1.9975,0.6549},
+        {950,-0.39,-0.00622,2.0066,0.0131,1.9939,0.6494},
+        {999,0.13,-0.00183,2.36,0.00944,2.0608,0.6516}
+    };
+
+    // BD coefficients
+    const double BDCOEF[18][7] = {
+        {12,-12.29,-0.08212,2.5641,0.1416,2.2657,0.3744},
+        {94,-13.03,-0.05197,2.5248,0.12,2.1999,0.4227},
+        {129,-12.25,-0.02418,2.6865,0.0961,2.2281,0.4222},
+        {131,-6.78,-0.00841,2.7001,0.0645,2.1938,0.4713},
+        {241,-8.89,-0.07324,2.4556,0.1216,2.2382,0.3249},
+        {261,-8.36,-0.01433,2.7878,0.0771,2.2593,0.4202},
+        {317,2.84,-0.00557,3.1808,0.0296,2.4606,0.5771},
+        {318,3.73,-0.00182,3.3766,0.0262,2.4291,0.6139},
+        {370,8.23,0.00039,3.0,0.0206,2.2116,0.8019},
+        {400,-1.24,-0.00385,3.1648,0.0312,2.3888,0.6067},
+        {531,-0.84,-0.01207,3.0043,0.0419,2.3951,0.5912},
+        {544,9.2,0.00052,3.0,0.0193,2.2165,0.8043},
+        {621,2.84,-0.00557,3.1808,0.0296,2.4606,0.5771},
+        {762,1.58,-0.00151,3.3878,0.0287,2.3875,0.6356},
+        {832,4.46,-0.00061,3.5972,0.0182,2.4804,0.5922},
+        {833,1.01,-0.00192,3.3188,0.0246,2.4268,0.6},
+        {950,2.66,-0.00313,3.278,0.0282,2.4416,0.594},
+        {999,0.03,-0.00196,3.3236,0.0263,2.4162,0.6012}
+    };
+
+    int IDX = array_helper::findIndexInSortedArray(VOLSP, SPN);
+    if (IDX < 0) {
+        out.errflag = 1;
+        return out;
+    }
+
+    int k = IDX;
+
+    if (SPN == static_cast<int>(CUCOEF[k][0])) {
+        double A1 = CUCOEF[k][1];
+        double A2 = CUCOEF[k][2];
+        double A3 = CUCOEF[k][3];
+        double A4 = CUCOEF[k][4];
+        double A5 = CUCOEF[k][5];
+        double A6 = CUCOEF[k][6];
+
+        double DBH = DBHOB;
+
+        if (HT2PRD < 0.1) {
+            out.errflag = 8;
+            return out;
+        }
+
+        double CV4 = A1 + A2 * pow(DBH, A3) + A4 * pow(DBH, A5) * pow(HT2PRD, A6);
+        out.grossCubicFootPrimary = CV4;  // Fortran VOL(4)
+
+        double BFMIND = (SPN < 300 ? 9.0 : 11.0);
+
+        if (DBH >= BFMIND) {
+            if (HT1PRD < 0.1) {
+                out.errflag = 7;
+                return out;
+            }
+
+            double B1 = BDCOEF[k][1];
+            double B2 = BDCOEF[k][2];
+            double B3 = BDCOEF[k][3];
+            double B4 = BDCOEF[k][4];
+            double B5 = BDCOEF[k][5];
+            double B6 = BDCOEF[k][6];
+
+            double UPSRATIO = 0.0;
+
+            if (SPN < 300) {
+                if (DBH >= 9.0 && DBH <= 10.9) UPSRATIO = 0.1589;
+                else if (DBH >= 11.0 && DBH <= 12.9) UPSRATIO = 0.1300;
+                else if (DBH >= 13.0 && DBH <= 14.9) UPSRATIO = 0.1060;
+                else if (DBH >= 15.0 && DBH <= 16.9) UPSRATIO = 0.0900;
+                else if (DBH >= 17.0 && DBH <= 18.9) UPSRATIO = 0.0775;
+                else if (DBH >= 19.0 && DBH <= 20.9) UPSRATIO = 0.0700;
+                else if (DBH >= 21.0)             UPSRATIO = 0.0650;
+            }
+            else {
+                if (DBH >= 9.0 && DBH <= 10.9) UPSRATIO = 0.0;
+                else if (DBH >= 11.0 && DBH <= 12.9) UPSRATIO = 0.2640;
+                else if (DBH >= 13.0 && DBH <= 14.9) UPSRATIO = 0.1900;
+                else if (DBH >= 15.0 && DBH <= 16.9) UPSRATIO = 0.1600;
+                else if (DBH >= 17.0)             UPSRATIO = 0.1500;
+            }
+
+            double TOPVOL = CV4 * UPSRATIO;
+            double SAWCU = CV4 - TOPVOL;
+
+            out.grossCubicFootSecondary = TOPVOL;  // Fortran VOL(7)
+            out.grossCubicFootPrimary = SAWCU;   // Fortran VOL(4)
+
+            double BD = B1 + B2 * pow(DBH, B3) + B4 * pow(DBH, B5) * pow(HT1PRD, B6);
+            out.grossInternationalBoardFoot = BD;      // Fortran VOL(10)
+        }
     }
     return out;
 }

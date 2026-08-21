@@ -7,7 +7,9 @@
 #include "DirectVolumeCalculator_BIA.h"
 #include "DirectVolumeCalculator_FIA_Eastern.h"
 #include "DirectVolumeCalculator_FIA_RockyMountain.h"
+#include "DirectVolumeCalculator_FIA_Southern.h"
 #include "HawaiiSharpnackVolume.h"
+#include "MerchHeightCalculator_R89.h"
 #include "..\SmalianScribnerIntl14.h"
 #include <cstring>
 
@@ -97,17 +99,49 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 	}
 	case VolumeEquation::GeoCode::ROCKYMOUNTAIN:
 	{
-		double drc = tree.drc > 0.0 ? tree.drc : tree.dbh;
-		return ChojnackyWoodlandVol(volumeEquation_.fiaCode, drc, tree.totalHeight);
+		if (volumeEquation_.volEqStr.substr(3, 3) == "CHO") {
+			double drc = tree.drc > 0.0 ? tree.drc : tree.dbh;
+			result =  ChojnackyWoodlandVol(volumeEquation_.fiaCode, drc, tree.totalHeight);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "KEM") {
+			result =  Kemp_Vol(volumeEquation_.fiaCode, tree.dbh, tree.totalHeight, merchRules.minimumBoardFootDiameter);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "MOI") {
+			result = Moisen_Vol(volumeEquation_.volEqStr, tree.dbh, tree.totalHeight, merchRules.minTopDibSaw, merchRules.minimumBoardFootDiameter);
+		}
+		return result;
 	}
 	case VolumeEquation::GeoCode::EASTERN:
 	{
 		if (volumeEquation_.volEqStr.substr(3, 3) == "HAH") {
-			return Hahn_NC_Vol(volumeEquation_.fiaCode, tree, vco.siteIndex, vco.basalArea, merchRules.minTopDibSaw, merchRules.minimumBoardFootDiameter);
+			result =  Hahn_NC_Vol(volumeEquation_.fiaCode, tree, vco.siteIndex, vco.basalArea, merchRules.minTopDibSaw, merchRules.minimumBoardFootDiameter);
 		}
 		else if (volumeEquation_.volEqStr.substr(3, 3) == "STN") {
-			return Stone_NC_Vol(volumeEquation_.fiaCode, tree, merchRules.minTopDibSaw, vco.siteIndex, vco.basalArea);
+			result = Stone_NC_Vol(volumeEquation_.fiaCode, tree, merchRules.minTopDibSaw, vco.siteIndex, vco.basalArea);
 		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "SCT") {
+			if (tree.totalHeight > 0.0 && tree.merchHeightSaw == 0.0) {
+				double merchHeightSaw = r89MerchHeight(9, 1, volumeEquation_.fiaCode, tree.dbh, tree.totalHeight, merchRules.minTopDibSaw, vco.basalArea, vco.siteIndex, false, false);
+				if (merchHeightSaw > 0.0) tree.merchHeightSaw = merchHeightSaw;
+			}
+			if (tree.totalHeight > 0.0 && tree.merchHeightNonsaw == 0.0) {
+				double merchHeightNonsaw = r89MerchHeight(9, 1, volumeEquation_.fiaCode, tree.dbh, tree.totalHeight, merchRules.minTopDibNonSaw, vco.basalArea, vco.siteIndex, true, false);
+				if (merchHeightNonsaw > 0.0) tree.merchHeightNonsaw = merchHeightNonsaw;
+			}
+
+			result = Scott_Vol(volumeEquation_.fiaCode, tree);
+		}
+		return result;
+	}
+	case VolumeEquation::GeoCode::SOUTHERN:
+	{
+		if (volumeEquation_.volEqStr.substr(3, 3) == "SRS") {
+			result =  SRS_Vol(volumeEquation_.volEqStr, tree, merchRules.minimumBoardFootDiameter);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "BRA") {
+			result =  Brandeis_Vol(volumeEquation_.volEqStr, tree);
+		}
+		return result;
 	}
 	case VolumeEquation::GeoCode::UNKNOWN:
 		break;

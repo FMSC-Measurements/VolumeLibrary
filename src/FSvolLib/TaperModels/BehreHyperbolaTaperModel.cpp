@@ -222,6 +222,8 @@ void BehreHyperbolaTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules 
         else {
             if (volEqStr_.substr(0, 1) == "I") formClass_ = 70;
             else formClass_ = GetFormClass(volEqStr_, vco.forest, tree.dbh);
+
+            tree.formClass = formClass_;
         }
     }
 

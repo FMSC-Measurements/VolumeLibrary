@@ -2,32 +2,12 @@
 #include <string>
 #include <cmath>
 
-// -----------------------------
-    // Utility helpers
-    // -----------------------------
-
-    // Safe substring using Fortran 1-based inclusive indices: s(i:j)
-//static std::string slice_1based(const std::string& s, std::size_t i1, std::size_t j1) {
-//    if (i1 == 0) i1 = 1;
-//    if (j1 < i1) return "";
-//    const std::size_t start = i1 - 1;
-//    const std::size_t len = j1 - i1 + 1;
-//    if (start >= s.size()) return "";
-//    return s.substr(start, std::min(len, s.size() - start));
-//}
 
 // Case-insensitive first-character check (Fortran VOLEQ(1:1) == 'B' or 'b')
 static bool starts_with_b(const std::string& s) {
     if (s.empty()) return false;
     return std::toupper(static_cast<unsigned char>(s[0])) == 'B';
 }
-
-// Trim or pad VOLEQ to at least 10 characters (Fortran CHARACTER*10)
-//static std::string normalize_voleq(const std::string& s) {
-//    std::string t = s;
-//    if (t.size() < 10) t.resize(10, ' ');
-//    return t;
-//}
 
 // -----------------------------
 // BLMTAPEQ: maps VOLEQ to PROFILE and TAPEQU

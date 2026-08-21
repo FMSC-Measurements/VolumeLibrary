@@ -216,6 +216,9 @@
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_Eastern.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_Southern.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -348,6 +351,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_Eastern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_Southern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\MerchHeightCalculator_R89.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -61,14 +61,14 @@ double VEQ(double DBHOB, double HT, double MODEL,
     return VEQ;
 }
 
-int findSpeciesIndex(int species, const int arr[], int size) {
-    for (int i = 0; i < size; i++) {
-        if (arr[i] == species) {
-            return i;   // found
-        }
-    }
-    return -1;  // not found
-}
+//int findSpeciesIndex(int species, const int arr[], int size) {
+//    for (int i = 0; i < size; i++) {
+//        if (arr[i] == species) {
+//            return i;   // found
+//        }
+//    }
+//    return -1;  // not found
+//}
 
 TreeOutput r8Lasher(const std::string& VOLEQ, TreeMeasurment tree, VolumeCalculationOptions vco, MerchRules merchRules) {
     TreeOutput out;
@@ -88,7 +88,8 @@ TreeOutput r8Lasher(const std::string& VOLEQ, TreeMeasurment tree, VolumeCalcula
         bool calcPulpHeight = true;
         ht2 = r89MerchHeight(vco.region, vco.forest, volSp, tree.dbh, tree.totalHeight, merchRules.minTopDibNonSaw, vco.basalArea, vco.siteIndex, calcPulpHeight);
     }
-    int spIdx = findSpeciesIndex(volSp, r8spList, 78);
+    //int spIdx = findSpeciesIndex(volSp, r8spList, 78);
+    int spIdx = findSpeciesIndex(r8spList, 78, volSp);
     if (spIdx <= 0) {
         out.errflag = 6;
         return out;

@@ -179,7 +179,10 @@ public:
 		if (modelCode == "NVB") { return ModelType::NVB; }
 		if (modelCode == "CUR") { return ModelType::CUR; }
 		if (modelCode == "TRF") { return ModelType::TRF; }
-		else { return ModelType::UNKNOWN; }
+		//else { return ModelType::UNKNOWN; }
+		else {
+			return ModelType::DVE;
+		}
 	}
 
 };

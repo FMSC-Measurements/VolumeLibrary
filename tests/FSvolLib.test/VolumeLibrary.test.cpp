@@ -17,12 +17,12 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 10;
-        volOpt.forest = 4;
-        volOpt.fiaCode = 42;
+        volOpt.region = 2;
+        volOpt.forest = 1;
+        volOpt.fiaCode = 100;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        //volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
+        volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
         //volOpt.ecoRegion = "M260";
         // ...
         auto volEqDefault = volLib.GetVolumeEquationNumber(volOpt);
@@ -30,12 +30,12 @@ public:
         TreeMeasurment tree;
         tree.dbh = 19.7;
         tree.totalHeight = 76.0;
-        tree.referenceHeight = 50.0;
-        tree.referenceDiameter = 7.0;
+        tree.referenceHeight = 0.0;
+        tree.referenceDiameter = 0.0;
         tree.minTopDibNonSawOverride = 0.0;
         tree.minTopDibSawOverride = 0.0;
         //tree.merchHeightUnit = TreeMeasurment::MerchHeightUnit::LOGS32;
-        //tree.merchHeightSaw = 45.0;
+        tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
         tree.formClass = 80;
         tree.heightToTopBroken = 0.0;
@@ -47,7 +47,7 @@ public:
 
         //double dia2 = volLib.GetDiameterAtHeight(volEqDefault, tree, 35.5);
         
-        volOpt.volumeEquationNumberOverride = "A02DEMW000";
+        volOpt.volumeEquationNumberOverride = "R03CHO0066";
         auto treeOutput = volLib.CalculateVolume(volOpt, tree);
         
         //test input merch rules for BEH

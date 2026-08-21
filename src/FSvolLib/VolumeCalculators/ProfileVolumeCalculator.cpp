@@ -6,7 +6,6 @@
 #include <array>
 
 
-
 TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
 {
     TreeOutput result;
@@ -192,7 +191,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
             result.grossCubicFootPrimary = stemVol.primaryVol;
             result.grossCubicFootSecondary = stemVol.topwoodVol;
             result.tipCubicFoot = stemVol.tipVol;
-            result.totalCubicFoot = stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol;
+            result.totalCubicFoot = stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol + stemVol.stumpVol;
             double cordFactor = 90.0;
             if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
             result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
@@ -249,7 +248,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     segVol = smallian(dibLarge, 0.0, totalHt - ht2);
     tipVol += segVol;
 
-    double totalCubicVolume = merchCubic + tipVol;
+    double totalCubicVolume = merchCubic + tipVol + stumpVolume;
 
     //calculate cord volume for product 07 (firewood) using a factor, each region has its own factor
     double cordVolume = 0.0;
@@ -752,7 +751,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                 //call smalian, scribner, and intl14 to calculate cubic and boardfoot volume
                 //R6 BEH Butt Log cubic volume uses different method
                 if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R6 && volumeEquation_.modelType == VolumeEquation::ModelType::BEH && i == 0) {
-                    logData.grossCubicFoot = r6BehButtLogVolume(tree.dbh, logData.smallEndDiameterScaled);
+                    logData.grossCubicFoot = r6BehButtLogVolume(tree.dbh, logData.smallEndDiameterActual);
                 }
                 else {
                     logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, loglen[i]);
@@ -914,6 +913,12 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
 
                 }
 
+            }
+            else if (volumeEquationNumber.substr(0, 3) == "628") {
+                double boardfootFix = Beh628BoardfootFix(tree);
+                for (int i = 0; i < numseg; i += 1) {
+                    result[i].grossBoardFoot = std::round(result[i].grossBoardFoot * boardfootFix);
+                }
             }
         }
         //end 32 foot log

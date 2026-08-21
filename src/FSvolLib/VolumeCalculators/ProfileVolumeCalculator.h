@@ -40,6 +40,15 @@ public:
 		return 0.005454 * logLen * ( 0.294 * std::pow(dbhOb, 2) + 0.715 * std::pow(d17, 2));
 	};
 
+	static double Beh628BoardfootFix(TreeMeasurment tree) {
+		if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET) {
+			return 0.4017 + (0.1450 * log(tree.merchHeightSaw)) - (0.0025 * tree.dbh) - (0.0009 * tree.formClass);
+		}
+		else {
+			return 0.1909 + (0.0006 * tree.dbh) + (0.1349 * log(tree.totalHeight)) - (0.0002 * tree.formClass);
+		}
+	}
+
 private:
 	void solveTotalHeight(TreeMeasurment& tree, MerchRules merchRules);
 

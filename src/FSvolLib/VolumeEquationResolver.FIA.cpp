@@ -133,5 +133,10 @@ bool VolumeEquationResolver::isValidFiaEquation(const std::string& voleq) {
 			return true;
 		}
 	}
+
+	if (voleq.substr(0, 1) == "P" || voleq.substr(0, 1) == "R" || voleq.substr(0, 1) == "S" || voleq.substr(0, 1) == "E") {
+		//no validation for FIA local equation
+		return true;
+	}
 	return false;
 }
