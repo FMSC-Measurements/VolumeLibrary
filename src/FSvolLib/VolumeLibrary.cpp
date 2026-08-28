@@ -8,7 +8,10 @@
 TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options, const TreeMeasurment tree, std::optional<MerchRules> maybe_merchRules)
 {
 	if (tree.dbh < 1.0 && tree.drc < 1.0) {
-		throw std::invalid_argument("DBH less than one!");
+		TreeOutput out;
+		out.errflag = 3;
+		//throw std::invalid_argument("DBH less than one!");
+		return out;
 	}
 
 	WeightFactorAndRefData refSpeciesData = getSpeciesWtfactorAndRefData(options.region, options.forest, options.fiaCode);

@@ -8,6 +8,7 @@
 #include "DirectVolumeCalculator_FIA_Eastern.h"
 #include "DirectVolumeCalculator_FIA_RockyMountain.h"
 #include "DirectVolumeCalculator_FIA_Southern.h"
+#include "DirectVolumeCalculator_FIA_PacificCoast.h"
 #include "HawaiiSharpnackVolume.h"
 #include "MerchHeightCalculator_R89.h"
 #include "..\SmalianScribnerIntl14.h"
@@ -40,9 +41,23 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 	case VolumeEquation::GeoCode::R4:
 		return R4D2H(volumeEquationNumber, vco, tree);
 	case VolumeEquation::GeoCode::R5:
-		return r5dve::R5HARV(volumeEquationNumber, tree, merchRules);
+	{
+		if (volumeEquation_.modelType == VolumeEquation::ModelType::TRF) {
+			return PNW_Tarif_Vol(volumeEquationNumber, tree, merchRules); 
+		}
+		else {
+			return r5dve::R5HARV(volumeEquationNumber, tree, merchRules);
+		}
+	}
 	case VolumeEquation::GeoCode::R6:
-		return R6VOL2(volumeEquationNumber, tree);
+	{
+		if (volumeEquation_.modelType == VolumeEquation::ModelType::TRF) {
+			return PNW_Tarif_Vol(volumeEquationNumber, tree, merchRules); 
+		}
+		else {
+			return R6VOL2(volumeEquationNumber, tree);
+		}
+	}
 	case VolumeEquation::GeoCode::R8:
 		return r8Lasher(volumeEquationNumber, tree, vco, merchRules);
 	case VolumeEquation::GeoCode::R9:
@@ -109,6 +124,10 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 		else if (volumeEquation_.volEqStr.substr(3, 3) == "MOI") {
 			result = Moisen_Vol(volumeEquation_.volEqStr, tree.dbh, tree.totalHeight, merchRules.minTopDibSaw, merchRules.minimumBoardFootDiameter);
 		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "RMR") {
+			//The equation R00RMR0*** is same as S00SRS0***
+			result = SRS_Vol(volumeEquation_.volEqStr, tree, merchRules.minimumBoardFootDiameter);
+		}
 		return result;
 	}
 	case VolumeEquation::GeoCode::EASTERN:
@@ -142,6 +161,67 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 			result =  Brandeis_Vol(volumeEquation_.volEqStr, tree);
 		}
 		return result;
+	}
+	case VolumeEquation::GeoCode::PACIFIC_COAST:
+	{
+		if (volumeEquation_.volEqStr.substr(3, 3) == "DMR") {
+			result = DeMars_Vol(volumeEquation_.volEqStr, tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "EMB") {
+			result = Embry_Vol(volumeEquation_.fiaCode, tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "DEE") {
+			result = DeMars_Embry_Vol(volumeEquation_.volEqStr, tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "BDE") {
+			result = Browne_DeMars_Embry_Vol(volumeEquation_.volEqStr, tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "MAC") {
+			result = MacLean_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "PIL") {
+			double CV8 = Pillsbury_CV8(volumeEquation_.volEqStr, tree.dbh, tree.totalHeight);
+			result = DNR24_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules, CV8, "CV8");
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "CRT") {
+			double CVT = Curtis_RedAlder_CVT(tree.dbh, tree.totalHeight);
+			result = DNR24_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules, CVT, "CVT");
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "CHT") {
+			double CVTS = Chittester_WesternJuniper_CVTS(tree.dbh, tree.totalHeight);
+			if (tree.dbh < 5.0 || tree.totalHeight < 10.0) {
+				result.totalCubicFoot = CVTS;
+				return result;
+			}
+			else {
+				double CV4 = (CVTS + 3.48) / (1.18052 + 0.32736 * std::exp(-0.1 * tree.dbh)) - 2.948;
+				result = DNR24_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules, CVTS, "CVTS", CV4);
+			}
+		}
+		else {
+			double CVTS = 0.0;
+			if (volumeEquation_.volEqStr.substr(3, 3) == "BRC" || volumeEquation_.volEqStr.substr(3, 3) == "BRI" || volumeEquation_.volEqStr.substr(3, 3) == "BRO") {
+				CVTS = Browne_CVTS(volumeEquation_.volEqStr, tree.dbh, tree.totalHeight);
+				result = DNR24_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules, CVTS, "CVTS");
+			}
+			else if (volumeEquation_.volEqStr.substr(3, 3) == "BEL") {
+				CVTS = Bell_MountainHemlock_CVTS(tree.dbh, tree.totalHeight);
+			}
+			else if (volumeEquation_.volEqStr.substr(3, 3) == "CHA") {
+				CVTS = Chamber_WesternHemlock_CVTS(tree.dbh, tree.totalHeight);
+			}
+			else if (volumeEquation_.volEqStr.substr(3, 3) == "KIN") {
+				CVTS = King_DouglasFir_CVTS(tree.dbh, tree.totalHeight);
+			}
+			else if (volumeEquation_.volEqStr.substr(3, 3) == "KRU") {
+				CVTS = Krumland_CVTS(volumeEquation_.fiaCode, tree.dbh, tree.totalHeight);
+			}
+			else if (volumeEquation_.volEqStr.substr(3, 3) == "SMF") {
+				CVTS = Summerfield_CVTS(volumeEquation_.fiaCode, tree.dbh, tree.totalHeight);
+			}
+
+			result = DNR24_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules, CVTS, "CVTS");
+		}
 	}
 	case VolumeEquation::GeoCode::UNKNOWN:
 		break;

@@ -138,5 +138,10 @@ bool VolumeEquationResolver::isValidFiaEquation(const std::string& voleq) {
 		//no validation for FIA local equation
 		return true;
 	}
+
+	if ((voleq.substr(0, 1) == "5" || voleq.substr(0, 1) == "5") && voleq.substr(0, 3) == "TRF") {
+		return true;
+	}
+
 	return false;
 }

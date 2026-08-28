@@ -46,6 +46,9 @@ TreeOutput SRS_Vol(const std::string& VOLEQ, TreeMeasurment tree, double bfMinDb
     // Extract SPN from VOLEQ(8:10)
     int SPN = std::stoi(VOLEQ.substr(7, 3));
 
+    if (SPN == 544) SPN = 540;
+    else if (SPN == 972) SPN = 970;
+
     // VOLSP list ---- 85 entries
     static const std::array<int, 85> VOLSP = {
         10, 43, 60, 67, 68, 90, 107,110,111,115,
@@ -463,6 +466,7 @@ TreeOutput SRS_Vol(const std::string& VOLEQ, TreeMeasurment tree, double bfMinDb
             double BD = RB * CV4;
 
             out.grossInternationalBoardFoot = BD;           // Fortran VOL(10)
+            out.grossBoardFootPrimary = BD * 0.89;
         }
     }
     return out;

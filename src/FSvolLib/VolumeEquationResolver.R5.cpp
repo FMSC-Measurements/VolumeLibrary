@@ -135,5 +135,9 @@ bool VolumeEquationResolver::isValidR5Equation(const std::string& voleq)
 	for (const auto& [code, eq] : m) {
 		if (eq == voleq) return true;
 	}
+
+	if (voleq.substr(3, 3) == "TRF") {
+		return true;
+	}
 	return false;
 }
