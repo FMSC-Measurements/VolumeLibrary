@@ -9,6 +9,7 @@
 #include "DirectVolumeCalculator_FIA_RockyMountain.h"
 #include "DirectVolumeCalculator_FIA_Southern.h"
 #include "DirectVolumeCalculator_FIA_PacificCoast.h"
+#include "DirectVolumeCalculator_FIA_PacificIsland.h"
 #include "HawaiiSharpnackVolume.h"
 #include "MerchHeightCalculator_R89.h"
 #include "..\SmalianScribnerIntl14.h"
@@ -20,7 +21,9 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 	switch (volumeEquation_.geoCode) {
 	case VolumeEquation::GeoCode::R1:
 	{
-		if (std::string(volumeEquation_.subregionalCode, 2) != "01") result =  R1KEMP(volumeEquationNumber, vco, tree);
+		if (std::string(volumeEquation_.subregionalCode, 2) != "01") { 
+			result = R1KEMP(volumeEquationNumber, vco, tree); 
+		}
 		else
 		{
 			result = R1ALLENC(volumeEquationNumber, vco, tree, merchRules);
@@ -197,6 +200,18 @@ TreeOutput DirectVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco,
 				double CV4 = (CVTS + 3.48) / (1.18052 + 0.32736 * std::exp(-0.1 * tree.dbh)) - 2.948;
 				result = DNR24_Tarif_Vol(volumeEquation_.volEqStr, tree, merchRules, CVTS, "CVTS", CV4);
 			}
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "ISL") {
+			//Pacific Island equation
+			result = PacificIsland_Vol(volumeEquation_.volEqStr, tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "CEN") {
+			// Pacific Island CENtroid volume equation
+			result = Centroid_CV(tree, merchRules);
+		}
+		else if (volumeEquation_.volEqStr.substr(3, 3) == "FRU") {
+			// Pacific Island FRUstum volume equation
+			result = Frustum_Vol(tree, merchRules);
 		}
 		else {
 			double CVTS = 0.0;

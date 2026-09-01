@@ -11,6 +11,7 @@ struct TreeMeasurment
 	//heights
 	double totalHeight;
 	double referenceHeight = 0.0; // aka 479, UpperstemHeight
+	bool referenceHeightAtCentroid = false; // only used by FIA Pacific Island CENtroid volume equation
 	double merchHeightSaw = 0.0;
 	double merchHeightNonsaw = 0.0;
 	MerchHeightUnit merchHeightUnit = MerchHeightUnit::FEET; // if zero merch height is in feet else merch height is in 8,16,32 foot logs

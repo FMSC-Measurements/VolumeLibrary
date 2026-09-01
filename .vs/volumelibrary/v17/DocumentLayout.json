@@ -3,24 +3,44 @@
   "WorkspaceRootPath": "C:\\development\\fsvollibNG\\VolumeLibrary\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pnw266.for||{8B382828-6202-11D1-8870-0000F87579D2}",
-      "RelativeMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|solutionrelative:fia_pnw266.for||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{472C0F32-567E-E697-8CCA-FA2BF49FA930}|tests\\FSvolLib.test\\FSvolLib.test.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\VolumeLibrary.test.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{472C0F32-567E-E697-8CCA-FA2BF49FA930}|tests\\FSvolLib.test\\FSvolLib.test.vcxproj|solutionrelative:tests\\FSvolLib.test\\VolumeLibrary.test.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\TreeMeasurment.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\Models\\TreeMeasurment.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pi_vol.for||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|solutionrelative:fia_pi_vol.for||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pnw266.for||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|solutionrelative:fia_pnw266.for||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\BehreHyperbolaTaperModel.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -43,7 +63,7 @@
       "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeEquationResolver.R6.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|c:\\development\\fsvollibng\\volumelibrary\\pnwtarif.f||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|C:\\development\\fsvollibNG\\VolumeLibrary\\pnwtarif.f||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|solutionrelative:pnwtarif.f||{8B382828-6202-11D1-8870-0000F87579D2}"
     },
     {
@@ -109,10 +129,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeEquationResolver.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -201,10 +217,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|C:\\development\\fsvollibNG\\VolumeLibrary\\profile.f||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|solutionrelative:profile.f||{8B382828-6202-11D1-8870-0000F87579D2}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\TreeMeasurment.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{8CC4BBBE-D401-4B25-8A88-6E7D6E22F273}|src\\FSvolLib\\FSvolLib.vcxproj|solutionrelative:src\\FSvolLib\\Models\\TreeMeasurment.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DD129EEC-6427-4818-924F-87C2CDBBA9AD}|vollib\\vollib.vfproj|C:\\development\\fsvollibNG\\VolumeLibrary\\volinit.f||{8B382828-6202-11D1-8870-0000F87579D2}",
@@ -629,89 +641,152 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "VolumeLibrary.test.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\VolumeLibrary.test.cpp",
               "RelativeDocumentMoniker": "tests\\FSvolLib.test\\VolumeLibrary.test.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\VolumeLibrary.test.cpp",
               "RelativeToolTip": "tests\\FSvolLib.test\\VolumeLibrary.test.cpp",
-              "ViewState": "AgIAACgAAAAAAAAAAAAQwDUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABwAAAAAAAAAAAAgwDYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-02-05T17:36:04.865Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "DirectVolumeCalculator_FIA_PacificCoast.cpp",
-              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
-              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
-              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
-              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
-              "ViewState": "AgIAAKoBAAAAAAAAAAAIwMkBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-08-25T15:10:16.403Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "DirectVolumeCalculator_FIA_PacificCoast.h",
-              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
-              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
-              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
-              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAkwA8AAAA/AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-08-25T14:45:36.128Z",
+              "Title": "DirectVolumeCalculator_FIA_RockyMountain.cpp",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
+              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
+              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAFQBAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-08-06T15:04:30.415Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "DirectVolumeCalculator.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.cpp",
-              "ViewState": "AgIAAK8AAAAAAAAAAAAkwLMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAL0AAAAAAAAAAAAAANUAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-16T14:45:29.842Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
+              "Title": "DirectVolumeCalculator_FIA_PacificIsland.cpp",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.cpp",
+              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.cpp",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.cpp*",
+              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.cpp*",
+              "ViewState": "AgIAABYAAAAAAAAAAAAQwCAAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-08-31T15:52:29.502Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "DirectVolumeCalculator_FIA_PacificCoast.cpp",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
+              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
+              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.cpp",
+              "ViewState": "AgIAAMIBAAAAAAAAAAAAAKMAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2026-08-25T15:10:16.403Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "fia_pi_vol.for",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pi_vol.for",
+              "RelativeDocumentMoniker": "fia_pi_vol.for",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pi_vol.for",
+              "RelativeToolTip": "fia_pi_vol.for",
+              "ViewState": "AgIAABEBAAAAAAAAAAAAABUBAAAZAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGdSURBVDhP7ZSxa1pRFIe/qAl9RJJAAg2CpYqYl5AhlzRTJ12yZXMsQgZFSjO4mMHFCpmyBnHuX9EgCt0ckgedgtBJLAkkqJAXKnrfzRB80ZeXxErHfnCW3\u002BF8lwOHi1KKer3OpBQKhSPTNC23Qik1o5RCSrnT6/UmsV4Ct0Cke36NspTd8K8v4ZufZUxoGAatVmvMMMTr9aLrOqFQCIDvb78hb/t2/\u002BOPPRa3V/CNzFCr1ahWq6ORjcfjQQhBMpkkHA4DMLeqoX/9AID23g8wLhxSKpWcEZ1Oh3w\u002BjxDCFvZvevw6/knkcIu55TcIITY8zkGAYDD4pAKBAFJK\u002Bv3HNZW0\u002BPP7DmkOAGg0GheuwkmZjyyye/WJd/trdua6shuappFIJNB1HYDQwSa\u002BhVkAKpXKqWEYZwAopRgMBjumaVrFYtGKxWJP7uu1SqfTn4cPT71yKpUil8s54\u002BmF7XabbrfrjKcXPsd/4QPNZvPVsizLOQbPHXYmk3FGEzMmjMfjRKPR0ehF/P6HH2aUv/1gXclms1/K5fIJQ\u002BG/5B6MC/MMF6TcdgAAAABJRU5ErkJggg==",
+              "WhenOpened": "2026-08-31T16:07:45.805Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "DirectVolumeCalculator_FIA_PacificCoast.h",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
+              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
+              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificCoast.h",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-08-25T14:45:36.128Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "DirectVolumeCalculator_FIA_PacificIsland.h",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.h",
+              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.h",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.h",
+              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_PacificIsland.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-08-31T15:51:24.265Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TreeMeasurment.h",
+              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\TreeMeasurment.h",
+              "RelativeDocumentMoniker": "src\\FSvolLib\\Models\\TreeMeasurment.h",
+              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\TreeMeasurment.h",
+              "RelativeToolTip": "src\\FSvolLib\\Models\\TreeMeasurment.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAABkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2026-09-01T14:48:16.575Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
               "Title": "fia_pnw266.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pnw266.for",
               "RelativeDocumentMoniker": "fia_pnw266.for",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_pnw266.for",
               "RelativeToolTip": "fia_pnw266.for",
-              "ViewState": "AgIAAJ4AAAAAAAAAAAApwK8AAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAKQAAAAAAAAAAAApwMoAAAAQAAAAAAAAAA==",
               "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAGdSURBVDhP7ZSxa1pRFIe/qAl9RJJAAg2CpYqYl5AhlzRTJ12yZXMsQgZFSjO4mMHFCpmyBnHuX9EgCt0ckgedgtBJLAkkqJAXKnrfzRB80ZeXxErHfnCW3\u002BF8lwOHi1KKer3OpBQKhSPTNC23Qik1o5RCSrnT6/UmsV4Ct0Cke36NspTd8K8v4ZufZUxoGAatVmvMMMTr9aLrOqFQCIDvb78hb/t2/\u002BOPPRa3V/CNzFCr1ahWq6ORjcfjQQhBMpkkHA4DMLeqoX/9AID23g8wLhxSKpWcEZ1Oh3w\u002BjxDCFvZvevw6/knkcIu55TcIITY8zkGAYDD4pAKBAFJK\u002Bv3HNZW0\u002BPP7DmkOAGg0GheuwkmZjyyye/WJd/trdua6shuappFIJNB1HYDQwSa\u002BhVkAKpXKqWEYZwAopRgMBjumaVrFYtGKxWJP7uu1SqfTn4cPT71yKpUil8s54\u002BmF7XabbrfrjKcXPsd/4QPNZvPVsizLOQbPHXYmk3FGEzMmjMfjRKPR0ehF/P6HH2aUv/1gXclms1/K5fIJQ\u002BG/5B6MC/MMF6TcdgAAAABJRU5ErkJggg==",
               "WhenOpened": "2026-08-25T21:52:28.064Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 13,
               "Title": "VolumeEquation.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquation.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquation.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquation.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquation.h",
-              "ViewState": "AgIAAH4AAAAAAAAAAAAAAIQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAH0AAAAAAAAAAAAxwIQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-05T17:09:16.319Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-05T17:09:16.319Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 11,
               "Title": "VolumeEquationResolver.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.h",
@@ -719,12 +794,11 @@
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.h",
               "ViewState": "AgIAACUAAAAAAAAAAAAQwDUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-04-16T14:51:16.187Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-16T14:51:16.187Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 12,
               "Title": "VolumeLibrary.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeLibrary.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeLibrary.cpp",
@@ -732,12 +806,11 @@
               "RelativeToolTip": "src\\FSvolLib\\VolumeLibrary.cpp",
               "ViewState": "AgIAACkAAAAAAAAAAAAQwEAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-02-05T18:11:11.835Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-02-05T18:11:11.835Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "BehreHyperbolaTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\BehreHyperbolaTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\BehreHyperbolaTaperModel.cpp",
@@ -750,7 +823,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 16,
               "Title": "fia_nw_tarif.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_nw_tarif.for",
               "RelativeDocumentMoniker": "fia_nw_tarif.for",
@@ -763,20 +836,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "VolumeEquationResolver.R6.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R6.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R6.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R6.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R6.cpp",
-              "ViewState": "AgIAAK0BAAAAAAAAAAAAALQBAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAKwBAAAAAAAAAAAxwLQBAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-04-23T21:10:12.778Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-04-23T21:10:12.778Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "PNWTARIF.F",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\pnwtarif.f",
               "RelativeDocumentMoniker": "pnwtarif.f",
@@ -789,7 +861,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 17,
               "Title": "fia_volinit.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_volinit.for",
               "RelativeDocumentMoniker": "fia_volinit.for",
@@ -802,7 +874,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 19,
               "Title": "DirectVolumeCalculator.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator.h",
@@ -814,7 +886,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 18,
               "Title": "R5harv.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r5harv.f",
               "RelativeDocumentMoniker": "r5harv.f",
@@ -827,7 +899,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 20,
               "Title": "fia_ak_vol.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_ak_vol.for",
               "RelativeDocumentMoniker": "fia_ak_vol.for",
@@ -840,7 +912,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 21,
               "Title": "ProfileVolumeCalculator.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\ProfileVolumeCalculator.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\ProfileVolumeCalculator.cpp",
@@ -852,32 +924,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 22,
               "Title": "FlewellingTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel.cpp",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel.cpp",
-              "ViewState": "AgIAACcAAAAAAAAAAAAAABYAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAACYAAAAAAAAAAAAxwBYAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-21T15:27:11.692Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 23,
               "Title": "FlewellingTaperModel_West.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.cpp",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.cpp",
-              "ViewState": "AgIAAK0BAAAAAAAAAAAAAJMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAKwBAAAAAAAAAAAxwJMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-06-02T17:59:25.803Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 24,
               "Title": "FlewellingTaperModel_Ingy.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Ingy.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Ingy.cpp",
@@ -889,7 +961,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 25,
               "Title": "array_helper.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\array_helper.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\array_helper.h",
@@ -901,7 +973,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 26,
               "Title": "fiaeq2nveleq.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fiaeq2nveleq.for",
               "RelativeDocumentMoniker": "fiaeq2nveleq.for",
@@ -914,7 +986,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 29,
               "Title": "DirectVolumeCalculator_FIA_Eastern.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.h",
@@ -926,7 +998,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 27,
               "Title": "DirectVolumeCalculator_R5.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R5.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R5.h",
@@ -938,31 +1010,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 28,
               "Title": "DirectVolumeCalculator_R5.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R5.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R5.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R5.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R5.cpp",
-              "ViewState": "AgIAADIBAAAAAAAAAAAAAJQAAABNAAAAAAAAAA==",
+              "ViewState": "AgIAADEBAAAAAAAAAAAxwJQAAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-07-10T14:31:55.56Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 30,
               "Title": "DirectVolumeCalculator_FIA_Southern.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Southern.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Southern.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Southern.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Southern.cpp",
-              "ViewState": "AgIAACQAAAAAAAAAAAAAADIAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACMAAAAAAAAAAAAxwDIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-08-20T15:11:25.96Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 31,
               "Title": "VolumeEquationResolver.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.cpp",
@@ -974,31 +1046,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
-              "Title": "DirectVolumeCalculator_FIA_RockyMountain.cpp",
-              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
-              "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
-              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
-              "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.cpp",
-              "ViewState": "AgIAAIYBAAAAAAAAAAAAAFIBAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2026-08-06T15:04:30.415Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 32,
               "Title": "DirectVolumeCalculator_FIA_Eastern.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Eastern.cpp",
-              "ViewState": "AgIAADYAAAAAAAAAAAAAABcBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADUAAAAAAAAAAAAxwBcBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-08-06T17:29:21.88Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 35,
               "Title": "DirectVolumeCalculator_R89.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R89.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R89.cpp",
@@ -1010,7 +1070,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 33,
               "Title": "fia_vol_r1.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_vol_r1.for",
               "RelativeDocumentMoniker": "fia_vol_r1.for",
@@ -1023,19 +1083,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 36,
               "Title": "MerchHeightCalculator_R89.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\MerchHeightCalculator_R89.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\MerchHeightCalculator_R89.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\MerchHeightCalculator_R89.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\MerchHeightCalculator_R89.h",
-              "ViewState": "AgIAAM0CAAAAAAAAAAAAAHoDAAACAAAAAAAAAA==",
+              "ViewState": "AgIAAMwCAAAAAAAAAAAxwHoDAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-06-25T21:17:11.878Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 34,
               "Title": "MerchHeightCalculator_R89.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\MerchHeightCalculator_R89.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\MerchHeightCalculator_R89.cpp",
@@ -1047,7 +1107,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 37,
               "Title": "DirectVolumeCalculator_FIA_RockyMountain.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_RockyMountain.h",
@@ -1059,7 +1119,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 38,
               "Title": "fia_kemp_vol.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_kemp_vol.for",
               "RelativeDocumentMoniker": "fia_kemp_vol.for",
@@ -1072,7 +1132,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 39,
               "Title": "DirectVolumeCalculator_FIA_Southern.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Southern.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_FIA_Southern.h",
@@ -1084,7 +1144,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 40,
               "Title": "fia_vol_carib.for",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\fia_vol_carib.for",
               "RelativeDocumentMoniker": "fia_vol_carib.for",
@@ -1097,67 +1157,67 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 41,
               "Title": "VolumeEquationResolver.R10.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R10.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R10.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R10.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R10.cpp",
-              "ViewState": "AgIAAHIAAAAAAAAAAAAAAAwAAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAAHEAAAAAAAAAAAAxwAwAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T22:48:09.967Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 45,
               "Title": "VolumeEquationResolver.R4.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R4.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R4.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R4.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R4.cpp",
-              "ViewState": "AgIAAAEAAAAAAAAAAAAAAMgAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAxwMgAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T17:50:59.819Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 42,
               "Title": "VolumeEquationResolver.R1.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R1.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R1.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R1.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R1.cpp",
-              "ViewState": "AgIAAIEAAAAAAAAAAAAAAIoAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAIAAAAAAAAAAAAAxwIoAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T20:06:50.047Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 43,
               "Title": "VolumeEquationResolver.R2.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R2.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R2.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R2.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R2.cpp",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAAAHEAAABAAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAxwHEAAABAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T20:43:58.384Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 44,
               "Title": "VolumeEquationResolver.R3.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R3.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R3.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R3.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R3.cpp",
-              "ViewState": "AgIAAGkAAAAAAAAAAAAAAHwAAABNAAAAAAAAAA==",
+              "ViewState": "AgIAAGgAAAAAAAAAAAAxwHwAAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T20:55:21.891Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 47,
               "Title": "ClarkTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\ClarkTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\ClarkTaperModel.cpp",
@@ -1170,7 +1230,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 48,
               "Title": "BehreHyperbolaTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\BehreHyperbolaTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\BehreHyperbolaTaperModel.h",
@@ -1182,7 +1242,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 50,
               "Title": "R6fix.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r6fix.f",
               "RelativeDocumentMoniker": "r6fix.f",
@@ -1195,7 +1255,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 51,
               "Title": "ProfileVolumeCalculator.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\ProfileVolumeCalculator.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\ProfileVolumeCalculator.h",
@@ -1207,7 +1267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 46,
               "Title": "SmalianScribnerIntl14.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\SmalianScribnerIntl14.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\SmalianScribnerIntl14.cpp",
@@ -1219,43 +1279,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 49,
               "Title": "BlmTaperAndDbhIb.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\BlmTaperAndDbhIb.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\BlmTaperAndDbhIb.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\BlmTaperAndDbhIb.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\BlmTaperAndDbhIb.h",
-              "ViewState": "AgIAAJ8AAAAAAAAAAAAAAAoAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAJ4AAAAAAAAAAAAxwAoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-29T19:01:41.441Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 52,
               "Title": "BiomassOutput.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\BiomassOutput.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\Models\\BiomassOutput.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\BiomassOutput.h",
               "RelativeToolTip": "src\\FSvolLib\\Models\\BiomassOutput.h",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAACQAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAxwCQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-03-17T19:49:57.626Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
-              "Title": "TreeMeasurment.h",
-              "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\TreeMeasurment.h",
-              "RelativeDocumentMoniker": "src\\FSvolLib\\Models\\TreeMeasurment.h",
-              "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\TreeMeasurment.h",
-              "RelativeToolTip": "src\\FSvolLib\\Models\\TreeMeasurment.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2026-02-09T21:09:32.235Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 54,
               "Title": "volinit.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\volinit.f",
               "RelativeDocumentMoniker": "volinit.f",
@@ -1268,7 +1316,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 53,
               "Title": "profile.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\profile.f",
               "RelativeDocumentMoniker": "profile.f",
@@ -1281,19 +1329,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 55,
               "Title": "ClarkProfileCoefficients_R9.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\ClarkProfileCoefficients_R9.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\ClarkProfileCoefficients_R9.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\ClarkProfileCoefficients_R9.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\ClarkProfileCoefficients_R9.h",
-              "ViewState": "AgIAAMwAAAAAAAAAAAAAAN4AAAAxAAAAAAAAAA==",
+              "ViewState": "AgIAAMsAAAAAAAAAAAAxwN4AAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-24T20:38:05.86Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 57,
               "Title": "NationalScaleVolumeBiomass.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.h",
@@ -1305,20 +1353,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 58,
               "Title": "NationalScaleVolumeBiomassCalculator.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomassCalculator.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomassCalculator.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomassCalculator.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomassCalculator.cpp",
-              "ViewState": "AgIAABkBAAAAAAAAAAAAAAgDAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABgBAAAAAAAAAAAxwAgDAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-03-04T20:47:11.978Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 56,
               "Title": "DirectVolumeCalculator_BIA.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_BIA.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_BIA.h",
@@ -1330,7 +1378,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 59,
               "Title": "R9init.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r9init.f",
               "RelativeDocumentMoniker": "r9init.f",
@@ -1343,7 +1391,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 60,
               "Title": "R8init.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r8init.f",
               "RelativeDocumentMoniker": "r8init.f",
@@ -1356,7 +1404,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 61,
               "Title": "r9vol.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r9vol.f",
               "RelativeDocumentMoniker": "r9vol.f",
@@ -1369,7 +1417,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 62,
               "Title": "F_other.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\f_other.f",
               "RelativeDocumentMoniker": "f_other.f",
@@ -1382,7 +1430,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 63,
               "Title": "bioeqinfo.inc",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\bioeqinfo.inc",
               "RelativeDocumentMoniker": "bioeqinfo.inc",
@@ -1394,19 +1442,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 64,
               "Title": "DeMarsTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\DeMarsTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\DeMarsTaperModel.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\DeMarsTaperModel.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\DeMarsTaperModel.h",
-              "ViewState": "AgIAAHgAAAAAAAAAAAAAABkAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAAHcAAAAAAAAAAAAxwBkAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-04-30T17:33:55.586Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 65,
               "Title": "DeMarsTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\DeMarsTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\DeMarsTaperModel.cpp",
@@ -1418,7 +1466,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 66,
               "Title": "R10tapo.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r10tapo.f",
               "RelativeDocumentMoniker": "r10tapo.f",
@@ -1431,7 +1479,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 67,
               "Title": "r10tap.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r10tap.f",
               "RelativeDocumentMoniker": "r10tap.f",
@@ -1444,7 +1492,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
+              "DocumentIndex": 69,
               "Title": "Scrib.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\scrib.f",
               "RelativeDocumentMoniker": "scrib.f",
@@ -1457,7 +1505,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 68,
               "Title": "R10volo.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r10volo.f",
               "RelativeDocumentMoniker": "r10volo.f",
@@ -1470,7 +1518,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 67,
+              "DocumentIndex": 70,
               "Title": "grossvol.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\grossvol.f",
               "RelativeDocumentMoniker": "grossvol.f",
@@ -1483,19 +1531,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
+              "DocumentIndex": 71,
               "Title": "VolumeEquationResolver.R7.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R7.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R7.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R7.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R7.cpp",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAANAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABEAAAAAAAAAAAAxwNAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T21:57:07.613Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 69,
+              "DocumentIndex": 72,
               "Title": "SmalianScribnerIntl14.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\SmalianScribnerIntl14.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\SmalianScribnerIntl14.h",
@@ -1507,19 +1555,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
+              "DocumentIndex": 74,
               "Title": "VolumeLibrary.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeLibrary.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeLibrary.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeLibrary.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeLibrary.h",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAACkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABcAAAAAAAAAAAAxwCkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-02-05T17:32:52.02Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 73,
               "Title": "DefaultFormClassForFVS.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\DefaultFormClassForFVS.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\DefaultFormClassForFVS.h",
@@ -1531,7 +1579,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 75,
               "Title": "WenselOlsonTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\WenselOlsonTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\WenselOlsonTaperModel.cpp",
@@ -1543,19 +1591,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 76,
               "Title": "WenselOlsonTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\WenselOlsonTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\WenselOlsonTaperModel.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\WenselOlsonTaperModel.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\WenselOlsonTaperModel.h",
-              "ViewState": "AgIAABcAAAAAAAAAAAAAADwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAxwDwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-02-06T03:12:15.914Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 78,
               "Title": "ClarkProfileCoefficients_R8.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\ClarkProfileCoefficients_R8.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\ClarkProfileCoefficients_R8.h",
@@ -1567,7 +1615,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
+              "DocumentIndex": 77,
               "Title": "ClarkTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\ClarkTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\ClarkTaperModel.h",
@@ -1579,19 +1627,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 76,
+              "DocumentIndex": 79,
               "Title": "string_helper.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\string_helper.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\string_helper.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\string_helper.h",
               "RelativeToolTip": "src\\FSvolLib\\string_helper.h",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABcAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAxwBcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-07-21T17:54:34.234Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 79,
+              "DocumentIndex": 82,
               "Title": "DirectVolumeCalculator_R1.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R1.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R1.cpp",
@@ -1603,7 +1651,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 80,
+              "DocumentIndex": 83,
               "Title": "DirectVolumeCalculator_R1.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R1.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R1.h",
@@ -1615,7 +1663,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 77,
+              "DocumentIndex": 80,
               "Title": "WoodlandBiomass.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\WoodlandBiomass.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\WoodlandBiomass.cpp",
@@ -1627,7 +1675,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 78,
+              "DocumentIndex": 81,
               "Title": "FlewellingTaperModel_Other.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Other.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Other.cpp",
@@ -1639,19 +1687,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 84,
+              "DocumentIndex": 87,
               "Title": "WeightFactorAndRefDataResolver.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\WeightFactorAndRefDataResolver.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\WeightFactorAndRefDataResolver.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\WeightFactorAndRefDataResolver.h",
               "RelativeToolTip": "src\\FSvolLib\\WeightFactorAndRefDataResolver.h",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAxwAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-02-27T20:14:14.984Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 81,
+              "DocumentIndex": 84,
               "Title": "WeightFactorAndRefDataResolver.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\WeightFactorAndRefDataResolver.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\WeightFactorAndRefDataResolver.cpp",
@@ -1663,7 +1711,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 82,
+              "DocumentIndex": 85,
               "Title": "NSVB.test.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\NSVB.test.cpp",
               "RelativeDocumentMoniker": "tests\\FSvolLib.test\\NSVB.test.cpp",
@@ -1676,7 +1724,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 83,
+              "DocumentIndex": 86,
               "Title": "VolumeCalculationOptions.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\VolumeCalculationOptions.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\Models\\VolumeCalculationOptions.h",
@@ -1688,7 +1736,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 85,
+              "DocumentIndex": 88,
               "Title": "VolumeCalculatorBase.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\VolumeCalculatorBase.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\VolumeCalculatorBase.h",
@@ -1700,7 +1748,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 87,
+              "DocumentIndex": 90,
               "Title": "MerchRulesResolver.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\MerchRulesResolver.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\MerchRulesResolver.cpp",
@@ -1712,7 +1760,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 86,
+              "DocumentIndex": 89,
               "Title": "MerchRulesResolver.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\MerchRulesResolver.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\MerchRulesResolver.h",
@@ -1724,7 +1772,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 90,
+              "DocumentIndex": 93,
               "Title": "RustagiTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\RustagiTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\RustagiTaperModel.cpp",
@@ -1736,31 +1784,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 89,
+              "DocumentIndex": 92,
               "Title": "RustagiTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\RustagiTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\RustagiTaperModel.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\RustagiTaperModel.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\RustagiTaperModel.h",
-              "ViewState": "AgIAACUAAAAAAAAAAAAAAJMAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAxwJMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-04-22T17:23:59.926Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 88,
+              "DocumentIndex": 91,
               "Title": "TaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\TaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\TaperModel.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\TaperModel.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\TaperModel.h",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAxwBgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-05-01T17:45:49.566Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 91,
+              "DocumentIndex": 94,
               "Title": "NationalScaleVolumeBiomassTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\NationalScaleVolumeBiomassTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\NationalScaleVolumeBiomassTaperModel.cpp",
@@ -1772,19 +1820,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 92,
+              "DocumentIndex": 95,
               "Title": "JenkinsBiomass.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\JenkinsBiomass.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\JenkinsBiomass.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\JenkinsBiomass.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\JenkinsBiomass.cpp",
-              "ViewState": "AgIAAG4BAAAAAAAAAAAAAAgAAAAcAAAAAAAAAA==",
+              "ViewState": "AgIAAG0BAAAAAAAAAAAxwAgAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-29T17:52:24.602Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 93,
+              "DocumentIndex": 96,
               "Title": "WoodlandBiomass.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\WoodlandBiomass.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\WoodlandBiomass.h",
@@ -1796,7 +1844,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 94,
+              "DocumentIndex": 97,
               "Title": "JenkinsBiomass.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\JenkinsBiomass.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\JenkinsBiomass.h",
@@ -1808,7 +1856,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 95,
+              "DocumentIndex": 98,
               "Title": "LogOutput.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\LogOutput.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\Models\\LogOutput.h",
@@ -1820,7 +1868,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 96,
+              "DocumentIndex": 99,
               "Title": "FlewellingTaperModel_Alaska.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Alaska.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Alaska.h",
@@ -1832,7 +1880,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 97,
+              "DocumentIndex": 100,
               "Title": "Intl78.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\intl78.f",
               "RelativeDocumentMoniker": "intl78.f",
@@ -1845,7 +1893,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 100,
+              "DocumentIndex": 103,
               "Title": "CzaplewskiTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\CzaplewskiTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\CzaplewskiTaperModel.h",
@@ -1857,44 +1905,44 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 98,
+              "DocumentIndex": 101,
               "Title": "NationalScaleVolumeBiomassTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\NationalScaleVolumeBiomassTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\NationalScaleVolumeBiomassTaperModel.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\NationalScaleVolumeBiomassTaperModel.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\NationalScaleVolumeBiomassTaperModel.h",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAxwCEAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAcAAAAAAAAAAABBwCEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-04-20T16:04:09.924Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 99,
+              "DocumentIndex": 102,
               "Title": "FlewellingTaperModel.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel.h",
-              "ViewState": "AgIAADUAAAAAAAAAAAAxwEwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADQAAAAAAAAAAABBwEwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-05-21T15:26:14.603Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 101,
+              "DocumentIndex": 104,
               "Title": "CzaplewskiTaperModel.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\CzaplewskiTaperModel.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\CzaplewskiTaperModel.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\CzaplewskiTaperModel.cpp",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\CzaplewskiTaperModel.cpp",
-              "ViewState": "AgIAACkAAAAAAAAAAAAxwN4AAAAUAAAAAAAAAA==",
+              "ViewState": "AgIAACgAAAAAAAAAAABBwN4AAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-05-04T16:12:20.669Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 102,
+              "DocumentIndex": 105,
               "Title": "HawaiiSharpnackTaper.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\HawaiiSharpnackTaper.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\HawaiiSharpnackTaper.h",
@@ -1906,7 +1954,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 103,
+              "DocumentIndex": 106,
               "Title": "DirectVolumeCalculator_R610.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R610.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R610.h",
@@ -1918,19 +1966,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 104,
+              "DocumentIndex": 107,
               "Title": "DirectVolumeCalculator_R610.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R610.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R610.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R610.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R610.cpp",
-              "ViewState": "AgIAADgAAAAAAAAAAAAxwAgAAAARAAAAAAAAAA==",
+              "ViewState": "AgIAADcAAAAAAAAAAABBwAgAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-29T14:07:08.44Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 105,
+              "DocumentIndex": 108,
               "Title": "VolumeEquationResolver.R8.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R8.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R8.cpp",
@@ -1942,19 +1990,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 106,
+              "DocumentIndex": 109,
               "Title": "VolumeEquationResolver.R9.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R9.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeEquationResolver.R9.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeEquationResolver.R9.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeEquationResolver.R9.cpp",
-              "ViewState": "AgIAAMsAAAAAAAAAAAAxwNUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAMoAAAAAAAAAAABBwNUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-23T22:37:15.783Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 107,
+              "DocumentIndex": 110,
               "Title": "R8vol.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r8vol.f",
               "RelativeDocumentMoniker": "r8vol.f",
@@ -1967,7 +2015,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 108,
+              "DocumentIndex": 111,
               "Title": "R8vol1.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r8vol1.f",
               "RelativeDocumentMoniker": "r8vol1.f",
@@ -1980,31 +2028,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 109,
+              "DocumentIndex": 112,
               "Title": "FlewellingTaperModel_Other.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Other.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Other.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Other.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Other.h",
-              "ViewState": "AgIAAG4AAAAAAAAAAAAxwBkAAAAsAAAAAAAAAA==",
+              "ViewState": "AgIAAG0AAAAAAAAAAABBwBkAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-06-02T14:04:20.63Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 110,
+              "DocumentIndex": 113,
               "Title": "FlewellingTaperModel_Ingy.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Ingy.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Ingy.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Ingy.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_Ingy.h",
-              "ViewState": "AgIAAC4BAAAAAAAAAAAxwAUAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAC0BAAAAAAAAAABBwAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-06-01T17:38:49.533Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 111,
+              "DocumentIndex": 114,
               "Title": "DirectVolumeCalculator_R234.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R234.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R234.h",
@@ -2016,7 +2064,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 112,
+              "DocumentIndex": 115,
               "Title": "Sf_yhat3.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_yhat3.f",
               "RelativeDocumentMoniker": "sf_yhat3.f",
@@ -2029,7 +2077,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 113,
+              "DocumentIndex": 116,
               "Title": "Sf_ds.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_ds.f",
               "RelativeDocumentMoniker": "sf_ds.f",
@@ -2042,7 +2090,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 115,
+              "DocumentIndex": 118,
               "Title": "SF_corr.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_corr.f",
               "RelativeDocumentMoniker": "sf_corr.f",
@@ -2055,7 +2103,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 114,
+              "DocumentIndex": 117,
               "Title": "Sf_dfz.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_dfz.f",
               "RelativeDocumentMoniker": "sf_dfz.f",
@@ -2068,19 +2116,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 116,
+              "DocumentIndex": 119,
               "Title": "FlewellingTaperModel_West.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.h",
               "RelativeToolTip": "src\\FSvolLib\\TaperModels\\FlewellingTaperModel_West.h",
-              "ViewState": "AgIAAAQAAAAAAAAAAABBwAMAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAAAMAAAAAAAAAAIBJwAMAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-06-02T17:58:41.23Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 118,
+              "DocumentIndex": 121,
               "Title": "CzaplewskiTaperModel.test.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\CzaplewskiTaperModel.test.cpp",
               "RelativeDocumentMoniker": "tests\\FSvolLib.test\\CzaplewskiTaperModel.test.cpp",
@@ -2093,7 +2141,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 117,
+              "DocumentIndex": 120,
               "Title": "FlewellingShapeCoef.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\TaperModels\\FlewellingShapeCoef.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\TaperModels\\FlewellingShapeCoef.h",
@@ -2105,7 +2153,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 153,
+              "DocumentIndex": 156,
               "Title": "span",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.41.34120\\include\\span",
               "RelativeDocumentMoniker": "..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Professional\\VC\\Tools\\MSVC\\14.41.34120\\include\\span",
@@ -2118,7 +2166,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 119,
+              "DocumentIndex": 122,
               "Title": "Sf_hs.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_hs.f",
               "RelativeDocumentMoniker": "sf_hs.f",
@@ -2131,7 +2179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 120,
+              "DocumentIndex": 123,
               "Title": "Sf_taper.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_taper.f",
               "RelativeDocumentMoniker": "sf_taper.f",
@@ -2144,7 +2192,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 122,
+              "DocumentIndex": 125,
               "Title": "Sf_3z.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_3z.f",
               "RelativeDocumentMoniker": "sf_3z.f",
@@ -2157,7 +2205,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 123,
+              "DocumentIndex": 126,
               "Title": "Sf_2pth.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_2pth.f",
               "RelativeDocumentMoniker": "sf_2pth.f",
@@ -2170,7 +2218,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 124,
+              "DocumentIndex": 127,
               "Title": "Sf_yhat.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_yhat.f",
               "RelativeDocumentMoniker": "sf_yhat.f",
@@ -2183,7 +2231,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 121,
+              "DocumentIndex": 124,
               "Title": "Sf_2pt.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_2pt.f",
               "RelativeDocumentMoniker": "sf_2pt.f",
@@ -2196,7 +2244,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 125,
+              "DocumentIndex": 128,
               "Title": "Sf_shp.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\sf_shp.f",
               "RelativeDocumentMoniker": "sf_shp.f",
@@ -2209,7 +2257,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 126,
+              "DocumentIndex": 129,
               "Title": "MerchRules.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\Models\\MerchRules.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\Models\\MerchRules.h",
@@ -2221,19 +2269,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 127,
+              "DocumentIndex": 130,
               "Title": "DirectVolumeCalculator_R234.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R234.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R234.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R234.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_R234.cpp",
-              "ViewState": "AgIAADcDAAAAAAAAAIBJwC4CAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAADYDAAAAAAAAAABRwC4CAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-24T18:11:53.211Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 128,
+              "DocumentIndex": 131,
               "Title": "NSVB.TaperModel.test.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\NSVB.TaperModel.test.cpp",
               "RelativeDocumentMoniker": "tests\\FSvolLib.test\\NSVB.TaperModel.test.cpp",
@@ -2246,7 +2294,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 129,
+              "DocumentIndex": 132,
               "Title": "WenselOlsonTaperModel.test.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\WenselOlsonTaperModel.test.cpp",
               "RelativeDocumentMoniker": "tests\\FSvolLib.test\\WenselOlsonTaperModel.test.cpp",
@@ -2259,7 +2307,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 130,
+              "DocumentIndex": 133,
               "Title": "DeMarsTaperModel.test.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\tests\\FSvolLib.test\\DeMarsTaperModel.test.cpp",
               "RelativeDocumentMoniker": "tests\\FSvolLib.test\\DeMarsTaperModel.test.cpp",
@@ -2272,7 +2320,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 131,
+              "DocumentIndex": 134,
               "Title": "r8prep.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r8prep.f",
               "RelativeDocumentMoniker": "r8prep.f",
@@ -2285,7 +2333,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 132,
+              "DocumentIndex": 135,
               "Title": "r8cfo.inc",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r8cfo.inc",
               "RelativeDocumentMoniker": "r8cfo.inc",
@@ -2297,7 +2345,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 133,
+              "DocumentIndex": 136,
               "Title": "r9coeff.inc",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r9coeff.inc",
               "RelativeDocumentMoniker": "r9coeff.inc",
@@ -2309,7 +2357,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 134,
+              "DocumentIndex": 137,
               "Title": "R2tap.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\r2tap.f",
               "RelativeDocumentMoniker": "r2tap.f",
@@ -2322,31 +2370,31 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 135,
+              "DocumentIndex": 138,
               "Title": "DirectVolumeCalculator_BIA.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_BIA.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_BIA.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_BIA.cpp",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\DirectVolumeCalculator_BIA.cpp",
-              "ViewState": "AgIAAFEAAAAAAAAAAIBJwG0AAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAAFAAAAAAAAAAAABRwG0AAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-29T15:50:29.384Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 137,
+              "DocumentIndex": 140,
               "Title": "dllmain.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\dllmain.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\dllmain.cpp",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\dllmain.cpp",
               "RelativeToolTip": "src\\FSvolLib\\dllmain.cpp",
-              "ViewState": "AgIAAAUAAAAAAAAAAIBJwAgAAAAKAAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAABRwAgAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2026-04-16T14:51:12.228Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 138,
+              "DocumentIndex": 141,
               "Title": "HawaiiSharpnackVolume.cpp",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\HawaiiSharpnackVolume.cpp",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\HawaiiSharpnackVolume.cpp",
@@ -2359,7 +2407,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 139,
+              "DocumentIndex": 142,
               "Title": "HawaiiSharpnackVolume.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\HawaiiSharpnackVolume.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\HawaiiSharpnackVolume.h",
@@ -2371,7 +2419,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 140,
+              "DocumentIndex": 143,
               "Title": "NationalScaleVolumeBiomass.DistrictProvinceData.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.DistrictProvinceData.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.DistrictProvinceData.h",
@@ -2383,19 +2431,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 141,
+              "DocumentIndex": 144,
               "Title": "NationalScaleVolumeBiomass.Table1.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table1.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table1.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table1.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table1.h",
-              "ViewState": "AgIAABEAAAAAAAAAAABRwAYAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABAAAAAAAAAAAEBVwAYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-03-04T19:45:07.462Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 142,
+              "DocumentIndex": 145,
               "Title": "NationalScaleVolumeBiomass.TableStruct.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.TableStruct.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.TableStruct.h",
@@ -2407,19 +2455,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 143,
+              "DocumentIndex": 146,
               "Title": "NationalScaleVolumeBiomass.Table11.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table11.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table11.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table11.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table11.h",
-              "ViewState": "AgIAAAUAAAAAAAAAAABRwBwAAAAEAAAAAAAAAA==",
+              "ViewState": "AgIAAAQAAAAAAAAAAEBVwBwAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-03-10T20:46:41.664Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 144,
+              "DocumentIndex": 147,
               "Title": "NationalScaleVolumeBiomass.Table9.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table9.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table9.h",
@@ -2431,7 +2479,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 145,
+              "DocumentIndex": 148,
               "Title": "NationalScaleVolumeBiomass.Table5.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table5.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table5.h",
@@ -2443,7 +2491,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 146,
+              "DocumentIndex": 149,
               "Title": "NationalScaleVolumeBiomass.Table4.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table4.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table4.h",
@@ -2455,19 +2503,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 147,
+              "DocumentIndex": 150,
               "Title": "NationalScaleVolumeBiomass.Table3.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table3.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table3.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table3.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table3.h",
-              "ViewState": "AgIAAJABAAAAAAAAAABRwKIBAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAAI8BAAAAAAAAAEBVwKIBAAAkAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-03-05T16:53:44.668Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 148,
+              "DocumentIndex": 151,
               "Title": "NationalScaleVolumeBiomass.Table2.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table2.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table2.h",
@@ -2479,7 +2527,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 149,
+              "DocumentIndex": 152,
               "Title": "NationalScaleVolumeBiomass.Table8.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table8.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table8.h",
@@ -2491,7 +2539,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 150,
+              "DocumentIndex": 153,
               "Title": "NationalScaleVolumeBiomass.Table7.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table7.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table7.h",
@@ -2503,19 +2551,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 151,
+              "DocumentIndex": 154,
               "Title": "NationalScaleVolumeBiomass.Table6.h",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table6.h",
               "RelativeDocumentMoniker": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table6.h",
               "ToolTip": "C:\\development\\fsvollibNG\\VolumeLibrary\\src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table6.h",
               "RelativeToolTip": "src\\FSvolLib\\VolumeCalculators\\NationalScaleVolumeBiomass.Table6.h",
-              "ViewState": "AgIAAAsAAAAAAAAAAABRwBkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAAoAAAAAAAAAAEBVwBkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2026-03-05T17:23:30.356Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 152,
+              "DocumentIndex": 155,
               "Title": "Segmnt.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\segmnt.f",
               "RelativeDocumentMoniker": "segmnt.f",
@@ -2528,7 +2576,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 154,
+              "DocumentIndex": 157,
               "Title": "Form1.cs",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\volCStest\\Form1.cs",
               "RelativeDocumentMoniker": "volCStest\\Form1.cs",
@@ -2540,7 +2588,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 136,
+              "DocumentIndex": 139,
               "Title": "honer.f",
               "DocumentMoniker": "C:\\development\\fsvollibNG\\VolumeLibrary\\honer.f",
               "RelativeDocumentMoniker": "honer.f",

@@ -174,6 +174,7 @@
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_BIA.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_Eastern.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_PacificCoast.h" />
+    <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_PacificIsland.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_RockyMountain.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_Southern.h" />
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_R1.h" />
@@ -228,6 +229,7 @@
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_BIA.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_Eastern.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_PacificCoast.cpp" />
+    <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_PacificIsland.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_RockyMountain.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_Southern.cpp" />
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_R1.cpp" />
