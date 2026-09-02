@@ -17,6 +17,12 @@ c***********************************************************************
 c                      Coefficients for NW TAPER Coop  April, 1994
 c                         (REGN  CD17.coe)
 c                       Copyright  J. W. Flewelling, 1994 
+c
+c              NOTE ON PUBLIC RELEASE: 
+c              Per the original author agreement, the 10-year proprietary 
+c              holding period has expired. This legacy code has been 
+c              released into the Public Domain by the maintaining agency.
+c***********************************************************************
 
       IMPLICIT DOUBLE PRECISION (A-H, O-Z) 
 

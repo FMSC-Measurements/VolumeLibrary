@@ -6,6 +6,11 @@ c               Language Systems   Sterling, VA.
 c      
 c           Code is Copyright by Language Systems.
 c           Source, object and executable MAY be distributed with SF_TEST.
+c
+c           HISTORICAL NOTE (2026 Review): Language Systems Corp. ceased 
+c           independent operations and was acquired by Fortner Research in 
+c           May 1996. This legacy file is retained under its original 
+c           permissive distribution terms ("MAY be distributed").
 
 c>> 1996       SZERO  JWF     Removed calls AMACH , MESS, SMESS and UMESS  
 c>> 1993-04-27 SZERO  Krogh   Additions for Conversion to C.
