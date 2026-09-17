@@ -25,7 +25,7 @@ static const std::vector<std::string> EQNUM_R2 = {
     "210DVEW122","200DVEW122","203DVEW122","200CZ2W746","200DVEW746",
     "210DVEW746","200DVEW066","200CZ2W019","200CZ2W015","200DVEW015",
     "200CZ3W202","200CZ3W093","200CZ3W108","200CZ3W122","203CZ3W122",
-    "200CZ3W746","200CZ3W019","200CZ3W015"
+    "200CZ3W746","200CZ3W019","200CZ3W015","223DVEW122"
 };
 
 // Helper: Fortran-style 1-based EQNUM(i)
@@ -106,7 +106,11 @@ VolumeEquation VolumeEquationResolver::GetR2VolumeEquation(VolumeCalculationOpti
 
     // --- Species-specific overrides ---
     if (SPEC == 122 && FORNUM == 3) {
-        VOLEQ = eqR2(43);
+        if (vco.primaryProduct == 1) {
+            VOLEQ = eqR2(43);
+        }
+        else VOLEQ = "223DVEW122";
+        
         return VolumeEquation::ParseVolumeEquationNumber(VOLEQ);
     }
     else if (SPEC == 122 && FORNUM == 13) {

@@ -197,7 +197,8 @@ BiomassOutput woodlandBiomass(VolumeCalculationOptions vco, TreeMeasurment tree,
         }
         DRYBIO[11] = WT_BRA; // DRYBIO(12)
         DRYBIO[12] = WT_FOL; // DRYBIO(13)
-        DRYBIO[0] = DRYBIO[5] + DRYBIO[11]; // DRYBIO(1) = BIO3 + branches
+        //changed to use DRYBIO[1] for the above ground total
+        DRYBIO[0] = DRYBIO[1] + DRYBIO[11]; // DRYBIO(1) = BIO3 + branches
         out.aboveGroundTotal = DRYBIO[0];
         out.stemWoodTotal = DRYBIO[1];
         out.branches = DRYBIO[11];

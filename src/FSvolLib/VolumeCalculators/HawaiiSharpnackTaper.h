@@ -1,6 +1,4 @@
 #pragma once
-// r12tap.hpp
-#pragma once
 #include <array>
 #include <vector>
 #include <string>

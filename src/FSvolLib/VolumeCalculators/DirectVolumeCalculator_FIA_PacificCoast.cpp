@@ -816,6 +816,7 @@ double MERCH_HT(int SPN, double DBH, double HT, double TOP,
     }
     else if (SPN == 242)
     {
+        // This part is not used. The SPN 242 is handled above with SPN 42
         // NOT USED in FIA code — converted faithfully as requested
 
         int KNOL = 0;
@@ -1044,7 +1045,7 @@ TreeOutput DeMars_Vol(const std::string& VOLEQ, TreeMeasurment tree, MerchRules 
 
 //Embry volume calculation
 
-inline double CONE_CV(double DBH, double THT, double TOP, double CV)
+inline double Embry_Cone_CV(double DBH, double THT, double TOP, double CV)
 {
     // Height at top diameter point
     double HT_TOP = TOP * (THT - 4.5) / DBH;
@@ -1105,7 +1106,7 @@ TreeOutput Embry_Vol(int SPN, TreeMeasurment tree, MerchRules merchRules)
     if (CV4 < 0.0)
     {
         double TOP = 4.0;
-        CV4 = CONE_CV(DBH, HT, TOP, CV4);
+        CV4 = Embry_Cone_CV(DBH, HT, TOP, CV4);
     }
 
     out.grossCubicFootPrimary = CV4;       // VOL(4)
@@ -1139,7 +1140,7 @@ TreeOutput Embry_Vol(int SPN, TreeMeasurment tree, MerchRules merchRules)
         if (CV6 < 0.0)
         {
             double TOP = 6.0;
-            CV6 = CONE_CV(DBH, HT, TOP, CV6);
+            CV6 = Embry_Cone_CV(DBH, HT, TOP, CV6);
         }
 
         out.grossCubicFootSecondary = CV4 - CV6;   // VOL(7)

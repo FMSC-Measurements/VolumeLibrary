@@ -24,7 +24,7 @@ struct RefSpeciesDataRow {
 //Regional default weight factor
 //Table data are col(1) Region, col(2) Forest, col(3) SpeciesCD, 
 // col(4) WeightfactorSaw, col(5) WeightFactorNonsaw, col(6) MoistureContent, col(7) WeightFactorDead
-static constexpr std::array<std::array<double, 7>, 146> regionalDefaultWtFactor = { {
+static constexpr std::array<std::array<double, 7>, 148> regionalDefaultWtFactor = { {
 {1,0,17,62.55,58.94,0,46.55},
 {1,0,19,49.47,46.68,0,40.78},
 {1,0,73,63.87,61.57,0,47.46},
@@ -108,6 +108,7 @@ static constexpr std::array<std::array<double, 7>, 146> regionalDefaultWtFactor 
 {6,0,19,64,0,0,0},
 {6,0,21,64,0,0,0},
 {6,6,22,63,0,0,0},
+{6,3,22,63,0,0,0},
 {6,0,22,64,0,0,0},
 {6,6,25,63,0,0,0},
 {6,3,25,59,0,0,0},
@@ -169,6 +170,7 @@ static constexpr std::array<std::array<double, 7>, 146> regionalDefaultWtFactor 
 {6,0,264,64,0,0,0},
 {6,0,312,68,0,0,0},
 {6,10,351,57,0,0,0},
+{6,3,351,64,0,0,0 },
 {6,0,351,68,0,0,0},
 {6,0,747,46,0,0,0}
 } };
@@ -188,7 +190,7 @@ static constexpr std::array<std::array<double, 7>, 146> regionalDefaultWtFactor 
 //           10 Dry weight factor(lb / cf)
 //           11 Sapling adjustment factor
 //           12 Carbon ratioC      Column# Name
-const int sp999Index = 359; // 460; //c++ index start with 0
+const int sp999Index = 459; // 460; //c++ index start with 0
 
 static constexpr std::array<std::array<double, 12>, 2677> refSpeciesData = { {
 {10,0,3,22.46,30.58,84,62.43,11.76,47.2,26.1,0.608,0.48},

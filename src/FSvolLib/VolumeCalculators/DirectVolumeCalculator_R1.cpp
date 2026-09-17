@@ -575,27 +575,6 @@ static inline bool map_ispc_R1ALLENC(const std::string& VOLEQ, int& ISPC) {
     return true;
 }
 
-//static inline bool map_ispc_R1ALLENB(const std::string& VOLEQ, int& ISPC, bool& early_return_zero) {
-//    if (VOLEQ.size() < 10) return false;
-//    const std::string code = VOLEQ.substr(7, 3); // (8:10)
-//    early_return_zero = false;
-//    if (code == "119") ISPC = 1;
-//    else if (code == "073") ISPC = 2;
-//    else if (code == "202") ISPC = 3;
-//    else if (code == "017") ISPC = 4;
-//    else if (code == "263" || code == "260") ISPC = 5;
-//    else if (code == "242" || code == "240") ISPC = 6;
-//    else if (code == "108") ISPC = 7;
-//    else if (code == "093" || code == "090") ISPC = 8;
-//    else if (code == "019") ISPC = 9;
-//    else if (code == "122") ISPC = 10;
-//    else if (code == "999") ISPC = 11;
-//    else if (code == "375") { early_return_zero = true; return true; }
-//    else if (code == "740") { early_return_zero = true; return true; }
-//    else return false;
-//    return true;
-//}
-
 // =========================
 // R1ALLENC: cubic volumes (merchantable and total)
 // =========================

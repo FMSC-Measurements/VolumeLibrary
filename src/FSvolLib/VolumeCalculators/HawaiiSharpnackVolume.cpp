@@ -160,6 +160,8 @@
         out.grossCubicFootSecondary = twTotal;
         out.grossBoardFootPrimary = bfTotal;
         out.numberOfLogs = nologp;
+        out.tipCubicFoot = tcvol - cfTotal - twTotal;
+        out.grossInternationalBoardFoot = bfTotal;
         return out;
     }
 

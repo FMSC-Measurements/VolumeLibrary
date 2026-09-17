@@ -225,6 +225,9 @@
     <ClInclude Include="VolumeCalculators\DirectVolumeCalculator_FIA_PacificIsland.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WeightFactorAndRefDataCache.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TaperModels\TaperModel.cpp">
@@ -369,6 +372,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VolumeCalculators\DirectVolumeCalculator_FIA_PacificIsland.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WeightFactorAndRefDataCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VolumeCalculators\VolumeCalculatorBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

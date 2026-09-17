@@ -151,6 +151,7 @@ void ClarkTaperModel::setClarkCoef(int spcd)
         clarkCoef.bfi = R8CF[geoSppIdx][6];
         clarkCoef.spgrp = R8CF[geoSppIdx][2];
         spgrp = clarkCoef.spgrp;
+        clarkCoefOb.dib17 = 0.0;
 
         if (eqHeightType_ == 0 || eqHeightType_ == 1 || eqHeightType_ == 8) {
             
@@ -1270,6 +1271,16 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
         //Get total height
         totHt = GetTotalHeight(tree.totalHeight, clarkCoefOb.dib17, topHt, topDob, clarkCoefOb.a, clarkCoefOb.b);
         if (tree.totalHeight == 0.0) tree.totalHeight = totHt;
+
+        //DOB17
+        if (clarkCoefOb.dib17 < clarkCoef.dib17) {
+            clarkCoefOb.dib17 = clarkCoef.dib17;
+        }
+        if (clarkCoefOb.dib17 < topDob) {
+            if (topHt > 17.2) {
+                clarkCoefOb.dib17 = topDob + (dbhOb_ - topDob) * (topHt - 17.3) / (topHt - 4.5);
+            }
+        }
     }
 }
 

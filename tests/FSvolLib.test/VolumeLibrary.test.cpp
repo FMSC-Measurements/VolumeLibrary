@@ -17,12 +17,14 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 5;
+        volOpt.region = 8;
         volOpt.forest = 1;
-        volOpt.fiaCode = 100;
+        volOpt.district = 1;
+        volOpt.fiaCode = 731;
+        //volOpt.auxFlag = AuxFlag::R10YOUNGGROWTH;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
-        volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
+        //volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
         //volOpt.ecoRegion = "M260";
         // ...
         auto volEqDefault = volLib.GetVolumeEquationNumber(volOpt);
@@ -48,7 +50,7 @@ public:
 
         //double dia2 = volLib.GetDiameterAtHeight(volEqDefault, tree, 35.5);
         
-        volOpt.volumeEquationNumberOverride = "P03CEN0000";
+        //volOpt.volumeEquationNumberOverride = "B03BEHW202";
         auto treeOutput = volLib.CalculateVolume(volOpt, tree);
         
         //test input merch rules for BEH
@@ -67,6 +69,7 @@ public:
         merchRules.doubleBarkThicknessAtBrestHeight = 0.0;
         merchRules.minimumBoardFootDiameter = 1.0;
         merchRules.useCorrectedFactor = false;
+        tree.totalHeight = tree.totalHeight + 1.5;  // add 1.0 for R6 BEH and add 1.5 for BLM BEH
 
         // Act
         //auto treeOutput = volLib.CalculateVolume(volOpt, tree, merchRules);

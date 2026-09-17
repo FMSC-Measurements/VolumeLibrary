@@ -41,6 +41,7 @@ FlewellingShapeParams shapeIngy(int JSP, const std::string_view GEOSUB,
 
             if (GEOSUB == "15" || GEOSUB == "03") {
                 geotemp = "15";
+                F = F_shapeIngy[12];
             }
             else {
                 geotemp = GEOSUB;

@@ -9,6 +9,8 @@
 #include "..\VolumeEquation.h"
 #include "..\Models\VolumeCalculationOptions.h"
 #include "..\WeightfactorAndRefDataResolver.h"
+#include "..\WeightFactorAndRefDataCache.h"
+#include "..\VolumeEquationResolver.h"
 
 struct EqCoeffs {
     int    equation;
@@ -68,7 +70,7 @@ class NationalScaleVolumeBiomass //: public VolumeCalculatorBase
 
 public:
     NationalScaleVolumeBiomass(std::string nsvbEquationNumber, VolumeCalculationOptions vco)
-        : weightFactorAndRefData(getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode)),
+        : weightFactorAndRefData(getCachedSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode)),
         volEqStr(nsvbEquationNumber), spcd(std::stoi(nsvbEquationNumber.substr(7, 3)))
     {
         //No calculation for woodland species.
@@ -85,7 +87,7 @@ public:
     }
 
     NationalScaleVolumeBiomass(VolumeCalculationOptions vco)
-        : weightFactorAndRefData(getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode)),
+        : weightFactorAndRefData(getCachedSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode)),
         volEqStr(vco.volumeEquationNumberOverride), spcd(vco.fiaCode)
     {
         //No calculation for woodland species.
@@ -94,8 +96,14 @@ public:
             throw std::invalid_argument("NSVB cannot calculate for woodland species!");
         }
         //get NVB equation components
+        //Get the default volume equation for Cruise and FVS
+        if (volEqStr.substr(0,3) != "NVB" && (vco.volumeCalculationOptions == VolumeCalculationType::CRUISE || vco.volumeCalculationOptions == VolumeCalculationType::FVS)) {
+            VolumeEquation volumeEquation = VolumeEquationResolver::GetVolumeEquation(vco);
+            volEqStr = volumeEquation.volEqStr;
+        }
         if (!isValidNVBeq(volEqStr))
         {
+           
             //build NVB equation using ecoRegion, spFiaCode, standOrigin (for 110 and 131 species only)
             if (spcd == 110 || spcd == 131)
             {
@@ -123,7 +131,10 @@ public:
             }
             buildVolEqStr();
         }
-        else setDivisionFromVolEq();
+        else { 
+            spcd = std::stoi(volEqStr.substr(7, 3));
+            setDivisionFromVolEq(); 
+        }
 
         //set the coefficients for the volEqStr
         setNSVBcoeffs();

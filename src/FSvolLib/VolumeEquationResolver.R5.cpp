@@ -87,6 +87,7 @@ VolumeEquation VolumeEquationResolver::GetR5VolumeEquation(VolumeCalculationOpti
 	int fiaCode = vco.fiaCode;
 
 	// Apply variant-specific overrides for certain species
+	if (fiaCode == 60) fiaCode = 62;
 	// Whitebark pine (101) - use different equations based on variant
 	if (fiaCode == 101) {
 		if (fvsVariant == "SO") {

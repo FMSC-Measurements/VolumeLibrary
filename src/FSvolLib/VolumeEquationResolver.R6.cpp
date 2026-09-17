@@ -92,6 +92,11 @@ static const std::vector<std::string> EQNUMB_R6 = {
     "B00BEHW999","B02BEHW202","B03BEHW202","B01BEHW202"
 };
 
+// EQNUM for for Red Alder in GP and Siuslaw
+static const std::vector<std::string> EQNUMRA = {
+    "A16CURW351","NVBM240351"
+};
+
 // ---------- Helpers ----------
 static inline std::string trim(const std::string& s) {
     size_t b = 0, e = s.size();
@@ -156,6 +161,7 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
 
     int DONEI = 0;
     int DONEF = 0;
+    int DONERA = -1;
 
     // ----- Westside variants -----
     if (inWestside(VAR)) {
@@ -171,6 +177,9 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
                 DONEF = 10;
                 if (DISTNUM == 1)      DONEF = 22;
                 else if (DISTNUM == 5) DONEF = 10;
+            }
+            else if (SPEC == 351) {
+                DONERA = 0;
             }
         }
         else if (FORNUM == 6) { // Mt Hood
@@ -200,10 +209,14 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
             else if (SPEC == 202) {
                 DONEF = 19;
             }
+            else if (SPEC == 263) {
+                DONEF = 21;
+            }
         }
         else if (FORNUM == 12) { // Siuslaw
             if (SPEC == 202) DONEF = 1;
             else if (SPEC == 263) DONEF = 12;
+            else if (SPEC == 351) DONERA = 1;
         }
         else if (FORNUM == 9) { // Olympic
             if (SPEC == 202) DONEF = 10;
@@ -212,7 +225,7 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
         }
         else if (FORNUM == 15) { // Umpqua
             if (SPEC == 15)  DONEI = 2;
-            else if (SPEC == 20)  DONEI = 1;
+            else if (SPEC == 20 || SPEC == 21)  DONEI = 1;
             else if (SPEC == 81)  DONEI = 4;
             else if (SPEC == 93)  DONEI = 5;
             else if (SPEC == 108) DONEI = 6;
@@ -221,6 +234,8 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
             else if (SPEC == 242) DONEI = 1;
             else if (SPEC == 263) DONEI = 23;
             else if (SPEC == 264) DONEI = 10;
+            else if (SPEC == 11) DONEI = 76;
+            else if (SPEC == 103) DONEI = 11;
         }
         else if (FORNUM == 18) { // Willamette
             if (SPEC == 22)  DONEI = 6;
@@ -236,6 +251,9 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
         }
         else if (DONEF > 0) {
             VOLEQ = eqF(DONEF);
+        }
+        else if (DONERA >= 0) {
+            VOLEQ = EQNUMRA[DONERA];
         }
         else {
             // Behre’s hyperbola default
@@ -286,6 +304,9 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
             }
             else if (SPEC == 81) {
                 DONEI = 22;
+            }
+            else if (SPEC == 117) {
+                DONEI = 44;
             }
         }
         else if (FORNUM == 2 || FORNUM == 20) { // Fremont
@@ -385,7 +406,7 @@ VolumeEquation VolumeEquationResolver::GetR6VolumeEquation(VolumeCalculationOpti
             else if (SPEC == 122) DONEI = 32;
             else if (SPEC == 202) DONEI = 21;
             else if (SPEC == 242) DONEI = 22;
-            else if (SPEC == 263 || SPEC == 264) DONEI = 14;
+            else if (SPEC == 260 || SPEC == 263 || SPEC == 264) DONEI = 14;
         }
 
         if (DONEI > 0) {
@@ -438,7 +459,7 @@ bool VolumeEquationResolver::isValidR6Equation(const std::string& VOLEQ)
 
     // Membership checks in BLM/INGY/Flewelling/Canadian/Direct tables
     if (contains(EQNUMB_R6, VOLEQ) || contains(EQNUMI_R6, VOLEQ) || contains(EQNUMF_R6, VOLEQ) ||
-        contains(EQNUMC_R6, VOLEQ) || contains(EQNUMD_R6, VOLEQ)) {
+        contains(EQNUMC_R6, VOLEQ) || contains(EQNUMD_R6, VOLEQ) || contains(EQNUMRA, VOLEQ)) {
         return true;
     }
     //check Fleweling for 3-point equation

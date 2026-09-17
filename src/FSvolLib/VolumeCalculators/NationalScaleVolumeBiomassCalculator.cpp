@@ -797,6 +797,11 @@ TreeOutput NationalScaleVolumeBiomass::CalculateVolumeBiomass(VolumeCalculationO
             VtwibSound = Vtwib * cullReduction;
             out.grossCubicFootSecondary = VtwibSound;
         }
+        else {
+            // no topwood, everything goes to tip
+            merchHeightNonsaw = merchHeightSaw;
+            Rmrch = getRatio_impl(totalHt, merchHeightNonsaw, ratioIB_eqCoeffs);
+        }
     }
     else //for nonsaw product
     {

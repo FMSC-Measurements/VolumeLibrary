@@ -10,11 +10,11 @@ WeightFactorAndRefData getSpeciesWtfactorAndRefData(int region, int forst, int f
 	double weightFactorDead = 0.0;
 	double weightFactorDry = 0.0;
 	bool found = false;
+	std::size_t last = sizeof(regionalDefaultWtFactor) / sizeof(regionalDefaultWtFactor[0]);
 
 	if (region > 0 && region <= 10)
 	{
-		//int sz = regionalDefaultWtFactor.size();
-		for (int i = 0; i < 146; ++i)
+		for (int i = 0; i < last; ++i)
 		{
 			const auto& row = regionalDefaultWtFactor[i];
 			if ((static_cast<int>(row[0]) == region && static_cast<int>(row[1]) == forst && static_cast<int>(row[2]) == fiaSpcd) || (static_cast<int>(row[0]) == region && static_cast<int>(row[1]) == 0 && static_cast<int>(row[2]) == fiaSpcd))
@@ -69,29 +69,13 @@ RefSpeciesData getRefSpeciesData(int fiaSpcd)
 
 	// Compute search range depending on SPCD > 999
 	std::size_t first = 0;
-	std::size_t last = sp999Index; 
-	if (fiaSpcd > 999)
-	{
-		first = sp999Index + 1;
-		last = sizeof(refSpeciesData) / sizeof(refSpeciesData[0]) - 1;
-	}
+	std::size_t last = sizeof(refSpeciesData) / sizeof(refSpeciesData[0]); //sp999Index; 
 
 	int found_index = -1;
-	std::size_t lo = first, hi = last;
-	while (lo <= hi) {
-		std::size_t mid = lo + (hi - lo) / 2;
-		const auto& row = refSpeciesData[mid];
-		int key = static_cast<int>(row[0]);
-		if (key == fiaSpcd) 
-		{ 
-			found_index = mid; 
-			break; 
-		}
-		if (key < fiaSpcd) { lo = mid + 1; }
-		else 
-		{ 
-			if (mid == 0) break; 
-			hi = mid - 1; 
+
+	for (size_t i = 0; i < last; ++i) {
+		if (refSpeciesData[i][0] == fiaSpcd) {
+			found_index =  static_cast<int>(i);
 		}
 	}
 

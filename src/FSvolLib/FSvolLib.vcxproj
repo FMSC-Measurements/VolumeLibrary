@@ -206,6 +206,7 @@
     <ClInclude Include="VolumeLibrary.h" />
     <ClInclude Include="TaperModels\WenselOlsonTaperModel.h" />
     <ClInclude Include="WeightFactorAndRefData.h" />
+    <ClInclude Include="WeightFactorAndRefDataCache.h" />
     <ClInclude Include="WeightFactorAndRefDataResolver.h" />
     <ClInclude Include="WoodlandBiomass.h" />
   </ItemGroup>
@@ -242,6 +243,7 @@
     <ClCompile Include="VolumeCalculators\NationalScaleVolumeBiomassCalculator.cpp" />
     <ClCompile Include="VolumeCalculators\ProfileVolumeCalculator.cpp" />
     <ClCompile Include="VolumeCalculators\JenkinsBiomass.cpp" />
+    <ClCompile Include="VolumeCalculators\VolumeCalculatorBase.cpp" />
     <ClCompile Include="VolumeEquationResolver.cpp" />
     <ClCompile Include="VolumeEquationResolver.FIA.cpp" />
     <ClCompile Include="VolumeEquationResolver.R1.cpp" />
@@ -256,6 +258,7 @@
     <ClCompile Include="VolumeEquationResolver.R9.cpp" />
     <ClCompile Include="VolumeLibrary.cpp" />
     <ClCompile Include="TaperModels\WenselOlsonTaperModel.cpp" />
+    <ClCompile Include="WeightFactorAndRefDataCache.cpp" />
     <ClCompile Include="WeightFactorAndRefDataResolver.cpp" />
     <ClCompile Include="WoodlandBiomass.cpp" />
   </ItemGroup>

@@ -127,7 +127,8 @@ VolumeEquation VolumeEquationResolver::GetR4VolumeEquation(VolumeCalculationOpti
     // Engelmann spruce (93) OR Blue spruce (96)
     if (SPEC == 93 || SPEC == 96) {
         if (in(FORNUM, 2, 12, 13))              VOLEQ = eq(36);
-        else if (in(FORNUM, 7, 8))              VOLEQ = eq(37);
+        else if (in(FORNUM, 7))                 VOLEQ = eq(37);
+        else if(in(FORNUM, 8))                  VOLEQ = eq(56);
         else                                    VOLEQ = eq(38);
         return VolumeEquation::ParseVolumeEquationNumber(VOLEQ);
     }

@@ -3,8 +3,48 @@
 #include "ProfileVolumeCalculator.h"
 #include "..\WeightfactorAndRefDataResolver.h"
 #include "..\DefaultFormClassForFVS.h"
+#include "..\WeightFactorAndRefDataCache.h"
 #include <array>
 
+// Compute total cubic volume for trees dbh < 4 or total height < 18
+static double FirstGrowTotalCubicVol(double dbh, double totalHeight) {
+    double TERM1, TERM2, FORM, VN;
+    double H = totalHeight;
+    double D = dbh;
+
+    if (H <= 18.0) {
+        TERM1 = ((H - 0.9) * (H - 0.9)) / ((H - 4.5) * (H - 4.5));
+        TERM2 = TERM1 * (H - 0.9) / (H - 4.5);
+        FORM = 0.406098 * TERM1
+            - 0.0762998 * D * TERM2
+            + 0.00262615 * D * H * TERM2;
+    }
+    else {
+        FORM = 0.480961
+            + 42.46542 / (H * H)
+            - 10.99643 * D / (H * H)
+            - 0.107809 * D / H
+            - 0.00409083 * D;
+    }
+
+    VN = 0.005454154 * FORM * D * D * H;
+
+    return VN;
+}
+
+// Compute second growth trees total cubic volume for dbh >= 4 and total height >= 18
+// up to dbh <= 9 and total height < 40
+static double SecondGrowTotalCubicVol(double dbh, double totalHeight) {
+
+    double D = dbh, H = totalHeight, VN;
+
+    // Compute VN (natural log components)
+    VN = -5.577 + 1.9067 * std::log(D) + 0.9416 * std::log(H);
+
+    VN = std::exp(VN);
+
+    return VN;
+}
 
 TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco, TreeMeasurment tree, MerchRules merchRules)
 {
@@ -65,6 +105,30 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
         else if (d17 < merchRules.minTopDibNonSaw) {
             double logvol = 0.00272708 * (dbhIb * dbhIb + std::pow(d17, 2)) * 17.3;
             result.totalCubicFoot = logvol + 0.00272708 * std::pow(d17, 2) * (tree.totalHeight - 17.3);
+            return result;
+        }
+    }
+    else if (volumeEquation_.modelType == VolumeEquation::ModelType::DEM) {
+        // R10 DeMar small trees
+        //merchRules.trim = 0.3; // this is test only!!!
+
+        if (tree.totalHeight <= 40.0 || tree.dbh < 9.0) {
+            if (tree.dbh <= 3.5 || tree.totalHeight < 18.0) {
+                result.totalCubicFoot = FirstGrowTotalCubicVol(tree.dbh, tree.totalHeight);
+            }
+            else {
+                double cubicVol = SecondGrowTotalCubicVol(tree.dbh, tree.totalHeight);
+                result.totalCubicFoot = cubicVol;
+                result.grossCubicFootPrimary = cubicVol;
+                result.numberOfLogs = 1;
+                LogOutput logData;
+                logData.grossCubicFoot = cubicVol;
+                logData.isSecondary = false;
+                logData.length = 16.0;
+                logData.smallEndDiameterScaled = merchRules.minTopDibSaw;
+                logData.logNumber = 1;
+                result.logs.push_back(logData);
+            }
             return result;
         }
     }
@@ -130,7 +194,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
                 result.grossBoardFootSecondary = grossIntl14Secondary;
             }
         }
-        else if (vco.region = 8)
+        else if (vco.region == 8)
         {
             std::vector<int> listForest8 = { 8,9,10,12 };
             if (std::count(listForest8.begin(), listForest8.end(), vco.forest) > 0)
@@ -149,7 +213,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
         if (!logs.empty()) {
             size_t topIndex = logs.size() - 1; // Last element index
             if (logs[topIndex].length == 0.0) topIndex -= 1;
-            double merchHeight = logs[topIndex].heightToLargeEndDiameter + logs[topIndex].length;
+            double merchHeight = logs[topIndex].heightToLargeEndDiameter + logs[topIndex].length + merchRules.trim;
             double tipLength = tree.totalHeight - merchHeight;
             tipVolume = smallian(logs[topIndex].smallEndDiameterActual, 0.0, tipLength);
         }
@@ -189,8 +253,13 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
 
             result.stumpCubicFoot = stemVol.stumpVol;
             result.grossCubicFootPrimary = stemVol.primaryVol;
-            result.grossCubicFootSecondary = stemVol.topwoodVol;
-            result.tipCubicFoot = stemVol.tipVol;
+            if (result.grossCubicFootSecondary > 0.0) {
+                result.grossCubicFootSecondary = stemVol.topwoodVol;
+                result.tipCubicFoot = stemVol.tipVol;
+            }
+            else {
+                result.tipCubicFoot = stemVol.tipVol + stemVol.topwoodVol;
+            }
             result.totalCubicFoot = stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol + stemVol.stumpVol;
             double cordFactor = 90.0;
             if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
@@ -668,7 +737,8 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
     }
 
 
-    WeightFactorAndRefData wf = getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode);
+    //WeightFactorAndRefData wf = getSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode);
+    //WeightFactorAndRefData wf = getCachedSpeciesWtfactorAndRefData(vco.region, vco.forest, vco.fiaCode);
 
     if (!merchRules.useCorrectedFactor) COR = 'N';
 	// merchendize the tree
@@ -695,6 +765,15 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
         }
     }
     double merchLength = merchHeight - merchRules.stumpHeight;
+
+    // R10 32 foot equation needs to reset the minimum log length for segmentation
+    if (volumeEquationNumber.substr(3, 2) == "F3" || volumeEquationNumber.substr(1, 2) == "32" ||
+        volumeEquationNumber.substr(1, 2) == "61" || volumeEquationNumber.substr(1, 2) == "62") {
+        int numberOf16footLogs = static_cast<int>(merchLength / (merchRules.maxLogLength + merchRules.trim));
+        if (numberOf16footLogs % 2 == 1) {
+            merchRules.minLogLength = 2.0;
+        }
+    }
 
     //get logs for the primary product
 			// segment logs
@@ -736,15 +815,18 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                 actualDiaSmall = taperModel_.GetDiameterAtHeight(tree, prevHeight + loglen[i] + merchRules.trim);
                 //reset the last log small end diameter
                 if (i == numseg - 1 && actualDiaSmall < merchRules.minTopDibSaw) {
-                    actualDiaSmall = merchRules.minTopDibSaw;
+                    if (vco.region != 8) {
+                        //no reset for R8 because R8 merchRules.minTopDibSaw is DOB
+                        actualDiaSmall = merchRules.minTopDibSaw;
+                    }
                 }
                 logData.length = loglen[i];
                 logData.logNumber = i + 1;
                 logData.product = vco.primaryProduct;
                 logData.largeEndDiameterActual = actualDiaLarge;
                 logData.smallEndDiameterActual = actualDiaSmall;
-                logData.largeEndDiameterScaled = static_cast<int>(actualDiaLarge + 0.501);
-                logData.smallEndDiameterScaled = static_cast<int>(actualDiaSmall + 0.501);
+                logData.largeEndDiameterScaled = static_cast<int>(actualDiaLarge + 0.499);  // + 0.501);
+                logData.smallEndDiameterScaled = static_cast<int>(actualDiaSmall + 0.499); // +0.501);
                 logData.isSecondary = false;
 
                 //Calculate log cubic and boardfoot volume
@@ -754,10 +836,15 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     logData.grossCubicFoot = r6BehButtLogVolume(tree.dbh, logData.smallEndDiameterActual);
                 }
                 else {
-                    logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, loglen[i]);
+                    if (vco.region == 8 || vco.region == 9) {
+                        logData.grossCubicFoot = smallian(actualDiaLarge, actualDiaSmall, loglen[i]);
+                    }
+                    else {
+                        logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, loglen[i]);
+                        //rounding
+                        logData.grossCubicFoot = std::nearbyint(logData.grossCubicFoot * 10.0) / 10.0;
+                    }
                 }
-                //rounding
-                logData.grossCubicFoot = std::nearbyint(logData.grossCubicFoot * 10.0) / 10.0;
 
                 //BIA Behr using different boardfoot calculation
                 if (volumeEquation_.volEqStr.substr(0, 1) == "I" && volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
@@ -768,13 +855,13 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                 logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, loglen[i]);
 
                 //calculate log green weight and dry weight using cubic volume and weight factor
-                if (!tree.isLive) logData.greenWeight = logData.grossCubicFoot * wf.weightFactorDead;
+                if (!tree.isLive) logData.greenWeight = logData.grossCubicFoot * weightFactorDead_;
                 else
                 {
-                    if (logData.product == 1) logData.greenWeight = logData.grossCubicFoot * wf.weightFactorSaw;
-                    else logData.greenWeight = logData.grossCubicFoot * wf.weightFactorNonsaw;
+                    if (logData.product == 1) logData.greenWeight = logData.grossCubicFoot * weightFactorGreenSaw_;
+                    else logData.greenWeight = logData.grossCubicFoot * weightFactorGreenNonsaw_;
                 }
-                logData.dryWeight = logData.grossCubicFoot * wf.weightFactorDry;
+                logData.dryWeight = logData.grossCubicFoot * weightFactorDry_;
 
                 result.push_back(logData);
 
@@ -785,6 +872,7 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
         // check for 32 foot log equation to combine the two 16-foot log into one and recalculate log board foot volume
         // find volume for 32 foot logs (Flewelling & Demars equation only)
         if (volumeEquation_.modelType == VolumeEquation::ModelType::DEM ||
+            volumeEquation_.modelType == VolumeEquation::ModelType::CUR ||
             volumeEquation_.modelType == VolumeEquation::ModelType::BEH ||
             volumeEquation_.modelType == VolumeEquation::ModelType::B32 ||
             volumeEquation_.modelType == VolumeEquation::ModelType::F32 ||
@@ -979,15 +1067,21 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     logData.smallEndDiameterScaled = static_cast<int>(actualDiaSmall + 0.501);
                     //Calculate log cubic and boardfoot volume
                     //call smalian, scribner, and intl14 to calculate cubic and boardfoot volume
-                    logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, secondaryLogs[i]);
+                    if (vco.region == 8 || vco.region == 9) {
+                        logData.grossCubicFoot = smallian(actualDiaLarge, actualDiaSmall, secondaryLogs[i]);
+                    }
+                    else {
+                        logData.grossCubicFoot = smallian(logData.largeEndDiameterScaled, logData.smallEndDiameterScaled, secondaryLogs[i]);
+                    }
+                    
                     logData.grossCubicFoot = std::nearbyint(logData.grossCubicFoot * 10.0) / 10.0;
                     logData.grossBoardFoot = scribner(logData.smallEndDiameterScaled, secondaryLogs[i], COR);
                     logData.internationalBoardFoot = intl14(logData.smallEndDiameterScaled, secondaryLogs[i]);
 
                     //calculate log green weight and dry weight using cubic volume and weight factor
-                    if (!tree.isLive) logData.greenWeight = logData.grossCubicFoot * wf.weightFactorDead;
-                    else logData.greenWeight = logData.grossCubicFoot * wf.weightFactorNonsaw;
-                    logData.dryWeight = logData.grossCubicFoot * wf.weightFactorDry;
+                    if (!tree.isLive) logData.greenWeight = logData.grossCubicFoot * weightFactorDead_;
+                    else logData.greenWeight = logData.grossCubicFoot * weightFactorGreenNonsaw_;
+                    logData.dryWeight = logData.grossCubicFoot * weightFactorDry_;
 
                     
                     result.push_back(logData);

@@ -8,6 +8,10 @@ class RustagiTaperModel : public TaperModel
 {
 private:
     std::string volEqStr;
+    int voleqCoefIdx_;
+    double stumpDib_;
+    double B_ = 0.0;
+
 // Store CFCOEF in the exact order as the Fortran DATA statement.
 // Fortran fills 2D arrays column-major: (1,1),(2,1)...(20,1),(1,2)...(20,7).
 // We'll access with a helper to mimic CFCOEF(II, col).
@@ -67,78 +71,80 @@ private:
         else return 0;
     }
 
-    double R4MAT_Taper(
-        const std::string& VOLEQ,
-        double DBHOB,
-        double HTTOT,
-        double HTUP,
-        double DIB,
-        bool calcCF0 = false)
-    {
-        int ERRFLAG = 0;
-        double STUMPD = 0.0;
-        double BUTTCF = 0.0;
-        double CF0 = 0.0;
-        double B = 0.0;
-        
-        // Basic input checks (same as Fortran)
-        if (DBHOB < 1.0) {
-            ERRFLAG = 3;
-            return 0;
-        }
-        // Proposed modification to prevent div by zero (same as your code)
-        if (HTTOT <= 5.0) {
-            ERRFLAG = 4;
-            return 0;
-        }
+    //double R4MAT_Taper(
+    //    const std::string& VOLEQ,
+    //    double DBHOB,
+    //    double HTTOT,
+    //    double HTUP,
+    //    double DIB,
+    //    bool calcCF0 = false)
+    //{
+    //    int ERRFLAG = 0;
+    //    double STUMPD = 0.0;
+    //    double BUTTCF = 0.0;
+    //    double CF0 = 0.0;
+    //    double B = 0.0;
+    //    
+    //    // Basic input checks (same as Fortran)
+    //    if (DBHOB < 1.0) {
+    //        ERRFLAG = 3;
+    //        return 0;
+    //    }
+    //    // Proposed modification to prevent div by zero (same as your code)
+    //    if (HTTOT <= 5.0) {
+    //        ERRFLAG = 4;
+    //        return 0;
+    //    }
 
-        // Determine index II from VOLEQ
-        int II = mapVOLEQtoII(VOLEQ);
-        if (II == 0) {
-            ERRFLAG = 1;
-            return 0;
-        }
+    //    // Determine index II from VOLEQ
+    //    int II = mapVOLEQtoII(VOLEQ);
+    //    if (II == 0) {
+    //        ERRFLAG = 1;
+    //        return 0;
+    //    }
 
-        // Mathis anchor at 1 ft
-        double THT = HTTOT - 1.0;
+    //    // Mathis anchor at 1 ft
+    //    double THT = HTTOT - 1.0;
 
-        // Compute intermediates
-        double HT67 = CF(II, 1) * std::pow(DBHOB, CF(II, 2)) * std::pow(THT, CF(II, 3));
-        BUTTCF = CF(II, 5) * DBHOB + CF(II, 4);
-        STUMPD = std::sqrt((BUTTCF * BUTTCF * THT) / (THT - 4.0));
-        double D67 = CF(II, 7) * DBHOB * (2.0 / 3.0) + CF(II, 6);
-        CF0 = 0.002727 * (HT67 * STUMPD * STUMPD + D67 * D67 * THT);
-        if (calcCF0) return CF0;
+    //    // Compute intermediates
+    //    double HT67 = CF(II, 1) * std::pow(DBHOB, CF(II, 2)) * std::pow(THT, CF(II, 3));
+    //    BUTTCF = CF(II, 5) * DBHOB + CF(II, 4);
+    //    STUMPD = std::sqrt((BUTTCF * BUTTCF * THT) / (THT - 4.0));
+    //    double D67 = CF(II, 7) * DBHOB * (2.0 / 3.0) + CF(II, 6);
+    //    CF0 = 0.002727 * (HT67 * STUMPD * STUMPD + D67 * D67 * THT);
+    //    if (calcCF0) return CF0;
 
-        double F = CF0 / (0.005454 * STUMPD * STUMPD * THT);
-        B = (1.0 - F) / (2.0 * F);
+    //    double F = CF0 / (0.005454 * STUMPD * STUMPD * THT);
+    //    B = (1.0 - F) / (2.0 * F);
 
-        // Forward: given HTUP, compute DIB
-        if (HTUP > 0.0 && HTUP < HTTOT) {
-            if (HTUP <= 1.0) {
-                DIB = STUMPD;
-            }
-            else {
-                double PHT = HTUP - 1.0; // height above 1 ft
-                DIB = STUMPD * std::pow((THT - PHT) / THT, B);
-            }
-            return DIB;
-        }
-        // Inverse: given DIB, compute HTUP
-        else if (DIB > 0.0 && DIB < STUMPD) {
-            double PHT = THT - THT * std::pow(DIB / STUMPD, 1.0 / B);
-            HTUP = PHT + 1.0;
-            return HTUP;
-        }
+    //    // Forward: given HTUP, compute DIB
+    //    if (HTUP > 0.0 && HTUP < HTTOT) {
+    //        if (HTUP <= 1.0) {
+    //            DIB = STUMPD;
+    //        }
+    //        else {
+    //            double PHT = HTUP - 1.0; // height above 1 ft
+    //            DIB = STUMPD * std::pow((THT - PHT) / THT, B);
+    //        }
+    //        return DIB;
+    //    }
+    //    // Inverse: given DIB, compute HTUP
+    //    else if (DIB > 0.0 && DIB < STUMPD) {
+    //        double PHT = THT - THT * std::pow(DIB / STUMPD, 1.0 / B);
+    //        HTUP = PHT + 1.0;
+    //        return HTUP;
+    //    }
 
-        return ERRFLAG;
-    }
+    //    return ERRFLAG;
+    //}
 public:
     RustagiTaperModel(VolumeEquation volumeEquation)
         : TaperModel(), volEqStr(volumeEquation.volEqStr)
-    {}
+    {
+        voleqCoefIdx_ = mapVOLEQtoII(volEqStr);
+    }
 
-    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override {/* do nothing */ };
+    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // {/* do nothing */ };
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 

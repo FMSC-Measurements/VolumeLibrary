@@ -826,11 +826,23 @@ static constexpr std::array<std::array<double, 9>, 182> obR8CF = { {
 } };
 
 static int findR8GeoSppIndex(int geoCode, int spcd) {
+    int idx = -1;
     for (std::size_t i = 0; i < R8CF.size(); ++i) {
         if (static_cast<int>(R8CF[i][0]) == geoCode &&
             static_cast<int>(R8CF[i][1]) == spcd) {
-            return static_cast<int>(i);
+            //return static_cast<int>(i);
+            idx = static_cast<int>(i);
         }
     }
-    return -1; // not found
+    if (idx < 0) {
+        geoCode = 9;
+        for (std::size_t i = 0; i < R8CF.size(); ++i) {
+            if (static_cast<int>(R8CF[i][0]) == geoCode &&
+                static_cast<int>(R8CF[i][1]) == spcd) {
+                //return static_cast<int>(i);
+                idx = static_cast<int>(i);
+            }
+        }
+    }
+    return idx; // not found
 }

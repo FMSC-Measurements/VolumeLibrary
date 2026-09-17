@@ -16,7 +16,7 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
     double DRC = tree.drc;
     int PROD = vco.primaryProduct;
     double MTOPP = merchRules.minTopDibSaw;
-    if (tree.minTopDibSawOverride > 0.0) MTOPP = tree.minTopDibSawOverride > 0.0;
+    //if (tree.minTopDibSawOverride > 0.0) MTOPP = tree.minTopDibSawOverride > 0.0;
     int ERRFLAG = 0;
     std::array<double, 15> VOL;
     VOL.fill(0.0);
@@ -37,8 +37,8 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
     }
 
 
-    const std::string code_1_3 = VOLEQ.substr(1, 3);
-    const std::string code_8_10 = VOLEQ.substr(8, 10);
+    const std::string subRegion = VOLEQ.substr(0, 3);
+    const std::string spcd = VOLEQ.substr(7, 3);
 
     // Working variables
     double D2H = (DBHOB * DBHOB) * HTTOT;
@@ -57,7 +57,7 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
     // -----------------------------
 
     // ASPEN - RM232 Total Cubic, TOP=6 board foot, TOP=4 cubic
-    if (code_8_10 == "746" && code_1_3 == "200") {
+    if (spcd == "746" && subRegion == "200") {
         // Total cubic
         if (D2H <= 12470.0) TCUFT = 0.002219 * D2H;
         else                TCUFT = 0.001896 * D2H + 4.0267;
@@ -92,7 +92,7 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
         }
     }
     // ASPEN - Peterson (201) volume to 4" top DIB
-    else if (code_8_10 == "746" && code_1_3 == "201") {
+    else if (spcd == "746" && subRegion == "201") {
         DIB = (0.8954 * DBHOB) + 0.3168;
         X1 = std::log10(std::max(DIB - 4.0, 0.000001)); // guard small
         X2 = std::log10(std::max(HTTOT - 4.5, 0.000001));
@@ -100,13 +100,13 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
         GCUFT = std::pow(10.0, (0.0827 * X1) + (0.4045 * X2) + (0.6593 * X3) - 0.4721) + 0.3;
     }
     // ASPEN - RM232 total (210)
-    else if (code_8_10 == "746" && code_1_3 == "210") {
+    else if (spcd == "746" && subRegion == "210") {
         if (D2H <= 12470.0) GCUFT = 0.002219 * D2H;
         else                GCUFT = 0.001896 * D2H + 4.0267;
     }
 
     // LODGEPOLE PINE - RM6 (200)
-    else if (code_8_10 == "108" && code_1_3 == "200") {
+    else if (spcd == "108" && subRegion == "200") {
         // Total cubic
         if (D2H <= 7000.0) TCUFT = 0.002777 * D2H + 0.027967;
         else               TCUFT = 0.002332 * D2H + 3.446454;
@@ -147,13 +147,13 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
         }
     }
     // LODGEPOLE PINE - RM6 total (210)
-    else if (code_8_10 == "108" && code_1_3 == "210") {
+    else if (spcd == "108" && subRegion == "210") {
         if (D2H <= 7000.0) GCUFT = 0.002777 * D2H + 0.027967;
         else               GCUFT = 0.002332 * D2H + 3.446454;
     }
 
     // PONDEROSA PINE - Prosser Black Hills (203)
-    else if (code_8_10 == "122" && code_1_3 == "203") {
+    else if (spcd == "122" && subRegion == "203") {
         // Total cubic
         if (D2H < 6000.0) TCUFT = 0.0024506 * D2H + 0.3470564;
         else              TCUFT = 0.0022325 * D2H + 3.2829984;
@@ -169,13 +169,13 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
         else               GCUFT = 0.002407 * D2H - 2.257724;
     }
     // PONDEROSA PINE - Myers (213) total
-    else if (code_8_10 == "122" && code_1_3 == "213") {
+    else if (spcd == "122" && subRegion == "213") {
         if (D2H <= 6000.0) GCUFT = 0.002213 * D2H + 0.030288;
         else               GCUFT = 0.002474 * D2H - 1.557103;
     }
 
     // PONDEROSA PINE - Front Range RM218 (200)
-    else if (code_8_10 == "122" && code_1_3 == "200") {
+    else if (spcd == "122" && subRegion == "200") {
         // Total cubic
         TCUFT = 0.00226 * D2H;
 
@@ -205,12 +205,12 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
         }
     }
     // PONDEROSA PINE - Front Range total (210)
-    else if (code_8_10 == "122" && code_1_3 == "210") {
+    else if (spcd == "122" && subRegion == "210") {
         GCUFT = 0.00226 * D2H;
     }
 
     // ENGELMANN SPRUCE - RM95 (200)
-    else if (code_8_10 == "093" && code_1_3 == "200") {
+    else if (spcd == "093" && subRegion == "200") {
         // Total cubic
         if (D2H <= 22500.0) TCUFT = 0.00239 * D2H + 0.06439;
         else                TCUFT = 0.00193 * D2H + 10.41663;
@@ -242,13 +242,13 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
         }
     }
     // ENGELMANN SPRUCE - RM95 total (210)
-    else if (code_8_10 == "093" && code_1_3 == "210") {
+    else if (spcd == "093" && subRegion == "210") {
         if (D2H <= 22500.0) GCUFT = 0.00239 * D2H + 0.06439;
         else                GCUFT = 0.00193 * D2H + 10.41663;
     }
 
     // PONDEROSA PINE - Myers RM8 total (212)
-    else if (code_8_10 == "122" && code_1_3 == "212") {
+    else if (spcd == "122" && subRegion == "212") {
         if (D2H <= 6000.0) TCUFT = 0.002213 * D2H + 0.030288;
         else               TCUFT = 0.002474 * D2H - 1.557103;
 
@@ -280,49 +280,49 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
     }
 
     // Oneseed Juniper - INT-339
-    else if (code_8_10 == "069") {
+    else if (spcd == "069") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(-0.19321 + 0.136101 * std::cbrt(D2H) + 0.038187 * MSTEM, 3.0);
         GCUFT = TCUFT;
     }
 
     // Rocky Mountain Juniper - INT-339
-    else if (code_8_10 == "066") {
+    else if (spcd == "066") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(0.02434 + 0.119106 * std::cbrt(D2H), 3.0);
         GCUFT = TCUFT;
     }
 
     // Utah Juniper - INT-339
-    else if (code_8_10 == "065") {
+    else if (spcd == "065") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(-0.08728 + 0.135420 * std::cbrt(D2H) - 0.019587 * MSTEM, 3.0);
         GCUFT = TCUFT;
     }
 
     // Gambel Oak - INT-339
-    else if (code_8_10 == "814") {
+    else if (spcd == "814") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(-0.13600 + 0.145743 * std::cbrt(D2H), 3.0);
         GCUFT = TCUFT;
     }
 
     // Bur Oak - INT-339
-    else if (code_8_10 == "823") {
+    else if (spcd == "823") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(0.12853 + 0.105885 * std::cbrt(D2H), 3.0);
         GCUFT = TCUFT;
     }
 
     // Pinyon Pine
-    else if (code_8_10 == "106") {
+    else if (spcd == "106") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(-0.20296 + 0.150283 * std::cbrt(D2H) + 0.054178 * MSTEM, 3.0);
         GCUFT = TCUFT;
     }
 
     // Mountain Mahogany - INT-339
-    else if (code_8_10 == "475") {
+    else if (spcd == "475") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(-0.13363 + 0.128222 * std::cbrt(D2H) + 0.080208 * MSTEM, 3.0);
         // Match FIA behavior for small diameters (2024-04-26 note)
@@ -331,7 +331,7 @@ TreeOutput R2OLDV(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMe
     }
 
     // Other Hardwoods - INT-339
-    else if (code_8_10 == "998") {
+    else if (spcd == "998") {
         if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
         TCUFT = std::pow(-0.13822 + 0.121850 * std::cbrt(D2H), 3.0);
         GCUFT = TCUFT;
@@ -381,10 +381,10 @@ TreeOutput HANN_PP(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeM
     double HTTOT = tree.totalHeight;
     int PROD = vco.primaryProduct;
     double MTOPP = merchRules.minTopDibSaw;
-    if (tree.minTopDibSawOverride > 0.0) MTOPP = tree.minTopDibSawOverride;
+    //if (tree.minTopDibSawOverride > 0.0) MTOPP = tree.minTopDibSawOverride;
     if (PROD != 1) {
         MTOPP = merchRules.minTopDibNonSaw;
-        if (tree.minTopDibNonSawOverride > 0.0) MTOPP = tree.minTopDibNonSawOverride;
+        //if (tree.minTopDibNonSawOverride > 0.0) MTOPP = tree.minTopDibNonSawOverride;
     }
     std::array<double, 15> VOL;
     VOL.fill(0.0);
@@ -423,13 +423,13 @@ TreeOutput HANN_PP(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeM
     if (TOP == 0.0) TOP = 4.0;
     TOP = std::clamp(TOP, 3.0, 8.0);
 
-    const std::string code23 = safe_substr_1based(VOLEQ, 2, 3);  // forest group code
+    const std::string subRegion = safe_substr_1based(VOLEQ, 2, 3);  // forest group code
     const char young_old = safe_substr_1based(VOLEQ, 7, 7).empty() ? '\0'
         : safe_substr_1based(VOLEQ, 7, 7)[0]; // '0' blackjack (young), '1' yellow (old)
 
     if (young_old == '0') {
         // Blackjack (young-growth)
-        if (code23 == "01") {
+        if (subRegion == "01") {
             ENTIRE = 0.0810724804 + 0.00198351037 * D2H;
             UM6 = -0.125349396 + 0.00360421889 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
                 + 0.00540634204 * std::pow(DBHOB, 2);
@@ -443,7 +443,7 @@ TreeOutput HANN_PP(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeM
             SCBDFT = INTBDFT * (0.96579222 - 0.40579028 * std::pow(DBHOB, -1)
                 - 16.93678414 * std::pow(DBHOB, -2));
         }
-        else if (code23 == "02") {
+        else if (subRegion == "02") {
             ENTIRE = 0.0483082948 + 0.00204968419 * D2H;
             UM6 = -0.133967845 + 0.00650174839 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
                 + 0.00490223789 * std::pow(DBHOB, 2);
@@ -527,7 +527,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
     double DRC = tree.drc;
     double HTTFLL = tree.heightToFirstLiveLimb;
     double HT1PRD = tree.merchHeightSaw;
-    int FCLASS = tree.stems;
+    int numOfStems = tree.stems;
 
     std::array<double, 15> VOL;
     VOL.fill(0.0);
@@ -559,10 +559,10 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
 
     //std::string PROD = (UNT == 1) ? "01" : "02";
     const std::string code13 = safe_substr_1based(VOLEQU, 1, 3);
-    const std::string code810 = safe_substr_1based(VOLEQU, 8, 10);
+    const std::string spcd = safe_substr_1based(VOLEQU, 8, 10);
 
     // 300DVEW122 – Ponderosa/Arizona/Apache (Eager Mill)
-    if (code810 == "122" && code13 == "300") {
+    if (spcd == "122" && code13 == "300") {
         if (D2H <= 31629.91964) {
             SCBDFT = -1.786 + 0.00098814 * D2H;
         }
@@ -587,19 +587,19 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 301DVEW122 – PP young-growth (<21" use 301HAB0122; else 300HAB1122)
-    else if (code810 == "122" && code13 == "301") {
+    else if (spcd == "122" && code13 == "301") {
         std::string VOLEQTMP = (DBHOB < 21.0) ? "301HAB0122" : "300HAB1122";
         out = HANN_PP(VOLEQTMP, vco, tree, merchRules);
         return out;
     }
     // 302DVEW122 – PP young-growth (Carson/Santa Fe)
-    else if (code810 == "122" && code13 == "302") {
+    else if (spcd == "122" && code13 == "302") {
         std::string VOLEQTMP = (DBHOB < 21.0) ? "302HAB0122" : "300HAB1122";
         out = HANN_PP(VOLEQTMP, vco, tree, merchRules);
         return out; 
     }
     // 301DVEW202 – Douglas-fir (Lincoln/Coconino/Tonto)
-    else if (code810 == "202" && code13 == "301") {
+    else if (spcd == "202" && code13 == "301") {
         ENTIRE = 0.438374 + 0.001756 * D2H;
         UM6 = -0.083149 + 0.001219 * ((std::pow(6.0, 3) * HTTOT) / DBHOB)
             + 0.005417 * std::pow(DBHOB, 2);
@@ -618,7 +618,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         SCBDFT *= 0.932;
     }
     // 302DVEW202 – Douglas-fir (Carson/Santa Fe)
-    else if (code810 == "202" && code13 == "302") {
+    else if (spcd == "202" && code13 == "302") {
         ENTIRE = 0.341133 + 0.001918 * D2H;
         UM6 = -0.187631 + 0.006719 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
             + 0.005364 * std::pow(DBHOB, 2);
@@ -634,7 +634,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 301DVEW015 – White fir (Lincoln/Coconino/Tonto)
-    else if (code810 == "015" && code13 == "301") {
+    else if (spcd == "015" && code13 == "301") {
         ENTIRE = 0.210904 + 0.001840 * D2H;
         UM6 = -0.182700 + 0.001248 * ((std::pow(6.0, 3) * HTTOT) / DBHOB)
             + 0.006245 * std::pow(DBHOB, 2);
@@ -651,7 +651,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 302DVEW015 – White fir (Carson/Santa Fe)
-    else if (code810 == "015" && code13 == "302") {
+    else if (spcd == "015" && code13 == "302") {
         ENTIRE = 0.157777 + 0.002009 * D2H;
         UM6 = -0.187563 + 0.006326 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
             + 0.006041 * std::pow(DBHOB, 2);
@@ -668,7 +668,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 300DVEW093 – Spruces (corkbark/subalpine/engelmann/blue)
-    else if (code810 == "093") {
+    else if (spcd == "093") {
         ENTIRE = 0.225466 + 0.002170 * D2H;
         UM6 = -0.2664752 + 0.006129 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
             + 0.007431 * std::pow(DBHOB, 2);
@@ -685,7 +685,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 300DVEW113 – SW white pine / bristlecone / limber / foxtail
-    else if (code810 == "113") {
+    else if (spcd == "113") {
         ENTIRE = 0.160889 + 0.002032 * D2H;
         UM6 = -0.213005 + 0.004912 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
             + 0.006061 * std::pow(DBHOB, 2);
@@ -701,7 +701,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 300DVEW746 – Aspen
-    else if (code810 == "746") {
+    else if (spcd == "746") {
         ENTIRE = 0.0327 + 0.002311 * D2H;
         UM6 = -0.236432 + 0.005802 * ((std::pow(6.0, 3) * HTTOT) / std::pow(DBHOB, 1.5))
             + 0.006080 * std::pow(DBHOB, 2);
@@ -718,19 +718,19 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         TWVOL = UM6 - UM4;
     }
     // 300DVEW060 – Junipers/cypress/misc softwoods (pulpwood only)
-    else if (code810 == "060") {
+    else if (spcd == "060") {
         if (DBHOB > 3.0 || DRC > 3.0) {
             if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
             double D2HA = D2H / 1000.0;
-            const std::string code23 = safe_substr_1based(VOLEQU, 2, 3);
-            if (code23 == "01") {
+            const std::string subRegion = safe_substr_1based(VOLEQU, 2, 3);
+            if (subRegion == "01") {
                 // INT-363
                 if (D2HA <= 5.0) GCUFT4 = -0.05 + 2.48 * D2HA + 0.057 * D2HA * D2HA;
                 else             GCUFT4 = 4.24 + 2.48 * D2HA - 14.29 / D2HA;
             }
-            else if (code23 == "02") {
+            else if (subRegion == "02") {
                 // INT-379
-                if (FCLASS != 1) {
+                if (numOfStems != 1) {
                     if (D2HA <= 5.0) GCUFT4 = -0.169 + 1.9246 * D2HA + 0.053 * D2HA * D2HA;
                     else             GCUFT4 = 3.805 + 1.9246 * D2HA - 13.249 / D2HA;
                 }
@@ -741,7 +741,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
             }
             else {
                 // INT-391
-                if (FCLASS != 1) {
+                if (numOfStems != 1) {
                     if (D2HA <= 6.0) GCUFT4 = -0.129 + 2.0255 * D2HA + 0.1011 * D2HA * D2HA;
                     else             GCUFT4 = 10.786 + 2.0255 * D2HA - 43.663 / D2HA;
                 }
@@ -758,17 +758,17 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         if (UNT == 1) GCUFT6 = GCUFT4;
     }
     // 300DVEW106 – Pinyon pines (pulpwood only)
-    else if (code810 == "106") {
+    else if (spcd == "106") {
         if (DBHOB > 3.0 || DRC > 3.0) {
             if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
             double D2HA = D2H / 1000.0;
-            const std::string code23 = safe_substr_1based(VOLEQU, 2, 3);
-            if (code23 == "01") {
+            const std::string subRegion = safe_substr_1based(VOLEQU, 2, 3);
+            if (subRegion == "01") {
                 // INT-363
                 if (D2HA <= 5.0) GCUFT4 = -0.07 + 2.51 * D2HA + 0.098 * D2HA * D2HA;
                 else             GCUFT4 = 7.29 + 2.51 * D2HA - 24.53 / D2HA;
             }
-            else if (code23 == "02") {
+            else if (subRegion == "02") {
                 // INT-379 (TCVOL equals GCUFT4 here)
                 double TCVOL = 0.0;
                 if (D2HA <= 5.0) TCVOL = -0.073 + 2.1608 * D2HA + 0.0804 * D2HA * D2HA;
@@ -788,10 +788,10 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         if (UNT == 1) GCUFT6 = GCUFT4;
     }
     // 300DVEW310 – Misc hardwoods/maple (pulpwood only)
-    else if (code810 == "310") {
+    else if (spcd == "310") {
         if (DBHOB > 3.0 || DRC > 3.0) {
             if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
-            double B4 = (FCLASS != 1) ? 0.0 : 1.0;
+            double B4 = (numOfStems != 1) ? 0.0 : 1.0;
             double B1 = -0.29013;
             double B2 = 0.126114;
             double B3 = 0.14489;
@@ -804,14 +804,14 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         if (UNT == 1) GCUFT6 = GCUFT4;
     }
     // 300DVEW800 – Oaks (pulpwood only)
-    else if (code810 == "800") {
+    else if (spcd == "800") {
         if (DBHOB > 3.0 || DRC > 3.0) {
             if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
             double D2HA = D2H / 1000.0;
-            const std::string code23 = safe_substr_1based(VOLEQU, 2, 3);
-            if (code23 == "01") {
+            const std::string subRegion = safe_substr_1based(VOLEQU, 2, 3);
+            if (subRegion == "01") {
                 // INT-379
-                if (FCLASS != 1) {
+                if (numOfStems != 1) {
                     if (D2HA <= 5.0) GCUFT4 = -0.181 + 2.1917 * D2HA + 0.0208 * D2HA * D2HA;
                     else             GCUFT4 = -1.742 + 2.1917 * D2HA + 5.205 / D2HA;
                 }
@@ -822,7 +822,7 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
             }
             else {
                 // INT-391
-                if (FCLASS != 1) {
+                if (numOfStems != 1) {
                     if (D2HA <= 4.0) GCUFT4 = -0.028 + 1.9545 * D2HA + 0.1400 * D2HA * D2HA;
                     else             GCUFT4 = 6.691 + 1.9545 * D2HA - 17.918 / D2HA;
                 }
@@ -840,11 +840,11 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         if (UNT == 1) GCUFT6 = GCUFT4;
     }
     // 300DVEW999 – Mesquite (pulpwood only)
-    else if (code810 == "999") {
+    else if (spcd == "999") {
         if (DBHOB > 3.0 || DRC > 3.0) {
             if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
             double D2HA = D2H / 1000.0;
-            if (FCLASS != 1) {
+            if (numOfStems != 1) {
                 if (D2HA <= 2.0) GCUFT4 = 0.020 + 1.8972 * D2HA + 0.5756 * D2HA * D2HA;
                 else             GCUFT4 = 6.927 + 1.8972 * D2HA - 9.210 / D2HA;
             }
@@ -860,10 +860,10 @@ TreeOutput R3D2HV(const std::string& VOLEQU, VolumeCalculationOptions vco, TreeM
         if (UNT == 1) GCUFT6 = GCUFT4;
     }
     // 300DVEW314 – Hackberry/alderleaf/mtn mahogany (pulpwood only)
-    else if (code810 == "314") {
+    else if (spcd == "314") {
         if (DBHOB > 3.0 || DRC > 3.0) {
             if (DRC > 0.0) D2H = DRC * DRC * HTTOT;
-            double B4 = (FCLASS != 1) ? 0.0 : 1.0;
+            double B4 = (numOfStems != 1) ? 0.0 : 1.0;
             double B1 = -0.29013;
             double B2 = 0.126114;
             double B3 = 0.14489;
@@ -961,21 +961,21 @@ TreeOutput R4D2H(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMea
     int MSTEM = (tree.stems == 1) ? 1 : 0;
 
     // Species code
-    const std::string spc = safe_substr_1based(VOLEQ, 8, 10);
+    const std::string spcd = safe_substr_1based(VOLEQ, 8, 10);
     const std::string dist = safe_substr_1based(VOLEQ, 2, 3); // used for Utah juniper variants
 
     double cu = 0.0; // cubic volume (VOL(1) and VOL(4))
 
     // Western Juniper (064)
-    if (spc == "064") {
+    if (spcd == "064") {
         cu = std::pow(-0.22048 + 0.125468 * std::cbrt(D2H) + 0.100092 * MSTEM, 3.0);
     }
     // Rocky Mountain Juniper (066)
-    else if (spc == "066") {
+    else if (spcd == "066") {
         cu = std::pow(0.02434 + 0.119106 * std::cbrt(D2H), 3.0);
     }
     // Utah Juniper (065) — multiple district variants
-    else if (spc == "065") {
+    else if (spcd == "065") {
         if (dist == "01") {
             // W. Colorado, E. Utah, Wyoming
             cu = std::pow(-0.08728 + 0.135420 * std::cbrt(D2H) - 0.019587 * MSTEM, 3.0);
@@ -996,21 +996,21 @@ TreeOutput R4D2H(const std::string& VOLEQ, VolumeCalculationOptions vco, TreeMea
         if (DBHOB < 3.0 && DRC < 3.0) cu = 0.1;
     }
     // Single-leaf Pinyon Pine (133)
-    else if (spc == "133") {
+    else if (spcd == "133") {
         cu = std::pow(-0.14240 + 0.148190 * std::cbrt(D2H) - 0.016712 * MSTEM, 3.0);
         // Set to 0.1 for small trees to match FIA (2024-04-26)
         if (DBHOB < 3.0 && DRC < 3.0) cu = 0.1;
     }
     // Pinyon Pine (106)
-    else if (spc == "106") {
+    else if (spcd == "106") {
         cu = std::pow(-0.20296 + 0.150283 * std::cbrt(D2H) + 0.054178 * MSTEM, 3.0);
     }
     // Mountain Mahogany (475)
-    else if (spc == "475") {
+    else if (spcd == "475") {
         cu = std::pow(-0.13363 + 0.128222 * std::cbrt(D2H) + 0.080208 * MSTEM, 3.0);
     }
     // Other Hardwoods (998)
-    else if (spc == "998") {
+    else if (spcd == "998") {
         cu = std::pow(-0.13822 + 0.121850 * std::cbrt(D2H), 3.0);
     }
     // If species not matched, FORTRAN leaves VOL as zeros and ERRFLAG unchanged (0).
