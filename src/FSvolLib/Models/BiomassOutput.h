@@ -4,10 +4,10 @@ struct BiomassOutput
 	double aboveGroundTotal = 0.0;  //no foliage
 	double branches = 0.0;
 	double foliage = 0.0;
-	double stumpWood = 0.0;
-	double stumpBark = 0.0;
 	double stemWoodTotal = 0.0;
 	double stemBarkTotal = 0.0;
+	double stumpWood = 0.0;
+	double stumpBark = 0.0;
 	double stemPrimaryWood = 0.0;
 	double stemPrimaryBark = 0.0;
 	double stemSecondaryWood = 0.0;

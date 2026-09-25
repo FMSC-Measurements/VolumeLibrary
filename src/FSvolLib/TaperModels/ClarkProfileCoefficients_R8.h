@@ -832,6 +832,7 @@ static int findR8GeoSppIndex(int geoCode, int spcd) {
             static_cast<int>(R8CF[i][1]) == spcd) {
             //return static_cast<int>(i);
             idx = static_cast<int>(i);
+            break;
         }
     }
     if (idx < 0) {
@@ -841,6 +842,7 @@ static int findR8GeoSppIndex(int geoCode, int spcd) {
                 static_cast<int>(R8CF[i][1]) == spcd) {
                 //return static_cast<int>(i);
                 idx = static_cast<int>(i);
+                break;
             }
         }
     }

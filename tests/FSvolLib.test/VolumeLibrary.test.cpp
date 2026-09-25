@@ -17,18 +17,7 @@ public:
         // Arrange
         VolumeLibrary& volLib = VolumeLibrary::getInstance();
         VolumeCalculationOptions volOpt;
-        volOpt.region = 8;
-        volOpt.forest = 1;
-        volOpt.district = 1;
-        volOpt.fiaCode = 731;
-        //volOpt.auxFlag = AuxFlag::R10YOUNGGROWTH;
-        volOpt.primaryProduct = 1;
-        volOpt.secondaryProduct = 2;
-        //volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
-        //volOpt.ecoRegion = "M260";
-        // ...
-        auto volEqDefault = volLib.GetVolumeEquationNumber(volOpt);
-
+        
         TreeMeasurment tree;
         tree.dbh = 19.7;
         tree.totalHeight = 76.0;
@@ -40,16 +29,24 @@ public:
         //tree.merchHeightUnit = TreeMeasurment::MerchHeightUnit::LOGS32;
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
-        tree.formClass = 80;
+        tree.formClass = 0;
         tree.heightToTopBroken = 0.0;
         tree.topBrokenDiameter = 0.0;
         // ...
+        volOpt.region = 8;
+        volOpt.forest = 10;
+        volOpt.district = 10;
+        volOpt.fiaCode = 100;
+        //volOpt.auxFlag = AuxFlag::R10YOUNGGROWTH;
+        volOpt.primaryProduct = 1;
+        volOpt.secondaryProduct = 2;
+        //volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
+        //volOpt.ecoRegion = "M260";
+        // ...
+        auto volEqDefault = volLib.GetVolumeEquationNumber(volOpt);
         //int numLogs = volLib.GetNumberOfLogs(volOpt, tree);
-
         //double ht2 = volLib.GetHeightAtDiameter(volEqDefault, tree, 3.0);
-
         //double dia2 = volLib.GetDiameterAtHeight(volEqDefault, tree, 35.5);
-        
         //volOpt.volumeEquationNumberOverride = "B03BEHW202";
         auto treeOutput = volLib.CalculateVolume(volOpt, tree);
         

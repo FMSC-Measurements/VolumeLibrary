@@ -96,7 +96,6 @@ static inline std::string trim(const std::string& s) {
  * @param ERRFLAG Error flag (0 = OK, 1 = not found in default map).
  */
 VolumeEquation VolumeEquationResolver::GetR2VolumeEquation(VolumeCalculationOptions vco)
-//static void R2_EQN_cpp(const std::string& FORST, int& SPEC, std::string& VOLEQ, int& ERRFLAG)
 {
     int ERRFLAG = 0;
     int SPEC = vco.fiaCode;

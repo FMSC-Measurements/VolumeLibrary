@@ -109,6 +109,10 @@ int ClarkTaperModel::findSpeciesIndex(int spcd)
         idx = array_helper::findIndexInSortedArray(R8Species, sppGrp);
     }
     //spgrp = sppGrp;
+    if (idx < 0) {
+        throw std::invalid_argument("Invalid VOLEQ!");
+    }
+
     return idx;
 }
 
@@ -1039,11 +1043,7 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
         totHt = GetTotalHeight(tree.totalHeight, clarkCoef.dib17, topHt, topDib, clarkCoef.a, clarkCoef.b);
         if (tree.totalHeight == 0.0) tree.totalHeight = totHt;
 
-        //set the volume correction factor
-        if (volumeEquation_.fiaCode < 300) r9VolCorFactor = 1.04;
-        else if ((volumeEquation_.fiaCode >= 741 && volumeEquation_.fiaCode <= 746) || volumeEquation_.fiaCode == 621)
-            r9VolCorFactor = 1.0;
-        else r9VolCorFactor = 1.1;
+        r9VolCorFactor = getR9VolCorFactor(volumeEquation_.fiaCode);
 
     } //end geoCode R9
     else if (volumeEquation_.geoCode == VolumeEquation::GeoCode::R8)
@@ -1360,20 +1360,6 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
 
     result.tipVol = ClarkCubicFootVol(lowHt, totHt) - result.primaryVol - result.topwoodVol;
     if (result.tipVol < 0.0) result.tipVol = 0.0;
-    
-    if (vco.region == 9) {
-
-        result.stumpVol *= r9VolCorFactor;    // multiply AND store back into 'result'
-        result.primaryVol *= r9VolCorFactor;
-        result.topwoodVol *= r9VolCorFactor;
-        result.tipVol *= r9VolCorFactor;
-    }
-
-    //round result to one decimal number
-    result.stumpVol = std::round(result.stumpVol * 10.0) / 10.0;
-    result.primaryVol = std::round(result.primaryVol * 10.0) / 10.0;
-    result.topwoodVol = std::round(result.topwoodVol * 10.0) / 10.0;
-    result.tipVol = std::round(result.tipVol * 10.0) / 10.0;
 
     return result;
 }

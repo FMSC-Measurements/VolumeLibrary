@@ -100,6 +100,7 @@ MerchRules MerchRulesResolver::GetMerchRules(VolumeCalculationOptions vco)
 			if (vco.region == 8) result.minTopDibSaw = 7.0;
 			else if (vco.region == 9) result.minTopDibSaw = 7.6;
 		}
+		result.useCorrectedFactor = false;
 	}
 	else if (vco.region == 10)
 	{

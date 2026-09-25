@@ -250,6 +250,24 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
                 item.greenWeight *= cubicRatio;
                 item.dryWeight *= cubicRatio;
             }
+            
+            //apply R9 volume correction factor to boardfoot and cubicfoot volume
+            if (vco.region == 9) {
+                double r9VolCorFactor = getR9VolCorFactor(volumeEquation_.fiaCode);
+                for (auto& item : result.logs) {
+                    item.grossBoardFoot = std::round(item.grossBoardFoot * r9VolCorFactor);
+                    item.internationalBoardFoot = std::round(item.internationalBoardFoot * r9VolCorFactor);
+                }
+                result.grossBoardFootPrimary = std::round(result.grossBoardFootPrimary * r9VolCorFactor);
+                result.grossBoardFootSecondary = std::round(result.grossBoardFootSecondary * r9VolCorFactor);
+                result.grossInternationalBoardFoot = std::round(result.grossInternationalBoardFoot * r9VolCorFactor);
+
+                stemVol.stumpVol *= r9VolCorFactor;   
+                stemVol.primaryVol *= r9VolCorFactor;
+                stemVol.topwoodVol *= r9VolCorFactor;
+                stemVol.tipVol *= r9VolCorFactor;
+                
+            }
 
             result.stumpCubicFoot = stemVol.stumpVol;
             result.grossCubicFootPrimary = stemVol.primaryVol;
@@ -264,6 +282,13 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
             double cordFactor = 90.0;
             if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
             result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
+
+            //round result to one decimal number
+            result.stumpCubicFoot = std::round(result.stumpCubicFoot * 10.0) / 10.0;
+            result.grossCubicFootPrimary = std::round(result.grossCubicFootPrimary * 10.0) / 10.0;
+            result.grossCubicFootSecondary = std::round(result.grossCubicFootSecondary * 10.0) / 10.0;
+            result.tipCubicFoot = std::round(result.tipCubicFoot * 10.0) / 10.0;
+
         //}
         return result;
     }
@@ -1050,7 +1075,8 @@ std::vector<LogOutput> ProfileVolumeCalculator::SegmentLogs(VolumeCalculationOpt
                     if (i == 0)
                     {
                         if (numseg == 0) logData.heightToLargeEndDiameter = 4.5;
-                        else logData.heightToLargeEndDiameter = actualSawHeight + merchRules.trim;
+                        else logData.heightToLargeEndDiameter = actualSawHeight; // +merchRules.trim;
+
                         heightToSmallEnd = actualSawHeight + secondaryLogs[i] + merchRules.trim;
                     }
                     else

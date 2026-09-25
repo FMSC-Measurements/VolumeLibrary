@@ -428,3 +428,21 @@ double biaBehBoardfoot(double dia, double loglength) {
     }
     return bf;
 }
+
+//R9 volume correction factor to account for proper merchandising and 
+// bring volumes in line with mill studies and legacy system
+double getR9VolCorFactor(int fiaCode) {
+    double factor = 1.0;
+
+    if (fiaCode < 300) {
+        factor = 1.04;
+    }
+    else if ((fiaCode >= 741 && fiaCode <= 746) || fiaCode == 621) {
+        factor = 1.0;
+    }
+    else {
+        factor = 1.1;
+    }
+
+    return factor;
+}

@@ -106,12 +106,14 @@ VolumeEquation VolumeEquationResolver::GetR8VolumeEquation(VolumeCalculationOpti
         // Ozark/St Francis
         GEOAREA = '6';
         if (DISTNUM == 7) GEOAREA = '7';
+        else if (DISTNUM == 3) GEOAREA = '1';
+        else if (DISTNUM == 10) GEOAREA = '2';
     }
     else if (FORNUM == 11) {
         // North Carolina
         GEOAREA = '3';
-        if (DISTNUM == 3)  GEOAREA = '1';
-        else if (DISTNUM == 10) GEOAREA = '2';
+        //if (DISTNUM == 3)  GEOAREA = '1';
+        //else if (DISTNUM == 10) GEOAREA = '2';
     }
     else if (FORNUM == 12) {
         // Francis Marion/Sumpter

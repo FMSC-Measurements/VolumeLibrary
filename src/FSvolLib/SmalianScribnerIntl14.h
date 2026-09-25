@@ -12,3 +12,5 @@ double treeFormClass78BoardFootTable(double dbh, double numberOf16FootLogs, std:
 double treeFormClass78BoardFootFormula(double dbh, double numberOf16FootLogs, std::string_view boardFootTable);
 
 double biaBehBoardfoot(double dia, double loglength);
+
+double getR9VolCorFactor(int fiaCode);
