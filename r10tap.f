@@ -22,7 +22,7 @@ C
       CHARACTER*2 ISP,IAC,IRC,IRA
       REAL RH, DSI, RH32,BK,RH40
       REAL HTTOT,HTUP,DBHOB,D2,D,H,BKAYC,BKWRC
-      REAL*8 BKAC,DVA,BKWR,DVR,BB,DD2MI,DVREDA
+      REAL BKAC,DVA,BKWR,DVR,BB,DD2MI,DVREDA
 C
 C
 C     PROFILE EQUATION  (USED FOR DIAMETER CALCULATIONS)
@@ -155,11 +155,11 @@ C
 C     THIS IS THE SPRUCE-HEMLOCK AND RED ALDER PROFILE EQUATION CALCULATION
 
         ELSE
-	     IF(ISP.EQ.IRA)THEN
-	        BK = 0
-	     ELSE
+           IF(ISP.EQ.IRA)THEN
+              BK = 0
+           ELSE
               BK = BB(D,H)
-	     ENDIF
+           ENDIF
            RH = (H - HTUP)/(H - 4.5)
 C----------
 C      IF R<0.078 (R^32<10^-38), R32 IS TRUNCATED AND USED IN
@@ -169,34 +169,34 @@ C----------
             IF(RH.LE.0.0)THEN
                RH = 0
                RH32 = 0
-	         RH40 = 0
-	         D2 = 0
-	         RETURN
+               RH40 = 0
+               D2 = 0
+               RETURN
             ELSEIF(RH .LT. 0.078) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= 0.078
             ELSEIF(RH .LT. 0.15) THEN
-	         RH40 = 0.15
+               RH40 = 0.15
                RH32= RH
             ELSE
-	         RH40 = RH
+               RH40 = RH
                RH32= RH
             ENDIF
 C
-	     IF(ISP.EQ.IRA)THEN
-	         D2=DVREDA(RH,RH32,RH40,H,D)
-	     ELSE
+           IF(ISP.EQ.IRA)THEN
+               D2=DVREDA(RH,RH32,RH40,H,D)
+           ELSE
                D2=DD2MI(RH,RH32,D,H)
-	     ENDIF
+           ENDIF
            if(d2.lt.0.0) d2 = 0.0
-	     IF(ISP.EQ.IRA)THEN
-	         D2=(D2)**.5*D
-	     ELSE
+           IF(ISP.EQ.IRA)THEN
+               D2=(D2)**.5*D
+           ELSE
                D2=(D2*BK)**.5*D
-	     ENDIF
+           ENDIF
         ENDIF
 C
 C     THIS IS THE END OF THE DIAMETER CALCULATIONS
 C
-  900 RETURN
+      RETURN
       END 
