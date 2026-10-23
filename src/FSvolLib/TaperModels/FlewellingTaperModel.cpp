@@ -995,7 +995,7 @@ double FlewellingTaperModel::estimateDibAtHeight(double upperHeight, double& slo
     return DIB;
 }
 
-void FlewellingTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void FlewellingTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     //fwinit.f
     dbh_ = tree.dbh;

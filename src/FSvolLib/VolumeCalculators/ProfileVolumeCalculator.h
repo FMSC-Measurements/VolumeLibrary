@@ -50,7 +50,7 @@ public:
 	}
 
 private:
-	void solveTotalHeight(TreeMeasurment& tree, MerchRules merchRules);
+	void solveTotalHeight(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco);
 
 };
 

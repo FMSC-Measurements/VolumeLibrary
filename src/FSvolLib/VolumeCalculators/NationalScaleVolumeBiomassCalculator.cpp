@@ -821,6 +821,10 @@ TreeOutput NationalScaleVolumeBiomass::CalculateVolumeBiomass(VolumeCalculationO
     double Vtipbk = Vtipob - Vtipib;
     double VtipibSound = (Vtipib - Vibmiss) * cullReduction;
     double VtipbkSound = Vtipbk - Vbkmiss;
+    if (tree.heightToTopBroken > 0.0 && tree.heightToTopBroken <= merchHeightNonsaw) {
+        VtipibSound = 0.0;
+		VtipbkSound = 0.0;
+    }
     if (VtipibSound < 0.0) VtipibSound = 0.0;
     if (VtipbkSound < 0.0) VtipbkSound = 0.0;
     double VtipobSound = VtipibSound + VtipbkSound;
@@ -892,18 +896,19 @@ TreeOutput NationalScaleVolumeBiomass::CalculateVolumeBiomass(VolumeCalculationO
         out.dryBio.stemSecondaryBark = Wtwbk;
         out.dryWeightPrimary = Wsawib + Wsawbk;
         out.dryWeightSecondary = Wtwib + Wtwbk;
+        out.dryBio.stemTopAndLimb = AGBpredRed - Wstumpib - Wstumpbk - Wsawib - Wsawbk - Wtwib - Wtwbk;
     }
     else
     {
         out.dryBio.stemPrimaryWood = Wmrchib;
         out.dryBio.stemSecondaryBark = Wmrchbk;
         out.dryWeightPrimary = Wmrchib + Wmrchbk;
+        out.dryBio.stemTopAndLimb = AGBpredRed - Wstumpib - Wstumpbk - Wmrchib - Wmrchbk;
     }
     out.dryBio.stemTipWood = Wtipib;
     out.dryBio.stemTipBark = Wtipbk;
     out.dryBio.branches = BrchHarm;
     out.dryBio.foliage = WfolRem;
-    out.dryBio.stemTopAndLimb = AGBpredRed - Wstumpib - Wstumpbk - Wsawib - Wsawbk - Wtwib - Wtwbk;
     
     double carbonFraction = weightFactorAndRefData.carbonFraction;
     if (!tree.isLive && decaycd > 0) carbonFraction = DeadCF;

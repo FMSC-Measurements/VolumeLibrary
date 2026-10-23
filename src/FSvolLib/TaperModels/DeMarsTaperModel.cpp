@@ -1,6 +1,6 @@
 #include "DeMarsTaperModel.h"
 
-void DeMarsTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void DeMarsTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     topDibSaw = merchRules.minTopDibSaw;
     if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET)

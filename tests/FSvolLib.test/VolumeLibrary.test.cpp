@@ -31,12 +31,12 @@ public:
         tree.merchHeightNonsaw = 0.0;
         tree.formClass = 0;
         tree.heightToTopBroken = 0.0;
-        tree.topBrokenDiameter = 0.0;
+        tree.topBrokenDiameter = 6.5;
         // ...
-        volOpt.region = 8;
-        volOpt.forest = 10;
-        volOpt.district = 10;
-        volOpt.fiaCode = 100;
+        volOpt.region = 4;
+        volOpt.forest = 1;
+        volOpt.district = 1;
+        volOpt.fiaCode = 122;
         //volOpt.auxFlag = AuxFlag::R10YOUNGGROWTH;
         volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;

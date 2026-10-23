@@ -12,7 +12,7 @@ class TaperModel
 public:
 	TaperModel() {};
 
-	virtual void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) = 0; // for flewelling models
+	virtual void InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco) = 0; // for flewelling models
 
 	
 	virtual double GetDiameterAtHeight(TreeMeasurment tree, double height) = 0;

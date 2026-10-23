@@ -1,6 +1,6 @@
 #include "NationalScaleVolumeBiomassTaperModel.h"
 
-void NationalScaleVolumeBiomassTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void NationalScaleVolumeBiomassTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
 	if(volEq.volEqStr != "223DVEW122") nsvb.setIbToObRatio(tree.dbh, tree.totalHeight);
 }
@@ -23,7 +23,6 @@ StemVolume NationalScaleVolumeBiomassTaperModel::GetStemCubicVol(TreeMeasurment 
 	result.primaryVol = out.grossCubicFootPrimary;
 	result.topwoodVol = out.grossCubicFootSecondary;
 	result.tipVol = out.tipCubicFoot;
-	//result.volCalculated = true;
 
 	return result;
 }

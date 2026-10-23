@@ -117,7 +117,7 @@ int ClarkTaperModel::findSpeciesIndex(int spcd)
 }
 
 void ClarkTaperModel::shortTreeReset(double upperHt) {
-    if (upperHt < 17.4) {
+    if (upperHt >0.0 && upperHt < 17.4) {
         shortHeight = true;
         topHt = 17.4;
         shrtHt = upperHt;
@@ -910,7 +910,7 @@ double ClarkTaperModel::ClarkHtH479(double stmDib, bool useDob) {
 
     return stmHt;
 }
-void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void ClarkTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     int errFlg = 0;
     dbhOb_ = tree.dbh;
@@ -1095,6 +1095,9 @@ void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRule
             
         }
 
+        if(topHt == 0.0 && tree.heightToTopBroken > 0.0 && tree.topBrokenDiameter > 0.0) {
+            return;
+		}
         if (topHt == 0.0) {
             throw std::invalid_argument("Upper stem height measurements required");
         }
@@ -1315,6 +1318,7 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
     if (vco.region == 8) useDob = true;
     if (vco.primaryProduct == 1) {
         upHt = (tree.merchHeightSaw > 0.0 ? tree.merchHeightSaw : ClarkHt(merchRules.minTopDibSaw, useDob));
+		if (tree.heightToTopBroken > 0.0 && tree.heightToTopBroken < upHt) upHt = tree.heightToTopBroken;
         if (upHt > merchRules.minMerchLength + merchRules.stumpHeight + merchRules.trim) {
 
             if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
@@ -1329,6 +1333,7 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
         }
 
         upHt = (tree.merchHeightNonsaw > 0.0 ? tree.merchHeightNonsaw : ClarkHt(merchRules.minTopDibNonSaw, useDob));
+        if (tree.heightToTopBroken > 0.0 && tree.heightToTopBroken < upHt) upHt = tree.heightToTopBroken;
         double vol4 = 0.0;
         if (upHt > merchRules.minMerchLength + merchRules.stumpHeight + merchRules.trim) {
 
@@ -1342,6 +1347,7 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
     else
     {
         upHt = (tree.merchHeightNonsaw > 0.0 ? tree.merchHeightNonsaw : ClarkHt(merchRules.minTopDibNonSaw, useDob));
+        if (tree.heightToTopBroken > 0.0 && tree.heightToTopBroken < upHt) upHt = tree.heightToTopBroken;
         if (upHt > merchRules.minMerchLength + merchRules.stumpHeight + merchRules.trim) {
 
             if (eqHeightType_ == 4 || eqHeightType_ == 7 || eqHeightType_ == 9) {
@@ -1357,8 +1363,9 @@ StemVolume ClarkTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchRules merc
 
         result.topwoodVol = 0.0;
     }
-
-    result.tipVol = ClarkCubicFootVol(lowHt, totHt) - result.primaryVol - result.topwoodVol;
+    double heightToTip = totHt;
+	if (tree.heightToTopBroken > 0.0) heightToTip = tree.heightToTopBroken;
+    result.tipVol = ClarkCubicFootVol(lowHt, heightToTip) - result.primaryVol - result.topwoodVol;
     if (result.tipVol < 0.0) result.tipVol = 0.0;
 
     return result;

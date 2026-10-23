@@ -1,6 +1,6 @@
 #include "RustagiTaperModel.h"
 
-void RustagiTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) {
+void RustagiTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco) {
 	double DBHOB = tree.dbh;
 	double HTTOT = tree.totalHeight;
 	
@@ -15,15 +15,20 @@ void RustagiTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRu
         ERRFLAG = 3;
         throw std::invalid_argument("DBH < 1.0");
     }
+    if (voleqCoefIdx_ == 0) {
+        ERRFLAG = 1;
+        throw std::invalid_argument("Invalid VOLEQ");
+    }
+
+    if(HTTOT == 0.0 && (tree.merchHeightSaw > 0.0 || tree.merchHeightNonsaw > 0.0 || (tree.heightToTopBroken > 0.0 && tree.topBrokenDiameter > 0.0))) {
+		//Estimate total height from merch height and top diameter in ProfileVolumeCalculator::solveTotalHeight
+        return;
+	}
+
     // Proposed modification to prevent div by zero (same as your code)
     if (HTTOT <= 5.0) {
         ERRFLAG = 4;
         throw std::invalid_argument("HTTOT < 5.0");
-    }
-
-    if (voleqCoefIdx_ == 0) {
-        ERRFLAG = 1;
-        throw std::invalid_argument("Invalid VOLEQ");
     }
 
     int II = voleqCoefIdx_;

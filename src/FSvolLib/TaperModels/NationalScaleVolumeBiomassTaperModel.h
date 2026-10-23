@@ -24,7 +24,7 @@ public:
     }
 
 
-    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override;
+    void InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco) override;
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 
