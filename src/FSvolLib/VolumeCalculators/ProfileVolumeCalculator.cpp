@@ -239,69 +239,60 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
     
 	// calculate total cubic and cords
     // total volume for NVB and CLK profile will be calculated differently.
-    //if ((volumeEquation_.modelType == VolumeEquation::ModelType::BEH && volumeEquation_.geoCode == VolumeEquation::GeoCode::R6) ||
     if (volumeEquation_.modelType == VolumeEquation::ModelType::CLK ||
         volumeEquation_.modelType == VolumeEquation::ModelType::NVB) {
 
         StemVolume stemVol = taperModel_.GetStemCubicVol(tree, merchRules, vco);
-        //for Behre's taper to calculate the total cubic volume
-        //if (volumeEquation_.modelType == VolumeEquation::ModelType::BEH) {
-        //    result.stumpCubicFoot = stemVol.stumpVol;
-        //    result.totalCubicFoot = stemVol.primaryVol;
-        //    result.cordMerchantable = std::round((result.grossCubicFootPrimary / 90.0) * 10.0) / 10.0;
-        //}
-        //else {
-            //for taper CLK and NVB
-            double merchCF = result.grossCubicFootPrimary + result.grossCubicFootSecondary;
-            double cubicRatio = 1.0;
-            if (merchCF > 0.0) cubicRatio = (stemVol.primaryVol + stemVol.topwoodVol) / merchCF;
+        //for taper CLK and NVB
+        double merchCF = result.grossCubicFootPrimary + result.grossCubicFootSecondary;
+        double cubicRatio = 1.0;
+        if (merchCF > 0.0) cubicRatio = (stemVol.primaryVol + stemVol.topwoodVol) / merchCF;
 
-            //Correct log cubic volume and weight
-            for (auto& item : result.logs) {
-                item.grossCubicFoot *= cubicRatio;
-                item.greenWeight *= cubicRatio;
-                item.dryWeight *= cubicRatio;
-            }
+        //Correct log cubic volume and weight
+        for (auto& item : result.logs) {
+            item.grossCubicFoot *= cubicRatio;
+            item.greenWeight *= cubicRatio;
+            item.dryWeight *= cubicRatio;
+        }
             
-            //apply R9 volume correction factor to boardfoot and cubicfoot volume
-            if (vco.region == 9) {
-                double r9VolCorFactor = getR9VolCorFactor(volumeEquation_.fiaCode);
-                for (auto& item : result.logs) {
-                    item.grossBoardFoot = std::round(item.grossBoardFoot * r9VolCorFactor);
-                    item.internationalBoardFoot = std::round(item.internationalBoardFoot * r9VolCorFactor);
-                }
-                result.grossBoardFootPrimary = std::round(result.grossBoardFootPrimary * r9VolCorFactor);
-                result.grossBoardFootSecondary = std::round(result.grossBoardFootSecondary * r9VolCorFactor);
-                result.grossInternationalBoardFoot = std::round(result.grossInternationalBoardFoot * r9VolCorFactor);
+        //apply R9 volume correction factor to boardfoot and cubicfoot volume
+        if (vco.region == 9) {
+            double r9VolCorFactor = getR9VolCorFactor(volumeEquation_.fiaCode);
+            for (auto& item : result.logs) {
+                item.grossBoardFoot = std::round(item.grossBoardFoot * r9VolCorFactor);
+                item.internationalBoardFoot = std::round(item.internationalBoardFoot * r9VolCorFactor);
+            }
+            result.grossBoardFootPrimary = std::round(result.grossBoardFootPrimary * r9VolCorFactor);
+            result.grossBoardFootSecondary = std::round(result.grossBoardFootSecondary * r9VolCorFactor);
+            result.grossInternationalBoardFoot = std::round(result.grossInternationalBoardFoot * r9VolCorFactor);
 
-                stemVol.stumpVol *= r9VolCorFactor;   
-                stemVol.primaryVol *= r9VolCorFactor;
-                stemVol.topwoodVol *= r9VolCorFactor;
-                stemVol.tipVol *= r9VolCorFactor;
+            stemVol.stumpVol *= r9VolCorFactor;   
+            stemVol.primaryVol *= r9VolCorFactor;
+            stemVol.topwoodVol *= r9VolCorFactor;
+            stemVol.tipVol *= r9VolCorFactor;
                 
-            }
+        }
 
-            result.stumpCubicFoot = stemVol.stumpVol;
-            result.grossCubicFootPrimary = stemVol.primaryVol;
-            if (result.grossCubicFootSecondary > 0.0) {
-                result.grossCubicFootSecondary = stemVol.topwoodVol;
-                result.tipCubicFoot = stemVol.tipVol;
-            }
-            else {
-                result.tipCubicFoot = stemVol.tipVol + stemVol.topwoodVol;
-            }
-            result.totalCubicFoot = stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol + stemVol.stumpVol;
-            double cordFactor = 90.0;
-            if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
-            result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
+        result.stumpCubicFoot = stemVol.stumpVol;
+        result.grossCubicFootPrimary = stemVol.primaryVol;
+        if (result.grossCubicFootSecondary > 0.0) {
+            result.grossCubicFootSecondary = stemVol.topwoodVol;
+            result.tipCubicFoot = stemVol.tipVol;
+        }
+        else {
+            result.tipCubicFoot = stemVol.tipVol + stemVol.topwoodVol;
+        }
+        result.totalCubicFoot = stemVol.primaryVol + stemVol.topwoodVol + stemVol.tipVol + stemVol.stumpVol;
+        double cordFactor = 90.0;
+        if (vco.region == 3 || vco.region == 8 || vco.region == 9) cordFactor = 79.0;
+        result.cordMerchantable = std::round((stemVol.primaryVol / cordFactor) * 10.0) / 10.0;
 
-            //round result to one decimal number
-            result.stumpCubicFoot = std::round(result.stumpCubicFoot * 10.0) / 10.0;
-            result.grossCubicFootPrimary = std::round(result.grossCubicFootPrimary * 10.0) / 10.0;
-            result.grossCubicFootSecondary = std::round(result.grossCubicFootSecondary * 10.0) / 10.0;
-            result.tipCubicFoot = std::round(result.tipCubicFoot * 10.0) / 10.0;
+        //round result to one decimal number
+        result.stumpCubicFoot = std::round(result.stumpCubicFoot * 10.0) / 10.0;
+        result.grossCubicFootPrimary = std::round(result.grossCubicFootPrimary * 10.0) / 10.0;
+        result.grossCubicFootSecondary = std::round(result.grossCubicFootSecondary * 10.0) / 10.0;
+        result.tipCubicFoot = std::round(result.tipCubicFoot * 10.0) / 10.0;
 
-        //}
         return result;
     }
 

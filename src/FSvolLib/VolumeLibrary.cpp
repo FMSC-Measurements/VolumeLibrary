@@ -169,16 +169,6 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 			treeOutput.dryBio.stemTipBark = treeOutput.greenBio.stemTipBark / mcFactor;
 		}
 
-		//the difference should be add to branches
-		//double stemGreenWeightDiff = treeOutput.greenBio.stemWoodTotal + treeOutput.greenBio.stemBarkTotal -
-		//	(treeOutput.greenBio.stumpWood + treeOutput.greenBio.stumpBark + treeOutput.greenBio.stemPrimaryWood +
-		//	treeOutput.greenBio.stemPrimaryBark + treeOutput.greenBio.stemTipWood + treeOutput.greenBio.stemTipBark);
-		//double stemDryWeightDiff = treeOutput.dryBio.stemWoodTotal + treeOutput.dryBio.stemBarkTotal -
-		//	(treeOutput.dryBio.stumpWood + treeOutput.dryBio.stumpBark + treeOutput.dryBio.stemPrimaryWood +
-		//	treeOutput.dryBio.stemPrimaryBark + treeOutput.dryBio.stemTipWood + treeOutput.dryBio.stemTipBark);
-		//treeOutput.greenBio.branches += stemGreenWeightDiff;
-		//treeOutput.dryBio.branches += stemDryWeightDiff;
-
 		//adjust other biomass components
 		treeOutput.greenBio.stemBarkTotal = 
 			treeOutput.greenBio.stumpBark + treeOutput.greenBio.stemPrimaryBark +

@@ -995,7 +995,7 @@ double FlewellingTaperModel::estimateDibAtHeight(double upperHeight, double& slo
     return DIB;
 }
 
-void FlewellingTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void FlewellingTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     //fwinit.f
     dbh_ = tree.dbh;
@@ -1038,7 +1038,6 @@ void FlewellingTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules mer
         totalHeight_ = solveTotalHeight(JSP_, geoSubregion_, dbh_, doubleBarkThicknessBH_, merchHeight_, merchTopDib_);
         
         if (totalHeight_ > 0.0) {
-            threePoint_ = true;
             tree.totalHeight = totalHeight_;
         }
         else {

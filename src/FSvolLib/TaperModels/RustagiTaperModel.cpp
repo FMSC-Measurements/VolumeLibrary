@@ -1,6 +1,6 @@
 #include "RustagiTaperModel.h"
 
-void RustagiTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco) {
+void RustagiTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) {
 	double DBHOB = tree.dbh;
 	double HTTOT = tree.totalHeight;
 	

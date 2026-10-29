@@ -910,7 +910,7 @@ double ClarkTaperModel::ClarkHtH479(double stmDib, bool useDob) {
 
     return stmHt;
 }
-void ClarkTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void ClarkTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     int errFlg = 0;
     dbhOb_ = tree.dbh;

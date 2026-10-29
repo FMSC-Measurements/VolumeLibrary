@@ -52,7 +52,7 @@ double BehreHyperbolaTaperModel::BehrTaper(TreeMeasurment tree, double stemUpper
 
     return D2;
 }
-void BehreHyperbolaTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void BehreHyperbolaTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     //setup variable related with tree measurements
     topDibSaw_ = merchRules.minTopDibSaw;
@@ -156,8 +156,21 @@ double BehreHyperbolaTaperModel::GetDiameterAtHeight(TreeMeasurment tree, double
     double totalLogHeight = 0.0;
     if (tree.merchHeightUnit != TreeMeasurment::MerchHeightUnit::FEET) totalLogHeight = tree.totalHeight;
 
-    //return BehrTaper(volEqStr_, tree.dbh, tree.totalHeight, totalLogHeight, height, formClass_, topDibSaw_);
-    return BehrTaper(tree, height);
+    // check if height is less than form class height. 
+	// Behr taper does not work for the Butt log. We use parabolic for height above DBH and below form class height.
+    if (height < formClassHeight_) {
+        double D1 = dbhIb_;
+        double D2 = d17_;
+        double Dh = 0.0;
+        if (height >= 4.5) {
+			Dh = std::sqrt(std::pow(D1, 2) - (std::pow(D1, 2) - std::pow(D2, 2)) / (formClassHeight_ - 4.5) * (height - 4.5));
+        }
+        else {
+			Dh = D1 * std::pow((formClassHeight_ - height) / (formClassHeight_ - 4.5), 0.25);   
+        }
+        return Dh;
+    }
+    else return BehrTaper(tree, height);
 
 }
 
@@ -284,9 +297,6 @@ StemVolume BehreHyperbolaTaperModel::GetStemCubicVol(TreeMeasurment tree, MerchR
             result.primaryVol += logVol;
         }
     }
-
-    //result.volCalculated = true;
-    //result.isBEH = true;
 
     return result;
 }

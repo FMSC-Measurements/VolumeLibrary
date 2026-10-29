@@ -155,7 +155,7 @@ public:
         : TaperModel(), fiaCode_(volumeEquation.fiaCode), volumeEquation_(volumeEquation)
     {}
 
-    void InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // {/* do nothing */ };
+    void InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco) override; // {/* do nothing */ };
 
     double GetDiameterAtHeight(TreeMeasurment tree, double height) override;
 

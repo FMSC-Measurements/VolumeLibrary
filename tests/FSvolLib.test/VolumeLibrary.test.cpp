@@ -20,7 +20,7 @@ public:
         
         TreeMeasurment tree;
         tree.dbh = 19.7;
-        tree.totalHeight = 76.0;
+        tree.totalHeight = 0.0;
         tree.referenceHeight = 0.0;
         tree.referenceDiameter = 0.0;
         tree.referenceHeightAtCentroid = false;
@@ -30,15 +30,15 @@ public:
         tree.merchHeightSaw = 0.0;
         tree.merchHeightNonsaw = 0.0;
         tree.formClass = 0;
-        tree.heightToTopBroken = 0.0;
+        tree.heightToTopBroken = 40.0;
         tree.topBrokenDiameter = 6.5;
         // ...
-        volOpt.region = 4;
+        volOpt.region = 10;
         volOpt.forest = 1;
         volOpt.district = 1;
-        volOpt.fiaCode = 122;
+        volOpt.fiaCode = 98;
         //volOpt.auxFlag = AuxFlag::R10YOUNGGROWTH;
-        volOpt.primaryProduct = 1;
+        volOpt.primaryProduct = 2;
         volOpt.secondaryProduct = 2;
         //volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
         //volOpt.ecoRegion = "M260";

@@ -1,6 +1,6 @@
 #include "NationalScaleVolumeBiomassTaperModel.h"
 
-void NationalScaleVolumeBiomassTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void NationalScaleVolumeBiomassTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
 	if(volEq.volEqStr != "223DVEW122") nsvb.setIbToObRatio(tree.dbh, tree.totalHeight);
 }

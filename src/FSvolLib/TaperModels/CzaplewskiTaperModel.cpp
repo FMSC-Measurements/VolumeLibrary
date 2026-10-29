@@ -163,7 +163,7 @@ double CzaplewskiTaperModel::top6Height(double dbh, double totalHeight, double h
     return TOP6;
 }
 
-void CzaplewskiTaperModel::InitializeOnTree(TreeMeasurment& tree, MerchRules merchRules, VolumeCalculationOptions vco)
+void CzaplewskiTaperModel::InitializeOnTree(TreeMeasurment tree, MerchRules merchRules, VolumeCalculationOptions vco)
 {
     if (modelType_ == VolumeEquation::ModelType::CZ3)
     {
