@@ -275,6 +275,7 @@ TreeOutput ProfileVolumeCalculator::CalculateVolume(VolumeCalculationOptions vco
 
         result.stumpCubicFoot = stemVol.stumpVol;
         result.grossCubicFootPrimary = stemVol.primaryVol;
+		result.grossCubicFootSecondary = stemVol.topwoodVol;
         if (result.grossCubicFootSecondary > 0.0) {
             result.grossCubicFootSecondary = stemVol.topwoodVol;
             result.tipCubicFoot = stemVol.tipVol;

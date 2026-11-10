@@ -121,6 +121,12 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 		}
 		else {
 			double totalStemWeight = treeOutput.totalCubicFoot * weightFactor;
+			//When the volume equation does not return any volume, use the NSVB biomass output as the tree biomass output
+			if (totalStemWeight == 0.0) {
+				treeOutput.greenBio = nsvbOutput.greenBio;
+				treeOutput.dryBio = nsvbOutput.dryBio;
+				return treeOutput;
+			}
 
 			if (nsvbOutput.greenBio.stemBarkTotal + nsvbOutput.greenBio.stemWoodTotal > 0.0) {
 				volFactor = totalStemWeight / (nsvbOutput.greenBio.stemBarkTotal + nsvbOutput.greenBio.stemWoodTotal);
@@ -128,7 +134,10 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 			}
 		}
 
-		if (volFactor <= 0.0) volFactor = 1.0;
+		if (volFactor <= 0.0) {
+			volFactor = 1.0;
+			ratioWood = 1.0;
+		}
 		treeOutput.greenBio = scale(nsvbOutput.greenBio, volFactor);
 		treeOutput.dryBio = scale(nsvbOutput.dryBio, volFactor);
 
@@ -167,6 +176,12 @@ TreeOutput VolumeLibrary::CalculateVolume(const VolumeCalculationOptions options
 			treeOutput.greenBio.stemTipBark = tipWeight * (1.0 - ratioWood);
 			treeOutput.dryBio.stemTipWood = treeOutput.greenBio.stemTipWood / mcFactor;
 			treeOutput.dryBio.stemTipBark = treeOutput.greenBio.stemTipBark / mcFactor;
+		}
+		else if(tree.heightToTopBroken>0.0){
+			treeOutput.greenBio.stemTipWood = 0.0;
+			treeOutput.greenBio.stemTipBark = 0.0;
+			treeOutput.dryBio.stemTipWood = 0.0;
+			treeOutput.dryBio.stemTipBark = 0.0;
 		}
 
 		//adjust other biomass components

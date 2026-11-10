@@ -31,14 +31,14 @@ public:
         tree.merchHeightNonsaw = 0.0;
         tree.formClass = 0;
         tree.heightToTopBroken = 40.0;
-        tree.topBrokenDiameter = 6.5;
+        tree.topBrokenDiameter = 7.0;
         // ...
-        volOpt.region = 10;
+        volOpt.region = 9;
         volOpt.forest = 1;
         volOpt.district = 1;
-        volOpt.fiaCode = 98;
+        volOpt.fiaCode = 122;
         //volOpt.auxFlag = AuxFlag::R10YOUNGGROWTH;
-        volOpt.primaryProduct = 2;
+        volOpt.primaryProduct = 1;
         volOpt.secondaryProduct = 2;
         //volOpt.volumeCalculationOptions = VolumeCalculationType::FIA;
         //volOpt.ecoRegion = "M260";
@@ -47,7 +47,7 @@ public:
         //int numLogs = volLib.GetNumberOfLogs(volOpt, tree);
         //double ht2 = volLib.GetHeightAtDiameter(volEqDefault, tree, 3.0);
         //double dia2 = volLib.GetDiameterAtHeight(volEqDefault, tree, 35.5);
-        //volOpt.volumeEquationNumberOverride = "B03BEHW202";
+        //volOpt.volumeEquationNumberOverride = "900CLKE318";
         auto treeOutput = volLib.CalculateVolume(volOpt, tree);
         
         //test input merch rules for BEH
